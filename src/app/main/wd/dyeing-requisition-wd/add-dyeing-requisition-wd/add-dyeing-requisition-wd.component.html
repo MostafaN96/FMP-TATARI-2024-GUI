@@ -1,0 +1,715 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">اذن صباغة</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="addRequisitionForm" (ngSubmit)="onAddRequisition()">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridForm3Class">
+                    <div class="col">
+                        <!-- Date -->
+                        <mat-form-field appearance="outline" class="example-form-field">
+                            <mat-label>التاريخ</mat-label>
+                            <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
+                            <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker">
+                            </mat-datepicker-toggle>
+                            <mat-datepicker [disabled]="false" #datepicker>
+
+                            </mat-datepicker>
+                            <mat-error *ngIf="!addRequisitionForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionForm.controls['date'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Dyers -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='dyers' [fields]='fieldsDyeing'
+                            (filtering)="onFilteringDyeing($event)" [placeholder]='textDyeing' [autofill]='autofill'
+                            formControlName="dyeingId" class="ejs-autocomplete" (change)="selectDyeing($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="addRequisitionForm.controls['dyeingId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="addRequisitionForm.controls['dyeingId'].hasError('required') && (addRequisitionForm.controls['dyeingId'].dirty 
+                            || addRequisitionForm.controls['dyeingId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- Warehouse -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete"
+                            (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse'
+                            [autofill]='autofill' formControlName="warehouseId" style="width: 260px;">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="addRequisitionForm.controls.warehouseId.hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="addRequisitionForm.controls.warehouseId.hasError('required') && (addRequisitionForm.controls.warehouseId.dirty 
+                                || addRequisitionForm.controls.warehouseId.touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- releaseProcess -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>الارسالية الصادرة</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="releaseProcess"
+                                placeholder="مثال: 10214" [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="addRequisitionForm.controls['releaseProcess'].hasError('required') && (addRequisitionForm.controls['releaseProcess'].dirty 
+                                || addRequisitionForm.controls['releaseProcess'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionForm.controls['releaseProcess'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Note -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> ملاحظات </mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize placeholder="ملاحظات"
+                                formControlName="note"></textarea>
+                            <mat-error *ngIf="addRequisitionForm.controls['note'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+
+                <div [class]="_sharedComponentService.gridForm2Class">
+                    <div [class]="_sharedComponentService.gridForm2Class">
+                        <app-current-stock-form-dyeing-wd #currentStockReport (parentFun)="getSelectedIndex($event)">
+                        </app-current-stock-form-dyeing-wd>
+                    </div>
+                </div>
+
+                <!-- Form Builder Section -->
+                <div class="row row-cols-1">
+                    <div class="col example-table-container">
+                        <table class="table table-style table-sm table-bordered table-striped table-responsive">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5px;">
+                                        التسلسل
+                                    </th>
+
+                                    <th style="max-width: 150px;">
+                                        نوع القماش الخام
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        كود المادة
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        كود المصبغة
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        رقم الرسالة
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        السعر
+                                    </th>
+
+                                    <th style="max-width: 50px;">
+                                        الكمية المشكلة
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        الكمية
+                                    </th>
+
+                                    <th style="max-width: 100px;">
+                                        الاجمالي
+                                    </th>
+
+                                    <th style="max-width: 40px;">
+                                        عدد الاثواب
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        فئة اللون
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        اللون
+                                    </th>
+
+                                    <th style="max-width: 50px;">
+                                        كود اللون
+                                    </th>
+
+                                    <th style="max-width: 50px;">
+                                        اجرة الصباغة
+                                    </th>
+
+                                    <th style="min-width: 180px;">
+                                        المعالجات
+                                    </th>
+
+                                    <th style="max-width: 120px;">
+                                        تكلفة الصباغة
+                                    </th>
+
+                                    <th style="max-width: 120px;">
+                                        إجمالي التكلفة
+                                    </th>
+
+                                    <th style="max-width: 130px;">
+                                        نوع القماش المصبوغ
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        كود القماش المصبوغ
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        كمية المصبوغ
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        الهالك
+                                    </th>
+
+                                    <th style="max-width: 50px;">
+                                        عرض القماش
+                                    </th>
+
+                                    <th style="max-width: 50px;">
+                                        وزن القماش م2
+                                    </th>
+
+                                    <th style="max-width: 80px;">
+                                        أمر الشغل
+                                    </th>
+
+                                    <th style="max-width: 80px;">
+                                        مكان التخزين
+                                    </th>
+
+                                    <th style="max-width: 80px;">
+                                        ملاحظات 1
+                                    </th>
+                                    
+                                    <th style="max-width: 80px;">
+                                        ملاحظات 2
+                                    </th>
+
+                                    <th style="max-width: 100px;">
+                                        البيان
+                                    </th>
+
+                                    <th style="width: 60px;">
+                                        حذف
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="items">
+                                <tr *ngFor="let row of getItem(addRequisitionForm);let index = index;">
+                                    <ng-container [formGroupName]="index">
+                                        <td>
+                                            <label style="width: 5px;">{{index+1}}</label>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 150px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    نوع القماش الخام
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="نوع القماش الخام"
+                                                    formControlName="fabricName" readonly>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود المادة
+                                                </mat-label>
+                                                <input matInput placeholder="كود المادة" readonly
+                                                    formControlName="fabricCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود المصبغة
+                                                </mat-label>
+                                                <input matInput placeholder="كود المصبغة" readonly
+                                                    formControlName="dyeingCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- consigment_dyeing_number -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    رقم الرسالة
+                                                </mat-label>
+                                                <input matInput placeholder="رقم الرسالة" readonly
+                                                    formControlName="consigmentDyeingNumber">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Price -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>السعر</mat-label>
+                                                <input autocomplete="off" type="text" matInput formControlName="price"
+                                                    placeholder="مثال: 15" [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('price').hasError('required') && (row.get('price').dirty 
+                                                    || row.get('price').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('price').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('price').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 50px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    الكمية المشكلة
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="الكمية المشكلة"
+                                                    formControlName="validQuantity" readonly>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Quantity -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>الكمية</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="quantity" placeholder="مثال: 12000"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1'); "
+                                                    (change)="validate(row)" required />
+                                                <mat-error class="text-danger"
+                                                    *ngIf="row.get('quantity').hasError('incorrect')">
+                                                    الكمية المدخلة غير متوفرة
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('quantity').hasError('required') && (row.get('quantity').dirty 
+                                                    || row.get('quantity').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('quantity').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- total -->
+                                        <td class="align-middle text-center">
+                                            <span>
+                                                {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value,
+                                                row.controls['quantity'].value) | number}}
+                                            </span>
+                                        </td>
+
+                                        <!-- numberFabricPieces -->
+                                        <td style="max-width: 40px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>عدد الاثواب</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="numberFabricPieces" placeholder="مثال: 10"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('required') && (row.get('numberFabricPieces').dirty 
+                                                    || row.get('numberFabricPieces').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+
+
+                                        <!-- Color Category -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    فئة اللون
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="فئة اللون"
+                                                    formControlName="colorCategoryName" readonly>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Color -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    اللون
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="اللون"
+                                                    formControlName="colorName" readonly>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 50px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود اللون
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="كود اللون" readonly
+                                                    formControlName="colorCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Dyeing Fee -->
+                                        <td style="max-width: 50px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>أجرة الصباغة</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="dyeingFee" placeholder="مثال: 10"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('dyeingFee').hasError('required') && (row.get('dyeingFee').dirty 
+                                                    || row.get('dyeingFee').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('dyeingFee').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Dyeing Services -->
+                                        <td style="min-width: 160px;">
+                                            <table class="w-100">
+                                                <tbody>
+                                                    <tr
+                                                        *ngFor="let dyeingService of selectArrayValues[index].dyeingServices">
+                                                        <td style="width: 150px;">{{dyeingService.name}}</td>
+                                                        <td style="width: 40px;">{{dyeingService.price}}</td>
+                                                        <td style="width: 40px;">{{(getServicesCost(row, dyeingService))
+                                                            | number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+
+                                        <!-- Total Cost -->
+                                        <td class="align-middle text-center">
+                                            <span>
+                                                {{_sharedComponentService.getDyeingCost((isCalcDyeingNet == '1') ?
+                                                row.controls['dyeingQuantity'].value : row.controls['quantity'].value,
+                                                selectArrayValues[index].dyeingServices,
+                                                row.controls['dyeingFee'].value,
+                                                row.controls['numberFabricPieces'].value) | number}}
+                                            </span>
+                                        </td>
+
+                                        <!-- Total Cost -->
+                                        <td class="align-middle text-center">
+                                            <span>
+                                                {{_sharedComponentService.getTotalCost(row.controls['price'].value,
+                                                (isCalcDyeingNet == '1') ? row.controls['dyeingQuantity'].value :
+                                                row.controls['quantity'].value, selectArrayValues[index].dyeingServices,
+                                                row.controls['dyeingFee'].value,
+                                                row.controls['numberFabricPieces'].value) | number}}
+                                            </span>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 130px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    نوع القماش المصبوغ
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="نوع القماش المصبوغ"
+                                                    formControlName="dyedFabricName" readonly>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود القماش المصبوغ
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="كود القماش المصبوغ"
+                                                    readonly formControlName="dyedFabricCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Dyeing Quantity -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>كمية المصبوغ</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="dyeingQuantity" placeholder="مثال: 12000"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                    required />
+                                                <mat-error class="text-danger"
+                                                    *ngIf="row.get('dyeingQuantity').hasError('incorrect')">
+                                                    الكمية المدخلة غير متوفرة
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('dyeingQuantity').hasError('required') && (row.get('dyeingQuantity').dirty 
+                                                    || row.get('dyeingQuantity').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('dyeingQuantity').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Wast -->
+                                        <td class="align-middle text-center"
+                                            [ngClass]="{'warning_quantity': getWast(row.controls['quantity'].value ,row.controls['dyeingQuantity'].value) > selectArrayValues[index].waste_ratio }">
+                                            <span>
+                                                {{getWast(row.controls['quantity'].value
+                                                ,row.controls['dyeingQuantity'].value) | number}}%
+                                            </span>
+                                        </td>
+
+                                        <!-- fabricWidth -->
+                                        <td style="max-width: 50px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>عرض القماش</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="fabricWidth" placeholder="مثال: 10214"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('fabricWidth').hasError('required') && (row.get('fabricWidth').dirty 
+                                                    || row.get('fabricWidth').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('fabricWidth').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- fabricQuantityM2 -->
+                                        <td style="max-width: 50px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>وزن القماش م2</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="fabricQuantityM2" placeholder="مثال: 10214"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('fabricQuantityM2').hasError('required') && (row.get('fabricQuantityM2').dirty 
+                                                    || row.get('fabricQuantityM2').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('fabricQuantityM2').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- workOrderNumber -->
+                                        <td style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>أمر الشغل</mat-label>
+                                                <input type="text" matInput formControlName="workOrderNumber"
+                                                    placeholder="مثال: 10214" [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('workOrderNumber').hasError('required') && (row.get('workOrderNumber').dirty 
+                                                    || row.get('workOrderNumber').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('workOrderNumber').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Storage Place -->
+                                        <td style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>مكان التخزين</mat-label>
+                                                <input autocomplete="off" type="text" matInput formControlName="storagePlace"
+                                                    placeholder="مثال: S-1" [errorStateMatcher]="matcher" />
+                                                <mat-error *ngIf="row.get('storagePlace').hasError('required') && (row.get('storagePlace').dirty 
+                                            || row.get('storagePlace').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('storagePlace').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('storagePlace').hasError('pattern')">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Note 1 -->
+                                        <td style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>ملاحظات 1</mat-label>
+                                                <input autocomplete="off" type="text" matInput formControlName="note1"
+                                                    placeholder="ملاحظات 1" [errorStateMatcher]="matcher" />
+                                                <mat-error *ngIf="row.get('note1').hasError('required') && (row.get('note1').dirty 
+                                            || row.get('note1').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('note1').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('note1').hasError('pattern')">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+                                        
+                                        <!-- Note 2 -->
+                                        <td style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>ملاحظات 2</mat-label>
+                                                <input autocomplete="off" type="text" matInput formControlName="note2"
+                                                    placeholder="ملاحظات 2" [errorStateMatcher]="matcher" />
+                                                <mat-error *ngIf="row.get('note2').hasError('required') && (row.get('note2').dirty 
+                                            || row.get('note2').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('note2').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('note2').hasError('pattern')">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+                                        
+                                        <!-- Statement -->
+                                        <td style="max-width: 100px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label> البيان </mat-label>
+                                                <textarea matInput rows="1" matTextareaAutosize placeholder="البيان"
+                                                    formControlName="statement"></textarea>
+                                                <mat-error *ngIf="row.get('statement').hasError('invalid') && (row.get('statement').dirty 
+                                                    || row.get('statement').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('statement').hasError('pattern')">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td>
+                                            <button type="button" class="btn-del-item" (click)="removeItem(index, row)">
+                                                -
+                                            </button>
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td>الاجمالي</td>
+
+                                    <td colspan="5"></td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
+                                        'validQuantity') | number}}</td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
+                                        'quantity') | number}}</td>
+                                    <td class="text-center">
+                                        {{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm,
+                                        'items', 'quantity', 'price') | number}}</td>
+                                        <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
+                                            'numberFabricPieces') | number}}</td>
+                                    <td colspan="6"></td>
+                                    <td class="text-center">{{getSumTotalCost(addRequisitionForm.controls.items.value,
+                                        selectArrayValues) | number}}</td>
+                                    <td colspan="2"></td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
+                                        'dyeingQuantity') | number}}</td>
+                                    <td colspan="9"></td>
+                                </tr>
+                            </tfoot>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto g-0">
+                    <div class="col">
+                        <button [disabled]="addRequisitionForm.controls.items.value.length <= 0 || !isShowAdd" type="submit"
+                            class="btn-style submit-btn">إضافة</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

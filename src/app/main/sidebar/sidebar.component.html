@@ -1,0 +1,69 @@
+<section id="navbar" class="navbar-section">
+    <!-- Nav bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light position-fixed">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="../../../assets/images/logo.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
+          <!-- Logo Brand Title -->
+          NulTech
+        </a>          
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" 
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+        </div> -->
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="navbar-nav">
+            <!-- ----------------- Start Preparation Menu ----------------- -->
+            <a class="nav-link " mat-button [matMenuTriggerFor]="preparation">الإعداد</a>
+            <mat-menu class="menu-list" #preparation="matMenu">
+              <ng-container *ngFor="let module of settingModule">
+                <button class="menu-element border-0" mat-menu-item [matMenuTriggerFor]='menu'>{{module.moduleName}}</button>
+                <mat-menu #menu>
+                  <ng-container *ngFor="let component of module.components">
+                    <button class="menu-element border-0" mat-menu-item [matMenuTriggerFor]='menu'>{{component.componentName}}</button>
+                    <mat-menu #menu>
+                      <ng-container *ngFor="let page of component.pages">
+                        <a mat-menu-item [routerLink]="['/dashboard', page.pageLink]">{{page.pageName}}</a>
+                      </ng-container>
+                    </mat-menu>
+                  </ng-container>
+                  </mat-menu>
+              </ng-container>
+            </mat-menu>
+  
+            
+            <!-- ----------------- End Preparation Menu ----------------- -->
+  
+            <!-- ----------------- Start WA Menu ----------------- -->
+            <ng-container *ngFor="let module of modules">
+              <a class="nav-link " mat-button [matMenuTriggerFor]="menu">{{module.moduleName}}</a>
+              <mat-menu class="menu-list" #menu>
+                <ng-container *ngFor="let component of module.components">
+                  <button class="menu-element border-0" mat-menu-item [matMenuTriggerFor]="menu">{{component.componentName}}</button>
+                  <mat-menu #menu>
+                  <ng-container *ngFor="let page of component.pages">
+                      <a mat-menu-item [routerLink]="['/dashboard', page.pageLink]">{{page.pageName}}</a>
+                  </ng-container>
+                </mat-menu>
+                </ng-container>
+              </mat-menu>
+            </ng-container>
+       
+            <!-- ----------------- Start WE Menu ----------------- -->
+            <!-- <a class="nav-link " mat-button [matMenuTriggerFor]="reports">التقارير</a> -->
+            <!-- Mat menu style -->
+            <mat-menu class="menu-list" #reports="matMenu">
+              <!-- <a mat-menu-item [routerLink]="['/dashboard', _constantsService.ROUTING_LINKS[106]]">التقرير اليومي</a> -->
+            </mat-menu>
+          </div>
+          
+        </div>
+
+
+      </div>
+    </nav>
+
+</section>

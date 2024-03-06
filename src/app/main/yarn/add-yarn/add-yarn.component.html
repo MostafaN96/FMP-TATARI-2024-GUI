@@ -1,0 +1,94 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">إضافة خيوط</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="yarnForm" (ngSubmit)="onAddYarn()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                    <div class="col">
+                        <!-- Name -->
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>اسم الخيط</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="name" placeholder="مثال: خيط بوليستر"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!yarnForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['name'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Code -->
+                    <div class="col">
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>الكود</mat-label>
+                            <input autocomplete="off" matInput
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                #code formControlName="code" placeholder="10001001">
+                            <mat-error *ngIf="!yarnForm.controls['code'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['code'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['code'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Code -->
+                    <div class="col">
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>اللوط</mat-label>
+                            <input autocomplete="off" matInput
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                #code formControlName="lotCode" placeholder="10">
+                            <mat-error *ngIf="!yarnForm.controls['lotCode'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['lotCode'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['lotCode'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    
+                </div>
+
+            </div>
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto g-0">
+                    <div class="col">
+                        <button type="submit" class="btn-style submit-btn">إضافة</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

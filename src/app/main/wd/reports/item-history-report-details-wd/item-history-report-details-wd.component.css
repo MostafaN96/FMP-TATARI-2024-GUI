@@ -1,0 +1,15 @@
+/* .example-table-container {
+    position: relative;
+    min-height: 200px;
+    max-height: 400px;
+    overflow: auto;
+  } */
+  .p-inputtext {
+    font-size: 0.8rem;
+    color: #6c757d;
+    background: transparent;
+    padding: 1rem 0.5rem;
+    width: 100%;
+    margin-top: 0.3rem;
+    font-weight: bold;
+}

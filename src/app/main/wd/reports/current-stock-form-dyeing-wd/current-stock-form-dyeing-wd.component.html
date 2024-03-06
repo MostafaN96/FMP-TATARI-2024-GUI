@@ -1,0 +1,644 @@
+<div [class]="_sharedComponentService.gridForm2Class">
+    <div class="col" id="main-page-title">
+        <div class="btn-export-section">
+            <a (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'جرد المخزن الجاهز')">
+                <i title="PDF" class="far fa-file-pdf"></i>
+            </a>
+
+            <a (click)="_exportDataService.exportToExcel('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'جرد المخزن الجاهز')">
+                <i title="Excel" class="far fa-file-excel px-2"></i>
+            </a>
+
+            <a
+                (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'جرد المخزن الجاهز', 'table-data-2')">
+                <i title="Print" class="fas fa-print pe-2"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col pb-4">
+        <div [class]="_sharedComponentService.tableSectionClass">
+
+            <div id="table-header-data-report">
+
+                <p-table #dt1 [value]="formDyeingFabricsByDyer" dataKey="id" columnResizeMode="expand"
+                    styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true" [rows]="10"
+                    [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll" scrollHeight="600px"
+                    [filterDelay]="0" sortField="fabric_code" sortOrder="1" [responsive]="true" appendTo="body"
+                    [autoLayout]="true">
+                    <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+                        <div data-html2canvas-ignore="true" class="flex">
+                            <button data-html2canvas-ignore="true" pButton label="اعادة" class="p-button-outlined"
+                                icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                        </div>
+
+                        <!-- Start Filter Section -->
+                        <div class="row row-cols-5">
+                         
+                            <div class="col">
+                                <p-columnFilter field="consigment_dyeing_number" matchMode="consigment-number-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'consigment_dyeing_number')"
+                                            (onChange)="onMultiselectedConsigmentNumber($event.value)"
+                                            placeholder="البحث بـ رقم الرسالة" optionLabel="consigment_dyeing_number">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.consigment_dyeing_number}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="fabric_name" matchMode="fabric-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'fabric_name')"
+                                            (onChange)="onMultiselectedFabric($event.value)"
+                                            placeholder="البحث بـ القماش الخام" optionLabel="fabric_name">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.fabric_name}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="fabric_code" matchMode="fabric-code-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'fabric_code')"
+                                            (onChange)="onMultiselectedFabricCode($event.value)"
+                                            placeholder="البحث بـ كود قماش الخام" optionLabel="fabric_code">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.fabric_code}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="color_code" matchMode="color-code-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'color_code')"
+                                            (onChange)="onMultiselectedColorCode($event.value)"
+                                            placeholder="البحث بـ كود اللون" optionLabel="color_code">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.color_code}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="color_category_name" matchMode="color-category-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'color_category_name')"
+                                            (onChange)="onMultiselectedColorCategory($event.value)"
+                                            placeholder="البحث بـ فئة اللون" optionLabel="color_category_name">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.color_category_name}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="color_name" matchMode="color-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'color_name')"
+                                            (onChange)="onMultiselectedColor($event.value)"
+                                            placeholder="البحث بـ اللون" optionLabel="color_name">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.color_name}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="dyed_fabric_name" matchMode="dyed-fabric-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'dyed_fabric_name')"
+                                            (onChange)="onMultiselectedDyedFabric($event.value)"
+                                            placeholder="البحث بـ القماش المصبوغ" optionLabel="dyed_fabric_name">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.dyed_fabric_name}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="dyed_fabric_code" matchMode="dyed-fabric-code-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'dyed_fabric_code')"
+                                            (onChange)="onMultiselectedDyedFabricCode($event.value)"
+                                            placeholder="البحث بـ كود قماش المصبوغ" optionLabel="dyed_fabric_code">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.dyed_fabric_code}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="order_number" matchMode="order-number-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'order_number')"
+                                            (onChange)="onMultiselectedSellerOrderNumber($event.value)"
+                                            placeholder="البحث بـ رقم طلبية العميل" optionLabel="order_number">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.order_number}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                        </div>
+                        <!-- End Filter Section -->
+
+
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <!-- Select Column -->
+                            <th data-html2canvas-ignore="true">
+                                اختيار
+                            </th>
+
+                            <!-- fabric_name Column -->
+                            <th pResizableColumn pSortableColumn="fabric_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    نوع القماش الخام<p-sortIcon data-html2canvas-ignore="true" field="fabric_name">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- fabric_code Column -->
+                            <th pResizableColumn pSortableColumn="fabric_code">
+                                <div class="flex justify-content-between align-items-center">
+                                    كود المادة<p-sortIcon data-html2canvas-ignore="true" field="fabric_code">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- fabric_dyeing_code Column -->
+                            <th pResizableColumn pSortableColumn="fabric_dyeing_code">
+                                <div class="flex justify-content-between align-items-center">
+                                    كود المصبغة<p-sortIcon data-html2canvas-ignore="true" field="fabric_dyeing_code">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- consigment_dyeing_number Column -->
+                            <th pResizableColumn pSortableColumn="consigment_dyeing_number">
+                                <div class="flex justify-content-between align-items-center">
+                                    رقم الرسالة<p-sortIcon data-html2canvas-ignore="true" field="consigment_dyeing_number">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            
+                            <!-- quantity Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    الكمية المشكلة
+                                </div>
+                            </th>
+
+                            <!-- current_quantity Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    الكمية التشكيل المتبقية
+                                </div>
+                            </th>
+
+                            <!-- price Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    السعر
+                                </div>
+                            </th>
+
+                            <!-- amount Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    القيمة
+                                </div>
+                            </th>
+
+                            <!-- date Column -->
+                            <th pResizableColumn pSortableColumn="date">
+                                <div class="flex justify-content-between align-items-center">
+                                    التاريخ<p-sortIcon data-html2canvas-ignore="true" field="date">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- Requisition Number Column -->
+                            <th pResizableColumn pSortableColumn="number">
+                                <div class="flex justify-content-between align-items-center">
+                                    رقم الاذن<p-sortIcon data-html2canvas-ignore="true" field="number">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- color_category_name Column -->
+                            <th pResizableColumn pSortableColumn="color_category_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    فئة اللون<p-sortIcon data-html2canvas-ignore="true" field="color_category_name">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- color_name Column -->
+                            <th pResizableColumn pSortableColumn="color_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    اللون<p-sortIcon data-html2canvas-ignore="true" field="color_name">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- color_code Column -->
+                            <th pResizableColumn pSortableColumn="color_code">
+                                <div class="flex justify-content-between align-items-center">
+                                    كود اللون<p-sortIcon data-html2canvas-ignore="true" field="color_code">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- Dyeing Services Column -->
+                            <th style="min-width: 190px;" pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    المعالجات
+                                </div>
+                            </th>
+
+                            <!-- dyed_fabric_name Column -->
+                            <th pResizableColumn pSortableColumn="dyed_fabric_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    القماش المصبوغ<p-sortIcon data-html2canvas-ignore="true" field="dyed_fabric_name">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- dyed_fabric_code Column -->
+                            <th pResizableColumn pSortableColumn="dyed_fabric_code">
+                                <div class="flex justify-content-between align-items-center">
+                                    كود القماش المصبوغ<p-sortIcon data-html2canvas-ignore="true"
+                                        field="dyed_fabric_code">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- fabric_width Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    عرض القماش
+                                </div>
+                            </th>
+
+                            <!-- fabric_quantity_m2 Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    وزن القماش م2
+                                </div>
+                            </th>
+
+                            <!-- seller_name Column -->
+                            <th pResizableColumn pSortableColumn="seller_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    العميل<p-sortIcon data-html2canvas-ignore="true" field="seller_name">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- order_quantity Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    الكمية المطلوبة
+                                </div>
+                            </th>
+
+                            <!-- dyeing_current_quantity Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    الكمية المتبقية
+                                </div>
+                            </th>
+
+                            <!-- order_number Column -->
+                            <th pResizableColumn pSortableColumn="order_number">
+                                <div class="flex justify-content-between align-items-center">
+                                    رقم طلبية العميل<p-sortIcon data-html2canvas-ignore="true"
+                                        field="order_number">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- Update Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    تعديل المعالجات
+                                </div>
+                            </th>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-element let-index="rowIndex">
+                        <tr class="p-selectable-row">
+
+                            <!-- Select Column -->
+                            <td data-html2canvas-ignore="true">
+                                <mat-checkbox *ngIf="isShowCheckBox" (click)="parentFun.emit(element)" (click)="$event.stopPropagation()"
+                                    (change)="$event ? selection.toggle(element) : null"
+                                    [checked]="selection.isSelected(element)">
+                                </mat-checkbox>
+                                <a *ngIf="!isShowCheckBox" class="update-symbol" (click)="parentFun.emit(element)">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </td>
+
+                            <!-- fabric_name Column -->
+                            <td>
+                                {{ element.fabric_name }}
+                            </td>
+
+                            <!-- fabric_code Column -->
+                            <td>
+                                {{ element.fabric_code }}
+                            </td>
+
+                            <!-- fabric_dyeing_code Column -->
+                            <td>
+                                {{ element.fabric_dyeing_code }}
+                            </td>
+
+                            <!-- consigment_dyeing_number Column -->
+                            <td>
+                                {{ element.consigment_dyeing_number }}
+                            </td>
+
+                            <!-- quantity Column -->
+                            <td>
+                                {{ element.quantity }}
+                            </td>
+                            
+                            <!-- current_quantity Column -->
+                            <td>
+                                {{ element.current_quantity }}
+                            </td>
+
+                            <!-- price Column -->
+                            <td>
+                                {{ element.price | number }}
+                            </td>
+
+                            <!-- amount Column -->
+                            <td>
+                                {{_sharedComponentService.getCollectTimes(element.current_quantity, element.price) |
+                                number}}
+                            </td>
+
+                            <!-- date Column -->
+                            <td>
+                                {{ element.date | date:'EEEE, d/M/y'}}
+                            </td>
+
+
+
+                            <!-- Requisition Number Column -->
+                            <td>
+                                <a [routerLink]="[goToRequisitionPage(element?.type_of_requisition, element?.wd_form_dyeing_order_requisition_id)]"
+                                    [queryParams]="{ id: element?.requisition_id}">
+                                    {{ element.number }}
+                                </a>
+                            </td>
+
+                            <!-- color_category_name Column -->
+                            <td>
+                                {{ element.color_category_name }}
+                            </td>
+
+                            <!-- color_name Column -->
+                            <td>
+                                {{ element.color_name }}
+                            </td>
+
+                            <!-- color_code Column -->
+                            <td>
+                                {{ element.color_code }}
+                            </td>
+
+                            <!-- Dyeing Services Column -->
+                            <td style="min-width: 190px;">
+                                <table class="w-100 h-100 m-0 table">
+                                    <tbody>
+                                        <tr class="h-100" *ngFor="let dyeingService of element.dyeingServices">
+                                            <td>{{dyeingService.name}}</td>
+                                            <td>{{dyeingService.price}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <!-- dyed_fabric_name Column -->
+                            <td>
+                                {{ element.dyed_fabric_name }}
+                            </td>
+
+                            <!-- dyed_fabric_code Column -->
+                            <td>
+                                {{ element.dyed_fabric_code }}
+                            </td>
+
+                            <!-- fabric_width Column -->
+                            <td>
+                                {{ element.fabric_width }}
+                            </td>
+
+                            <!-- fabric_quantity_m2 Column -->
+                            <td>
+                                {{element.fabric_quantity_m2}}
+                            </td>
+
+                            <!-- seller_name Column -->
+                            <td>
+                                {{ element.seller_name}}
+                            </td>
+
+                            <!-- order_quantity Column -->
+                            <td>
+                                {{ element.order_quantity}}
+                            </td>
+
+                            <!-- dyeing_current_quantity Column -->
+                            <td>
+                                {{ element.dyeing_current_quantity}}
+                            </td>
+
+                            <!-- order_number Column -->
+                            <td>
+                                {{ element.order_number}}
+                            </td>
+
+                            <!-- Update Column -->
+                            <td>
+                                <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                    (click)="getSelectedData(element)">
+                                    <i class="fas fa-edit update-symbol"></i>
+                                </a>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <!-- <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="17">لا يوجد بيانات</td>
+                        </tr>
+                    </ng-template> -->
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <!-- Select Column -->
+                            <td data-html2canvas-ignore="true"></td>
+
+                            <!-- fabric_name Column -->
+                            <td>الإجمالي</td>
+
+                            <!-- fabric_code Column -->
+                            <td></td>
+
+                            <!-- fabric_dyeing_code Column -->
+                            <td></td>
+
+                            <!-- consigment_dyeing_number Column -->
+                            <td></td>
+
+                            <!-- quantity Column -->
+                            <td>
+                                {{_sharedComponentService.getTotalCollectSum(dt1.filteredValue == null ? formDyeingFabricsByDyer:  dt1.filteredValue,
+                                "quantity") | number}}
+                            </td>
+
+                            <!-- current_quantity Column -->
+                            <td>
+                                {{_sharedComponentService.getTotalCollectSum(dt1.filteredValue == null ? formDyeingFabricsByDyer:  dt1.filteredValue,
+                                "current_quantity") | number}}
+                            </td>
+
+                            <!-- price Column -->
+                            <td></td>
+
+                            <!-- amount Column -->
+                            <td>
+                                {{_sharedComponentService.getTotalCollectTimes(dt1.filteredValue == null ? formDyeingFabricsByDyer:  dt1.filteredValue,
+                                "current_quantity", "price") | number}}
+                            </td>
+
+                            <!-- date Column -->
+                            <td> </td>
+
+                            <!-- Requisition Number Column -->
+                            <td></td>
+
+                            <!-- color_category_name Column -->
+                            <td> </td>
+
+                            <!-- color_name Column -->
+                            <td></td>
+
+                            <!-- color_code Column -->
+                            <td></td>
+
+                            <!-- Dyeing Services Column -->
+                            <td style="min-width: 190px;"></td>
+
+                            <!-- dyed_fabric_name Column -->
+                            <td> </td>
+
+                            <!-- dyed_fabric_code Column -->
+                            <td></td>
+
+                            <!-- fabric_width Column -->
+                            <td></td>
+
+                            <!-- fabric_quantity_m2 Column -->
+                            <td></td>
+
+                            <!-- seller_name Column -->
+                            <td></td>
+
+                            <!-- order_quantity Column -->
+                            <td>
+                                {{_sharedComponentService.getTotalCollectSum(dt1.filteredValue == null ? formDyeingFabricsByDyer:  dt1.filteredValue,
+                                "order_quantity") | number}}
+                            </td>
+
+                            <!-- dyeing_current_quantity Column -->
+                            <td>
+                                {{_sharedComponentService.getTotalCollectSum(dt1.filteredValue == null ? formDyeingFabricsByDyer:  dt1.filteredValue,
+                                "dyeing_current_quantity") | number}}
+                            </td>
+
+                            <!-- order_number Column -->
+                            <td></td>
+
+                            <!-- Update Column -->
+                            <td></td>
+
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<app-update-dyeing-services-wd *ngIf="showDyeingServciesUpdate" [selectedData]="selectedDataToUpdate">
+</app-update-dyeing-services-wd>

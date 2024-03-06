@@ -1,0 +1,24 @@
+.btn-add-item {
+    display: block;
+    width: 30px;
+    height: 35px;
+}
+
+input[type="radio"] {
+    cursor: pointer;
+    transform: scale(1.5);
+}
+
+.added-order {
+    background-color: rgba(21, 128, 0, 0.551) !important;
+}
+
+.p-inputtext {
+    font-size: 0.8rem;
+    color: #6c757d;
+    background: transparent;
+    padding: 1rem 0.5rem;
+    width: 100%;
+    margin-top: 0.3rem;
+    font-weight: bold;
+}

@@ -1,0 +1,226 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">اذن نقل بين المصابغ</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+            <div class="row row-cols-3">
+                <div id="table-header-data" class="col">
+                    <table class="table table-style">
+                        <tbody>
+                            <tr>
+                                <th>
+                                    رقم الإذن:
+                                </th>
+                                <td>
+                                    {{transitionBetweenDyersDetails[0]?.number}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>التاريخ:</th>
+                                <td>{{transitionBetweenDyersDetails[0]?.date | date:'EEEE, d/M/y'}}</td>
+                            </tr>
+
+                            <tr>
+                                <th>من مصبغة:</th>
+                                <td>{{transitionBetweenDyersDetails[0]?.from_dyeing_name}} </td>
+                            </tr>
+
+                            <tr>
+                                <th>الى مصبغة:</th>
+                                <td>{{transitionBetweenDyersDetails[0]?.to_dyeing_name}} </td>
+                            </tr>
+                            <tr>
+                                <th>الملاحظات:</th>
+                                <td>{{transitionBetweenDyersDetails[0]?.note}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col">
+                    <div class="btn-export-section">
+                        <a
+                            (click)="_exportDataService.exportToPDF('table-header-data', 'table-data', 'اذن نقل بين المصابغ')">
+                            <i title="PDF" class="far fa-file-pdf"></i>
+                        </a>
+
+                        <a
+                            (click)="_exportDataService.exportToExcel('table-header-data', 'table-data', 'اذن نقل بين المصابغ')">
+                            <i title="Excel" class="far fa-file-excel px-2"></i>
+                        </a>
+
+                        <a
+                            (click)="_exportDataService.print('table-header-data', 'table-data', 'اذن نقل بين المصابغ', 'table-data-2')">
+                            <i title="Print" class="fas fa-print pe-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Body -->
+            <div [class]="_sharedComponentService.gridForm2Class">
+                <div class="col">
+                    <div [class]="_sharedComponentService.tableSectionClass">
+                        <mat-form-field class="w-100" appearance="outline">
+                            <input matInput [(ngModel)]="filter" (keyup)="applyFilter($any($event.target).value)"
+                                placeholder="بحث" />
+                        </mat-form-field>
+
+                        <div class="example-table-container">
+
+                            <table id="table-data" mat-table matSort #sortColumns="matSort"
+                                [dataSource]="dataSourceSearchTabel" [class]="_sharedComponentService.tableStyleClass">
+
+                                <!-- Index Column -->
+                                <ng-container matColumnDef="index">
+                                    <th mat-header-cell *matHeaderCellDef> <b>تسلسل </b></th>
+                                    <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
+                                    <td mat-footer-cell *matFooterCellDef> <b> الإجمالي </b> </td>
+                                </ng-container>
+
+                                <!-- fabric_name Column -->
+                                <ng-container matColumnDef="fabric_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>المادة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.fabric_name }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- fabric_code Column -->
+                                <ng-container matColumnDef="fabric_code">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>كود المادة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.fabric_code }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- dyeing_code Column -->
+                                <ng-container matColumnDef="dyeing_code">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>كود المصبغة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.fabric_dyeing_code }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- consigment_dyeing_number Column -->
+                                <ng-container matColumnDef="consigment_dyeing_number">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>رقم الرسالة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.consigment_dyeing_number }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- quantity Column -->
+                                <ng-container matColumnDef="quantity">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الكمية</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.quantity | number}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> {{getTotalQuantity() | number}} </td>
+                                </ng-container>
+
+                                <!-- price Column -->
+                                <ng-container matColumnDef="price">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>السعر</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.price}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- Total Column -->
+                                <ng-container matColumnDef="total">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b><b> الإجمالي </b></b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{getPriceXQuantity(element.price, element.quantity) | number}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> {{getTotalPriceXQuantity() | number}} </td>
+                                </ng-container>
+
+                                <!-- document Column -->
+                                <ng-container matColumnDef="document">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الوثيقة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.document }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- statement Column -->
+                                <ng-container matColumnDef="statement">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>البيان</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.statement }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- Update Column -->
+                                <ng-container matColumnDef="update">
+                                    <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
+                                        <b>تعديل</b>
+                                    </th>
+                                    <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
+                                        <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                            (click)="getSelectedData(row)">
+                                            <i class="fas fa-edit update-symbol"></i>
+                                        </a>
+                                    </td>
+                                    <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                                <tr mat-footer-row *matFooterRowDef="displayedColumns; "></tr>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Buttons Section -->
+        <div *ngIf="!showAddDetails" [class]="_sharedComponentService.btnSectionClass">
+            <div class="row row-cols-auto">
+                <div class="col">
+                    <button (click)="showAddDetailsFunc()" type="button" class="btn-style submit-btn">اضافة
+                        بيانات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<app-wd-transition-between-dyers-form-add-details *ngIf="showAddDetails" [selectedData]="selectedDataToDetails">
+</app-wd-transition-between-dyers-form-add-details>
+<app-update-transition-between-dyers-wd *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate">
+</app-update-transition-between-dyers-wd>

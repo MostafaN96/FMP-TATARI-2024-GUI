@@ -1,0 +1,80 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">استعلام عن توافر قماش</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="inquireFabricForm" (ngSubmit)="onSubmitForm()">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridForm3Class">
+                    <!-- dyed Fabric -->
+                    <div class="col mb-2">
+                        <ejs-autocomplete class="ejs-autocomplete" [dataSource]='fabrics' [fields]='fieldsFabric'
+                            (filtering)="onFilteringFabricName($event)" [placeholder]='textFabric' [autofill]='autofill'
+                            formControlName="dyedFabricId" (change)='selectFabric($event)'>
+                        </ejs-autocomplete>
+                        <small class="text-danger"
+                            *ngIf="inquireFabricForm.controls['dyedFabricId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="inquireFabricForm.controls['dyedFabricId'].hasError('required') && (inquireFabricForm.controls['dyedFabricId'].dirty 
+                            || inquireFabricForm.controls['dyedFabricId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- color -->
+                    <div class="col mb-2">
+                        <ejs-autocomplete class="ejs-autocomplete" [dataSource]='colors' [fields]='fieldsColor'
+                            (filtering)="onFilteringColor($event)" [placeholder]='textColor' [autofill]='autofill'
+                            formControlName="colorId" (change)='selectColor($event)'>
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="inquireFabricForm.controls['colorId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="inquireFabricForm.controls['colorId'].hasError('required') && (inquireFabricForm.controls['colorId'].dirty 
+                                        || inquireFabricForm.controls['colorId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- quantity -->
+                    <div class="col mb-2">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>الكمية</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="quantity"
+                                placeholder="مثال: 12000" [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="inquireFabricForm.controls['quantity'].hasError('required') && (inquireFabricForm.controls['quantity'].dirty 
+                                || inquireFabricForm.controls['quantity'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="inquireFabricForm.controls['quantity'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col mb-2">
+                        <button type="submit" class="btn-style submit-btn">بحث</button>
+                    </div>
+
+                </div>
+
+                <!--  -->
+                <app-inquire-fabric-avilability-shared-report-wd [inquireFabricForm]="inquireFabricForm">
+                </app-inquire-fabric-avilability-shared-report-wd>
+
+            </div>
+
+        </form>
+    </div>
+</section>

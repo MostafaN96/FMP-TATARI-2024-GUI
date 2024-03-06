@@ -1,0 +1,47 @@
+<section [id]="_sharedComponentService.pageId()">
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="anointedServicesPricesForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                   <!-- price -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>السعر*</mat-label>
+                            <input type="text" matInput formControlName="price" placeholder="مثال: 100000"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!anointedServicesPricesForm.controls['price'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="anointedServicesPricesForm.controls['price'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="anointedServicesPricesForm.controls['price'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="d-flex align-items-center">        
+                        <mat-checkbox  class="px-1" formControlName="isFabricPiece" (change)="isChecked('isFabricPiece', $event.checked ? 1: 0)">يضرب بعدد الاكياس</mat-checkbox>
+                    </div>
+
+                </div>
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto">
+                        <div class="col">
+                            <button type="submit" class="btn-style submit-btn">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

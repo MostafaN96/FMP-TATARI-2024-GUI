@@ -1,0 +1,275 @@
+<section [id]="_sharedComponentService.pageId()">
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="addRequisitionWeForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+
+                    <div class="col">
+                        <!-- Date -->
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
+                            <mat-label>التاريخ</mat-label>
+                            <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
+                            <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
+                            <mat-datepicker [disabled]="false" #datepicker>
+                              
+                            </mat-datepicker>
+                            <mat-error *ngIf="!addRequisitionWeForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['date'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                          </mat-form-field>
+                    </div>
+
+                    <!-- workOrderNumber -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>أمر الشغل</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="workOrderNumber"
+                                placeholder="مثال: 10214" [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="addRequisitionWeForm.controls['workOrderNumber'].hasError('required') && (addRequisitionWeForm.controls['workOrderNumber'].dirty 
+                                || addRequisitionWeForm.controls['workOrderNumber'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['workOrderNumber'].hasError('pattern')">
+                                <label
+                                    [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                     <!-- note -->
+                     <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> الملاحظات </mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize 
+                                 placeholder="الملاحظات" formControlName="note"></textarea>
+                                <mat-error *ngIf="addRequisitionWeForm.controls['note'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Color Category -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='colorCategories' [fields]='fieldsColorCategory' 
+                            (filtering)="onFilteringColorCategoryName($event)" [placeholder]='textColorCategory' [autofill]='autofill'
+                            formControlName="colorCategoryId" class="ejs-autocomplete w-100" (change)="selectColorCategory($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="addRequisitionWeForm.controls['colorCategoryId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="addRequisitionWeForm.controls['colorCategoryId'].hasError('required') && (addRequisitionWeForm.controls['colorCategoryId'].dirty 
+                            || addRequisitionWeForm.controls['colorCategoryId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-8">
+                                <ejs-autocomplete [dataSource]='colors' [fields]='fieldsColor'  
+                                (filtering)="onFilteringColorName($event)" [placeholder]='textColor' [autofill]='autofill'
+                                formControlName="colorId" class="ejs-autocomplete w-100" (change)="selectColor($event)">
+                            </ejs-autocomplete>
+                            <small class="text-danger" *ngIf="addRequisitionWeForm.controls['colorId'].hasError('pattern')"
+                                [innerHTML]="_sharedComponentService.invalid_message">
+                            </small>
+                            <small class="text-danger" *ngIf="addRequisitionWeForm.controls['colorId'].hasError('required') && (addRequisitionWeForm.controls['colorId'].dirty 
+                                || addRequisitionWeForm.controls['colorId'].touched)"
+                                [innerHTML]="_sharedComponentService.required_field">
+                            </small>
+                            </div>
+                            <div class="col-4">
+                                <mat-form-field appearance="outline" class="example-full-width w-100">
+                                    <input type="text" matInput formControlName="colorCode" placeholder="كود اللون"
+                                    disabled/>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>السعر*</mat-label>
+                            <input type="text" matInput formControlName="price" placeholder="مثال: 15"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="addRequisitionWeForm.controls['price'].hasError('required') && (addRequisitionWeForm.controls['price'].dirty 
+                                    || addRequisitionWeForm.controls['price'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['price'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['price'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>الكمية*</mat-label>
+                            <input type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error class="text-danger"
+                                *ngIf="addRequisitionWeForm.controls['quantity'].hasError('incorrect')">
+                                الكمية المدخلة غير متوفرة
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['quantity'].hasError('required') && (addRequisitionWeForm.controls['quantity'].dirty 
+                                    || addRequisitionWeForm.controls['quantity'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['quantity'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['quantity'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- numberFabricPieces -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>عدد الأثواب</mat-label>
+                            <input type="text" matInput formControlName="numberFabricPieces" placeholder="مثال: 10214"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="addRequisitionWeForm.controls['numberFabricPieces'].hasError('required') && (addRequisitionWeForm.controls['numberFabricPieces'].dirty 
+                                    || addRequisitionWeForm.controls['numberFabricPieces'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['numberFabricPieces'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Dyeing Code -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>كود الصبغة</mat-label>
+                            <input type="text" matInput formControlName="dyeingCode" placeholder="مثال: 10214"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="addRequisitionWeForm.controls['dyeingCode'].hasError('required') && (addRequisitionWeForm.controls['dyeingCode'].dirty 
+                                    || addRequisitionWeForm.controls['dyeingCode'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['dyeingCode'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['dyeingCode'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Storage Place -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>مكان التخزين</mat-label>
+                            <input type="text" matInput formControlName="storagePlace" placeholder="مثال: S-1"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="addRequisitionWeForm.controls['storagePlace'].hasError('required') && (addRequisitionWeForm.controls['storagePlace'].dirty 
+                                    || addRequisitionWeForm.controls['storagePlace'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['storagePlace'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['storagePlace'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Document -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>الوثيقة</mat-label>
+                            <input type="text" matInput formControlName="document" placeholder="مثال: 10214"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="addRequisitionWeForm.controls['document'].hasError('required') && (addRequisitionWeForm.controls['document'].dirty 
+                                    || addRequisitionWeForm.controls['document'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['document'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['document'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Statement -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> البيان </mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize 
+                                 placeholder="البيان" formControlName="statement"></textarea>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['statement'].hasError('invalid') && (addRequisitionWeForm.controls['statement'].dirty 
+                                    || addRequisitionWeForm.controls['statement'].touched)">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWeForm.controls['statement'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto">
+                    <div class="col">
+                        <button type="submit" class="btn-style submit-btn">تعديل</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

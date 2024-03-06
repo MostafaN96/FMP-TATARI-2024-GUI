@@ -1,0 +1,202 @@
+<section>
+
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+
+            <!-- Form Body -->
+            <div [class]="_sharedComponentService.gridForm2Class">
+                <div class="col">
+                    <div [class]="_sharedComponentService.tableSectionClass">
+
+                        <mat-form-field class="w-100" appearance="outline">
+                            <input matInput [(ngModel)]="filter" (keyup)="applyFilter($any($event.target).value)"
+                                placeholder="بحث" />
+                        </mat-form-field>
+
+                        <div id="table-data-2">
+                            <div>
+                                <h2 class="text-center">المخرجات</h2>
+                            </div>
+                            <div class="example-table-container">
+                            <table mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
+                                [class]="_sharedComponentService.tableStyleClass">
+
+                                <!-- Index Column -->
+                                <ng-container matColumnDef="index">
+                                    <th mat-header-cell *matHeaderCellDef><b> تسلسل </b></th>
+                                    <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
+                                </ng-container>
+
+                                <!-- yarn_name Column -->
+                                <ng-container matColumnDef="fabric_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>نوع القماش</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.fabric_name }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- yarn_code Column -->
+                                <ng-container matColumnDef="fabric_code">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>كود المادة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.fabric_code }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- quantity Column -->
+                                <ng-container matColumnDef="quantity">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الكمية</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.quantity | number}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- Manufacturing fee Column -->
+                                <ng-container matColumnDef="manufacturing_fee">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b><b> اجرة التصنيع </b></b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.manufacturing_fee | number}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- total_with_wast Column -->
+                                <ng-container matColumnDef="total_with_wast">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الاجمالي مع الهالك</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{data | number}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- total_cost Column -->
+                                <ng-container matColumnDef="total_cost">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>اجمالي التكلفة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{totalCost(element.quantity, element.manufacturing_fee) | number}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- avg_price Column -->
+                                <ng-container matColumnDef="avg_price">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>وسطي سعر الكيلو</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{avgCost(element.quantity, element.manufacturing_fee) | number}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- circular_knitting_machine_name Column -->
+                                <!-- <ng-container matColumnDef="circular_knitting_machine_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الماكينة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+
+                                        <table class="table table-bordered h-100">
+                                            <tr>
+                                                <td>النوع</td>
+                                                <td>{{ element.circular_knitting_machine_type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>القطر</td>
+                                                <td>{{ element.circular_knitting_machine_diameter }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>النعومة</td>
+                                                <td>{{ element.circular_knitting_machine_smoothness }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>الطراز</td>
+                                                <td>{{ element.circular_knitting_machine_model }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>الرقم</td>
+                                                <td>{{ element.circular_knitting_machine_number }}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </ng-container> -->
+
+                                <!-- consigment_number Column -->
+                                <ng-container matColumnDef="consigment_number">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>رقم الإرسالية</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.consigment_number }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- warehouse_name Column -->
+                                <ng-container matColumnDef="warehouse_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>المخزن</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.warehouse_name }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- document Column -->
+                                <ng-container matColumnDef="document">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الوثيقة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.document }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- statement Column -->
+                                <ng-container matColumnDef="statement">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>البيان</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.statement }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                    <!-- Update Column -->
+                                    <ng-container matColumnDef="update">
+                                        <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
+                                            <b>تعديل</b>
+                                        </th>
+                                        <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
+                                            <a *ngIf="!isShowOrder" onClick="document.getElementById('update-form-output').scrollIntoView();"
+                                                (click)="getSelectedData(row)">
+                                                <i class="fas fa-edit update-symbol"></i>
+                                            </a>
+                                        </td>
+                                        <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<app-update-manufacturing-output *ngIf="showOutputUpdate" [selectedData]="selectedDataToUpdate"></app-update-manufacturing-output>

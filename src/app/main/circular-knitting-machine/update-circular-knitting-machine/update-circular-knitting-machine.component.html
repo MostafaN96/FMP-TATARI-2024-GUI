@@ -1,0 +1,127 @@
+<section [id]="_sharedComponentService.pageId()">
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="circularKnittingMachineForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                   <!-- Type -->
+                   <div class="col">
+                    <mat-form-field appearance="outline" class="example-full-width w-100">
+                        <mat-label>نوع ماكينة التريكو</mat-label>
+                        <input type="text" matInput formControlName="type" placeholder="مثال: سنجل"
+                            [errorStateMatcher]="matcher" required/>
+                        <mat-error *ngIf="!circularKnittingMachineForm.controls['type'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.invalid_message">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['type'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.required_field">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['type'].hasError('pattern')">
+                            <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                            </label>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- Number -->
+                <div class="col">
+                    <mat-form-field appearance="outline" class="example-full-width w-100">
+                        <mat-label>رقم ماكينة التريكو</mat-label>
+                        <input type="text" matInput formControlName="number" placeholder="مثال: 1"
+                            [errorStateMatcher]="matcher"/>
+                        <mat-error *ngIf="!circularKnittingMachineForm.controls['number'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.invalid_message">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['number'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.required_field">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['number'].hasError('pattern')">
+                            <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                            </label>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- Diameter -->
+                <div class="col">
+                    <mat-form-field appearance="outline" class="example-full-width w-100">
+                        <mat-label>قطر ماكينة التريكو</mat-label>
+                        <input type="text" matInput formControlName="diameter" placeholder="مثال: 22"
+                            [errorStateMatcher]="matcher" />
+                        <mat-error *ngIf="!circularKnittingMachineForm.controls['diameter'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.invalid_message">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['diameter'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.required_field">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['diameter'].hasError('pattern')">
+                            <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                            </label>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- Smoothness -->
+                <div class="col">
+                    <mat-form-field appearance="outline" class="example-full-width w-100">
+                        <mat-label>جوج ماكينة التريكو</mat-label>
+                        <input type="text" matInput formControlName="smoothness" placeholder="مثال: 32"
+                            [errorStateMatcher]="matcher" />
+                        <mat-error *ngIf="!circularKnittingMachineForm.controls['smoothness'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.invalid_message">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['smoothness'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.required_field">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['smoothness'].hasError('pattern')">
+                            <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                            </label>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- Model -->
+                <div class="col">
+                    <mat-form-field appearance="outline" class="example-full-width w-100">
+                        <mat-label>طراز ماكينة التريكو</mat-label>
+                        <input type="text" matInput formControlName="model" placeholder="مثال: 22-32"
+                            [errorStateMatcher]="matcher" />
+                        <mat-error *ngIf="!circularKnittingMachineForm.controls['model'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.invalid_message">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['model'].hasError('required')">
+                            <label [innerHTML]="_sharedComponentService.required_field">
+                            </label>
+                        </mat-error>
+                        <mat-error *ngIf="circularKnittingMachineForm.controls['model'].hasError('pattern')">
+                            <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                            </label>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                </div>
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto">
+                        <div class="col">
+                            <button type="submit" class="btn-style submit-btn">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

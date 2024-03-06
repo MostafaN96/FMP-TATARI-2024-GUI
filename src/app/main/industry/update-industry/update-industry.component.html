@@ -1,0 +1,86 @@
+<section [id]="_sharedComponentService.pageId()">
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="industryForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                    <!-- Name -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>اسم المصنع*</mat-label>
+                            <input type="text" matInput formControlName="name" placeholder="مثال: مستودع الشروق"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!industryForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="industryForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="industryForm.controls['name'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- phone -->
+                    <div class="col">
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>رقم الموبايل*</mat-label>
+                            <input matInput
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                #code formControlName="phone" placeholder="0123456789">
+                            <mat-error *ngIf="!industryForm.controls['phone'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="industryForm.controls['phone'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="industryForm.controls['phone'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- address -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>عنوان المصنع*</mat-label>
+                            <input type="text" matInput formControlName="address"
+                                placeholder="مثال: مدينة العاشر من رمضان - محافظه الشرقية"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!industryForm.controls['address'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="industryForm.controls['address'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="industryForm.controls['address'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto">
+                        <div class="col">
+                            <button type="submit" class="btn-style submit-btn">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

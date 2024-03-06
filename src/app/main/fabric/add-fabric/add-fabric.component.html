@@ -1,0 +1,153 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">إضافة قماش</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="fabricForm" (ngSubmit)="onAddFabric()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                    <!-- Name -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>اسم القماش*</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="name" placeholder="مثال: حرير"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!fabricForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="fabricForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="fabricForm.controls['name'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- code -->
+                    <div class="col">
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>الكود*</mat-label>
+                            <input autocomplete="off" matInput
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                #code formControlName="code" placeholder="14852">
+                            <mat-error *ngIf="!fabricForm.controls['code'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="fabricForm.controls['code'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="fabricForm.controls['code'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Dyeing code -->
+                    <div class="col">
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>كود المصبغة</mat-label>
+                            <input autocomplete="off" matInput
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                #code formControlName="dyeingCode" placeholder="14852">
+                            <mat-error *ngIf="!fabricForm.controls['dyeingCode'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="fabricForm.controls['dyeingCode'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="fabricForm.controls['dyeingCode'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- fabricQuantityM2 -->
+                    <div class="col">
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>وزن القماش م2</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="fabricQuantityM2"
+                                placeholder="مثال: 10214" [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="fabricForm.controls['fabricQuantityM2'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- wasteRatio -->
+                    <div class="col" *ngIf="isDyedFabric">
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>نسبة الهالك</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="wasteRatio"
+                                placeholder="مثال: 10" [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="fabricForm.controls['wasteRatio'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- fabricId -->
+                    <div class="col" *ngIf="isDyedFabric">
+                        <ejs-autocomplete [dataSource]='rowFabrics' [fields]='fieldsFabric' 
+                        class="ejs-autocomplete w-100"
+                        (filtering)="onFilteringFabricName($event)"
+                            [placeholder]='textFabric' [autofill]='autofill'
+                            formControlName="fabricId" (change)='selectFabric($event, row)'
+                            [errorStateMatcher]="matcher" 
+                            >
+                        </ejs-autocomplete>
+                        <small class="text-danger"
+                        *ngIf="row?.get('fabricId').hasError('pattern')"
+                        [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger"
+                            *ngIf="row?.get('fabricId').hasError('required') && (row?.get('fabricId').dirty 
+                            || row?.get('fabricId').touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <div class="col" *ngIf="!isDyedFabric">
+                        <mat-checkbox class="px-1" formControlName="isForm" (change)="isChecked('isForm', $event.checked ? 1: 0)">
+                            إضافة أنواع الخيوط
+                        </mat-checkbox>
+                    </div>
+
+                </div>
+
+                <div [class]="_sharedComponentService.gridForm2Class">
+                    <app-form-fabric-yarns *ngIf="!isDyedFabric && fabricForm.controls['isForm'].value" [fabricForm]="fabricForm"></app-form-fabric-yarns>
+                </div>
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto g-0">
+                        <div class="col">
+                            <button type="submit" class="btn-style submit-btn">إضافة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

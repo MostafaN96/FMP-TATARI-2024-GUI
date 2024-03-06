@@ -1,0 +1,798 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">حركة مادة الجاهز </h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+            <div class="row row-cols-3">
+                <div id="table-header-data" class="col">
+                    <table class="table table-style">
+                        <tbody>
+                            <tr>
+                                <th>المخزن:</th>
+                                <td>{{warehouseName}} </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    كود المادة:
+                                </th>
+                                <td>
+                                    {{fabricCode}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>اسم المادة:</th>
+                                <td>{{fabricName}} </td>
+                            </tr>
+                  
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col">
+                    <div class="btn-export-section">
+                        <a
+                            (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'حركة مادة  E ', 'table-data-2')">
+                            <i title="PDF" class="far fa-file-pdf pe-2"></i>
+                        </a>
+
+                        <a
+                            (click)="_exportDataService.exportToExcel('table-header-data', 'table-data', 'حركة مادة  E ' + ' ' + fabricCode, 'table-data-2')">
+                            <i title="Excel" class="far fa-file-excel pe-2"></i>
+                        </a>
+
+                        <a
+                            (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'حركة مادة  E ', 'table-data-2')">
+                            <i title="Print" class="fas fa-print pe-2"></i>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Body -->
+            <div [class]="_sharedComponentService.gridForm2Class">
+                <div class="col">
+                    <div [class]="_sharedComponentService.tableSectionClass">
+
+                        <div class="mb-4">
+                            <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowStatement">البيان
+                            </mat-checkbox>
+                            <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowNote">الملاحظات
+                            </mat-checkbox>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <div class="pe-2">
+                                <i class="fas fa-square-full undefinedreturn_defect_text"></i>
+                                مرتجع صرف عيب بضاعة
+                            </div>
+                            <div class="pe-2">
+                                <i class="fas fa-square-full undefinedreturn_warning_text"></i>
+                                مرتجع صرف عادي
+                            </div>
+
+                            <div class="pe-2">
+                                <i class="fas fa-square-full undefinedreturn_buy_text"></i>
+                                مرتجع شراء عيب بضاعة
+                            </div>
+                        </div>
+
+                        <div id="table-header-data-report">
+                            <p-table #dt1 [value]="reportByFabricWeDetails" dataKey="id" columnResizeMode="expand"
+                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
+                                [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
+                                scrollHeight="600px" [filterDelay]="0" sortField="date" sortOrder="1"
+                                [responsive]="true" appendTo="body" [autoLayout]="true"
+                                [globalFilterFields]="['requisition_number', 'type_of_requisition','fabric_piece',
+                                'work_order_number','statement','note','dyeing_code', 'color_category_name',
+                                'color_name','color_code','side_of','document']">
+
+                                <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+   
+
+                                    <!-- Start Filter Section -->
+                                    <div class="row row-cols-5">
+                                        <div class="col">
+                                            <p-calendar class="w-100"
+                                            placeholder="البحث بـ التاريخ"
+                                            [(ngModel)]="dateFilters"
+                                                    appendTo="body"
+                                                    selectionMode="range"
+                                                    [readonlyInput]="true"
+                                                    [showIcon]="true"
+                                                    dateFormat="dd/mm/yy"
+                                                    (onClickOutside)="selectedDate($event)">
+                                                    </p-calendar>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="work_order_number" matchMode="work-order-number-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedWorkOrderNumber"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'work_order_number')"
+                                                        (onChange)="onMultiselectedWorkOrderNumber($event.value)"
+                                                        placeholder="البحث بـ أمر الشغل" optionLabel="work_order_number">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.work_order_number}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="dyeing_code" matchMode="dyeing-code-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedDyeingCodes"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'dyeing_code')"
+                                                        (onChange)="onMultiselectedDyeingCodes($event.value)"
+                                                        placeholder="البحث بـ كود المصبغة" optionLabel="dyeing_code">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.dyeing_code}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="color_category_name" matchMode="color-category-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedColorCategories"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'color_category_name')"
+                                                        (onChange)="onMultiselectedColorCategory($event.value)"
+                                                        placeholder="البحث بـ فئة اللون" optionLabel="color_category_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.color_category_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="color_code" matchMode="color-code-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedColorCode"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'color_code')"
+                                                        (onChange)="onMultiselectedColorCode($event.value)"
+                                                        placeholder="البحث بـ كود اللون" optionLabel="color_code">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.color_code}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+                                        
+                                        <div class="col">
+                                            <p-columnFilter field="color_name" matchMode="color-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedColorName"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'color_name')"
+                                                        (onChange)="onMultiselectedColorName($event.value)"
+                                                        placeholder="البحث بـ اللون" optionLabel="color_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.color_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="type_of_requisition" matchMode="type-of-requisition-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedTypeOfRequisition"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'type_of_requisition')"
+                                                        (onChange)="onMultiselectedTypeOfRequisition($event.value)"
+                                                        placeholder="البحث بـ نوع الاذن" optionLabel="type_of_requisition">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.type_of_requisition}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="side_of" matchMode="side-of-we-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedSideOf"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'side_of')"
+                                                        (onChange)="onMultiselectedSideOf($event.value)"
+                                                        placeholder="البحث بـ الجهة" optionLabel="side_of">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.side_of}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="document" matchMode="document-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedDocument"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'document')"
+                                                        (onChange)="onMultiselectedDocument($event.value)"
+                                                        placeholder="البحث بـ الوثيقة / الارسالية الصادرة" optionLabel="document">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.document}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="consigment_dyeing_number" matchMode="consigment-dyeing-number-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedConsigmentDyeingNumber"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'consigment_dyeing_number')"
+                                                        (onChange)="onMultiselectedConsigmentDyeingNumber($event.value)"
+                                                        placeholder="البحث بـ رسالة المصبغة" optionLabel="consigment_dyeing_number">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.consigment_dyeing_number}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="return_type_name" matchMode="return-type-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedReturnType"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'return_type_name')"
+                                                        (onChange)="onMultiselectedReturnType($event.value)"
+                                                        placeholder="البحث بـ نوع المرتجع" optionLabel="return_type_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.return_type_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div data-html2canvas-ignore="true" class="flex mt-1">
+                                        <button data-html2canvas-ignore="true" pButton label="اعادة" class="p-button-outlined"
+                                            icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                                    </div>
+
+<!-- End Filter Section -->
+
+
+                                </ng-template>
+                                
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <!-- Index Column -->
+                                        <th>
+                                            التسلسل
+                                        </th>
+
+                                        <!-- input Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                ادخال
+                                            </div>
+                                        </th>
+
+                                        <!-- output Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                اخراج
+                                            </div>
+                                        </th>
+
+                                        <!-- balance Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                رصيد
+                                            </div>
+                                        </th>
+
+                                        <!-- input_fabric_piece Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                ادخال عدد الاثواب
+                                            </div>
+                                        </th>
+
+                                        <!-- output_fabric_piece Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                إخراج عدد الاثواب
+                                            </div>
+                                        </th>
+
+                                        <!-- balance_fabric_piece Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                رصيد عدد الاثواب
+                                            </div>
+                                        </th>
+
+                                        <!-- input_price Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                سعر الإدخال
+                                            </div>
+                                        </th>
+
+                                        <!-- output_price Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                سعر الإخراج
+                                            </div>
+                                        </th>
+
+                                        <!-- input_amount Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                قيمة المدخلات
+                                            </div>
+                                        </th>
+
+                                        <!-- output_amount Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                قيمة المخرجات
+                                            </div>
+                                        </th>
+
+                                        <!-- requisition_number Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                رقم الاذن
+                                            </div>
+                                        </th>
+
+                                        <!-- date Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                التاريخ
+                                            </div>
+                                        </th>
+
+                                        <!-- type_of_requisition Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                نوع الاذن
+                                            </div>
+                                        </th>
+
+                                        <!-- fabric_piece Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                عدد الأثواب
+                                            </div>
+                                        </th>
+
+                                        <!-- work_order_number Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                أمر الشغل
+                                            </div>
+                                        </th>
+
+                                        <!-- statement Column -->
+                                        <th [hidden]="!iShowStatement" pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                البيان
+                                            </div>
+                                        </th>
+
+                                        <!-- note Column -->
+                                        <th [hidden]="!iShowNote" pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                الملاحظات
+                                            </div>
+                                        </th>
+
+                                        <!-- dyeing_code Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                كود الصبغة
+                                            </div>
+                                        </th>
+
+                                        <!-- color_category_name Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                فئة اللون
+                                            </div>
+                                        </th>
+
+                                        <!-- color_name Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                اللون
+                                            </div>
+                                        </th>
+
+                                        <!-- color_code Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                كود اللون
+                                            </div>
+                                        </th>
+                                        
+                                        <!-- side_of Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                الجهة
+                                            </div>
+                                        </th>
+
+                                        <!-- document Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                الوثيقة / الارسالية الصادرة
+                                            </div>
+                                        </th>
+
+                                        <!-- consigment_dyeing_number Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                رسالة المصبغة
+                                            </div>
+                                        </th>
+
+                                        <!-- requisition_details Column -->
+                                        <th pResizableColumn data-html2canvas-ignore="true">
+                                            <div class="flex justify-content-between align-items-center">
+                                                تفاصيل الإذن
+                                            </div>
+                                        </th>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-element let-index="rowIndex">
+                                    <tr class="p-selectable-row" [class]="_sharedComponentService.t+element.is_return_type">
+
+                                        <!-- Index Column -->
+                                        <td>
+                                            {{index + 1}}
+                                        </td>
+
+                                        <!-- input Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '1'">
+                                                {{ element.quantity | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- output Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '0'">
+                                                {{ element.quantity | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- balance Column -->
+                                        <td>
+                                            {{getInputQuantity(index) | number}}
+                                        </td>
+
+                                        <!-- input_fabric_piece Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '1'">
+                                                {{ element.fabric_piece | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- output_fabric_piece Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '0'">
+                                                {{ element.fabric_piece | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- balance_fabric_piece Column -->
+                                        <td>
+                                            {{getInputFabricPiece(i) | number}}
+                                        </td>
+
+                                        <!-- input_price Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '1'">
+                                                {{ element.price | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- output_price Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '0'">
+                                                {{ element.price | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- input_amount Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '1'">
+                                                {{_sharedComponentService.getCollectTimes(element.quantity,
+                                                element.price) | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- output_amount Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '0'">
+                                                {{_sharedComponentService.getCollectTimes(element.quantity,
+                                                element.price) | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- requisition_number Column -->
+                                        <td>
+                                            <a [routerLink]="[goToRequisitionPage(element?.type_of_requisition, element)]"
+                                                [queryParams]="{id: element?.requisition_id}">
+                                                {{ element.number}}
+                                            </a>
+                                        </td>
+
+                                        <!-- date Column -->
+                                        <td>
+                                            {{ element.date | date:'EEEE, d/M/y'}}
+                                        </td>
+
+                                        <!-- type_of_requisition Column -->
+                                        <td>
+                                            {{ element.type_of_requisition }}
+                                        </td>
+
+                                        <!-- fabric_piece Column -->
+                                        <td>
+                                            {{ element.fabric_piece }}
+                                        </td>
+
+                                        <!-- work_order_number Column -->
+                                        <td>
+                                            {{ element.work_order_number }}
+                                        </td>
+
+                                        <!-- statement Column -->
+                                        <td [hidden]="!iShowStatement">
+                                            {{ element.statement }}
+                                        </td>
+
+
+                                        <!-- note Column -->
+                                        <td [hidden]="!iShowNote">
+                                            {{ element.note }}
+                                        </td>
+
+                                        <!-- dyeing_code Column -->
+                                        <td>
+                                            {{ element.dyeing_code }}
+                                        </td>
+                                        
+                                        <!-- color_category_name Column -->
+                                        <td>
+                                            {{ element.color_category_name}}
+                                        </td>
+
+                                        <!-- color_name Column -->
+                                        <td>
+                                            {{ element.color_name}}
+                                        </td>
+
+                                        <!-- color_code Column -->
+                                        <td>
+                                            {{ element.color_code}}
+                                        </td>
+
+                                        <!-- side_of Column -->
+                                        <td>
+                                            {{element.side_of}}
+                                        </td>
+
+                                        <!-- document Column -->
+                                        <td>
+                                            {{ element.document }}
+                                        </td>
+
+                                        <!-- consigment_dyeing_number Column -->
+                                        <td>
+                                            {{ element.consigment_dyeing_number }}
+                                        </td>
+
+                                        <!-- requisition_details Column -->
+                                        <td data-html2canvas-ignore="true">
+                                            <a [routerLink]="[goToRequisitionPage(element.type_of_requisition)]"
+                                                [queryParams]="{ id: element.requisition_id}">
+                                                <i class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="25">لا يوجد بيانات</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <!-- Index Column -->
+                                        <td>الإجمالي</td>
+
+                                        <!-- input Column -->
+                                        <td>
+                                            {{ _sharedComponentService.getTotalInputQuantity(dt1.filteredValue ==
+                                            null ? reportByFabricWeDetails: dt1.filteredValue) | number}}
+                                        </td>
+
+                                        <!-- output Column -->
+                                        <td>
+                                            {{_sharedComponentService.getTotalOutputQuantity(dt1.filteredValue ==
+                                            null ? reportByFabricWeDetails: dt1.filteredValue) | number}}
+                                        </td>
+
+                                        <!-- balance Column -->
+                                        <td>
+                                            {{ _sharedComponentService.getTotalBalance(dt1.filteredValue ==
+                                            null ? reportByFabricWeDetails: dt1.filteredValue) | number}}
+                                        </td>
+
+                                        <!-- input_fabric_piece Column -->
+                                        <td>
+                                            {{ _sharedComponentService.getTotalQuantityWithCondition(dt1.filteredValue ==
+                                                null ? reportByFabricWeDetails: dt1.filteredValue,
+                                                "fabric_piece", "input_output", "1")}}
+                                        </td>
+
+                                        <!-- output_fabric_piece Column -->
+                                        <td>
+                                            {{ _sharedComponentService.getTotalQuantityWithCondition(dt1.filteredValue ==
+                                                null ? reportByFabricWeDetails: dt1.filteredValue,
+                                                "fabric_piece", "input_output", "0")}}
+                                        </td>
+
+                                        <!-- balance_fabric_piece Column -->
+                                        <td>
+                                            {{getTotalBalanceFabricPiece() | number}}
+                                        </td>
+
+                                        <!-- input_price Column -->
+                                        <td></td>
+
+                                        <!-- output_price Column -->
+                                        <td> </td>
+
+                                        <!-- input_amount Column -->
+                                        <td>
+                                            {{_sharedComponentService.getInputAmount(dt1.filteredValue ==
+                                            null ? reportByFabricWeDetails: dt1.filteredValue) | number}}
+                                        </td>
+
+                                        <!-- output_amount Column -->
+                                        <td>
+                                            {{_sharedComponentService.getOutputAmount(dt1.filteredValue ==
+                                            null ? reportByFabricWeDetails: dt1.filteredValue) | number}}
+                                        </td>
+
+                                        <!-- requisition_number Column -->
+                                        <td></td>
+
+                                        <!-- date Column -->
+                                        <td> </td>
+
+                                        <!-- type_of_requisition Column -->
+                                        <td> </td>
+
+                                        <!-- fabric_piece Column -->
+                                        <td></td>
+
+                                        <!-- work_order_number Column -->
+                                        <td></td>
+
+                                        <!-- statement Column -->
+                                        <td [hidden]="!iShowStatement"> </td>
+
+                                        <!-- note Column -->
+                                        <td [hidden]="!iShowNote"></td>
+
+                                        <!-- dyeing_code Column -->
+                                        <td></td>
+
+                                        <!-- color_category_name Column -->
+                                        <td></td>
+                                        
+                                        <!-- color_name Column -->
+                                        <td></td>
+
+                                        <!-- color_code Column -->
+                                        <td></td>
+
+                                        <!-- side_of Column -->
+                                        <td></td>
+
+                                        <!-- document Column -->
+                                        <td></td>
+
+                                        <!-- consigment_dyeing_number Column -->
+                                        <td></td>
+
+                                        <!-- requisition_details Column -->
+                                        <td data-html2canvas-ignore="true"></td>
+
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                        </div>
+
+                        <table id="table-data-2" class="table table-style mt-4">
+                            <tbody>
+                                <tr>
+                                    <th>
+                                        قيمة الصنف:
+                                    </th>
+                                    <td>
+                                        {{getItemAmount() | number}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>وسطي السعر:</th>
+                                    <td>{{getAvgPrice() | number}} </td>
+                                </tr>
+                                <tr>
+                                    <th>وسطي سعر المدخلات:</th>
+                                    <td>{{getAvgInputesPrice() | number}} </td>
+                                </tr>
+                                <tr>
+                                    <th>آخر السعر:</th>
+                                    <td>{{reportByFabricWeDetails[0]?.latest_price | number}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

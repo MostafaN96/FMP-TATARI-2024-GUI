@@ -1,0 +1,180 @@
+<section [id]="_sharedComponentService.pageId()">
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="dyeingOrderWdForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+
+                    <div class="col">
+                        <!-- Date -->
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
+                            <mat-label>التاريخ</mat-label>
+                            <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
+                            <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
+                            <mat-datepicker [disabled]="false" #datepicker>
+                              
+                            </mat-datepicker>
+                            <mat-error *ngIf="!dyeingOrderWdForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['date'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                          </mat-form-field>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>اسم الطلبية</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="name" placeholder="مثال: طلبية-1"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!dyeingOrderWdForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['name'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                     <!-- note -->
+                     <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> ملاحظات الاذن </mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize 
+                                 placeholder="ملاحظات الاذن" formControlName="note"></textarea>
+                                <mat-error *ngIf="dyeingOrderWdForm.controls['note'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>الكمية*</mat-label>
+                            <input type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" 
+                                />
+                            <mat-error class="text-danger"
+                                *ngIf="dyeingOrderWdForm.controls['quantity'].hasError('incorrect')">
+                                الكمية المدخلة غير متوفرة
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['quantity'].hasError('required') && (dyeingOrderWdForm.controls['quantity'].dirty 
+                                    || dyeingOrderWdForm.controls['quantity'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['quantity'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['quantity'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- work Order Number -->
+                    <!-- <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>رقم الطلب</mat-label>
+                            <input type="text" matInput formControlName="workOrderNumber" placeholder="مثال: 10214"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['workOrderNumber'].hasError('required') && (dyeingOrderWdForm.controls['workOrderNumber'].dirty 
+                                    || dyeingOrderWdForm.controls['workOrderNumber'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['workOrderNumber'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div> -->
+
+                    <!-- fabric width -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>عرض القماش</mat-label>
+                            <input type="text" matInput formControlName="fabricWidth" placeholder="مثال: 4"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['fabricWidth'].hasError('required') && (dyeingOrderWdForm.controls['fabricWidth'].dirty 
+                                    || dyeingOrderWdForm.controls['fabricWidth'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['fabricWidth'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- fabricQuantityM2 -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>وزن القماش م2</mat-label>
+                            <input type="text" matInput formControlName="fabricQuantityM2" placeholder="مثال: 4"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['fabricQuantityM2'].hasError('required') && (dyeingOrderWdForm.controls['fabricQuantityM2'].dirty 
+                                    || dyeingOrderWdForm.controls['fabricQuantityM2'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="dyeingOrderWdForm.controls['fabricQuantityM2'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                     <!-- detailsNote -->
+                     <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> ملاحظات </mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize 
+                                 placeholder="ملاحظات" formControlName="detailsNote"></textarea>
+                                <mat-error *ngIf="dyeingOrderWdForm.controls['detailsNote'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto">
+                    <div class="col">
+                        <button type="submit" class="btn-style submit-btn">تعديل</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

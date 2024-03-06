@@ -1,0 +1,144 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">إضافة اسعار خدمات المصبعة</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="anointedServicesPricesForm" (ngSubmit)="onAddAnointedServicesPrices()">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+
+                    <!-- Dyer -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='dyers' [fields]='fieldsDyer' class="ejs-autocomplete w-100"
+                            (filtering)="onFilteringDyer($event)" [placeholder]='textDyer' [autofill]='autofill'
+                            formControlName="dyerId" (change)="selectDyer($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger"
+                            *ngIf="anointedServicesPricesForm.controls['dyerId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="anointedServicesPricesForm.controls['dyerId'].hasError('required') && (anointedServicesPricesForm.controls['dyerId'].dirty 
+                            || anointedServicesPricesForm.controls['dyerId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Form Builder Section -->
+                <div class="row row-cols-1">
+                    <div class="col">
+                        <button type="button" class="btn-add-item btn-add-pos" (click)="addItem()" *ngIf="anointedServicesPricesForm">
+                            <span>+</span>
+                        </button>
+                        <table class="table table-style table-sm table-bordered table-striped table-responsive">
+                            <thead>
+                                <tr>
+                                    <th style="max-width: 15px;">
+                                        التسلسل
+                                    </th>
+
+                                    <th style="max-width: 180px;">
+                                        الخدمة
+                                    </th>
+
+                                    <th style="max-width: 100px;">
+                                        السعر
+                                    </th>
+
+                                    <th style="max-width: 30px;">
+                                        يضرب بعدد الاثواب
+                                    </th>
+
+                                    <th style="width: 60px;">
+                                        حذف
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="items">
+                                <tr *ngFor="let row of getItem(anointedServicesPricesForm);let index = index;">
+                                    <ng-container [formGroupName]="index">
+                                        <td style="max-width: 15px;">
+                                            <label style="width: 5px;">{{index+1}}</label>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label> الخدمه *</mat-label>
+                                                <mat-select formControlName="anointedServicesId">
+                                                    <mat-option *ngFor="let item of resultAnointedServices"
+                                                        [value]="item.id">
+                                                        {{item.name}}
+                                                    </mat-option>
+                                                </mat-select>
+                                                <mat-error *ngIf="row.get('anointedServicesId').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Price -->
+                                        <td class="table-td" style="max-width: 100px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>السعر*</mat-label>
+                                                <input type="text" matInput formControlName="price"
+                                                    placeholder="مثال: 15" [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('price').hasError('required') && (row.get('price').dirty 
+                                                    || row.get('price').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('price').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('price').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- IsFabricPiece -->
+                                        <td class="table-td" style="max-width: 30px;">
+                                            <mat-checkbox style="margin: 5px"
+                                                (change)="selectIsFabricPiece($event, row)">
+                                            </mat-checkbox>
+                                        </td>
+
+                                        <td>
+                                            <button *ngIf="index !== 0" class="btn-del-item"
+                                                (click)="removeItem(index)">
+                                                -
+                                            </button>
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto g-0">
+                    <div class="col">
+                        <button type="submit" class="btn-style submit-btn">إضافة</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</section>

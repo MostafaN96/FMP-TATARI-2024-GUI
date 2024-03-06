@@ -1,0 +1,292 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">اذن تسوية المصبغة</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+            <div class="row row-cols-3">
+                <div id="table-header-data" class="col">
+                    <table class="table table-style">
+                        <tbody>
+
+                            <tr>
+                                <th>
+                                    رقم الإذن:
+                                </th>
+                                <td>
+                                    {{requisitionDetails[0]?.number}}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>التاريخ:</th>
+                                <td>{{requisitionDetails[0]?.date | date:'EEEE, d/M/y'}}</td>
+                            </tr>
+                            <tr>
+                                <th>المصبغة:</th>
+                                <td>{{requisitionDetails[0]?.dyeing_name}}</td>
+                            </tr>
+
+                            <tr>
+                                <th>الملاحظات:</th>
+                                <td>{{requisitionDetails[0]?.note}}</td>
+                            </tr>
+
+                            <tr>
+                                <th>المستخدم:</th>
+                                <td>{{requisitionDetails[0]?.creator_id}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col">
+                    <div class="btn-export-section">
+                        <a
+                            (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'اذن تسوية المصبغة')">
+                            <i title="PDF" class="far fa-file-pdf px-2"></i>
+                        </a>
+
+                        <a
+                            (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'اذن تسوية المصبغة')">
+                            <i title="Excel" class="far fa-file-excel px-2"></i>
+                        </a>
+
+                        <a
+                            (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'اذن تسوية المصبغة', 'table-data-2')">
+                            <i title="Print" class="fas fa-print pe-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Form Body -->
+            <div [class]="_sharedComponentService.gridForm2Class">
+                <div class="col">
+                    <div [class]="_sharedComponentService.tableSectionClass">
+
+                        <div id="table-header-data-report">
+                            <p-table #dt1 [value]="requisitionDetails" dataKey="id" columnResizeMode="expand"
+                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
+                                [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
+                                scrollHeight="600px" [filterDelay]="0" sortField="yarn_code" [responsive]="true"
+                                [sortOrder]="1" appendTo="body" [autoLayout]="true">
+                                <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+
+                                        <!-- Index Column -->
+                                        <th>
+                                            تسلسل
+                                        </th>
+
+                                        <!-- fabric_name Column -->
+                                        <th pResizableColumn pSortableColumn="fabric_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                الصنف
+                                                <p-sortIcon data-html2canvas-ignore="true" field="fabric_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- fabric_code Column -->
+                                        <th pResizableColumn pSortableColumn="fabric_code">
+                                            <div class="flex justify-content-between align-items-center">
+                                                كود الصنف
+                                                <p-sortIcon data-html2canvas-ignore="true" field="fabric_code">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- fabric_dyeing_code Column -->
+                                        <th pResizableColumn pSortableColumn="fabric_dyeing_code">
+                                            <div class="flex justify-content-between align-items-center">
+                                                كود المصبغة
+                                                <p-sortIcon data-html2canvas-ignore="true" field="fabric_dyeing_code">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- consigment_dyeing_number Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                رقم الرسالة
+                                            </div>
+                                        </th>
+
+                                        <!-- Input Quantity Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                إدخال
+                                            </div>
+                                        </th>
+
+                                        <!-- Output Quantity Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                إخراج
+                                            </div>
+                                        </th>
+
+                                        <!-- Price Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                السعر
+                                            </div>
+                                        </th>
+
+                                        <!-- Statement Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                البيان
+                                            </div>
+                                        </th>
+
+                                        <!-- Update Column -->
+                                        <th data-html2canvas-ignore="true">
+                                            <div class="flex justify-content-between align-items-center">
+                                                تعديل
+                                            </div>
+                                        </th>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-element let-index="rowIndex">
+                                    <tr class="p-selectable-row">
+
+
+                                        <!-- Index Column -->
+                                        <td>
+                                            {{index + 1}}
+                                        </td>
+
+                                        <!-- fabric_name Column -->
+                                        <td>
+                                            {{element.fabric_name}}
+                                        </td>
+
+                                        <!-- fabric_code Column -->
+                                        <td>
+                                            {{ element.fabric_code }}
+                                        </td>
+                                        
+                                        <!-- fabric_dyeing_code Column -->
+                                        <td>
+                                            {{ element.fabric_dyeing_code }}
+                                        </td>
+
+                                        <!-- consigment_dyeing_number Column -->
+                                        <td>
+                                            {{ element.consigment_dyeing_number }}
+                                        </td>
+
+                                        <!-- Input Quantity Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '1'">
+                                                {{ element.quantity  | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- Output Quantity Column -->
+                                        <td>
+                                            <ng-container *ngIf="element.input_output == '0'">
+                                                {{ element.quantity  | number}}
+                                            </ng-container>
+                                        </td>
+
+                                        <!-- Price Column -->
+                                        <td>
+                                            {{ element.price }}
+                                        </td>
+
+                                        <!-- Statement Column -->
+                                        <td>
+                                            {{ element.statement }}
+                                        </td>
+
+                                        <!-- Update Column -->
+                                        <td data-html2canvas-ignore="true">
+                                            <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                        (click)="getSelectedData(element)">
+                                        <i class="fas fa-edit update-symbol"></i>
+                                           </a>
+                                        </td>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="10">لا يوجد بيانات</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <!-- Index Column -->
+                                        <td></td>
+
+                                        <!-- fabric_name Column -->
+                                        <td>الإجمالي</td>
+
+                                        <!-- fabric_dyeing_code Column -->
+                                        <td></td>
+
+                                        <!-- fabric_code Column -->
+                                        <td></td>
+
+                                        <!-- consigment_dyeing_number Column -->
+                                        <td></td>
+
+                                        <!-- Input Quantity Column -->
+                                        <td>
+                                            {{_sharedComponentService.getTotalQuantityWithCondition(dt1.filteredValue ==
+                                                null ? requisitionDetails: dt1.filteredValue, 'quantity', 'input_output', '1') | number}}
+                                        </td>
+
+                                        <!-- Output Quantity Column -->
+                                        <td>
+                                            {{_sharedComponentService.getTotalQuantityWithCondition(dt1.filteredValue ==
+                                                null ? requisitionDetails: dt1.filteredValue, 'quantity', 'input_output', '0') | number}}
+                                        </td>
+
+                                        <!-- Price Column -->
+                                        <td></td>
+
+                                        <!-- Statement Column -->
+                                        <td></td>
+
+                                        <!-- Update Column -->
+                                        <td></td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Buttons Section -->
+        <div *ngIf="!showAddDetails" [class]="_sharedComponentService.btnSectionClass">
+            <div class="row row-cols-auto">
+                <div class="col">
+                    <button (click)="showAddDetailsFunc()" type="button" class="btn-style submit-btn">اضافة
+                        بيانات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<app-wd-reconciliation-requisition-update *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-wd-reconciliation-requisition-update>
+
+<app-wd-reconciliation-requisition-form-add-details *ngIf="showAddDetails" [selectedData]="selectedDataToDetails"></app-wd-reconciliation-requisition-form-add-details>

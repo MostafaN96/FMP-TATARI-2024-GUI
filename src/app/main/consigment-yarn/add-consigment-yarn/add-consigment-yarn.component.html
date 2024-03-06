@@ -1,0 +1,52 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">إضافة رسالة الخيط</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="consigmentYarnForm" (ngSubmit)="onAddConsigmentYarn()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                    <!-- Name -->
+                        <div class="col">
+                            <mat-form-field appearance="outline" class="example-full-width w-100">
+                                <mat-label>رسالة الخيط*</mat-label>
+                                <input autocomplete="off" type="text" matInput formControlName="number" placeholder="مثال: رسالة"
+                                    [errorStateMatcher]="matcher" />
+                                <mat-error *ngIf="!consigmentYarnForm.controls['number'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="consigmentYarnForm.controls['number'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="consigmentYarnForm.controls['number'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                    </label>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                </div>
+
+                  
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto g-0">
+                        <div class="col">
+                            <button type="submit" class="btn-style submit-btn">إضافة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

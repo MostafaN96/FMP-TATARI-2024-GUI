@@ -1,0 +1,260 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">تقرير ماكينات التريكو</h2>
+        </div>
+    </div>
+
+    <!-- Export Section -->
+    <div class="container-fluid mt-2">
+        <div class="row row-cols-3">
+            <div class="col">
+                <div class="btn-export-section">
+                    <a
+                        (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير ماكينات التريكو')">
+                        <i title="PDF" class="far fa-file-pdf"></i>
+                    </a>
+
+                    <a
+                        (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'تقرير ماكينات التريكو')">
+                        <i title="Excel" class="far fa-file-excel px-2"></i>
+                    </a>
+
+                    <a (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير ماكينات التريكو')">
+                        <i title="Print" class="fas fa-print pe-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+            <!-- Form Body -->
+            <div [class]="_sharedComponentService.gridForm2Class">
+                <div class="col">
+
+                    <div [class]="_sharedComponentService.tableSectionClass">
+                        <div id="table-header-data-report">
+
+                            <p-table #dt1 [value]="yarns" dataKey="id" columnResizeMode="expand"
+                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
+                                [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
+                                scrollHeight="600px" [filterDelay]="0" sortField="number"
+                                sortOrder="0" [responsive]="true" appendTo="body"  [autoLayout]="true"> 
+                                <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+                                    <div data-html2canvas-ignore="true" class="flex">
+                                        <button data-html2canvas-ignore="true" pButton label="اعادة"
+                                            class="p-button-outlined" icon="pi pi-filter-slash"
+                                            (click)="clear(dt1)"></button>
+                                    </div>
+
+                                    <div class="row row-cols-5">
+
+                                        <div class="col">
+                                            <p-columnFilter field="industry_name" matchMode="dyeing-service-filter" [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedDyeingServices" [options]="_sharedComponentService.uniqueArray(yarns, 'industry_name')"
+                                                        (onChange)="onMultiselectDyeingService($event.value)" placeholder="البحث بـ المصنع" optionLabel="industry_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.industry_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="fabric_name" matchMode="fabric-filter" [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedFabrics" [options]="_sharedComponentService.uniqueArray(yarns, 'fabric_name')"
+                                                        (onChange)="onMultiselectFabric($event.value)" placeholder="البحث بـ القماش" optionLabel="fabric_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.fabric_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="fabric_quantity_m2" matchMode="fabric-quantity-m2-filter" [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedFabricQuantityM2" [options]="_sharedComponentService.uniqueArray(yarns, 'fabric_quantity_m2')"
+                                                        (onChange)="onMultiselectFabricQuantityM2($event.value)" placeholder="البحث بـ وزن الخام" optionLabel="fabric_quantity_m2">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.fabric_quantity_m2}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="circular_knitting_machine_name" matchMode="circular-knitting-machine-filter" [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedCircularKnittingMachine" [options]="_sharedComponentService.uniqueArray(yarns, 'circular_knitting_machine_type')"
+                                                        (onChange)="onMultiselectCircularKnittingMachine($event.value)" placeholder="البحث بـ ماكينة التريكو" optionLabel="circular_knitting_machine_type">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.circular_knitting_machine_type}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th data-html2canvas-ignore="true">
+                                            التسلسل
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="industry_name"
+                                            >
+                                            <div class="flex justify-content-between align-items-center">
+                                                المصنع<p-sortIcon field="industry_name"></p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <th pResizableColumn pSortableColumn="fabric_code">
+                                            <div class="flex justify-content-between align-items-center">
+                                                كود القماش<p-sortIcon field="fabric_code"></p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <th pResizableColumn pSortableColumn="fabric_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                القماش<p-sortIcon field="fabric_name"></p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <th pResizableColumn pSortableColumn="fabric_quantity_m2"
+                                            >
+                                            <div class="flex justify-content-between align-items-center">
+                                                وزن الخام م2<p-sortIcon field="fabric_quantity_m2"></p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <th pResizableColumn pSortableColumn="circular_knitting_machine_name"
+                                            >
+                                            <div class="flex justify-content-between align-items-center">
+                                                ماكينة التريكو<p-sortIcon field="circular_knitting_machine_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                اسم المادة
+                                            </div>
+                                        </th>
+
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                الاجمالي
+                                            </div>
+                                        </th>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-element let-index="rowIndex">
+                                    <tr class="p-selectable-row">
+                                        <td data-html2canvas-ignore="true">
+                                            {{index + 1 }}
+                                        </td>
+                                        <td>
+                                            {{element.industry_name}}
+                                        </td>
+
+                                        <td>
+                                            {{element.fabric_code}}
+                                        </td>
+
+                                        <td>
+                                            {{element.fabric_name}}
+                                        </td>
+
+                                        <td>
+                                            {{element.fabric_quantity_m2}}
+                                        </td>
+
+                                        <td>
+                                            <!-- النوع: {{ element.circular_knitting_machine_type }} -->
+                                            <br>
+                                            القطر: {{ element.circular_knitting_machine_diameter }}
+                                            <br>
+                                            جوج: {{ element.circular_knitting_machine_smoothness }}
+                                            <br>
+                                            <!-- الموديل: {{ element.circular_knitting_machine_model }}
+                                            <br> -->
+                                            <!-- رقم: {{ element.circular_knitting_machine_number }}  -->
+                                        </td>
+
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr *ngFor="let yarn of element.details">
+                                                        <td style="width: 200px; border: 1px solid #e9ecef;">
+                                                            {{yarn.yarn_name}}</td>
+                                                        <td style="width: 100px; border: 1px solid #e9ecef;">{{yarn.quantity |
+                                                            number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+
+                                        <td>
+                                            {{_sharedComponentService.getTotalCollectSum(element.details,
+                                            'quantity') | number}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="17">لا يوجد بيانات</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <td data-html2canvas-ignore="true"></td>
+                                        <td>الإجمالي</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            {{_sharedComponentService.getTotalCollectTotalSum(dt1.filteredValue == null ? yarns:  dt1.filteredValue, 'quantity') | number}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

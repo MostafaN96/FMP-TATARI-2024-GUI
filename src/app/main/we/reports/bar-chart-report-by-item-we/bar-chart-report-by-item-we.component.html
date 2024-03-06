@@ -1,0 +1,19 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">إحصائيات صباغة القماش</h2>
+        </div>
+    </div>
+<div class="row-cols-3">
+    <div class="col">
+        <ejs-autocomplete class="ejs-autocomplete" [dataSource]='fabrics' [fields]='fieldsFabric' (filtering)="onFilteringFabricName($event)"
+        [placeholder]='textFabric' [autofill]='autofill' (change)='getSelectedItem($event)'
+        >
+    </ejs-autocomplete>
+    </div>
+</div>
+</section>
+<app-bar-chart-report-by-item #barChartByItemReport (parentFun)="getSelectedItem($event)">
+</app-bar-chart-report-by-item>

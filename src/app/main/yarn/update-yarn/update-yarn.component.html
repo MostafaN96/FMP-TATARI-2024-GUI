@@ -1,0 +1,64 @@
+<section [id]="_sharedComponentService.pageId()">
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="yarnForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                    <div class="col">
+                        <!-- Name -->
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>اسم الخيط</mat-label>
+                            <input type="text" matInput formControlName="name" placeholder="مثال: خيط بوليستر"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!yarnForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['name'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Code -->
+                    <div class="col">
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>الكود</mat-label>
+                            <input matInput
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                #code formControlName="code" placeholder="10001001">
+                            <mat-error *ngIf="!yarnForm.controls['code'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['code'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="yarnForm.controls['code'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    
+                </div>
+            </div>
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto">
+                    <div class="col">
+                        <button type="submit" class="btn-style submit-btn">تعديل</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

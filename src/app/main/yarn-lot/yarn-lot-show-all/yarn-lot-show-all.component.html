@@ -1,0 +1,131 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">إظهار جميع لوط الخيوط</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+
+    <div class="container-fluid mt-2">
+        <div class="row row-cols-3">
+            <div class="col">
+                <div class="btn-export-section">
+                    <a (click)="_exportDataService.exportToPDF('table-header-data', 'table-data', 'لوط')">
+                        <i title="PDF" class="far fa-file-pdf"></i>
+                    </a>
+
+                    <a (click)="_exportDataService.exportToExcel('table-header-data', 'table-data', 'لوط')">
+                        <i title="Excel" class="far fa-file-excel px-2"></i>
+                    </a>
+                    
+                    <a
+                    (click)="_exportDataService.print('table-header-data', 'table-data', 'لوط')">
+                    <i title="Print" class="fas fa-print pe-2"></i>
+                </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridForm2Class">
+                    <div class="col">
+                        <div [class]="_sharedComponentService.tableSectionClass">
+                            <mat-form-field class="w-100" appearance="outline">
+                                <input matInput [(ngModel)]="filter" (keyup)="applyFilter($any($event.target).value)"
+                                    placeholder="بحث" />
+                            </mat-form-field>
+
+                            <div class="example-table-container">
+
+                            <table id="table-data" mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
+                            [class]="_sharedComponentService.tableStyleClass">
+
+                                <!-- Checkbox Column -->
+                                <ng-container matColumnDef="select">
+                                    <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
+                                        <mat-checkbox (change)="$event ? masterToggle() : null"
+                                            [checked]="selection.hasValue() && isAllSelected()"
+                                            [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                            (change)="selectAll()">
+                                        </mat-checkbox>
+                                    </th>
+                                    <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row" style="width: 5%;">
+                                        <mat-checkbox (click)="getSelectedIndex(row)" (click)="$event.stopPropagation()"
+                                            (change)="$event ? selection.toggle(row) : null"
+                                            [checked]="selection.isSelected(row)">
+                                        </mat-checkbox>
+                                    </td>
+                                </ng-container>
+
+                                <!-- index Column -->
+                                <ng-container matColumnDef="index">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>التسلسل</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element; let index = index">
+                                        {{index + 1 }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- yarn_name Column -->
+                                <ng-container matColumnDef="yarn_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الخيط</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.yarn_name }} ({{ element.yarn_code }})
+                                    </td>
+                                </ng-container>
+                                
+                                <!-- code Column -->
+                                <ng-container matColumnDef="code">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>لوط</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.code }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- Update Column -->
+                                <ng-container matColumnDef="update">
+                                    <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
+                                        <b>تعديل</b>
+                                    </th>
+                                    <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
+                                        <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                       (click)="getSelectedData(row)">
+                                            <i class="fas fa-edit update-symbol"></i>
+                                        </a>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto">
+                        <div class="col">
+                            <button [disabled]="selectedData.length < 1" 
+                            (click)="delete()"
+                            type="submit" class="btn-style delete-btn">حذف</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</section>
+
+<app-yarn-lot-update *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-yarn-lot-update>

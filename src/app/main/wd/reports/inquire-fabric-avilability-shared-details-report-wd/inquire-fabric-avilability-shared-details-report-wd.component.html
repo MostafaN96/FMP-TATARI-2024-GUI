@@ -1,0 +1,369 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+
+    <!-- Form Builder Section -->
+    <div class="row row-cols-md-3">
+
+        <!-- weFabrics -->
+        <div class="col" *ngIf="dataReport?.weFabrics.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="4">
+                            <h4>
+                                مخزن الجاهز
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            مخزن
+                        </th>
+                        <th>
+                            نوع القماش
+                        </th>
+                        <th>
+                            متاح في المخزن
+                        </th>
+                        <th>
+                            الكمية المراد شرائها
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let weFabric of dataReport.weFabrics">
+                        <td>
+                            {{ weFabric.warehouse_name }}
+                        </td>
+                        <td>
+                            {{ weFabric.dyed_fabric_name }} ({{ weFabric.dyed_fabric_code }})
+                        </td>
+                        <td>
+                            {{weFabric.current_quantity | number}}
+                        </td>
+                        <td>
+                            {{weFabric.needed_quantity | number}}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.weFabrics, 'current_quantity') |
+                            number}}
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.weFabrics, 'needed_quantity') |
+                            number}}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- wdFormFabrics -->
+        <div class="col" *ngIf="dataReport?.wdFormFabrics.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="3">
+                            <h4>
+                                المشكل في المصبغة
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            مصبغة
+                        </th>
+                        <th>
+                            نوع القماش
+                        </th>
+                        <th>
+                            الكمية المتشكلة
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let wdFormFabric of dataReport.wdFormFabrics">
+                        <td>
+                            {{ wdFormFabric.dyeing_name }}
+                        </td>
+                        <td>
+                            {{ wdFormFabric.fabric_name }} ({{ wdFormFabric.fabric_code }})
+                        </td>
+                        <td>
+                            {{wdFormFabric.form_current_quantity | number}}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wdFormFabrics,
+                            'form_current_quantity') |
+                            number}}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- wdFabrics -->
+        <div class="col" *ngIf="dataReport?.wdFabrics.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="3">
+                            <h4>
+                                مخزن المصبغة
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            مصبغة
+                        </th>
+                        <th>
+                            نوع القماش
+                        </th>
+                        <th>
+                            الكمية
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let wdFabric of dataReport.wdFabrics">
+                        <td>
+                            {{ wdFabric.dyeing_name }}
+                        </td>
+                        <td>
+                            {{ wdFabric.fabric_name }} ({{ wdFabric.fabric_code }})
+                        </td>
+                        <td>
+                            {{wdFabric.current_quantity | number}}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wdFabrics, 'current_quantity') |
+                            number}}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- wcFabrics -->
+        <div class="col" *ngIf="dataReport?.wcFabrics.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="4">
+                            <h4>
+                                مخزن الخام
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            مخزن
+                        </th>
+                        <th>
+                            نوع القماش
+                        </th>
+                        <th>
+                            متاح في المخزن
+                        </th>
+                        <th>
+                            الكمية المراد شرائها
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let wcFabric of dataReport.wcFabrics">
+                        <td>
+                            {{wcFabric.warehouse_name }}
+                        </td>
+                        <td>
+                            {{wcFabric.name }} ({{wcFabric.code }})
+                        </td>
+                        <td>
+                            {{wcFabric.current_quantity | number}}
+                        </td>
+                        <td>
+                            {{wcFabric.needed_quantity | number}}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wcFabrics, 'current_quantity') |
+                            number}}
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wcFabrics, 'needed_quantity') |
+                            number}}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- wbYarns -->
+        <div class="col" *ngIf="dataReport?.wbYarns.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="4">
+                            <h4>
+                                مصنع السكولير
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            المصنع
+                        </th>
+                        <th>
+                            نوع الخيط
+                        </th>
+                        <th>
+                            كود الخيط
+                        </th>
+                        <th>
+                            الكمية
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let wbYarn of dataReport.wbYarns">
+                        <td>
+                            {{wbYarn.manufacturer_name}}
+                        </td>
+                        <td>
+                            {{wbYarn.yarn_name}}
+                        </td>
+                        <td>
+                            {{wbYarn.yarn_code}}
+                        </td>
+                        <td>
+                            {{wbYarn.current_quantity | number}}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+                        <td [colSpan]="2">
+
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wbYarns, 'current_quantity') |
+                            number}}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- waYarns -->
+        <div class="col" *ngIf="dataReport?.waYarns.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="5">
+                            <h4>
+                                مخزن الخيوط
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            مخزن
+                        </th>
+                        <th>
+                            نوع الخيط
+                        </th>
+                        <th>
+                            كود الخيط
+                        </th>
+                        <th>
+                            متاح في المخزن
+                        </th>
+                        <th>
+                            الكمية المراد شرائها
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let waYarn of dataReport.waYarns">
+                        <td>
+                            {{waYarn.warehouse_name}}
+                        </td>
+                        <td>
+                            {{waYarn.name}}
+                        </td>
+                        <td>
+                            {{waYarn.code}}
+                        </td>
+                        <td>
+                            {{waYarn.existed_quantity | number}}
+                        </td>
+                        <td>
+                            {{waYarn.needed_quantity | number}}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+                        <td [colSpan]="2">
+
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.waYarns, 'existed_quantity') |
+                            number}}
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.waYarns, 'needed_quantity') |
+                            number}}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+
+</section>

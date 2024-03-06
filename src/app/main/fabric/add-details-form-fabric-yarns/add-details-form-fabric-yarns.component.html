@@ -1,0 +1,153 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="fabricYarnsForm" (ngSubmit)="onAddDetails()">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+
+                <!-- Form Builder Section -->
+                <div class="row row-cols-1">
+                    <div class="col">
+                        <button type="button" class="btn-add-item btn-add-pos" (click)="addItem()" *ngIf="fabricYarnsForm">
+                            <span>+</span>
+                        </button>
+                        <table class="table table-style table-sm table-bordered table-striped table-responsive">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10px;">
+                                        التسلسل
+                                    </th>
+
+                                    <th style="max-width: 180px;">
+                                        نوع الخيط
+                                    </th>
+
+                                    <th style="max-width: 100px;">
+                                        كود الخيط
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        نسبة الكمية
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        نسبة الهالك
+                                    </th>
+
+                                    <th style="width: 60px;">
+                                        حذف
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="items">
+                                <tr *ngFor="let row of getItem(fabricYarnsForm);let index = index;">
+                                    <ng-container [formGroupName]="index">
+                                        <td>
+                                            <label style="width: 5px;">{{index+1}}</label>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='yarns' [fields]='fieldsYarn'
+                                                (filtering)="onFilteringYarnName($event)" [placeholder]='textYarn'
+                                                [autofill]='autofill' formControlName="yarnId"
+                                                (change)='selectYarn($event, row)' [errorStateMatcher]="matcher">
+                                            </ejs-autocomplete>
+                                            <small class="text-danger" *ngIf="row.get('yarnId').hasError('pattern')"
+                                                [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger" *ngIf="row.get('yarnId').hasError('required') && (row.get('yarnId').dirty 
+                                                || row.get('yarnId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 100px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود الصنف
+                                                </mat-label>
+                                                <input matInput placeholder="كود الصنف" readonly
+                                                    formControlName="yarnCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Ratio -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>نسبة الكمية</mat-label>
+                                                <input autocomplete="off" type="text" formControlName="ratio" matInput
+                                                    name="ratio" placeholder="مثال: 5" [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                    />
+                                                <mat-error *ngIf="row.get('ratio').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                            
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- wast_ratio -->
+                                        <td class="table-td" style="max-width: 60px">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>نسبة الهالك</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="wastRatio" placeholder="مثال: 5"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error
+                                                    *ngIf="row.get('wastRatio').hasError('required') && (row.get('wastRatio').dirty 
+                                                                                            || row.get('wastRatio').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('wastRatio').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('wastRatio').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td>
+                                            <button class="btn-del-item"
+                                            *ngIf="index !== 0" (click)="removeItem(index)">
+                                                -
+                                            </button>
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>الاجمالي</td>
+                                    <td colspan="2"></td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(fabricYarnsForm, 'items',
+                                        'ratio') | number}}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto g-0">
+                        <div class="col">
+                            <button type="submit" class="btn-style submit-btn">إضافة</button>
+                        </div>
+                    </div>
+                </div>
+        </form>
+    </div>
+</section>

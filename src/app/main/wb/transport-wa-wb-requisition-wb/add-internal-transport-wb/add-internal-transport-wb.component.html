@@ -1,0 +1,89 @@
+<section [id]="_sharedComponentService.pageId()">
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="internalTransportWbForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                    <div class="col">
+                        <table  class="table table-style">
+                            <tbody>
+                                <tr>
+                                    <th>
+                                        الخيط:
+                                    </th>
+                                    <td>
+                                        {{yarnName}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div [class]="_sharedComponentService.gridFormClass">
+
+                    <!-- Name -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric' 
+                            (filtering)="onFilteringFabricName($event)" [placeholder]='textFabric' [autofill]='autofill'
+                            formControlName="fabricToBeManufacturedId" (change)='selectFabric($event)' class="ejs-autocomplete w-100">
+                        </ejs-autocomplete>
+                        <small class="text-danger"
+                            *ngIf="internalTransportWbForm.controls['fabricToBeManufacturedId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="internalTransportWbForm.controls['fabricToBeManufacturedId'].hasError('required') && (internalTransportWbForm.controls['fabricToBeManufacturedId'].dirty 
+                        || internalTransportWbForm.controls['fabricToBeManufacturedId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <div class="col">
+                        <mat-form-field class="example-full-width w-100" appearance="outline">
+                            <mat-label>الكود</mat-label>
+                            <input  [disabled]="true" matInput readonly
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                value="{{fabricCode}}" placeholder="10001001">
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>الكمية*</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
+                                [errorStateMatcher]="matcher" (change)="validate($event)"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error class="text-danger"
+                                *ngIf="internalTransportWbForm.controls['quantity'].hasError('incorrect')">
+                                الكمية المدخلة غير متوفرة
+                            </mat-error>
+                            <mat-error *ngIf="internalTransportWbForm.controls['quantity'].hasError('required') && (internalTransportWbForm.controls['quantity'].dirty 
+                                    || internalTransportWbForm.controls['quantity'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="internalTransportWbForm.controls['quantity'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto">
+                    <div class="col">
+                        <button [hidden]="!isShowAdd" type="submit" class="btn-style submit-btn">تعديل</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

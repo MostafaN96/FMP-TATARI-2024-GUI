@@ -1,0 +1,52 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">استعلام عن توافر قماش</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+
+                <div *ngIf="dyeingOrderRequisitionIds != undefined" class="row row-cols-3">
+                    <div id="table-header-data" class="col">
+                        <!-- <table class="table table-style">
+                            <tbody>
+                                <tr>
+                                    <th>
+                                        كود المادة:
+                                    </th>
+                                    <td>
+                                        {{this.dyeingOrderRequisitionIds?.fabricCode}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>اسم المادة:</th>
+                                    <td>{{this.dyeingOrderRequisitionIds?.fabricName}} </td>
+                                </tr>
+                                <tr>
+                                    <th>اللون:</th>
+                                    <td>{{this.dyeingOrderRequisitionIds?.colorName}} </td>
+                                </tr>
+                                <tr>
+                                    <th>الكمية:</th>
+                                    <td>{{this.dyeingOrderRequisitionIds?.data.quantity}} </td>
+                                </tr>
+                            </tbody>
+                        </table> -->
+                    </div>
+    
+                </div>
+
+                <!--  -->
+                <app-inquire-fabric-avilability-shared-details-report-wd>
+                </app-inquire-fabric-avilability-shared-details-report-wd>
+
+            </div>
+
+    </div>
+</section>

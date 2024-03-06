@@ -1,0 +1,222 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">تعديل أنواع خيوط القماش</h2>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="fabricForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+
+                <div class="row row-cols-3">
+                    <div id="table-header-data" class="col">
+                        <table class="table table-style">
+                            <tbody>
+                                <tr>
+                                    <th>
+                                        اسم القماش:
+                                    </th>
+                                    <td>
+                                        {{fabricYarns[0]?.fabric_name}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>كود القماش:</th>
+                                    <td>{{fabricYarns[0]?.fabric_code}}</td>
+                                </tr>
+                                <tr>
+                                    <th>كود المصبغة:</th>
+                                    <td>{{fabricYarns[0]?.dyeing_code}}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>وزن القماش م2:</th>
+                                    <td>{{fabricYarns[0]?.fabric_quantity_m2}}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- Form Builder Section -->
+                <div class="row row-cols-1">
+                    <div class="col">
+                        
+                        <table class="table table-style table-sm table-bordered table-striped table-responsive">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10px;">
+                                        <mat-checkbox (change)="$event ? masterToggle() : null"
+                                        [checked]="selection.hasValue() && isAllSelected()"
+                                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                        (change)="selectAll()">
+                                    </mat-checkbox>
+                                    </th>
+
+                                    <th style="width: 10px;">
+                                        التسلسل
+                                    </th>
+
+                                    <th style="max-width: 180px;">
+                                        نوع الخيط
+                                    </th>
+
+                                    <th style="max-width: 100px;">
+                                        كود الخيط
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        نسبة الكمية
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        نسبة الهالك
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="items">
+                                <tr *ngFor="let row of getItem(fabricForm);let index = index;">
+                                    <ng-container [formGroupName]="index">
+
+                                        <!-- Checkbox Column -->
+                                        <td class="table-td" style="width: 10px !important;">
+                                            <mat-checkbox (click)="getSelectedIndex(row.value)" (click)="$event.stopPropagation()"
+                                                (change)="$event ? selection.toggle(row.value) : null"
+                                                [checked]="selection.isSelected(row.value)">
+                                            </mat-checkbox>
+                                        </td>
+                            
+                                        <td>
+                                            <label style="width: 5px;">{{index+1}}</label>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود الصنف
+                                                </mat-label>
+                                                <input matInput placeholder="كود الصنف" readonly
+                                                    formControlName="yarnName">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 100px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود الصنف
+                                                </mat-label>
+                                                <input matInput placeholder="كود الصنف" readonly
+                                                    formControlName="yarnCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Ratio -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>نسبة الكمية</mat-label>
+                                                <input autocomplete="off" type="text" formControlName="ratio" matInput
+                                                    name="ratio" placeholder="مثال: 5" [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                    (change)="_sharedComponentService.calculateRatio(getItem(fabricForm), 'ratio')" />
+                                                <mat-error *ngIf="row.get('ratio').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error class="text-danger"
+                                                    *ngIf="row.get('ratio').hasError('incorrect')">
+                                                    يجب ان تكون النسبة 100%
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- wast_ratio -->
+                                        <td class="table-td" style="max-width: 60px">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>نسبة الهالك</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="wastRatio" placeholder="مثال: 5"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error
+                                                    *ngIf="row.get('wastRatio').hasError('required') && (row.get('wastRatio').dirty 
+                                                                                            || row.get('wastRatio').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('wastRatio').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('wastRatio').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                    </ng-container>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>الاجمالي</td>
+                                    <td colspan="3"></td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(fabricForm, 'items',
+                                        'ratio') | number}}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto">
+             
+                </div>
+            </div>
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto">
+
+                    <div class="col">
+                        <button [disabled]="selectedData.length < 1" (click)="delete()" type="button"
+                            class="btn-style delete-btn">حذف</button>
+                    </div>
+
+                    <div class="col">
+                        <button type="submit" class="btn-style submit-btn">تعديل</button>
+                    </div>
+
+                    <div class="col" *ngIf="!showAddDetails">
+                        <button (click)="showAddDetailsFunc()" type="button" class="btn-style submit-btn">
+                            اضافة بيانات
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div *ngIf="showAddDetails" [class]="_sharedComponentService.gridForm2Class">
+        <app-add-details-form-fabric-yarns [fabricId]="fabricId"></app-add-details-form-fabric-yarns>
+    </div>
+
+</section>
+

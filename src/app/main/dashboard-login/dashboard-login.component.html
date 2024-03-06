@@ -1,0 +1,66 @@
+
+<section id="dashboard-login" class="text-center main-content-wrap">
+    <h2 class="my-5">تسجيل الدخول</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <div class="container-fluid">
+            <div class="rows row-cols-1">
+
+                <!-- Start email -->
+                <div class="col">
+                    <div>
+                        <mat-form-field class="example-full-width w-100">
+                            <mat-label>البريد الإلكتروني</mat-label>
+                            <input type="email" matInput formControlName="email" placeholder="Ex. name@email.com"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!loginForm.controls['email'].hasError('required')">
+                                الرجاء إدخال الايميل بالشكل الصحيح
+                            </mat-error>
+                            <mat-error *ngIf="loginForm.controls['email'].hasError('required')">
+                                الإيميل <b>مطلوب</b>
+                            </mat-error>
+                            <mat-error *ngIf="loginForm.controls['email'].hasError('pattern')">
+                                صيغة الإيميل غير صحيحة
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- End email -->
+
+                <!-- Start password -->
+                <div class="col">
+                    <div class="mb-6">
+                        <mat-form-field class="example-full-width w-100">
+                            <mat-label>كلمة المرور</mat-label>
+                            <input matInput type="password" placeholder="Create password"
+                                formControlName="password" [type]="hide ? 'password' : 'text'">
+                                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                                </button>
+                            <mat-error *ngIf="!loginForm.controls['password'].hasError('required')">
+                                الرجاء إدخال كلمة المرور بالشكل الصحيح
+                            </mat-error>
+                            <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
+                                كلمة المرور <b>مطلوب</b>
+                            </mat-error>
+                            <mat-error *ngIf="loginForm.controls['password'].hasError('pattern')">
+                                المسموح فقط الاحرف, الفاصلة, النقطة, والخط السفلي (: | / _ , & $ @ . #)  
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- End password -->
+
+                <div class="col mt-5">
+                    <button [disabled]="!loginForm.valid"
+                        class="btn-style submit-btn"
+                        type="submit">
+                        تسجيل دخول
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</section>

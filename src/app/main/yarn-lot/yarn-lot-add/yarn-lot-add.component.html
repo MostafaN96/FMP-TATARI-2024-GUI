@@ -1,0 +1,69 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">إضافة لوط الخيط</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="yarnLotForm" (ngSubmit)="onAddYarnLot()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+
+                    <!-- Yarns -->
+                    <div class="col">
+                        <ejs-autocomplete #autoComplete [dataSource]='yarns' [fields]='fieldsYarns' 
+                            (filtering)="onFilteringYarns($event)" [placeholder]='textYarns' [autofill]='autofill'
+                            formControlName="yarnId" class="ejs-autocomplete w-100">
+                        </ejs-autocomplete>
+                        <small class="text-danger"
+                            *ngIf="yarnLotForm.controls['yarnId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="yarnLotForm.controls['yarnId'].hasError('required') && (yarnLotForm.controls['yarnId'].dirty 
+                            || yarnLotForm.controls['yarnId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- Name -->
+                        <div class="col">
+                            <mat-form-field appearance="outline" class="example-full-width w-100">
+                                <mat-label>اللوط</mat-label>
+                                <input type="text" autocomplete="off" matInput formControlName="code" placeholder="مثال: 30008"
+                                    [errorStateMatcher]="matcher" />
+                                <mat-error *ngIf="!yarnLotForm.controls['code'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="yarnLotForm.controls['code'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="yarnLotForm.controls['code'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                    </label>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                </div>
+
+                  
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto g-0">
+                        <div class="col">
+                            <button type="submit" class="btn-style submit-btn">إضافة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

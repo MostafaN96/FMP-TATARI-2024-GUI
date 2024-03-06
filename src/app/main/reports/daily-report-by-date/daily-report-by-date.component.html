@@ -1,0 +1,70 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">التقرير اليومي</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+     <!-- Date -->
+     <div class="row">
+        <div class="col-md-auto">
+            <!-- <mat-form-field appearance="outline" class="example-form-field">
+                <mat-label>التاريخ</mat-label>
+                <input matInput [matDatepicker]="datepicker" (dateChange)="dateFunc($event)">
+                <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+                <mat-datepicker #datepicker>
+                </mat-datepicker>
+              </mat-form-field> -->
+
+              <mat-form-field appearance="outline" class="example-form-field">
+                <mat-label>البحث بالتاريخ</mat-label>
+                <mat-date-range-input [rangePicker]="rangePicker">
+                    <input [disabled]="true" matStartDate [(ngModel)]="startDate" placeholder="Start date">
+                    <input [disabled]="true" matEndDate [(ngModel)]="endDate" placeholder="End date">
+                </mat-date-range-input>
+                <mat-datepicker-toggle [disabled]="false" matSuffix [for]="rangePicker">
+                </mat-datepicker-toggle>
+                <mat-date-range-picker [disabled]="false" #rangePicker>
+                    <mat-date-range-picker-actions>
+                        <button mat-button matDateRangePickerCancel>اغلاق</button>
+                        <button mat-raised-button color="primary" matDateRangePickerApply
+                            (click)="dateFunc()">بحث</button>
+                    </mat-date-range-picker-actions>
+                </mat-date-range-picker>
+            </mat-form-field>
+         </div>
+
+         <div class="col-md-auto">
+            <div class="btn-export-section">
+                <!-- <a (click)="_exportDataService.exportToPDFMultiple('table-header-data', ['pr_id_1-table', 'pr_id_2-table',
+                'pr_id_3-table', 'pr_id_4-table', 'table-data-5'], 'تقرير اليومي')">
+                    <i title="PDF" class="far fa-file-pdf"></i>
+                </a> -->
+
+                <a (click)="_exportDataService.exportToExcelMultiple('table-header-data', ['pr_id_1-table', 'pr_id_2-table',
+                'pr_id_3-table', 'pr_id_4-table', 'pr_id_5-table'], 'تقرير اليومي')">
+                    <i title="Excel" class="far fa-file-excel px-2"></i>
+                </a>
+                
+                <a
+                (click)="_exportDataService.printMultiple('table-header-data-report', ['pr_id_1-table', 'pr_id_2-table',
+                'pr_id_3-table', 'pr_id_4-table', 'pr_id_5-table'], 'تقرير اليومي', 'pr_id_5-table')">
+                <i title="Print" class="fas fa-print pe-2"></i>
+            </a>
+            </div>
+         </div>
+         
+     </div>
+
+    </div>
+</section>
+
+<app-item-history-by-yarns-report-wa *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-item-history-by-yarns-report-wa>
+<app-all-item-history-report-wb *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-all-item-history-report-wb>
+<app-item-history-by-fabrics-report-wc *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-item-history-by-fabrics-report-wc>
+<app-all-item-history-report-wd *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-all-item-history-report-wd>
+<app-item-history-by-dyed-fabrics-report-we *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-item-history-by-dyed-fabrics-report-we>

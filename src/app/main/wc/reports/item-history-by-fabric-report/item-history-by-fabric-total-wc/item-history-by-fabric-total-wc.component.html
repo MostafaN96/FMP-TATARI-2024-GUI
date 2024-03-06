@@ -1,0 +1,415 @@
+<!-- Form Section -->
+
+<div class="container-fluid mt-2">
+    <div class="row row-cols-3">
+        <div class="col">
+            <div class="btn-export-section">
+                <a (click)="_exportDataService.exportToPDF('table-header-data', 'pr_id_2-table', 'تقرير جرد الخام')">
+                    <i title="PDF" class="far fa-file-pdf"></i>
+                </a>
+
+                <a (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_2-table', 'تقرير جرد الخام')">
+                    <i title="Excel" class="far fa-file-excel px-2"></i>
+                </a>
+
+                <a
+                    (click)="_exportDataService.print('table-header-data', 'pr_id_2-table', 'تقرير جرد الخام', 'table-data-2')">
+                    <i title="Print" class="fas fa-print pe-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Page Form -->
+<div [class]="_sharedComponentService.mainPageFormClass">
+    <div [class]="_sharedComponentService.subMainPageFormClass">
+        <!-- Form Body -->
+        <div [class]="_sharedComponentService.gridForm2Class">
+            <div class="col">
+                <div [class]="_sharedComponentService.tableSectionClass">
+
+                    <div class="mb-4">
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowTotalInput">إجمالي الإدخال
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalOutput">إجمالي الإخراج
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalBalance">الرصيد
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowTotalAmountInput">قيمة المدخلات
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalAmountOutput">قيمة المخرجات
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowItemValue">قيمة الصنف
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowAvgPrice">وسطي السعر
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowAvgInputes">وسطي سعر المدخلات
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestManufacturingPrice">آخر
+                            سعر تصنيع</mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestPrice">آخر سعر
+                        </mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowClosedBalances"
+                            (change)="getClosedBalances()">اظهار الارصدة المغلقة</mat-checkbox>
+                    </div>
+
+                    <div id="table-header-data-report">
+
+                        <p-table #dt1 [value]="fabrics" dataKey="id" columnResizeMode="expand"
+                            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
+                            [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
+                            scrollHeight="600px" [filterDelay]="0" sortField="code" sortOrder="1"
+                            [responsive]="true" appendTo="body" [autoLayout]="true">
+                            <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+                                <div data-html2canvas-ignore="true" class="flex">
+                                    <button data-html2canvas-ignore="true" pButton label="اعادة"
+                                        class="p-button-outlined" icon="pi pi-filter-slash"
+                                        (click)="clear(dt1)"></button>
+                                </div>
+
+                                <!-- Start Filter Section -->
+                                <div class="row row-cols-5">
+
+                                    <div class="col">
+                                        <p-columnFilter field="code" matchMode="code-total-filter" [showMenu]="false"
+                                            [showClearButton]="false">
+                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                <p-multiSelect [ngModel]="selectedCodesTotal" [options]="_sharedComponentService.uniqueArray(fabrics, 'code')"
+                                                    (onChange)="onMultiselectedCodesTotal($event.value)"
+                                                    placeholder="البحث بـ كود المادة" optionLabel="code">
+                                                    <ng-template let-option pTemplate="item">
+                                                        <div class="p-multiselect-representative-option">
+                                                            <span class="ml-1">{{option.code}}</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-multiSelect>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </div>
+
+                                    <div class="col">
+                                        <p-columnFilter field="dyeing_code" matchMode="dyeing-code-total-filter" [showMenu]="false"
+                                            [showClearButton]="false">
+                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                <p-multiSelect [ngModel]="value" [options]="fabrics"
+                                                    (onChange)="onMultiselectedDyeingCodesTotal($event.value)"
+                                                    placeholder="البحث بـ كود المصبغة" optionLabel="dyeing_code">
+                                                    <ng-template let-option pTemplate="item">
+                                                        <div class="p-multiselect-representative-option">
+                                                            <span class="ml-1">{{option.dyeing_code}}</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-multiSelect>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </div>
+
+                                    <div class="col">
+                                        <p-columnFilter field="name" matchMode="name-total-filter" [showMenu]="false"
+                                            [showClearButton]="false">
+                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                <p-multiSelect [ngModel]="selectedNamesTotal" [options]="_sharedComponentService.uniqueArray(fabrics, 'name')"
+                                                    (onChange)="onMultiselectedNamesTotal($event.value)"
+                                                    placeholder="البحث بـ اسم المادة" optionLabel="name">
+                                                    <ng-template let-option pTemplate="item">
+                                                        <div class="p-multiselect-representative-option">
+                                                            <span class="ml-1">{{option.name}}</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-multiSelect>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </div>
+
+                                </div>
+                                <!-- End Filter Section -->
+
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <!-- Index Column -->
+                                    <th data-html2canvas-ignore="true">
+                                        التسلسل
+                                    </th>
+
+                                    <!-- code Column -->
+                                    <th pResizableColumn pSortableColumn="code">
+                                        <div class="flex justify-content-between align-items-center">
+                                            كود المادة<p-sortIcon data-html2canvas-ignore="true" field="code">
+                                            </p-sortIcon>
+                                        </div>
+                                    </th>
+
+                                    <!-- dyeing_code Column -->
+                                    <th pResizableColumn pSortableColumn="dyeing_code">
+                                        <div class="flex justify-content-between align-items-center">
+                                            كود المصبغة<p-sortIcon data-html2canvas-ignore="true"
+                                                field="dyeing_code">
+                                            </p-sortIcon>
+                                        </div>
+                                    </th>
+
+                                    <!-- Name Column -->
+                                    <th pResizableColumn pSortableColumn="name">
+                                        <div class="flex justify-content-between align-items-center">
+                                            اسم المادة<p-sortIcon data-html2canvas-ignore="true" field="name">
+                                            </p-sortIcon>
+                                        </div>
+                                    </th>
+
+                                    <!-- total_amount_quantity_input Column -->
+                                    <th pResizableColumn pSortableColumn="total_amount_quantity_input"
+                                        [hidden]="!isShowTotalInput">
+                                        <div class="flex justify-content-between align-items-center">
+                                            إجمالي الإدخال
+                                        </div>
+                                    </th>
+
+                                    <!-- total_amount_quantity_output Column -->
+                                    <th pResizableColumn pSortableColumn="total_amount_quantity_output"
+                                        [hidden]="!iShowTotalOutput">
+                                        <div class="flex justify-content-between align-items-center">
+                                            إجمالي الإخراج
+                                        </div>
+                                    </th>
+
+                                    <!-- current_quantity Column -->
+                                    <th pResizableColumn pSortableColumn="current_quantity"
+                                        [hidden]="!iShowTotalBalance">
+                                        <div class="flex justify-content-between align-items-center">
+                                            الرصيد<p-sortIcon data-html2canvas-ignore="true"
+                                                field="current_quantity">
+                                            </p-sortIcon>
+                                        </div>
+                                    </th>
+
+                                    <!-- total_amount_input Column -->
+                                    <th pResizableColumn pSortableColumn="total_amount_input"
+                                        [hidden]="!isShowTotalAmountInput">
+                                        <div class="flex justify-content-between align-items-center">
+                                            قيمة المدخلات
+                                        </div>
+                                    </th>
+
+                                    <!-- total_amount_output Column -->
+                                    <th pResizableColumn pSortableColumn="total_amount_output"
+                                        [hidden]="!iShowTotalAmountOutput">
+                                        <div class="flex justify-content-between align-items-center">
+                                            قيمة المخرجات
+                                        </div>
+                                    </th>
+
+                                    <!-- item_amount Column -->
+                                    <th pResizableColumn pSortableColumn="item_amount" [hidden]="!iShowItemValue">
+                                        <div class="flex justify-content-between align-items-center">
+                                            قيمة الصنف
+                                        </div>
+                                    </th>
+
+                                    <!-- avg_price Column -->
+                                    <th pResizableColumn pSortableColumn="avg_price" [hidden]="!isShowAvgPrice">
+                                        <div class="flex justify-content-between align-items-center">
+                                            وسطي السعر
+                                        </div>
+                                    </th>
+
+                                    <!-- avg_inputes Column -->
+                                    <th pResizableColumn pSortableColumn="avg_inputes" [hidden]="!isShowAvgInputes">
+                                        <div class="flex justify-content-between align-items-center">
+                                            وسطي سعر المدخلات
+                                        </div>
+                                    </th>
+
+                                    <!-- latest_manufacturing_price Column -->
+                                    <th pResizableColumn pSortableColumn="latest_manufacturing_price"
+                                        [hidden]="!isShowLatestManufacturingPrice">
+                                        <div class="flex justify-content-between align-items-center">
+                                            آخر سعر تصنيع
+                                        </div>
+                                    </th>
+
+                                    <!-- latest_price Column -->
+                                    <th pResizableColumn pSortableColumn="latest_price"
+                                        [hidden]="!isShowLatestPrice">
+                                        <div class="flex justify-content-between align-items-center">
+                                            آخر سعر
+                                        </div>
+                                    </th>
+
+                                    <!-- Details Column -->
+                                    <th pResizableColumn pSortableColumn="details" data-html2canvas-ignore="true">
+                                        <div class="flex justify-content-between align-items-center">
+                                            حركة المادة
+                                        </div>
+                                    </th>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-element let-index="rowIndex">
+                                <tr class="p-selectable-row">
+
+                                    <!-- Index Column -->
+                                    <td data-html2canvas-ignore="true">
+                                        {{index + 1}}
+                                    </td>
+
+                                    <!-- code Column -->
+                                    <td>
+                                        {{ element.code }}
+                                    </td>
+
+                                    <!-- dyeing_code Column -->
+                                    <td>
+                                        {{element.dyeing_code}}
+                                    </td>
+
+
+                                    <!-- Name Column -->
+                                    <td>
+                                        {{ element.name }}
+                                    </td>
+
+                                    <!-- total_amount_quantity_input Column -->
+                                    <td [hidden]="!isShowTotalInput">
+                                        {{ _sharedComponentService.getTotalAmountQuantityInput(element.details) |
+                                        number}}
+                                    </td>
+
+                                    <!-- total_amount_quantity_output Column -->
+                                    <td [hidden]="!iShowTotalOutput">
+                                        {{_sharedComponentService.getTotalOutputQuantity(element.details) | number}}
+                                    </td>
+
+                                    <!-- current_quantity Column -->
+                                    <td [hidden]="!iShowTotalBalance">
+                                        {{ element.current_quantity | number}}
+                                    </td>
+
+                                    <!-- total_amount_input Column -->
+                                    <td [hidden]="!isShowTotalAmountInput">
+                                        {{ _sharedComponentService.getInputAmount(element.details) | number}}
+                                    </td>
+
+                                    <!-- total_amount_output Column -->
+                                    <td [hidden]="!iShowTotalAmountOutput">
+                                        {{ _sharedComponentService.getOutputAmount(element.details) | number}}
+                                    </td>
+
+                                    <!-- item_amount Column -->
+                                    <td [hidden]="!iShowItemValue">
+                                        {{ _sharedComponentService.getItemAmount(element.details) | number}}
+                                    </td>
+
+                                    <!-- avg_price Column -->
+                                    <td [hidden]="!isShowAvgPrice">
+                                        {{ _sharedComponentService.getAvgPrice(element.details) | number}}
+                                    </td>
+
+                                    <!-- avg_inputes Column -->
+                                    <td [hidden]="!isShowAvgInputes">
+                                        {{ _sharedComponentService.getAvgInputesPrice(element.details) | number}}
+                                    </td>
+
+                                    <!-- latest_manufacturing_price Column -->
+                                    <td [hidden]="!isShowLatestManufacturingPrice">
+                                        {{ element.latest_manufacturing_price | number}}
+                                    </td>
+
+                                    <!-- latest_price Column -->
+                                    <td [hidden]="!isShowLatestPrice">
+                                        {{ element.latest_price | number}}
+                                    </td>
+
+                                    <!-- Details Column -->
+                                    <td data-html2canvas-ignore="true">
+                                        <a [routerLink]="['details-total']"
+                                            [queryParams]="{ id: element.id, code: element.code, name: element.name}">
+                                            <i class="fas fa-angle-double-right update-symbol"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="17">لا يوجد بيانات</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="footer">
+                                <tr>
+                                    <!-- Index Column -->
+                                    <td data-html2canvas-ignore="true"></td>
+
+                                    <!-- dyeing_code Column -->
+                                    <td>الإجمالي</td>
+
+                                    <!-- code Column -->
+                                    <td></td>
+
+                                    <!-- Name Column -->
+                                    <td></td>
+
+                                    <!-- total_amount_quantity_input Column -->
+                                    <td [hidden]="!isShowTotalInput">
+                                        {{ getTotalTotalAmountQuantityInput() | number}}
+                                    </td>
+
+                                    <!-- total_amount_quantity_output Column -->
+                                    <td [hidden]="!iShowTotalOutput">
+                                        {{ getTotalTotalAmountQuantityOutput() | number}}
+                                    </td>
+
+                                    <!-- current_quantity Column -->
+                                    <td [hidden]="!iShowTotalBalance">
+                                        {{ _sharedComponentService.getTotalQuantity(dt1.filteredValue ==
+                                            null ? fabrics: dt1.filteredValue, "current_quantity") | number}}
+                                    </td>
+
+                                    <!-- total_amount_input Column -->
+                                    <td [hidden]="!isShowTotalAmountInput">
+                                        {{_sharedComponentService.getTotalTotalAmountQuantity(dt1.filteredValue ==
+                                        null ? fabrics: dt1.filteredValue,
+                                        "input_output", "1") | number}}
+                                    </td>
+
+                                    <!-- total_amount_output Column -->
+                                    <td [hidden]="!iShowTotalAmountOutput">
+                                        {{_sharedComponentService.getTotalTotalAmountQuantity(dt1.filteredValue ==
+                                        null ? fabrics: dt1.filteredValue,
+                                        "input_output", "0") | number}}
+                                    </td>
+
+                                    <!-- item_amount Column -->
+                                    <td [hidden]="!iShowItemValue">
+                                        {{getTotalItemAmount() | number}}
+                                    </td>
+
+                                    <!-- avg_price Column -->
+                                    <td [hidden]="!isShowAvgPrice">
+                                        {{ getTotalAvgPrice() | number}}
+                                    </td>
+
+                                    <!-- avg_inputes Column -->
+                                    <td [hidden]="!isShowAvgInputes"></td>
+
+                                    <!-- latest_manufacturing_price Column -->
+                                    <td [hidden]="!isShowLatestManufacturingPrice"></td>
+
+                                    <!-- latest_price Column -->
+                                    <td [hidden]="!isShowLatestPrice"></td>
+
+                                    <!-- Details Column -->
+                                    <td data-html2canvas-ignore="true"></td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

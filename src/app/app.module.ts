@@ -1,0 +1,57 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from './app.component';
+import { RouterModule } from '@angular/router';
+
+// Routing Module
+import { AppLayoutModule } from './app-layout.module';
+
+// Main
+import { SidebarComponent } from './main/sidebar/sidebar.component';
+import { MatMenuModule } from '@angular/material/menu';
+
+// UIKIT Animation
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { NgxSpinnerModule } from "ngx-spinner";
+import { UniquePipePipe } from './services/custom-pipe/unique-pipe.pipe';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+
+    // Main
+    SidebarComponent,
+    UniquePipePipe,
+
+  ],
+  imports: [
+    RouterModule.forRoot([], {
+      scrollPositionRestoration: 'enabled'
+    }),
+
+    BrowserModule,
+
+    // Routing Module
+    AppLayoutModule,
+
+    // UIKIT Animation
+    BrowserAnimationsModule,
+
+    // MAT Menu For navbar
+    MatMenuModule,
+
+    NgxSpinnerModule,
+
+  ],
+  providers: [
+    // Admin Side
+
+
+    // Client Side
+
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

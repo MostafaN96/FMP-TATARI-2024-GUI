@@ -1,0 +1,17 @@
+.table-style {
+    text-align: center;
+    box-shadow: 5px 10px #d1cbcb;
+  }
+
+  .table-style tbody tr td {
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .table-style h4 {
+    color: var(--primary-color-1);
+  }
+
+  .table-style thead tr.table-header-title th {
+    background-color:  transparent !important;
+  }

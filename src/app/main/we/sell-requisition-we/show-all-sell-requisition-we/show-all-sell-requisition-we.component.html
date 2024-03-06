@@ -1,0 +1,155 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">{{titlePage}}</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridForm2Class">
+                    <div class="col">
+                        <div [class]="_sharedComponentService.tableSectionClass">
+                            <!-- Start Filter Section -->
+                        <mat-form-field appearance="outline" *ngFor="let filter of filterSelectObj"
+                        style="margin-left: 15px;">
+                        <mat-label>البحث بـ {{filter.name}}</mat-label>
+                        <select matNativeControl name="{{filter.columnProp}}" [(ngModel)]="filter.modelValue"
+                            (change)="_sharedComponentService.filterChange(filter, $event, 'regular', dataSourceSearchTabel,
+                          filterValues, startDate, endDate, 'date')">
+                            <option value="">-- اختيار {{filter.name}} --</option>
+                            <option [value]="item" *ngFor="let item of filter.options">{{item}}</option>
+                        </select>
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-label>البحث بالتاريخ</mat-label>
+                        <mat-date-range-input [rangePicker]="rangePicker">
+                            <input [disabled]="true" matStartDate [(ngModel)]="startDate" placeholder="Start date">
+                            <input [disabled]="true" matEndDate [(ngModel)]="endDate" placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle [disabled]="false" matSuffix [for]="rangePicker">
+                        </mat-datepicker-toggle>
+                        <mat-date-range-picker [disabled]="false" #rangePicker>
+                            <mat-date-range-picker-actions>
+                                <button mat-button matDateRangePickerCancel>اغلاق</button>
+                                <button mat-raised-button color="primary" matDateRangePickerApply (click)="_sharedComponentService.filterChange('filter', $event, 'filterByDate', dataSourceSearchTabel,
+                            filterValues, startDate, endDate, 'date')">بحث</button>
+                            </mat-date-range-picker-actions>
+                        </mat-date-range-picker>
+                    </mat-form-field>
+
+                    <button class="mx-2 btn-filter submit-btn" mat-flat-button
+                        (click)="resetFilters(filterSelectObj)">إعادة</button>
+                    <!-- End Filter Section -->
+
+                            <mat-form-field class="w-100" appearance="outline">
+                                <input matInput [(ngModel)]="filter" (keyup)="applyFilter($any($event.target).value)"
+                                    placeholder="بحث" />
+                            </mat-form-field>
+
+                            <div class="example-table-container">
+                            <table mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
+                            [class]="_sharedComponentService.tableStyleClass">
+
+                                <!-- Number Column -->
+                                <ng-container matColumnDef="number">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>رقم الإذن</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.number }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- Date Column -->
+                                <ng-container matColumnDef="date">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>تاريخ الإذن</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.date | date:'EEEE, d/M/y'}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- seller_name Column -->
+                                <ng-container matColumnDef="seller_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>العميل</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.seller_name}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- Delivery Car Column -->
+                                <ng-container matColumnDef="delivery_car_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>اسم السائق</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.delivery_car_name}}
+                                    </td>
+                                </ng-container>
+
+                                 <!-- Note Column -->
+                                 <ng-container matColumnDef="note">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الملاحظات</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.note}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- Details Column -->
+                                <ng-container matColumnDef="details">
+                                    <th mat-header-cell *matHeaderCellDef>
+                                        <b>تفاصيل الإذن</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <a *ngIf="element.is_direct == '0'"
+                                        [routerLink]="['details']"
+                                        [queryParams]="{ id: element.id}">
+                                            <i class="fas fa-angle-double-right update-symbol"></i>
+                                        </a>
+
+                                        <a *ngIf="element.is_direct == '1'"
+                                        [routerLink]="['/dashboard/show-all-sell-requisition-direct-we/details']"
+                                        [queryParams]="{ id: element.id}">
+                                        تسليم مباشر
+                                        </a>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Confirm Column -->
+                                <ng-container matColumnDef="confirm">
+                                    <th mat-header-cell *matHeaderCellDef>
+                                        <b>تأكيد التسليم المباشر</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <a
+                                        [routerLink]="['confirm']"
+                                        [queryParams]="{ id: element.id }" >
+                                            <i class="fas fa-clipboard-check confirm-symbol"></i>
+                                        </a>
+                                    </td>
+                                </ng-container>
+
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    </div>
+</section>
+

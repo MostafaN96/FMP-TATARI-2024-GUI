@@ -1,0 +1,129 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass">إضافة سيارة شحن</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="deliveryCarForm" (ngSubmit)="onAddDeliveryCar()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+                    <!-- model -->
+                        <div class="col">
+                            <mat-form-field appearance="outline" class="example-full-width w-100">
+                                <mat-label>ماركة السيارة*</mat-label>
+                                <input type="text" matInput formControlName="model" placeholder="مثال: شيفروليه"
+                                    [errorStateMatcher]="matcher" />
+                                <mat-error *ngIf="!deliveryCarForm.controls['model'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="deliveryCarForm.controls['model'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="deliveryCarForm.controls['model'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                    </label>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                         <!-- plateNumber -->
+                         <div class="col">
+                            <mat-form-field appearance="outline" class="example-full-width w-100">
+                                <mat-label>رقم لوحة السيارة*</mat-label>
+                                <input type="text" matInput formControlName="plateNumber" placeholder="مثال: أ ب ي 293"
+                                    [errorStateMatcher]="matcher" />
+                                <mat-error *ngIf="!deliveryCarForm.controls['plateNumber'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="deliveryCarForm.controls['plateNumber'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="deliveryCarForm.controls['plateNumber'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                    </label>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <!-- driversName -->
+                        <div class="col">
+                            <mat-form-field appearance="outline" class="example-full-width w-100">
+                                <mat-label>اسم السائق*</mat-label>
+                                <input type="text" matInput formControlName="driversName" placeholder="مثال: حسين"
+                                    [errorStateMatcher]="matcher" />
+                                <mat-error *ngIf="!deliveryCarForm.controls['driversName'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="deliveryCarForm.controls['driversName'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="deliveryCarForm.controls['driversName'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                    </label>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <!-- phone -->
+                        <div class="col">
+                            <mat-form-field class="example-full-width" appearance="outline">
+                                <mat-label>رقم الموبايل*</mat-label>
+                                <input matInput
+                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                    #code formControlName="phone" placeholder="0123456789">
+                                <mat-error *ngIf="deliveryCarForm.controls['phone'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                    </label>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <!-- nationalId -->
+                        <div class="col">
+                            <mat-form-field appearance="outline" class="example-full-width w-100">
+                                <mat-label>الرقم القومى او الباسبور*</mat-label>
+                                <input type="text" matInput formControlName="nationalId" placeholder="مثال: 24756320145236"
+                                    [errorStateMatcher]="matcher" />
+                                <!-- <mat-error *ngIf="!deliveryCarForm.controls['nationalId'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                                <mat-error *ngIf="deliveryCarForm.controls['nationalId'].hasError('required')">
+                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                    </label>
+                                </mat-error> -->
+                                <mat-error *ngIf="deliveryCarForm.controls['nationalId'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                    </label>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                </div>
+
+                  
+
+                <!-- Buttons Section -->
+                <div [class]="_sharedComponentService.btnSectionClass">
+                    <div class="row row-cols-auto g-0">
+                        <div class="col">
+                            <button type="submit" class="btn-style submit-btn">إضافة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

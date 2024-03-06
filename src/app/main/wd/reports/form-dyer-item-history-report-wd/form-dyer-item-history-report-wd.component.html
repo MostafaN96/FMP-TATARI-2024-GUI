@@ -1,0 +1,172 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">تقرير جرد التشكيل بالمصبغة</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+
+    <div class="container-fluid mt-2">
+        <div class="row row-cols-3">
+            <div class="col">
+                <div class="btn-export-section">
+                    <a (click)="_exportDataService.exportToPDF('table-header-data', 'table-data', 'تقرير جرد التشكيل بالمصبغة')">
+                        <i title="PDF" class="far fa-file-pdf"></i>
+                    </a>
+
+                    <a
+                        (click)="_exportDataService.exportToExcel('table-header-data', 'table-data', 'تقرير جرد التشكيل بالمصبغة')">
+                        <i title="Excel" class="far fa-file-excel px-2"></i>
+                    </a>
+
+                    <a
+                        (click)="_exportDataService.print('table-header-data', 'table-data', 'تقرير جرد التشكيل بالمصبغة', 'table-data-2')">
+                        <i title="Print" class="fas fa-print pe-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+            <!-- Form Body -->
+            <div [class]="_sharedComponentService.gridForm2Class">
+                <div class="col">
+                    <div [class]="_sharedComponentService.tableSectionClass">
+                        <!-- Start Filter Section -->
+                        <mat-form-field appearance="outline" *ngFor="let filter of filterSelectObj"
+                            style="margin-left: 15px;">
+                            <mat-label>البحث بـ {{filter.name}}</mat-label>
+                            <select matNativeControl name="{{filter.columnProp}}" [(ngModel)]="filter.modelValue"
+                                (change)="_sharedComponentService.filterChange(filter, $event, 'regular', dataSourceSearchTabel,
+                                                          filterValues)">
+                                <option value="">-- اختيار {{filter.name}} --</option>
+                                <option [value]="item" *ngFor="let item of filter.options">{{item}}</option>
+                            </select>
+                        </mat-form-field>
+
+                        <button class="mx-2 btn-filter submit-btn" mat-flat-button
+                            (click)="resetFilters(filterSelectObj)">إعادة</button>
+                        <!-- End Filter Section -->
+
+                        <mat-form-field class="w-100" appearance="outline">
+                            <input matInput [(ngModel)]="filter" (keyup)="applyFilter($any($event.target).value)"
+                                placeholder="بحث" />
+                        </mat-form-field>
+
+                        <div class="example-table-container">
+                        <table id="table-data" mat-table matSort #sortColumns="matSort"
+                            [dataSource]="dataSourceSearchTabel" [class]="_sharedComponentService.tableStyleClass">
+
+                            <!-- Index Column -->
+                            <ng-container matColumnDef="index">
+                                <th mat-header-cell *matHeaderCellDef><b> تسلسل </b></th>
+                                <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
+                                <td mat-footer-cell *matFooterCellDef> <b> الإجمالي </b> </td>
+                            </ng-container>
+
+                            <!-- dyeing_name Column -->
+                            <ng-container matColumnDef="dyeing_name">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>المصبغة</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.dyeing_name }}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> </td>
+                            </ng-container>
+                            
+                            <!-- code Column -->
+                            <ng-container matColumnDef="code">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>رقم المادة</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.code }}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> </td>
+                            </ng-container>
+
+                            <!-- dyeing_code Column -->
+                            <ng-container matColumnDef="dyeing_code">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>كود المصبغة</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.dyeing_code }}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> </td>
+                            </ng-container>
+
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>اسم المادة</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.name }}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> </td>
+                            </ng-container>
+
+                            <!-- current_quantity Column -->
+                            <ng-container matColumnDef="current_quantity">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>رصيد القابل للتشكيل</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.current_quantity | number}}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> {{ _sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'current_quantity') | number}} </td>
+                            </ng-container>
+
+                            <!-- form_current_quantity Column -->
+                            <ng-container matColumnDef="form_current_quantity">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>رصيد التشكيل</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.form_current_quantity | number}}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> {{ _sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'form_current_quantity') | number}} </td>
+                            </ng-container>
+
+                            <!-- dyeing_current_quantity Column -->
+                            <ng-container matColumnDef="dyeing_current_quantity">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>رصيد المصبوغ</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.dyeing_current_quantity | number}}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> {{ _sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'dyeing_current_quantity') | number}} </td>
+                            </ng-container>
+
+                            <!-- now_current_quantity Column -->
+                            <ng-container matColumnDef="now_current_quantity">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>الرصيد الجاهز</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.now_current_quantity | number}}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> {{ _sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'now_current_quantity') | number}} </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                            <tr mat-footer-row *matFooterRowDef="displayedColumns;"></tr>
+                        </table>
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

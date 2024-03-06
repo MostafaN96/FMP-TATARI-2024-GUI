@@ -1,0 +1,73 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">استعلام عن توافر قماش</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="inquireFabricForm" (ngSubmit)="onSubmitForm()">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+
+                <div *ngIf="data != undefined" class="row row-cols-3">
+                    <div id="table-header-data" class="col">
+                        <table class="table table-style">
+                            <tbody>
+                                <tr>
+                                    <th>
+                                        كود المادة:
+                                    </th>
+                                    <td>
+                                        {{this.data?.fabricCode}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>اسم المادة:</th>
+                                    <td>{{this.data?.fabricName}} </td>
+                                </tr>
+                                <tr>
+                                    <th>اللون:</th>
+                                    <td>{{data?.colorName}} </td>
+                                </tr>
+                                <tr>
+                                    <th>الكمية:</th>
+                                    <td>{{data?.data.quantity}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+    
+                </div>
+
+    <!-- Form Body -->
+    <div [class]="_sharedComponentService.gridForm3Class">
+
+              <!-- color -->
+                    <div class="col mb-2">
+                        <ejs-autocomplete class="ejs-autocomplete" [dataSource]='colorCodes' [fields]='fieldsColorCode'
+                            (filtering)="onFilteringColorCode($event)" [placeholder]='textColorCode' [autofill]='autofill'
+                            formControlName="colorCode" (change)='selectColorCodes($event)'>
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="inquireFabricForm.controls['colorCode'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="inquireFabricForm.controls['colorCode'].hasError('required') && (inquireFabricForm.controls['colorCode'].dirty 
+                                        || inquireFabricForm.controls['colorCode'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+    </div>
+
+                <!--  -->
+                <app-inquire-fabric-avilability-shared-report-wd [inquireFabricForm]="inquireFabricForm" [data]="data">
+                </app-inquire-fabric-avilability-shared-report-wd>
+
+            </div>
+
+        </form>
+    </div>
+</section>

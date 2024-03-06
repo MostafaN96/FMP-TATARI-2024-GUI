@@ -1,0 +1,109 @@
+<section [id]="_sharedComponentService.pageId()">
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="weForm" (ngSubmit)="onUpdate()">
+            <div [class]="_sharedComponentService.subMainPageFormClass">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridFormClass">
+
+                    <!-- Color Category -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='colorCategories' [fields]='fieldsColorCategory' 
+                            (filtering)="onFilteringColorCategoryName($event)" [placeholder]='textColorCategory' [autofill]='autofill'
+                            formControlName="colorCategoryId" class="ejs-autocomplete w-100" (change)="selectColorCategory($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="weForm.controls['colorCategoryId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="weForm.controls['colorCategoryId'].hasError('required') && (weForm.controls['colorCategoryId'].dirty 
+                            || weForm.controls['colorCategoryId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-8">
+                                <ejs-autocomplete [dataSource]='colors' [fields]='fieldsColor'  
+                                (filtering)="onFilteringColorName($event)" [placeholder]='textColor' [autofill]='autofill'
+                                formControlName="colorId" class="ejs-autocomplete w-100" (change)="selectColor($event)">
+                            </ejs-autocomplete>
+                            <small class="text-danger" *ngIf="weForm.controls['colorId'].hasError('pattern')"
+                                [innerHTML]="_sharedComponentService.invalid_message">
+                            </small>
+                            <small class="text-danger" *ngIf="weForm.controls['colorId'].hasError('required') && (weForm.controls['colorId'].dirty 
+                                || weForm.controls['colorId'].touched)"
+                                [innerHTML]="_sharedComponentService.required_field">
+                            </small>
+                            </div>
+                            <div class="col-4">
+                                <mat-form-field appearance="outline" class="example-full-width w-100">
+                                    <input type="text" matInput formControlName="colorCode" placeholder="كود اللون"
+                                    disabled/>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Storage Place -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>مكان التخزين</mat-label>
+                            <input type="text" matInput formControlName="storagePlace" placeholder="مثال: S-1"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="weForm.controls['storagePlace'].hasError('required') && (weForm.controls['storagePlace'].dirty 
+                                    || weForm.controls['storagePlace'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="weForm.controls['storagePlace'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="weForm.controls['storagePlace'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Note 1 -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> ملاحظات 1</mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize 
+                            placeholder="ملاحظات" formControlName="note1"></textarea>
+                                <mat-error *ngIf="weForm.controls['note1'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Note 2 -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> ملاحظات 2</mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize 
+                            placeholder="ملاحظات" formControlName="note2"></textarea>
+                                <mat-error *ngIf="weForm.controls['note2'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                    </label>
+                                </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto">
+                    <div class="col">
+                        <button type="submit" class="btn-style submit-btn">تعديل</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

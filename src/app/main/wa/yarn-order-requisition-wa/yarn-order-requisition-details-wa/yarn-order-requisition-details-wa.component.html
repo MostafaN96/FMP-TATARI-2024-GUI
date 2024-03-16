@@ -32,6 +32,10 @@
                                 <td>{{manufacturingOrderDetails[0]?.seller_name}}</td>
                             </tr>
                             <tr>
+                                <th>اسم الطلبية:</th>
+                                <td>{{manufacturingOrderDetails[0]?.order_name}}</td>
+                            </tr>
+                            <tr>
                                 <th>الملاحظات:</th>
                                 <td>{{manufacturingOrderDetails[0]?.note}}</td>
                             </tr>
@@ -104,7 +108,7 @@
                                     <!-- quantity Column -->
                                     <ng-container matColumnDef="quantity">
                                         <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>الكمية</b>
+                                            <b>الكمية المطلوبة</b>
                                         </th>
                                         <td mat-cell *matCellDef="let element">
                                             {{ element.quantity | number}}
@@ -152,6 +156,19 @@
                                         </td>
                                     </ng-container>
 
+                                    <!-- current_quantity Column -->
+                                    <ng-container matColumnDef="current_quantity">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>الكمية المتبقية</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.current_quantity | number}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef>
+                                            {{_sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'current_quantity') | number}}
+                                             </td>
+                                    </ng-container>
+                                    
                                     <!-- note2 Column -->
                                     <ng-container matColumnDef="note2">
                                         <th mat-header-cell mat-sort-header *matHeaderCellDef>

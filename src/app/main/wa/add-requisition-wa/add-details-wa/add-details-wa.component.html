@@ -115,17 +115,17 @@
                                             <ejs-autocomplete [dataSource]='lots' [fields]='fieldsLot' 
                                             (filtering)="onFilteringLot($event)"
                                                 [placeholder]='textLot' [autofill]='autofill'
-                                                formControlName="yarnLotId"
+                                                formControlName="yarnLotCode"
                                                 [errorStateMatcher]="matcher" 
                                                 >
                                             </ejs-autocomplete>
                                             <small class="text-danger"
-                                            *ngIf="row.get('yarnLotId').hasError('pattern')"
+                                            *ngIf="row.get('yarnLotCode').hasError('pattern')"
                                             [innerHTML]="_sharedComponentService.invalid_message">
                                             </small>
                                             <small class="text-danger"
-                                                *ngIf="row.get('yarnLotId').hasError('required') && (row.get('yarnLotId').dirty 
-                                                || row.get('yarnLotId').touched)"
+                                                *ngIf="row.get('yarnLotCode').hasError('required') && (row.get('yarnLotCode').dirty 
+                                                || row.get('yarnLotCode').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
                                         </td>

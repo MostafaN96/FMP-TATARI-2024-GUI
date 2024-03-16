@@ -60,4 +60,16 @@ export class ManufacturingOrderRequisitionWbService {
       });
   }
 
+  // inquireFabricsForOrderWb
+  inquireFabricsByDyeingOrderForOrderWb(dyeingOrderRequisitionId: string): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}inquire-fabrics-by-dyeing-order-requisition/${dyeingOrderRequisitionId}`;
+
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 }

@@ -87,10 +87,10 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
       filter = this.selectedTypeOfRequisition
 
       if (this.selectedTypeOfRequisition[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -121,10 +121,10 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
       filter = this.selectedSideOf
 
       if (this.selectedSideOf[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -155,10 +155,10 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
       filter = this.selectedDocument
 
       if (this.selectedDocument[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -226,9 +226,12 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
     return this._sharedComponentService.getInputAmount(this.reportByYranWaDetails) / this._sharedComponentService.notZero(this._sharedComponentService.getTotalAmountQuantityInput(this.reportByYranWaDetails))
   }
 
-  goToRequisitionPage(typeOfRequisition) {
-    if (typeOfRequisition == 'اذن اضافة') {
+  goToRequisitionPage(typeOfRequisition, isOrder = "0") {
+    if (typeOfRequisition == 'اذن اضافة' && isOrder == "0") {
       return `/dashboard/show-all-add-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن اضافة' && isOrder == "1") {
+      return `/dashboard/show-all-add-requisition/order-details`
     }
     else if (typeOfRequisition == 'اذن نقل من (A) الى (B)') {
       return `/dashboard/show-all-transport-wa-wb-requisition/details`
@@ -244,6 +247,9 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
     }
     else if (typeOfRequisition == 'اذن نقل من (B) الى (A)') {
       return `/dashboard/show-all-transport-wb-wa-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن تنفيذ طلبية') {
+      return `/dashboard/show-all-execute-order-requisition-wa/details`
     }
     return
   }

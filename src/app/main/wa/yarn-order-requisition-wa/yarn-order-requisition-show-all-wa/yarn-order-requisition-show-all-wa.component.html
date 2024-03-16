@@ -103,7 +103,7 @@
                                         <!-- requisition_details Column -->
                                         <th>
                                             <div class="flex justify-content-between align-items-center">
-                                                نوع الخيوط
+                                                أنواع الخيوط
                                             </div>
                                         </th>
 
@@ -151,9 +151,9 @@
                                             {{ element.seller_name }}
                                         </td>
 
-                                        <!-- order_name Column -->
+                                        <!-- name Column -->
                                         <td>
-                                            {{ element.order_name }}
+                                            {{ element.name }}
                                         </td>
 
                                         <!-- requisition_details Column -->
@@ -169,13 +169,16 @@
                                                         </th>
 
                                                         <th>
-                                                            الكمية
+                                                            الكمية المطلوبة
                                                         </th>
 
                                                         <th style="width: 200px;">
                                                             الكمية الجاهزة
                                                         </th>
 
+                                                        <th>
+                                                            الكمية المتبقية
+                                                       </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -186,7 +189,7 @@
                                                         </td>
 
                                                         <td>
-                                                            {{ requestionDetailsData.fabric_code}}
+                                                            {{ requestionDetailsData.yarn_code}}
                                                         </td>
 
                                                         <td>
@@ -220,6 +223,9 @@
                                                             </table>
                                                         </td>
 
+                                                        <td>
+                                                            {{ requestionDetailsData.current_quantity}}
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
@@ -239,6 +245,10 @@
                                                             'current_quantity') | number}}
                                                         </td>
 
+                                                        <td>
+                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
+                                                            'current_quantity') | number}}
+                                                        </td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -260,7 +270,13 @@
 
                                         <!-- Details Column -->
                                         <td data-html2canvas-ignore="true">
-                                            <a [routerLink]="['details']" [queryParams]="{ id: element.id}">
+                                            <a *ngIf="element.is_order == '1'"
+                                            [routerLink]="['details']" [queryParams]="{ id: element.id}">
+                                                <i class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
+
+                                            <a *ngIf="element.is_order == '0'"
+                                            [routerLink]="['closed-details']" [queryParams]="{ id: element.id}">
                                                 <i class="fas fa-angle-double-right update-symbol"></i>
                                             </a>
                                         </td>

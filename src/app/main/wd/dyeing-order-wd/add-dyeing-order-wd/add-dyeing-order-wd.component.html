@@ -52,6 +52,27 @@
                         </small>
                     </div>
 
+                    <!-- Name -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>اسم الطلبية</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="name" placeholder="مثال: طلبية-1"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!addOrderForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addOrderForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addOrderForm.controls['name'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
                     <!-- Note -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

@@ -23,6 +23,17 @@ export class WaAddRequisitionDetailsService {
         })
       });
   }
+
+  addByOrder(obj: any): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}by-order`;
+
+    return this._http.post(url, obj,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
   
   // Select
   selectByRequisitionId(id: string): Observable<any> {
@@ -34,9 +45,29 @@ export class WaAddRequisitionDetailsService {
         })
       });
   }
+  selectByRequisitionIdForOrder(id: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}for-order/${id}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
 
   update(obj: any, id: string): Observable<any> {
     let url = `${this._constantsService.BASE_URL}${this.urlService}${id}`;
+
+    return this._http.put(url, obj,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
+  updateByOrder(obj: any, id: string): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}by-order/${id}`;
 
     return this._http.put(url, obj,
       {

@@ -354,21 +354,40 @@
 
                                         <!-- wa_yarn_order_requisition Column -->
                                         <td data-html2canvas-ignore="true">
-                                            <ng-container *ngIf="router.url == '/dashboard/show-all-dyeing-order-wd'">
-                                                <a *ngIf="element.wa_yarn_order_requisition_id == null; else elseBlockYarnOrder"
+                                            <ng-container *ngIf="element.yarnOrders.length < 1">
+                                                <a
                                                 [routerLink]="[goToRequisitionPage('add_yarn_order_requisition', element)]"
                                                 [queryParams]="{ id: element.id}">
                                                     <i class="fa-solid fa-square-plus update-symbol"></i>
                                                 </a>
                                             </ng-container>
-                                      
 
-                                            <ng-template #elseBlockYarnOrder>
-                                                <a [routerLink]="[goToRequisitionPage('show_all_yarn_order_requisition', element)]"
-                                                [queryParams]="{ id: element.id}">
-                                                    <i class="fas fa-angle-double-right update-symbol"></i>
+                                            <ng-container *ngFor="let yarnOrder of element.yarnOrders">
+                                                
+                                                <a class="pb-2" *ngIf="yarnOrder.is_order == '0'; else elseBlockYarnOrder"
+                                                [routerLink]="[goToRequisitionPage('show_all_closed_yarn_order_requisition', element)]"
+                                                [queryParams]="{ id: yarnOrder.wa_yarn_order_requisition_id}">
+                                                    {{yarnOrder.order_number}}
                                                 </a>
-                                            </ng-template>
+
+                                                <!-- <ng-container *ngIf="router.url == '/dashboard/show-all-dyeing-order-wd'">
+                                                    <a *ngIf="element.wa_yarn_order_requisition_id == null; else elseBlockYarnOrder"
+                                                    [routerLink]="[goToRequisitionPage('add_yarn_order_requisition', element)]"
+                                                    [queryParams]="{ id: element.id}">
+                                                        <i class="fa-solid fa-square-plus update-symbol"></i>
+                                                    </a>
+                                                </ng-container>
+                                           -->
+    
+                                                <ng-template #elseBlockYarnOrder>
+                                                    <a class="pb-2" [routerLink]="[goToRequisitionPage('show_all_opened_yarn_order_requisition', element)]"
+                                                    [queryParams]="{ id: yarnOrder.wa_yarn_order_requisition_id}">
+                                                    {{yarnOrder.order_number}}
+                                                    </a>
+                                                </ng-template>
+                                                <br>
+                                            </ng-container>
+                  
                                         </td>
 
                                         <!-- close_order Column -->

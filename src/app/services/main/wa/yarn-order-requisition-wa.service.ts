@@ -47,6 +47,18 @@ export class YarnOrderRequisitionWaService {
       });
   }
 
+  // inquireYarnsOfFabricForOrderWa
+  inquireYarnsOfFabricForOrderWa(dyeingOrderRequisitionId: string): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}inquire-yarns-by-yarn-order-requisition/${dyeingOrderRequisitionId}`;
+
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   // Select
   selectAll(isClosed): Observable<any> {
     let url = `${this._constantsService.BASE_URL}${this.urlService}opened-orders`;

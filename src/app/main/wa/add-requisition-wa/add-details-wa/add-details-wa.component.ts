@@ -86,7 +86,7 @@ export class AddDetailsWaComponent implements OnInit {
 
   // --------------- Lot --------------
   // maps the appropriate column to fields property
-  public fieldsLot: Object = { value: "id", text:"code"};
+  public fieldsLot: Object = { value: "code", text:"code"};
   // set the placeholder to the AutoComplete input
   public textLot: string = "اللوط"
 
@@ -98,7 +98,7 @@ export class AddDetailsWaComponent implements OnInit {
       //frame the query based on search string with filter type.
         query = (e.text != "") ? query.where(predicate) : query;
       //pass the filter data source, filter query to updateData method.
-        e.updateData(this.yarns, query);
+        e.updateData(this.lots, query);
   }
 
   constructor(
@@ -143,7 +143,7 @@ export class AddDetailsWaComponent implements OnInit {
       warehouseId: new FormControl("20229917115148716", [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       yarnCode: new FormControl(""),
-      yarnLotId: new FormControl("", [Validators.required]),
+      yarnLotCode: new FormControl("", [Validators.required]),
       consigmentYarnNumber: new FormControl("", [Validators.required]),
       price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -173,7 +173,7 @@ export class AddDetailsWaComponent implements OnInit {
     if (this.yarns[indexData] !== index.itemData) {
       row.controls['yarnId'].setValue(null)
       row.controls['yarnCode'].setValue(null)
-      row.controls['yarnLotId'].setValue(null)
+      row.controls['yarnLotCode'].setValue(null)
     }
     else {
       row.controls['yarnCode'].setValue(index.itemData.code)

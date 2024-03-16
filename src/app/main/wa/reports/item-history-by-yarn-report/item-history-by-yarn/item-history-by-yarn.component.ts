@@ -92,10 +92,10 @@ export class ItemHistoryByYarnComponent implements OnInit {
       filter = this.selectedYarnNames
 
       if (this.selectedYarnNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -126,10 +126,10 @@ export class ItemHistoryByYarnComponent implements OnInit {
       filter = this.selectedCodes
       
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -160,10 +160,10 @@ export class ItemHistoryByYarnComponent implements OnInit {
       filter = this.selectedWarehouses
 
       if (this.selectedWarehouses[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -194,10 +194,10 @@ export class ItemHistoryByYarnComponent implements OnInit {
       filter = this.selectedYarnLotCode
 
       if (this.selectedYarnLotCode[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -228,10 +228,10 @@ export class ItemHistoryByYarnComponent implements OnInit {
       filter = this.selectedConsigmentYarn
 
       if (this.selectedConsigmentYarn[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

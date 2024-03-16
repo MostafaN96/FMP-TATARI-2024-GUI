@@ -4,10 +4,10 @@ import { NgModule } from '@angular/core';
 import { ShowAllSellRequisitionWaModuleRoutingModule } from './show-all-sell-requisition-wa-module-routing.module';
 
 // Component
-import { ShowAllSellRequisitionComponent } from '../../../../../main/wa/sell-requisition-wa/show-all-sell-requisition/show-all-sell-requisition.component';
+import { ShowAllSellRequisitionComponent } from 'src/app/main/wa/sell-requisition-wa/show-all-sell-requisition/show-all-sell-requisition.component';
 
 // Shared Module
-import { SharedModule } from '../../../../../shared-modules/shared.module';
+import { SharedModule } from 'src/app/shared-modules/shared.module';
 
 @NgModule({
   declarations: [

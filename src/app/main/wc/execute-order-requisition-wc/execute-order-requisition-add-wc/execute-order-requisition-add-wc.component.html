@@ -1,0 +1,723 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">اذن تنفيذ طلبية قماش خام</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="addRequisitionForm" (ngSubmit)="onAddRequisition()">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridForm3Class">
+                    <div class="col">
+                        <!-- Date -->
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
+                            <mat-label>التاريخ</mat-label>
+                            <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
+                            <mat-datepicker-toggle [disabled]="false" matSuffix
+                                [for]="datepicker"></mat-datepicker-toggle>
+                            <mat-datepicker [disabled]="false" #datepicker>
+
+                            </mat-datepicker>
+                            <mat-error *ngIf="!addRequisitionForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionForm.controls['date'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- requisitionsOrder -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='requisitionsOrder' [fields]='fieldsRequisitionOrderName'
+                            (filtering)="onFilteringRequisitionOrderName($event)"
+                            [placeholder]='textRequisitionsOrderName' [autofill]='autofill'
+                            formControlName="wcFabricOrderRequisitionId" class="ejs-autocomplete w-100"
+                            (change)="selectRequisitionsOrderName($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger"
+                            *ngIf="addRequisitionForm.controls['wcFabricOrderRequisitionId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="addRequisitionForm.controls['wcFabricOrderRequisitionId'].hasError('required') && (addRequisitionForm.controls['wcFabricOrderRequisitionId'].dirty 
+                            || addRequisitionForm.controls['wcFabricOrderRequisitionId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- Warehouse -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete"
+                            (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse' [autofill]='autofill'
+                            formControlName="warehouseId"
+                            (change)="selectWarehouse($event)"
+                            style="width: 260px;">
+                        </ejs-autocomplete>
+                            <small class="text-danger"
+                            *ngIf="addRequisitionForm.controls.warehouseId.hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                            </small>
+                            <small class="text-danger"
+                                *ngIf="addRequisitionForm.controls.warehouseId.hasError('required') && (addRequisitionForm.controls.warehouseId.dirty 
+                                || addRequisitionForm.controls.warehouseId.touched)"
+                                [innerHTML]="_sharedComponentService.required_field">
+                            </small>
+                    </div>
+
+                    <!-- Note -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> ملاحظات </mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize placeholder="ملاحظات"
+                                formControlName="note"></textarea>
+                            <mat-error *ngIf="addRequisitionForm.controls['note'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+                <div [class]="_sharedComponentService.gridForm2Class">
+                    <div class="col">
+                        <div class="btn-export-section">
+                            <a
+                                (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'اذن تنفيذ طلبية قماش خام')">
+                                <i title="PDF" class="far fa-file-pdf"></i>
+                            </a>
+
+                            <a
+                                (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'اذن تنفيذ طلبية قماش خام')">
+                                <i title="Excel" class="far fa-file-excel px-2"></i>
+                            </a>
+
+                            <a
+                                (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'اذن تنفيذ طلبية قماش خام', 'table-data-2')">
+                                <i title="Print" class="fas fa-print pe-2"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col pb-4" id="table-header-data">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="row row-cols-1">
+                                    <div class="col py-4">
+                                        <table class="table table-style">
+                                            <tbody>
+                                                <tr>
+                                                    <th>اسم الطلبية:</th>
+                                                    <td>{{orderedFabrics[0]?.order_name}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div [class]="_sharedComponentService.tableSectionClass">
+                                    <p-table #dt2 [value]="orderedFabrics" dataKey="id" columnResizeMode="expand"
+                                        styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+                                        [rowHover]="true" [rows]="10" [showCurrentPageReport]="true"
+                                        [loading]="loadingDyeingFabrics" responsiveLayout="scroll" scrollHeight="600px"
+                                        [filterDelay]="0" sortField="fabric_code" sortOrder="1" [responsive]="true"
+                                        appendTo="body" [autoLayout]="true">
+                                        <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+                                            <div data-html2canvas-ignore="true" class="flex">
+                                                <button data-html2canvas-ignore="true" pButton label="اعادة"
+                                                    class="p-button-outlined" icon="pi pi-filter-slash"
+                                                    (click)="clearOrderFabrics(dt2)"></button>
+                                            </div>
+
+                                            <!-- Start Filter Section -->
+                                            <div class="row row-cols-2">
+
+                                                <div class="col">
+                                                    <p-columnFilter field="fabric_code" matchMode="fabric-code-filter"
+                                                        [showMenu]="false" [showClearButton]="false">
+                                                        <ng-template pTemplate="filter" let-value
+                                                            let-filter="filterCallback">
+                                                            <p-multiSelect [ngModelOptions]="{standalone: true}"
+                                                            [ngModel]="selectedFabricCodes"
+                                                                [options]="_sharedComponentService.uniqueArray(orderedFabrics, 'fabric_code')"
+                                                                (onChange)="onMultiselectedFabricCodes($event.value)"
+                                                                placeholder="البحث بـ كود القماش"
+                                                                optionLabel="fabric_code">
+                                                                <ng-template let-option pTemplate="item">
+                                                                    <div class="p-multiselect-representative-option">
+                                                                        <span class="ml-1">{{option.fabric_code}}</span>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-multiSelect>
+                                                        </ng-template>
+                                                    </p-columnFilter>
+                                                </div>
+
+                                                <div class="col">
+                                                    <p-columnFilter field="fabric_name" matchMode="fabric-name-filter"
+                                                        [showMenu]="false" [showClearButton]="false">
+                                                        <ng-template pTemplate="filter" let-value
+                                                            let-filter="filterCallback">
+                                                            <p-multiSelect [ngModelOptions]="{standalone: true}"
+                                                            [ngModel]="value"
+                                                                [options]="_sharedComponentService.uniqueArray(orderedFabrics, 'fabric_name')"
+                                                                (onChange)="onMultiselectedFabricNames($event.value)"
+                                                                placeholder="البحث بـ نوع القماش"
+                                                                optionLabel="fabric_name">
+                                                                <ng-template let-option pTemplate="item">
+                                                                    <div class="p-multiselect-representative-option">
+                                                                        <span class="ml-1">{{option.fabric_name}}</span>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-multiSelect>
+                                                        </ng-template>
+                                                    </p-columnFilter>
+                                                </div>
+
+                                            </div>
+                                            <!-- End Filter Section -->
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <!-- Index Column -->
+                                                <th data-html2canvas-ignore="true">
+                                                    اختيار
+                                                </th>
+
+
+                                                <!-- fabric_code Column -->
+                                                <th pResizableColumn pSortableColumn="fabric_code">
+                                                    <div class="flex justify-content-between align-items-center">
+                                                        كود القماش
+                                                        <p-sortIcon data-html2canvas-ignore="true" field="fabric_code">
+                                                        </p-sortIcon>
+                                                    </div>
+                                                </th>
+
+                                                <!-- fabric_name Column -->
+                                                <th pResizableColumn pSortableColumn="fabric_name">
+                                                    <div class="flex justify-content-between align-items-center">
+                                                        نوع القماش<p-sortIcon data-html2canvas-ignore="true"
+                                                            field="fabric_name">
+                                                        </p-sortIcon>
+                                                    </div>
+                                                </th>
+
+                                                <!-- current_quantity Column -->
+                                                <th pResizableColumn pSortableColumn="current_quantity">
+                                                    <div class="flex justify-content-between align-items-center">
+                                                        الكمية المطلوبة<p-sortIcon data-html2canvas-ignore="true"
+                                                            field="current_quantity">
+                                                        </p-sortIcon>
+                                                    </div>
+                                                </th>
+
+                                                <!-- added_quantity Column -->
+                                                <th pResizableColumn pSortableColumn="added_quantity">
+                                                    <div class="flex justify-content-between align-items-center">
+                                                        الكمية المحققة
+                                                        <p-sortIcon data-html2canvas-ignore="true"
+                                                            field="added_quantity">
+                                                        </p-sortIcon>
+                                                    </div>
+                                                </th>
+
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-element let-index="rowIndex">
+                                            <tr class="p-selectable-row">
+
+                                                <!-- Index Column -->
+                                                <td data-html2canvas-ignore="true">
+                                                    <input type="radio" (click)="selectRowFabric(element)"
+                                                        name="selectRowFabric" [value]="element">
+                                                </td>
+
+                                                <!-- fabric_code Column -->
+                                                <td>
+                                                    {{ element.fabric_code }}
+                                                </td>
+
+                                                <!-- fabric_name Column -->
+                                                <td>
+                                                    {{ element.fabric_name }}
+                                                </td>
+
+                                                <!-- current_quantity Column -->
+                                                <td>
+                                                    {{ element.current_quantity }}
+                                                </td>
+
+                                                <!-- added_quantity Column -->
+                                                <td>
+                                                    {{ element.added_quantity }}
+                                                </td>
+
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                            <tr>
+                                                <td colspan="5">لا يوجد بيانات</td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-7">
+
+                                <div class="row py-4">
+                                    <div class="col-md-6">
+                                        <table class="table table-style">
+                                            <tbody>
+                                                <tr>
+                                                    <th>كود القماش:</th>
+                                                    <td>{{storedWcFabrics[0]?.code}}</td>
+
+                                                    <th>نوع القماش:</th>
+                                                    <td>{{storedWcFabrics[0]?.name}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                                <div [class]="_sharedComponentService.tableSectionClass">
+
+                                    <div id="table-header-data-report">
+
+                                        <p-table #dt1 [value]="storedWcFabrics" dataKey="id" columnResizeMode="expand"
+                                            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+                                            [rowHover]="true" [rows]="10" [showCurrentPageReport]="true"
+                                            [loading]="loading" responsiveLayout="scroll" scrollHeight="600px"
+                                            [filterDelay]="0" sortField="code" sortOrder="1" [responsive]="true"
+                                            appendTo="body" [autoLayout]="true" [globalFilterFields]="[
+                                        'name','code','warehouse_name',
+                                        'consigment_manufacturing_number'
+                                        ]">
+                                            <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+                                                <div data-html2canvas-ignore="true" class="flex">
+                                                    <button data-html2canvas-ignore="true" pButton label="اعادة"
+                                                        class="p-button-outlined" icon="pi pi-filter-slash"
+                                                        (click)="clear(dt1)"></button>
+                                                </div>
+
+                                                <!-- Start Filter Section -->
+                                                <div class="row row-cols-5">
+
+                                                    <div class="col">
+                                                        <p-columnFilter field="warehouse_name" matchMode="warehouse-filter"
+                                                            [showMenu]="false" [showClearButton]="false">
+                                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                                <p-multiSelect [ngModelOptions]="{standalone: true}"
+                                                                [ngModel]="selectedWarehouses"
+                                                                    [options]="_sharedComponentService.uniqueArray(storedWcFabrics, 'warehouse_name')"
+                                                                    (onChange)="onMultiselectedWarehouses($event.value)"
+                                                                    placeholder="البحث بـ المخزن" optionLabel="warehouse_name">
+                                                                    <ng-template let-option pTemplate="item">
+                                                                        <div class="p-multiselect-representative-option">
+                                                                            <span class="ml-1">{{option.warehouse_name}}</span>
+                                                                        </div>
+                                                                    </ng-template>
+                                                                </p-multiSelect>
+                                                            </ng-template>
+                                                        </p-columnFilter>
+                                                    </div>
+
+
+                                        <!-- consigment_manufacturing_number -->
+                                        <div class="col">
+                                            <p-columnFilter field="consigment_manufacturing_number" matchMode="consigment-manufacturing-number-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModelOptions]="{standalone: true}"
+                                                    [ngModel]="selectedConsigmentYarn" [options]="_sharedComponentService.uniqueArray(storedWcFabrics, 'consigment_manufacturing_number')"
+                                                        (onChange)="onMultiselectedConsigmentManufacturing($event.value)"
+                                                        placeholder="البحث بـ رقم الرسالة" optionLabel="consigment_manufacturing_number">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.consigment_manufacturing_number}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <!-- type_of_requisition_trans -->
+                                        <div class="col">
+                                            <p-columnFilter field="type_of_requisition_trans" matchMode="type-of-requisition-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModelOptions]="{standalone: true}"
+                                                    [ngModel]="selectedTypeOfRequisition"
+                                                        [options]="_sharedComponentService.uniqueArray(storedWcFabrics, 'type_of_requisition_trans')"
+                                                        (onChange)="onMultiselectedTypeOfRequisition($event.value)"
+                                                        placeholder="البحث بـ نوع الاذن" optionLabel="type_of_requisition_trans">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.type_of_requisition_trans}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                                    <div class="col">
+                                                        <span class="p-input-icon-left">
+                                                            <i class="pi pi-search"></i>
+                                                            <input pInputText type="text"
+                                                                (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                                class="p-column-filter" placeholder="بحث" />
+                                                        </span>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <!-- End Filter Section -->
+
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <!-- Index Column -->
+                                                    <th data-html2canvas-ignore="true">
+                                                        اختيار
+                                                    </th>
+
+                                                    <!-- warehouse_name Column -->
+                                                    <th pResizableColumn pSortableColumn="warehouse_name">
+                                                        <div class="flex justify-content-between align-items-center">
+                                                            المخزن
+                                                            <p-sortIcon data-html2canvas-ignore="true"
+                                                                field="warehouse_name">
+                                                            </p-sortIcon>
+                                                        </div>
+                                                    </th>
+
+                                                    <!-- consigment_manufacturing_number Column -->
+                                                    <th pResizableColumn pSortableColumn="consigment_manufacturing_number">
+                                                        <div class="flex justify-content-between align-items-center">
+                                                            رقم الرسالة
+                                                            <p-sortIcon data-html2canvas-ignore="true"
+                                                                field="consigment_manufacturing_number">
+                                                            </p-sortIcon>
+                                                        </div>
+                                                    </th>
+
+                                                    <!-- type_of_requisition_trans Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                نوع الاذن
+                                            </div>
+                                        </th>
+
+                                                    <!-- current_quantity Column -->
+                                                    <th pResizableColumn pSortableColumn="current_quantity">
+                                                        <div class="flex justify-content-between align-items-center">
+                                                            الكمية المتوفرة
+                                                        </div>
+                                                    </th>
+
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-element let-index="rowIndex">
+                                                <tr class="p-selectable-row">
+
+                                                    <!-- Index Column -->
+                                                    <td data-html2canvas-ignore="true">
+                                                        <a class="update-symbol"
+                                                            (click)="getSelectedStoredFabrics(element)">
+                                                            <i class="fas fa-plus"></i>
+                                                        </a>
+                                                    </td>
+
+                                                    <!-- warehouse_name Column -->
+                                                    <td>
+                                                        {{element.warehouse_name}}
+                                                    </td>
+
+                                                    <!-- consigment_manufacturing_number Column -->
+                                                    <td>
+                                                        {{ element.consigment_manufacturing_number }}
+                                                    </td>
+
+                                                    <!-- type_of_requisition_trans Column -->
+                                                    <td>
+                                                        {{ element.type_of_requisition_trans }}
+                                                    </td>
+
+                                                    <!-- current_quantity Column -->
+                                                    <td>
+                                                        {{ element.current_quantity | number}}
+                                                    </td>
+
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                                <tr>
+                                                    <td colspan="5">لا يوجد بيانات</td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Form Builder Section -->
+                <div class="row row-cols-1">
+                    <div class="col">
+                        <table class="table table-style table-sm table-bordered table-striped table-responsive">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5px;">
+                                        التسلسل
+                                    </th>
+
+                                    <th style="max-width: 150px;">
+                                        نوع القماش
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        كود القماش
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        رقم الرسالة
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        نوع الاذن
+                                    </th>
+
+                                    <th style="max-width: 70px;">
+                                        السعر
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        الكمية المتوفرة
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        الكمية
+                                    </th>
+
+                                    <th style="max-width: 100px;">
+                                        الاجمالي
+                                    </th>
+
+                                    <th style="max-width: 100px;">
+                                        ملاحظات
+                                    </th>
+
+                                    <th style="width: 60px;">
+                                        حذف
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="items">
+                                <tr *ngFor="let row of getItem(addRequisitionForm);let index = index;">
+                                    <ng-container [formGroupName]="index">
+                                        <td>
+                                            <label style="width: 5px;">{{index+1}}</label>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 150px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    نوع القماش
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="نوع القماش"
+                                                    formControlName="fabricName" readonly>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود القماش
+                                                </mat-label>
+                                                <input matInput placeholder="كود القماش" readonly
+                                                    formControlName="fabricCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- consigmentManufacturingNumber -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    رقم الرسالة
+                                                </mat-label>
+                                                <input matInput placeholder="رقم الرسالة" readonly
+                                                    formControlName="consigmentManufacturingNumber">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- typeOfRequisitionTrans -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    نوع الاذن
+                                                </mat-label>
+                                                <input matInput placeholder="نوع الاذن" readonly
+                                                    formControlName="typeOfRequisitionTrans">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Price -->
+                                        <td class="table-td" style="max-width: 70px">
+                                            <!-- Price -->
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>السعر</mat-label>
+                                                <input type="text" matInput formControlName="price" required
+                                                    placeholder="مثال: 15" [matAutocomplete]="autoGroup"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                                                <mat-autocomplete #autoGroup="matAutocomplete">
+                                                    <ng-container
+                                                        *ngFor="let item of getListFabricPrices[index]; let i = index">
+                                                        <mat-optgroup [label]="groupPrices[i]"
+                                                            [disabled]="groupPrices[i].disabled">
+                                                            <mat-option value="{{item | number}}">
+                                                                {{item | number}}
+                                                            </mat-option>
+                                                        </mat-optgroup>
+                                                    </ng-container>
+                                                </mat-autocomplete>
+                                                <mat-error
+                                                    *ngIf="row.get('price').hasError('required') && (row.get('price').dirty 
+                                                                                            || row.get('price').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('price').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    الكمية المتوفرة
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="الكمية المتوفرة"
+                                                    formControlName="validQuantity" readonly>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Quantity -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>الكمية</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="quantity" placeholder="مثال: 12000"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                    (change)="validate(row)" required />
+                                                <mat-error class="text-danger"
+                                                    *ngIf="row.get('quantity').hasError('incorrect')">
+                                                    الكمية المدخلة غير متوفرة
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('quantity').hasError('required') && (row.get('quantity').dirty 
+                                                    || row.get('quantity').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('quantity').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- total -->
+                                        <td class="align-middle text-center">
+                                            <span>
+                                                {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value,
+                                                row.controls['quantity'].value) | number}}
+                                            </span>
+                                        </td>
+
+                                        <!-- note -->
+                                        <td style="max-width: 100px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label> ملاحظات </mat-label>
+                                                <textarea matInput rows="1" matTextareaAutosize placeholder="ملاحظات"
+                                                    formControlName="note"></textarea>
+                                                <mat-error *ngIf="row.get('note').hasError('invalid') && (row.get('note').dirty 
+                                                    || row.get('note').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('note').hasError('pattern')">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td>
+                                            <button type="button" class="btn-del-item" (click)="removeItem(index, row)">
+                                                -
+                                            </button>
+                                        </td>
+
+                                    </ng-container>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td>الاجمالي</td>
+
+                                    <td colspan="6"></td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
+                                        'quantity') | number}}</td>
+                                    <td class="text-center">
+                                        {{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm,
+                                        'items', 'quantity', 'price') | number}}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto g-0">
+                    <div class="col">
+                        <button [disabled]="addRequisitionForm.controls.items.value.length <= 0 || !isShowAdd"
+                            type="submit" class="btn-style submit-btn">إضافة</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

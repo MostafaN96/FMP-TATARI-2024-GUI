@@ -103,7 +103,7 @@ export class AddAddRequisitionWaComponent implements OnInit {
 
   // --------------- Lot --------------
   // maps the appropriate column to fields property
-  public fieldsLot: Object = { value: "id", text: "code" };
+  public fieldsLot: Object = { value: "code", text: "code" };
   // set the placeholder to the AutoComplete input
   public textLot: string = "اللوط"
 
@@ -158,7 +158,7 @@ export class AddAddRequisitionWaComponent implements OnInit {
       warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_ID, [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       yarnCode: new FormControl(""),
-      yarnLotId: new FormControl("", [Validators.required]),
+      yarnLotCode: new FormControl("", [Validators.required]),
       consigmentYarnNumber: new FormControl("", [Validators.required]),
       price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -188,16 +188,16 @@ export class AddAddRequisitionWaComponent implements OnInit {
     if (this.yarns[indexData] !== index.itemData) {
       row.controls['yarnId'].setValue("")
       row.controls['yarnCode'].setValue("")
-      row.controls['yarnLotId'].setValue("")
+      row.controls['yarnLotCode'].setValue("")
     }
     else {
       row.controls['yarnCode'].setValue(index.itemData.code)
 
       this._yarnLotService.selectByYarn(index.itemData.id).subscribe((response: any) => {
         this.lots = response
-        if(this.lots[0] != null) {
-          row.controls['yarnLotId'].setValue(this.lots[0].id)
-        }
+        // if(this.lots[0] != null) {
+        //   row.controls['yarnLotCode'].setValue(this.lots[0].code)
+        // }
       })
 
     }

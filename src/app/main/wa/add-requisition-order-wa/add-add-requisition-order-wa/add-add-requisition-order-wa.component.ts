@@ -13,9 +13,9 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 // Call Service
 import { YarnOrderRequisitionWaService } from "src/app/services/main/wa/yarn-order-requisition-wa.service";
 import { YarnService } from "src/app/services/main/yarn.service";
-
+import { WarehouseService } from 'src/app/services/main/warehouse.service';
 import { ReportWaService } from "src/app/services/main/wa/report-wa.service";
-import { FormDyeingRequisitionWdService } from "src/app/services/main/wd/form-dyeing-requisition-wd.service";
+import { ExecuteOrderRequisitionWaService } from "src/app/services/main/wa/execute-order-requisition-wa.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -53,6 +53,7 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   addRequisitionForm = new FormGroup({
     date: new FormControl(new Date(), [Validators.required]),
+    warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_ID, [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     waYarnOrderRequisitionId: new FormControl("", [Validators.required]),
     items: new FormArray([]),
@@ -63,19 +64,14 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   ///////////////////////////////// General ////////////////////////////////////////////////
   orderedYarns: any = []
   storedWaYarns: any = []
+  warehouses: any = []
+  yarnOrderRequisitionId = ""
+  yarnOrderRequisitionDetailsId = ""
+  yarnOrderCurrentQuantity = "0"
 
-  fabrics: any[] = [];
-  colors: any[] = [];
-  dyedFabrics: any[] = [];
   requisitionsOrder: any
-  dyeingOrders: any
-  selectedDyeingId: any
-  colorCategories: any[] = [];
-  dyeingServicesData: any
   yarnsPricesDetails: any[] = [];
   getListYarnPrices: any = []
-  selectedSeller: any = []
-  dyeingOrderDetails: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   selectedStoredYarnsMap = new Map()
   filter = "";
@@ -105,6 +101,22 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
     e.updateData(this.requisitionsOrder, query);
   }
 
+  // --------------- Warehouse --------------
+  // maps the appropriate column to fields property
+  public fieldsWarehouse: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textWarehouse: string = "المخزن"
+
+  public onFilteringWarehouse(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.warehouses, query);
+  }
+
 
   constructor(
     private _yarnService: YarnService,
@@ -116,10 +128,11 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
     private _sessionManagerService: SessionManagerService,
     private _reportWaService: ReportWaService,
     public _exportDataService: ExportDataService,
-    private _formDyeingRequisitionWdService: FormDyeingRequisitionWdService,
+    private _executeOrderRequisitionWaService: ExecuteOrderRequisitionWaService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    private _warehouseService: WarehouseService,
 
   ) {
     this._sharedComponentService.configRouterReloadPage()
@@ -142,6 +155,10 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
     this._yarnOrderRequisitionWaService.selectAll('opened').subscribe((response: any) => {
       this.requisitionsOrder = response
     })
+
+    this._warehouseService.selectWhereInWa().subscribe((response: any) => {
+      this.warehouses = response
+    })
   }
 
   //  Dyeing
@@ -163,12 +180,17 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
     if (objectData) {
       this._yarnService.selectStoredWaYarnsByYarnId(objectData.yarn_id).subscribe((response: any) => {
         this.storedWaYarns = response
-
+        this.yarnOrderRequisitionId = objectData.requisition_id
+        this.yarnOrderRequisitionDetailsId = objectData.id
+        this.yarnOrderCurrentQuantity = objectData.current_quantity
         // PrimeNG Table
         this.loading = false;
       })
     } else {
       this.storedWaYarns = []
+      this.yarnOrderRequisitionId = ""
+      this.yarnOrderRequisitionDetailsId = ""
+      this.yarnOrderCurrentQuantity = "0"
     }
   }
 
@@ -193,31 +215,36 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   }
 
   // Initialize Form Builder
-  initItem(selectedStoredYarns: any, index: number) {
+  initItem(selectedStoredYarns: any) {
     return new FormGroup({
-      index: new FormControl(index),
       typeOfRequisition: new FormControl(selectedStoredYarns.type_of_requisition, [Validators.required]),
       typeOfRequisitionTrans: new FormControl(selectedStoredYarns.type_of_requisition_trans, [Validators.required]),
       waRequisitionDetailsId: new FormControl(selectedStoredYarns.requisition_details_id, [Validators.required]),
+      waYarnOrderRequisitionId: new FormControl(this.yarnOrderRequisitionId, [Validators.required]),
+      waYarnOrderRequisitionDetailsId: new FormControl(this.yarnOrderRequisitionDetailsId, [Validators.required]),
       yarnId: new FormControl(selectedStoredYarns.id, [Validators.required]),
       yarnCode: new FormControl(selectedStoredYarns.code),
       yarnName: new FormControl(selectedStoredYarns.name),
-      consigmentYarnId: new FormControl(selectedStoredYarns.consigment_yarn_id, [Validators.required]),
+      fromWarehouseId: new FormControl(selectedStoredYarns.warehouse_id, [Validators.required]),
+      fromConsigmentYarnId: new FormControl(selectedStoredYarns.consigment_yarn_id, [Validators.required]),
       consigmentYarnNumber: new FormControl(selectedStoredYarns.consigment_yarn_number, [Validators.required]),
+      newConsigmentYarnNumber: new FormControl(this.requisitionsOrder[0].name, [Validators.required]),
       yarnLotId: new FormControl(selectedStoredYarns.yarn_lot_id, [Validators.required]),
       yarnLotCode: new FormControl(selectedStoredYarns.yarn_lot_code, [Validators.required]),
+      waId: new FormControl(selectedStoredYarns.wa_id, [Validators.required]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      quantity: new FormControl(selectedStoredYarns.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      quantity: new FormControl((this.yarnOrderCurrentQuantity <= selectedStoredYarns.current_quantity) ? this.yarnOrderCurrentQuantity : selectedStoredYarns.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredYarns.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
 
   addItem(selectedStoredYarns: any) {
-    let index = this.selectedStoredYarnsArrayValues.indexOf(selectedStoredYarns)
+    this.selectedStoredYarnsArrayValues.indexOf(selectedStoredYarns)
     const control = <FormArray>this.addRequisitionForm.get('items');
-    let row = this.initItem(selectedStoredYarns, index)
+    let row = this.initItem(selectedStoredYarns)
     control.push(row);
+    this.goalQuantityOfOrder()
   }
 
   getItem(form: any) {
@@ -234,6 +261,93 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   }
 
 
+  
+
+  validate(row: FormGroup) {
+
+    if (parseFloat(row.controls['quantity'].value) > parseFloat(row.controls['validQuantity'].value)) {
+      console.log("if");
+      row.controls['quantity'].setErrors({ 'incorrect': true });
+      // row.controls['quantity'].updateValueAndValidity()
+      this.addRequisitionForm.markAllAsTouched();
+    }
+    else {
+      console.log("else");
+      row.controls['quantity'].setErrors({ 'incorrect': null });
+      row.controls['quantity'].updateValueAndValidity()
+      this.goalQuantityOfOrder()
+    }
+  }
+
+  goalQuantityOfOrder() {    
+    const control = <FormArray>this.addRequisitionForm.get('items');
+    
+    for (let i = 0; i < this.orderedYarns.length; i++) {
+      const orderedYarn = this.orderedYarns[i];
+      orderedYarn.added_quantity = 0
+
+      for (let j = 0; j < control.controls.length; j++) {
+        const controls = control.controls[j] ;
+        
+      if(orderedYarn.yarn_id == controls['controls']['yarnId'].value) {
+        orderedYarn.added_quantity = parseFloat(orderedYarn.added_quantity + parseFloat(controls['controls']['quantity'].value))
+      }
+      }
+      
+    }
+    
+  }
+
+  //  Warehouse
+  selectWarehouse(event: { itemData: any; }) {
+    if (!this.warehouses.includes(event.itemData)) {
+      this.addRequisitionForm.controls['warehouseId'].setValue(null)
+    }
+  }
+
+  async onAddRequisition() {
+    this.isShowAdd = false
+
+    this.addRequisitionForm.markAllAsTouched();
+    if (this.addRequisitionForm.valid && this.addRequisitionForm.get('items')!['controls'].length > 0) {
+      if (
+        this._quantityOccurrencesValidationService.validateQuantityDynamic(
+          this.selectedStoredYarnsMap, this.addRequisitionForm.controls['items'].value,
+          'id', 'yarnId',
+          'consigment_yarn_id', 'fromConsigmentYarnId',
+          'waYarnOrderRequisitionDetailsId', 'id',
+          'quantity', 'name')) {
+
+        this._constantsService.spinner.show()
+        this._executeOrderRequisitionWaService.add(this.addRequisitionForm.value).subscribe(response => {
+          this._constantsService.spinner.hide();
+          if (response.msg == "data inserted") {
+            this._constantsService.successAddMessage()
+            this._sharedComponentService.openNewTab(`${this._constantsService.ROUTING_MAIN_LINKS[0]}${this._constantsService.ROUTING_LINKS[162]}`, { id: response.id });
+            this._sharedComponentService.reloadPage();
+          }
+          else {
+            if (response.msg == "quantity is wrong") {
+              this._constantsService.invalidInventoryQuantityErrorMessage(response.spentQuantity, response.newQuantity)
+            }
+            else if (response.msg == "duplicated data") {
+              this._constantsService.duplicateDataErrorMessage()
+            }
+            else {
+              this._constantsService.userErrorMessage()
+            }
+            this.isShowAdd = true
+          }
+        });
+      } else {
+        this.isShowAdd = true
+      }
+    } else {
+      this.isShowAdd = true
+    }
+  }
+
+  
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   customFilterForWarehouse() {
     const customFilterName = "warehouse-filter";
@@ -488,68 +602,6 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
     this.dt2?._filter()
   }
 
-  
-
-  validate(row: FormGroup) {
-
-    if (parseFloat(row.controls['quantity'].value) > parseFloat(row.controls['validQuantity'].value)) {
-      console.log("if");
-      row.controls['quantity'].setErrors({ 'incorrect': true });
-      // row.controls['quantity'].updateValueAndValidity()
-      this.addRequisitionForm.markAllAsTouched();
-    }
-    else {
-      console.log("else");
-      row.controls['quantity'].setErrors({ 'incorrect': null });
-      row.controls['quantity'].updateValueAndValidity()
-    }
-  }
-
-  async onAddRequisition() {
-    this.isShowAdd = false
-
-    this.addRequisitionForm.markAllAsTouched();
-    if (this.addRequisitionForm.valid && this.addRequisitionForm.get('items')!['controls'].length > 0) {
-      if (
-        this._quantityOccurrencesValidationService.validateQuantityDynamic(
-          this.selectedStoredYarnsMap, this.addRequisitionForm.controls['items'].value,
-          'id', 'yarnId',
-          'consigment_yarn_id', 'consigmentYarnId',
-          'waYarnOrderRequisitionId', 'dyeing_id',
-          'quantity', 'name')) {
-        const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.addRequisitionForm, 'items',
-          ['index', 'yarnCode', 'yarnName',
-            'colorCategoryId', 'colorId', 'colorCode', 'consigmentYarnNumber',
-            'dyedFabricCode', 'validQuantity'])
-
-        this._constantsService.spinner.show()
-        this._formDyeingRequisitionWdService.addByOrder(formGroup.value).subscribe(response => {
-          this._constantsService.spinner.hide();
-          if (response.msg == "data inserted") {
-            this._constantsService.successAddMessage()
-            this._sharedComponentService.openNewTab(`${this._constantsService.ROUTING_MAIN_LINKS[0]}${this._constantsService.ROUTING_LINKS[140]}`, { id: response.id });
-            this._sharedComponentService.reloadPage();
-          }
-          else {
-            if (response.msg == "quantity is wrong") {
-              this._constantsService.invalidInventoryQuantityErrorMessage(response.spentQuantity, response.newQuantity)
-            }
-            else if (response.msg == "duplicated data") {
-              this._constantsService.duplicateDataErrorMessage()
-            }
-            else {
-              this._constantsService.userErrorMessage()
-            }
-            this.isShowAdd = true
-          }
-        });
-      } else {
-        this.isShowAdd = true
-      }
-    } else {
-      this.isShowAdd = true
-    }
-  }
 
 }
 

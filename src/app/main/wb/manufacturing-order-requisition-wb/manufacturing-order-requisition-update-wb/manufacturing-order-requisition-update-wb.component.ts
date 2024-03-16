@@ -27,7 +27,7 @@ export class ManufacturingOrderRequisitionUpdateWbComponent implements OnInit {
   @Input() selectedData: any
   manufacturingOrderWdForm: FormGroup = new FormGroup({
     date: new FormControl(null, [Validators.required]),
-    name: new FormControl('', [Validators.required, Validators.maxLength(90), Validators.minLength(3), Validators.pattern(this.patterns.validator_pattern.shortText)]),
+    name: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     sellerId: new FormControl(null, [Validators.required]),

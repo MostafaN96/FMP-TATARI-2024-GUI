@@ -3,7 +3,7 @@
     <div [class]="_sharedComponentService.titlePageClass">
         <!-- Sub Title Page -->
         <div [class]="_sharedComponentService.subTitlePageClass">
-            <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">تنفيذ طلبية</h2>
+            <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">اذن تنفيذ طلبية</h2>
         </div>
     </div>
     <!-- Form Section -->
@@ -56,6 +56,25 @@
                         </small>
                     </div>
 
+                    <!-- Warehouse -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete"
+                            (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse' [autofill]='autofill'
+                            formControlName="warehouseId"
+                            (change)="selectWarehouse($event)"
+                            style="width: 260px;">
+                        </ejs-autocomplete>
+                            <small class="text-danger"
+                            *ngIf="addRequisitionForm.controls.warehouseId.hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                            </small>
+                            <small class="text-danger"
+                                *ngIf="addRequisitionForm.controls.warehouseId.hasError('required') && (addRequisitionForm.controls.warehouseId.dirty 
+                                || addRequisitionForm.controls.warehouseId.touched)"
+                                [innerHTML]="_sharedComponentService.required_field">
+                            </small>
+                    </div>
+
                     <!-- Note -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">
@@ -93,7 +112,7 @@
 
                     <div class="col pb-4" id="table-header-data">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <div class="row row-cols-1">
                                     <div class="col py-4">
                                         <table class="table table-style">
@@ -117,7 +136,7 @@
                                             <div data-html2canvas-ignore="true" class="flex">
                                                 <button data-html2canvas-ignore="true" pButton label="اعادة"
                                                     class="p-button-outlined" icon="pi pi-filter-slash"
-                                                    (click)="clearDyeingFabrics(dt2)"></button>
+                                                    (click)="clearOrderYarn(dt2)"></button>
                                             </div>
 
                                             <!-- Start Filter Section -->
@@ -203,6 +222,16 @@
                                                     </div>
                                                 </th>
 
+                                                <!-- added_quantity Column -->
+                                                <th pResizableColumn pSortableColumn="added_quantity">
+                                                    <div class="flex justify-content-between align-items-center">
+                                                        الكمية المحققة
+                                                        <p-sortIcon data-html2canvas-ignore="true"
+                                                            field="added_quantity">
+                                                        </p-sortIcon>
+                                                    </div>
+                                                </th>
+
                                             </tr>
                                         </ng-template>
 
@@ -230,6 +259,11 @@
                                                     {{ element.current_quantity }}
                                                 </td>
 
+                                                <!-- added_quantity Column -->
+                                                <td>
+                                                    {{ element.added_quantity }}
+                                                </td>
+
                                             </tr>
                                         </ng-template>
                                         <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
@@ -242,7 +276,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-8">
+                            <div class="col-md-7">
 
                                 <div class="row py-4">
                                     <div class="col-md-6">
@@ -592,9 +626,9 @@
                                         <td class="table-td" style="max-width: 60px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
-                                                    رقم الرسالة
+                                                    نوع الاذن
                                                 </mat-label>
-                                                <input matInput placeholder="رقم الرسالة" readonly
+                                                <input matInput placeholder="نوع الاذن" readonly
                                                     formControlName="typeOfRequisitionTrans">
                                             </mat-form-field>
                                         </td>

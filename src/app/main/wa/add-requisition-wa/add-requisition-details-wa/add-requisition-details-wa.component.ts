@@ -36,6 +36,7 @@ export class AddRequisitionDetailsWaComponent implements OnInit {
   addRequisitionDetails: any[] = []
   hideItemHistory = false
   selectedDataToUpdate: any
+  showAddDetails = false
 
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
@@ -112,6 +113,9 @@ export class AddRequisitionDetailsWaComponent implements OnInit {
     return parseFloat(price) * parseFloat(quantity);
   }
 
+  showAddDetailsFunc() {
+    this.showAddDetails = true;
+  }
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
 
 }

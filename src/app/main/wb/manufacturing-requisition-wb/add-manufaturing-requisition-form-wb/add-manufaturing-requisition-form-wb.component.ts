@@ -143,14 +143,14 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
       consigmentYarnId: new FormControl(data.consigment_yarn_id, [Validators.required]),
       consigmentYarnNumber: new FormControl(data.consigment_yarn_number),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      wastRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      wastRatio: new FormControl(data.wast_ratio, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       quantityWithWaste: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       statement: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
-
+  
   addItem(data: any) {
     let index = this.yarns.indexOf(data)
     const control = <FormArray>this.addManufacturingRequisitionForm.get('items');

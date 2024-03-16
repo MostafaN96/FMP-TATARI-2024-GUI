@@ -1,14 +1,14 @@
 <section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
 
     <!-- Form Builder Section -->
-    <div class="row row-cols-md-3">
+    <div class="row">
 
         <!-- weFabrics -->
-        <div class="col" *ngIf="dataReport?.weFabrics.length > 0">
+        <div class="col-md-4" *ngIf="dataReport?.weFabrics.length > 0">
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">
-                        <th [colSpan]="4">
+                        <th [colSpan]="5">
                             <h4>
                                 مخزن الجاهز
                             </h4>
@@ -20,6 +20,9 @@
                         </th>
                         <th>
                             نوع القماش
+                        </th>
+                        <th>
+                            اللون
                         </th>
                         <th>
                             متاح في المخزن
@@ -38,6 +41,9 @@
                             {{ weFabric.dyed_fabric_name }} ({{ weFabric.dyed_fabric_code }})
                         </td>
                         <td>
+                            {{ weFabric.color_name }} ({{ weFabric.color_code }})
+                        </td>
+                        <td>
                             {{weFabric.current_quantity | number}}
                         </td>
                         <td>
@@ -50,7 +56,7 @@
                         <td>
                             الإجمالي
                         </td>
-                        <td>
+                        <td [colSpan]="2">
                             
                         </td>
                         <td>
@@ -67,7 +73,7 @@
         </div>
 
         <!-- wdFormFabrics -->
-        <div class="col" *ngIf="dataReport?.wdFormFabrics.length > 0">
+        <div class="col-md-4" *ngIf="dataReport?.wdFormFabrics.length > 0">
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">
@@ -121,7 +127,7 @@
         </div>
 
         <!-- wdFabrics -->
-        <div class="col" *ngIf="dataReport?.wdFabrics.length > 0">
+        <div class="col-md-4" *ngIf="dataReport?.wdFabrics.length > 0">
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">
@@ -174,7 +180,7 @@
         </div>
 
         <!-- wcFabrics -->
-        <div class="col" *ngIf="dataReport?.wcFabrics.length > 0">
+        <div class="col-md-4" *ngIf="dataReport?.wcFabrics.length > 0">
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">
@@ -237,7 +243,7 @@
         </div>
 
         <!-- wbYarns -->
-        <div class="col" *ngIf="dataReport?.wbYarns.length > 0">
+        <div class="col-md-4" *ngIf="dataReport?.wbYarns.length > 0">
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">
@@ -296,7 +302,7 @@
         </div>
 
         <!-- waYarns -->
-        <div class="col" *ngIf="dataReport?.waYarns.length > 0">
+        <div class="col-md-4" *ngIf="dataReport?.waYarns.length > 0">
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">

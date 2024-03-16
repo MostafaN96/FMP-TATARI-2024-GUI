@@ -339,7 +339,7 @@
 
                                         <!-- requisition_details Column -->
                                         <td data-html2canvas-ignore="true">
-                                            <a [routerLink]="[goToRequisitionPage(element.type_of_requisition)]"
+                                            <a [routerLink]="[goToRequisitionPage(element.type_of_requisition, element?.is_order)]"
                                                 [queryParams]="{id: element.requisition_id}">
                                                 <i class="fas fa-angle-double-right update-symbol"></i>
                                             </a>

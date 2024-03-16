@@ -9,6 +9,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 import { FabricService } from "src/app/services/main/fabric.service";
 import { BussinessmanService } from "src/app/services/main/bussinessman.service";
 import { ManufacturingOrderRequisitionWbService } from "src/app/services/main/wb/manufacturing-order-requisition-wb.service";
+import { DyeingOrderWdService } from "src/app/services/main/wd/dyeing-order-wd.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -30,8 +31,13 @@ export class ManufacturingOrderRequisitionAddWbComponent implements OnInit {
   addOrderForm = new FormGroup({
     date: new FormControl(new Date(), [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
+    name: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     sellerId: new FormControl(null, [Validators.required]),
-    items: new FormArray([this.initItem()]),
+    orderId: new FormControl(""),
+    orderName: new FormControl(""),
+    items: new FormArray([
+      
+    ]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   });
@@ -39,6 +45,8 @@ export class ManufacturingOrderRequisitionAddWbComponent implements OnInit {
   ///////////////////////////////// General ////////////////////////////////////////////////
   sellers: any
   fabrics: any
+  requisitionsOrder: any
+  fabricsOrderData: any
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -79,6 +87,23 @@ export class ManufacturingOrderRequisitionAddWbComponent implements OnInit {
     e.updateData(this.fabrics, query);
   }
 
+  // --------------- Requisitio nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsRequisitionOrderName: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textRequisitionsOrderName: string = "اسم الطلبية"
+
+
+  public onFilteringRequisitionOrderName(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.requisitionsOrder, query);
+  }
+
   constructor(
     private _fabricService: FabricService,
     private _bussinessmanService: BussinessmanService,
@@ -89,6 +114,8 @@ export class ManufacturingOrderRequisitionAddWbComponent implements OnInit {
     private patterns: ValidatorPatternService,
     private _sessionManagerService: SessionManagerService,
     public _exportDataService: ExportDataService,
+    private _dyeingOrderWdService: DyeingOrderWdService,
+
   ) {
     this._sharedComponentService.configRouterReloadPage()
 
@@ -106,13 +133,37 @@ export class ManufacturingOrderRequisitionAddWbComponent implements OnInit {
     this._fabricService.selectAll().subscribe((response: any) => {
       this.fabrics = response
     })
+
+    this._dyeingOrderWdService.selectAll('opened').subscribe((response: any) => {
+      this.requisitionsOrder = response
+    })
+  }
+
+  getFabricsOrderData(dyeingOrderRequisition) {
+
+    this._manufacturingOrderRequisitionWbService.inquireFabricsByDyeingOrderForOrderWb(dyeingOrderRequisition).subscribe((response: any) => {
+      this.fabricsOrderData = response
+      
+      this.addOrderForm.controls['name'].setValue(this.fabricsOrderData[0].dyeingOrderRequisition.order_name)
+      this.addOrderForm.controls['orderId'].setValue(dyeingOrderRequisition)
+      this.addOrderForm.controls['orderName'].setValue(this.fabricsOrderData[0].dyeingOrderRequisition.order_name)
+      this.addOrderForm.controls['sellerId'].setValue(this.fabricsOrderData[0].dyeingOrderRequisition.seller_id)
+
+      for (let i = 0; i < this.fabricsOrderData.length; i++) {
+        const element = this.fabricsOrderData[i];
+
+        this.addItemByData(element)
+      }
+
+    })
   }
 
 // Initialize Form Builder
 initItem() {
   return new FormGroup({
-    fabricId: new FormControl(null, [Validators.required]),
-    fabricCode: new FormControl(null),
+    fabricId: new FormControl("", [Validators.required]),
+    fabricName: new FormControl(""),
+    fabricCode: new FormControl(""),
     quantity: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
   });
@@ -121,6 +172,21 @@ initItem() {
 addItem() {
   const control = <FormArray>this.addOrderForm.get('items');
   control.push(this.initItem());
+}
+
+initItemByData(data) {
+  return new FormGroup({
+    fabricId: new FormControl(data.id, [Validators.required]),
+    fabricName: new FormControl(data.name, [Validators.required]),
+    fabricCode: new FormControl(data.code),
+    quantity: new FormControl(data.needed_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
+  });
+}
+
+addItemByData(data) {
+  const control = <FormArray>this.addOrderForm.get('items');
+  control.push(this.initItemByData(data));
 }
 
 getItem(form: any) {    
@@ -146,12 +212,29 @@ removeItem(index: number){
   selectFabric(element: { itemData: any; }, row: FormGroup) {
     let indexData = this.fabrics.indexOf(element.itemData)
     if (this.fabrics[indexData] !== element.itemData) {
-      row.controls['fabricId'].setValue(null)
-      row.controls['fabricCode'].setValue(null)
+      row.controls['fabricId'].setValue("")
+      row.controls['fabricName'].setValue("")
+      row.controls['fabricCode'].setValue("")
     }
     else {
+      row.controls['fabricName'].setValue(element.itemData.name)
       row.controls['fabricCode'].setValue(element.itemData.code)
     }    
+  }
+
+  //  Dyeing
+  selectRequisitionsOrderName(event: { itemData: any; }) {
+    
+    if (this.requisitionsOrder.includes(event.itemData)) {
+      this.addOrderForm.controls['orderId'].setValue(event.itemData.id)
+      this.addOrderForm.controls['orderName'].setValue(event.itemData.name)
+      this.addOrderForm.controls['name'].setValue(event.itemData.name)
+      this.getFabricsOrderData(event.itemData.id)
+    } else {
+      this.addOrderForm.controls['orderId'].setValue("")
+      this.addOrderForm.controls['orderName'].setValue("")
+      this.addOrderForm.controls['name'].setValue("")
+    }
   }
 
   async onAddRequisition() {

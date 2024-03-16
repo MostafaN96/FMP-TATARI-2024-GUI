@@ -9,9 +9,9 @@ export class ValidatorPatternService {
   
   get validator_pattern(): any {      
     return {
-      name: "[A-Z a-z \% \s]{0,50}",
-      shortText: "^[a-zA-Z0-9\%\,\ \.\_\n\:\(\)\-\/\?& \u0600-\u06FF-/]{1,300}$",
-      longText: "^[a-zA-Z0-9\%\,\ \.\_\n\:\(\)\-\/\?& \u0600-\u06FF-/]{3,300}$",
+      name: "[A-Z a-z \*\% \s]{0,50}",
+      shortText: "^[a-zA-Z0-9\%\,\ \*\.\_\n\:\(\)\-\/\?& \u0600-\u06FF-/]{1,300}$",
+      longText: "^[a-zA-Z0-9\%\,\ \*\.\_\n\:\(\)\-\/\?& \u0600-\u06FF-/]{3,300}$",
       htmlText: "^<(\\S*?)[^>]*>.*?</\\1>|<.*?/>$",
       email: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]{1,10}(?:\.[a-zA-Z0-9-]+){1,3}$",
       phone: "^[0-9]{8,15}$",

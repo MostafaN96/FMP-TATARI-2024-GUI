@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // My Component
-import { AddReturnRequisitionWcComponent } from '../../../../../main/wc/return-requisition-wc/add-return-requisition-wc/add-return-requisition-wc.component';
+import { AddReturnRequisitionWcComponent } from 'src/app/main/wc/return-requisition-wc/add-return-requisition-wc/add-return-requisition-wc.component';
 
 export const routes: Routes = [
 

@@ -7,7 +7,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 
 // Call Service
 import { YarnService } from "src/app/services/main/yarn.service";
-import { YarnOrderRequisitionWaService } from "src/app/services/main/wa/yarn-order-requisition-wa.service";
+import { YarnOrderRequisitionDetailsWaService } from "src/app/services/main/wa/yarn-order-requisition-details-wa.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -62,7 +62,7 @@ export class YarnOrderRequisitionAddDetailsFormWaComponent implements OnInit {
   constructor(
     private _yarnService: YarnService,
     private route: ActivatedRoute,
-    private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
+    private _yarnOrderRequisitionDetailsWaService: YarnOrderRequisitionDetailsWaService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
@@ -91,7 +91,7 @@ export class YarnOrderRequisitionAddDetailsFormWaComponent implements OnInit {
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
-      fabricId: new FormControl(null, [Validators.required]),
+      yarnId: new FormControl(null, [Validators.required]),
       yarnCode: new FormControl(null),
       quantity: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -132,7 +132,7 @@ export class YarnOrderRequisitionAddDetailsFormWaComponent implements OnInit {
       const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.addOrderForm, 'items',
         ['yarnCode'])
       this._constantsService.spinner.show()
-      this._yarnOrderRequisitionWaService.addDetails(formGroup.value).subscribe(response => {
+      this._yarnOrderRequisitionDetailsWaService.add(formGroup.value).subscribe(response => {
         this._constantsService.spinner.hide();
         if (response.msg == "data inserted") {
           this._constantsService.successAddMessage()

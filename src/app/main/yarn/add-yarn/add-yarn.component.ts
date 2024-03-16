@@ -25,7 +25,7 @@ export class AddYarnComponent implements OnInit {
   yarnForm: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.maxLength(45), Validators.minLength(3), Validators.pattern(this.patterns.validator_pattern.shortText)]),
     code: new FormControl('', [Validators.required, Validators.maxLength(15), Validators.minLength(3), Validators.pattern(this.patterns.validator_pattern.number)]),
-    lotCode: new FormControl('24', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
+    // lotCode: new FormControl('24', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   })

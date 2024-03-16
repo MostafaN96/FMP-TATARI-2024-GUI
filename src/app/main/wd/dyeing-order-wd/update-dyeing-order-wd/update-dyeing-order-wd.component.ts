@@ -31,7 +31,7 @@ export class UpdateDyeingOrderWdComponent implements OnInit {
     colorId: new FormControl("", [Validators.required]),
     colorCode: new FormControl("", [Validators.required]),
     date: new FormControl("", [Validators.required]),
-    name: new FormControl('', [Validators.required, Validators.maxLength(90), Validators.minLength(3), Validators.pattern(this.patterns.validator_pattern.shortText)]),
+    name: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricWidth: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),

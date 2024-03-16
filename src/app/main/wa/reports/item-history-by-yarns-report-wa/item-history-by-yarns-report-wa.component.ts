@@ -332,6 +332,9 @@ export class ItemHistoryByYarnsReportWaComponent implements OnInit {
     else if (typeOfRequisition == 'اذن نقل من (B) الى (A)') {
       return `/dashboard/show-all-transport-wb-wa-requisition/details`
     }
+    else if (typeOfRequisition == 'اذن تنفيذ طلبية') {
+      return `/dashboard/show-all-execute-order-requisition-wa/details`
+    }
     return
   }
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////

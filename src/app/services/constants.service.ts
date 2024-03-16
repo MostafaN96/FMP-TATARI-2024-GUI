@@ -15,7 +15,7 @@ export class ConstantsService {
   ) { }
 
   get BASE_URL(): string {
-   return environment.baseUrl;
+    return environment.baseUrl;
   }
 
   get TOKEN_KEY(): string {
@@ -34,7 +34,7 @@ export class ConstantsService {
   get WE_Fabric_URL_IMG(): string {
     return "sell-requisition-we/image/";
   }
-  
+
   get TRAINING_SUB_CATEGORY_URL_IMG(): string {
     return "training-sub-categories/image/";
   }
@@ -168,7 +168,7 @@ export class ConstantsService {
     return `البيانات موجودة سابقا`;
   }
 
-  quantityErrorMessage(spentQuantity ,newQuantity): string {
+  quantityErrorMessage(spentQuantity, newQuantity): string {
     UIkit.notification({
       message: `الكمية المدخلة (${newQuantity}) اقل من الكمية المصروفة (${spentQuantity})`,
       timeout: 5000,
@@ -177,7 +177,7 @@ export class ConstantsService {
     return `الكمية المدخلة اقل من الكمية المصروفة`;
   }
 
-  invalidInventoryQuantityErrorMessage(spentQuantity ,newQuantity): string {
+  invalidInventoryQuantityErrorMessage(spentQuantity, newQuantity): string {
     UIkit.notification({
       message: `الكمية المدخلة (${newQuantity}) اكثر من الكمية الموجودة في المخزن (${spentQuantity})`,
       timeout: 5000,
@@ -186,7 +186,7 @@ export class ConstantsService {
     return `الكمية المدخلة اقل من الكمية المصروفة`;
   }
 
-  invalidNegativeDyeinQuantityErrorMessage(spentQuantity ,newQuantity): string {
+  invalidNegativeDyeinQuantityErrorMessage(spentQuantity, newQuantity): string {
     UIkit.notification({
       message: `الكمية الموجودة في مخزن الجاهز (${spentQuantity}) اقل من (${newQuantity}) فرق الكمية المراد طرحها`,
       timeout: 5000,
@@ -195,7 +195,7 @@ export class ConstantsService {
     return `الكمية الموجودة في مخزن الجاهز اقل من فرق الكمية المراد طرحها`;
   }
 
-  quantityOccurrenceErrorMessage(spentQuantity ,newQuantity, materialName): string {
+  quantityOccurrenceErrorMessage(spentQuantity, newQuantity, materialName): string {
     UIkit.notification({
       message: `الكمية المدخلة في مادة ${materialName} (${newQuantity}) اكثر من الكمية الموجودة في المخزن (${spentQuantity})`,
       timeout: 5000,
@@ -204,7 +204,7 @@ export class ConstantsService {
     return `الكمية المدخلة اقل من الكمية المصروفة`;
   }
 
-  transportWaWbQuantityErrorMessage(spentQuantity ,newQuantity): string {
+  transportWaWbQuantityErrorMessage(spentQuantity, newQuantity): string {
     UIkit.notification({
       message: `فرق الكمية  (${newQuantity}) اكثر من الكمية الموجودة في المخزن (${spentQuantity})`,
       timeout: 5000,
@@ -213,7 +213,7 @@ export class ConstantsService {
     return `الكمية المدخلة اقل من الكمية المصروفة`;
   }
 
-  manufactureQuantityErrorMessage(spentQuantity ,newQuantity): string {
+  manufactureQuantityErrorMessage(spentQuantity, newQuantity): string {
     UIkit.notification({
       message: `الكمية المدخلة (${newQuantity}) اكثر من الكمية المصنعة (${spentQuantity})`,
       timeout: 5000,
@@ -222,7 +222,7 @@ export class ConstantsService {
     return `الكمية المدخلة اكثر من الكمية المصنعة`;
   }
 
-  sellQuantityErrorMessage(spentQuantity ,newQuantity): string {
+  sellQuantityErrorMessage(spentQuantity, newQuantity): string {
     UIkit.notification({
       message: `فرق الكمية المراد بيعها (${newQuantity}) اكثر من الكمية الموجودة في المخزن (${spentQuantity})`,
       timeout: 5000,
@@ -388,7 +388,7 @@ export class ConstantsService {
 
       'report-wd', // [60]
 
-      
+
       // Color Category
       'add-color-category', // [61]
       'show-all-color-category', // [62]
@@ -488,11 +488,11 @@ export class ConstantsService {
 
       'circular-knitting-machines-manufacturing-report-wb', // [123]
 
-      'inventory-by-circular-knitting-machines-manufacturing-report-wb' ,// [124]
-      'report-customer-fabrics-orders-wd' ,// [125]
-      'report-fabrics-orders-wd' ,// [126]
+      'inventory-by-circular-knitting-machines-manufacturing-report-wb',// [124]
+      'report-customer-fabrics-orders-wd',// [125]
+      'report-fabrics-orders-wd',// [126]
 
-      'sales-report-we' ,// [127]
+      'sales-report-we',// [127]
 
       // Yarn Lot
       'add-yarn-lot', // [128]
@@ -515,7 +515,7 @@ export class ConstantsService {
       // Wd
       'show-all-form-dyeing-order-requisition-wd/order-details', // [140]
       'show-all-form-dyeing-requisition-wd/details', // [141]
- 
+
       // WB
       'fabric-by-consigment-manufacturing-report-wb', // [142]
 
@@ -536,13 +536,58 @@ export class ConstantsService {
 
       'inquire-fabric-avilability-report-wd', // [153]
       'inquire-fabric-avilability-by-send-data-report-wd', // [154]
-      
+
       'add-yarn-order-requisition-wa', // [155]
       'show-all-opened-yarn-order-requisition-wa', // [156]
       'show-all-closed-yarn-order-requisition-wa', // [157]
       'add-yarn-requisition-by-order-wa', // [158]
 
       'inquire-fabric-avilability-report-by-dyeing-order-wd', // [159]
+
+      // Circular Knitting Machine
+      'add-execute-order-requisition-wa', // [160]
+      'show-all-execute-order-requisition-wa', // [161]
+      'show-all-execute-order-requisition-wa/details', // [162]
+
+      'add-yarn-order-requisition-related-order-wa', // [163]
+      'show-all-opened-yarn-order-requisition-wa/details', // [164]
+
+      'add-transition-between-wh-requisition-wa', // [165]
+      'show-all-transition-between-wh-requisition-wa', // [166]
+      'show-all-transition-between-wh-requisition-wa/details', // [167]
+
+      'add-purchase-order-wa', // [168]
+      'show-all-opened-purchase-order-wa', // [169]
+      'show-all-opened-purchase-order-wa/details', // [170]
+      'show-all-closed-purchase-order-wa', // [171]
+      'show-all-closed-purchase-order-wa/details', // [172]
+
+      'add-add-requisition-by-order-wa', // [173]
+      'show-all-add-requisition/order-details', // [174]
+
+      'show-all-closed-yarn-order-requisition-wa/closed-details', // [175]
+
+      'add-fabric-order-requisition-wc', // [176]
+      'add-fabric-order-requisition-related-order-wc', // [177]
+      'show-all-opened-fabric-order-requisition-wc', // [178]
+      'show-all-opened-fabric-order-requisition-wc/details', // [179]
+      'show-all-closed-fabric-order-requisition-wc', // [180]
+      'show-all-closed-fabric-order-requisition-wc/closed-details', // [181]
+
+      'add-execute-order-requisition-wc', // [182]
+      'show-all-execute-order-requisition-wc', // [183]
+      'show-all-execute-order-requisition-wc/details', // [184]
+
+      'add-dyed-fabric-order-requisition-we', // [185]
+      'add-dyed-fabric-order-requisition-related-order-we', // [186]
+      'show-all-opened-dyed-fabric-order-requisition-we', // [187]
+      'show-all-opened-dyed-fabric-order-requisition-we/details', // [188]
+      'show-all-closed-dyed-fabric-order-requisition-we', // [189]
+      'show-all-closed-dyed-fabric-order-requisition-we/closed-details', // [190]
+      
+      'add-execute-order-requisition-we', // [191]
+      'show-all-execute-order-requisition-we', // [192]
+      'show-all-execute-order-requisition-we/details', // [193]
     ]
   }
 
@@ -686,8 +731,8 @@ export class ConstantsService {
 
       // in house registration requests
       'in-house-registration-requests', // [72]
-      
-      
+
+
     ]
   }
   // END Links

@@ -1,8 +1,8 @@
-import { Component, Inject, OnInit, ViewChild,} from '@angular/core';
+import { Component, OnInit, ViewChild,} from '@angular/core';
 
 // Angular Material Table
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -27,7 +27,6 @@ export class YarnOrderRequisitionDetailsWaComponent implements OnInit {
   // Child Components
   @ViewChild('updateOrder') updateOrder: YarnOrderRequisitionUpdateWaComponent | undefined;
 
-
   /////////////////// Variables ///////////////////
   manufacturingOrderDetails: any[] = []
   totalPriceXQuantityWithWast: any
@@ -43,6 +42,7 @@ export class YarnOrderRequisitionDetailsWaComponent implements OnInit {
     'yarn_code',
     'quantity',
     'completed_quantity',
+    'current_quantity',
     'note2',
     'close_order',
     // 'open_order',

@@ -146,8 +146,28 @@ export class ReportWeService {
       });
   }
 
+  inquireFabricAvilabilityTotalReportWe(object:any): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}inquire-fabric-avilability-total-report-we`;
+    return this._http.post(url,object,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   inquireFabricAvilabilityByDyeingOrderRequisitionReportWe(object:any): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}inquire-fabric-avilability-by-dyeing-order-requisition-report-we`;
+    return this._http.post(url,object,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
+  inquireFabricAvilabilityByDyeingOrderRequisitionTotalReportWe(object:any): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}inquire-fabric-avilability-by-dyeing-order-requisition-total-report-we`;
     return this._http.post(url,object,
       {
         headers: new HttpHeaders({

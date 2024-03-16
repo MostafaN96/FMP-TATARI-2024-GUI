@@ -89,10 +89,10 @@ export class ShowAllDyeingOrderWdComponent implements OnInit {
       filter = this.selectedSellerName
 
       if (this.selectedSellerName[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -122,10 +122,10 @@ export class ShowAllDyeingOrderWdComponent implements OnInit {
       filter = this.selectedNote
 
       if (this.selectedNote[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -158,10 +158,10 @@ export class ShowAllDyeingOrderWdComponent implements OnInit {
       filter = this.selectedWorkOrderNumber
 
       if (this.selectedWorkOrderNumber[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -192,10 +192,10 @@ export class ShowAllDyeingOrderWdComponent implements OnInit {
       filter = this.dateFilters
 
       if (event != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -286,10 +286,13 @@ export class ShowAllDyeingOrderWdComponent implements OnInit {
 
   goToRequisitionPage(typeOfRequisition, element?) {
     if (typeOfRequisition == 'add_yarn_order_requisition') {
-      return `/dashboard/${this._constantsService.ROUTING_LINKS[155]}`
+      return `/dashboard/${this._constantsService.ROUTING_LINKS[163]}`
     }
-    else if (typeOfRequisition == 'show_all_yarn_order_requisition') {
-      return `/dashboard/${this._constantsService.ROUTING_LINKS[156]}`
+    else if (typeOfRequisition == 'show_all_opened_yarn_order_requisition') {
+      return `/dashboard/${this._constantsService.ROUTING_LINKS[164]}`
+    }
+    else if (typeOfRequisition == 'show_all_closed_yarn_order_requisition') {
+      return `/dashboard/${this._constantsService.ROUTING_LINKS[175]}`
     }
     else if (typeOfRequisition == 'add_manufacturing_order_requisition') {
       return `/dashboard/${this._constantsService.ROUTING_LINKS[131]}`

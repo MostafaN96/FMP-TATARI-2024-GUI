@@ -11,8 +11,8 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 import { FabricService } from "src/app/services/main/fabric.service";
 import { BussinessmanService } from "src/app/services/main/bussinessman.service";
 import { DyeingOrderWdService } from "src/app/services/main/wd/dyeing-order-wd.service";
-import { ColorCategoryService } from "../../../../services/main/color-category.service";
-import { ColorService } from "../../../../services/main/color.service";
+import { ColorCategoryService } from "src/app/services/main/color-category.service";
+import { ColorService } from "src/app/services/main/color.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -34,6 +34,7 @@ export class AddDyeingOrderWdComponent implements OnInit {
   addOrderForm = new FormGroup({
     date: new FormControl(new Date(), [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
+    name: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     sellerId: new FormControl(null, [Validators.required]),
     items: new FormArray([this.initItem()]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),

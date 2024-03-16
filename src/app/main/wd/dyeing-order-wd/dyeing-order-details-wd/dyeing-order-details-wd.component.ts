@@ -1,15 +1,15 @@
-import { Component, Inject, OnInit, ViewChild,} from '@angular/core';
+import { Component, OnInit, ViewChild,} from '@angular/core';
 
 // Angular Material Table
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 
 // Shared Service
-import { SharedComponentService } from "../../../../services/shared-component.service";
-import { ExportDataService } from "../../../../services/export-data.service";
+import { SharedComponentService } from "src/app/services/shared-component.service";
+import { ExportDataService } from "src/app/services/export-data.service";
 
 // Call Service
-import { DyeingOrderDetailsWdService } from "../../../../services/main/wd/dyeing-order-details-wd.service";
+import { DyeingOrderDetailsWdService } from "src/app/services/main/wd/dyeing-order-details-wd.service";
 
 // Route
 import { ActivatedRoute, Router } from '@angular/router';

@@ -8,8 +8,8 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 // Call Service
 import { FabricService } from "src/app/services/main/fabric.service";
 import { DyeingOrderDetailsWdService } from "src/app/services/main/wd/dyeing-order-details-wd.service";
-import { ColorCategoryService } from "../../../../services/main/color-category.service";
-import { ColorService } from "../../../../services/main/color.service";
+import { ColorCategoryService } from "src/app/services/main/color-category.service";
+import { ColorService } from "src/app/services/main/color.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";

@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // My Component
-import { SellRequisitionDetailsComponent } from '../../../../../main/wa/sell-requisition-wa/sell-requisition-details/sell-requisition-details.component';
+import { SellRequisitionDetailsComponent } from 'src/app/main/wa/sell-requisition-wa/sell-requisition-details/sell-requisition-details.component';
 
 export const routes: Routes = [
 

@@ -1,0 +1,242 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass">
+            <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">إضافة طلبية شراء خيوط</h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <form [formGroup]="addOrderForm" (ngSubmit)="onAddRequisition()">
+            <div [class]="_sharedComponentService.subMainPageForm2Class">
+                <!-- Form Body -->
+                <div [class]="_sharedComponentService.gridForm3Class">
+                    <div class="col">
+                        <!-- Date -->
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
+                            <mat-label>التاريخ</mat-label>
+                            <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
+                            <mat-datepicker-toggle [disabled]="false" matSuffix
+                                [for]="datepicker"></mat-datepicker-toggle>
+                            <mat-datepicker [disabled]="false" #datepicker>
+
+                            </mat-datepicker>
+                            <mat-error *ngIf="!addOrderForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addOrderForm.controls['date'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addOrderForm.controls['date'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>اسم الطلبية</mat-label>
+                            <input autocomplete="off" type="text" matInput formControlName="name"
+                                placeholder="مثال: طلبية-1" [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="!addOrderForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addOrderForm.controls['name'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addOrderForm.controls['name'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- requisitionsOrder -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='requisitionsOrder' [fields]='fieldsRequisitionOrderName'
+                            (filtering)="onFilteringRequisitionOrderName($event)"
+                            [placeholder]='textRequisitionsOrderName' [autofill]='autofill' formControlName="orderId"
+                            class="ejs-autocomplete w-100" (change)="selectRequisitionsOrderName($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="addOrderForm.controls['orderId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="addOrderForm.controls['orderId'].hasError('required') && (addOrderForm.controls['orderId'].dirty 
+                            || addOrderForm.controls['orderId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- Note -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label> ملاحظات </mat-label>
+                            <textarea matInput rows="1" matTextareaAutosize placeholder="ملاحظات"
+                                formControlName="note"></textarea>
+                            <mat-error *ngIf="addOrderForm.controls['note'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+                <!-- Form Builder Section -->
+                <div class="row row-cols-1">
+                    <div class="col">
+                        <button class="btn-add-item btn-add-pos" type="button" (click)="addItem()" *ngIf="addOrderForm">
+                            <span>+</span>
+                        </button>
+
+                        <table class="table table-style table-sm table-bordered table-striped table-responsive">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5px;">
+                                        التسلسل
+                                    </th>
+
+                                    <th style="max-width: 130px;">
+                                        نوع الخيط
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        كود الخيط
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        الكمية
+                                    </th>
+
+                                    <th style="max-width: 100px;">
+                                        الملاحظات
+                                    </th>
+
+                                    <th style="width: 60px;">
+                                        حذف
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="items">
+                                <tr *ngFor="let row of getItem(addOrderForm);let index = index;">
+                                    <ng-container [formGroupName]="index">
+                                        <td>
+                                            <label style="width: 5px;">{{index+1}}</label>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='yarns' [fields]='fieldsYarn'
+                                                (filtering)="onFilteringYarnName($event)" [placeholder]='textYarn'
+                                                [autofill]='autofill' formControlName="yarnName"
+                                                (change)='selectYarn($event, row)' [errorStateMatcher]="matcher">
+                                            </ejs-autocomplete>
+                                            <small class="text-danger" *ngIf="row.get('yarnId').hasError('pattern')"
+                                                [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger" *ngIf="row.get('yarnId').hasError('required') && (row.get('yarnId').dirty 
+                                                || row.get('yarnId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 100px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    كود الخيط
+                                                </mat-label>
+                                                <input matInput placeholder="كود الخيط" readonly
+                                                    formControlName="yarnCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- quantity -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>الكمية </mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="quantity" placeholder="مثال: 12000"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                    required />
+                                                <mat-error class="text-danger"
+                                                    *ngIf="row.get('quantity').hasError('incorrect')">
+                                                    الكمية المدخلة غير متوفرة
+                                                </mat-error>
+                                                <mat-error
+                                                    *ngIf="row.get('quantity').hasError('required') && (row.get('quantity').dirty 
+                                                                                            || row.get('quantity').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('quantity').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Note -->
+                                        <td style="max-width: 100px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label> الملاحظات </mat-label>
+                                                <textarea matInput rows="1" matTextareaAutosize placeholder="الملاحظات"
+                                                    formControlName="note"></textarea>
+                                                <mat-error *ngIf="row.get('note').hasError('invalid') && (row.get('note').dirty 
+                                                    || row.get('note').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('note').hasError('pattern')">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_message">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td>
+                                            <button *ngIf="index !== 0" class="btn-del-item"
+                                                (click)="removeItem(index)">
+                                                -
+                                            </button>
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td>الاجمالي</td>
+
+                                    <td colspan="2"></td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(addOrderForm, 'items',
+                                        'quantity') | number}}</td>
+                                    <td colspan="6"></td>
+                                </tr>
+                            </tfoot>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons Section -->
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto g-0">
+                    <div class="col">
+                        <button type="submit" class="btn-style submit-btn">إضافة</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

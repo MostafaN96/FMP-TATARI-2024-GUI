@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { Router } from '@angular/router';
 
@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import { ConfirmationService } from 'primeng/api';
 
 // Shared Service
-import { SharedComponentService } from "../../../../services/shared-component.service";
+import { SharedComponentService } from "src/app/services/shared-component.service";
 
 // Call Service
 import { YarnOrderRequisitionWaService } from "src/app/services/main/wa/yarn-order-requisition-wa.service";

@@ -95,6 +95,16 @@ export class FabricService {
         })
       });
   }
+
+  selectStoredFabricsByFabricIdWc(fabricId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}stored-fabrics-by-fabric-wc/${fabricId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
   
   selectBySupplierByWarehouseWc(supplierId: string, warehouseId: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}stored-wc-fabrics/${supplierId}/${warehouseId}`;

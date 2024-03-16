@@ -229,9 +229,19 @@
             </div>
 
         </div>
+        <!-- Buttons Section -->
+        <div *ngIf="!showAddDetails" [class]="_sharedComponentService.btnSectionClass">
+            <div class="row row-cols-auto">
+                <div class="col">
+                    <button (click)="showAddDetailsFunc()" type="button" class="btn-style submit-btn">اضافة
+                        بيانات</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </section>
 
 <app-update-add-requisition-wa *ngIf="selectedDataToUpdate" [hidden]="!hideItemHistory" [selectedData]="selectedDataToUpdate"></app-update-add-requisition-wa>
 
-<app-add-details-wa></app-add-details-wa>
+<app-add-details-wa *ngIf="showAddDetails"></app-add-details-wa>

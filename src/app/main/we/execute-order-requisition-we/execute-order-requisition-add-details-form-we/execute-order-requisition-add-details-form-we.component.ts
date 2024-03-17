@@ -11,10 +11,12 @@ import { ValidatorPatternService } from 'src/app/services/validator-pattern.serv
 import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.service';
 
 // Call Service
-import { FabricOrderRequisitionWcService } from "src/app/services/main/wc/fabric-order-requisition-wc.service";
-import { ExecuteOrderRequisitionDetailsWcService } from "src/app/services/main/wc/execute-order-requisition-details-wc.service";
+import { DyedFabricOrderRequisitionWeService } from "src/app/services/main/we/dyed-fabric-order-requisition-we.service";
+import { ExecuteOrderRequisitionDetailsWeService } from "src/app/services/main/we/execute-order-requisition-details-we.service";
 import { FabricService } from "src/app/services/main/fabric.service";
-import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
+import { ReportWeService } from "src/app/services/main/we/report-we.service";
+import { ColorCategoryService } from "src/app/services/main/color-category.service";
+import { ColorService } from "src/app/services/main/color.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -27,21 +29,21 @@ import { QuantityOccurrencesValidationService } from "src/app/services/main/quan
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-execute-order-requisition-add-details-form-wc',
-  templateUrl: './execute-order-requisition-add-details-form-wc.component.html',
-  styleUrls: ['./execute-order-requisition-add-details-form-wc.component.css']
+  selector: 'app-execute-order-requisition-add-details-form-we',
+  templateUrl: './execute-order-requisition-add-details-form-we.component.html',
+  styleUrls: ['./execute-order-requisition-add-details-form-we.component.css']
 })
-export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit {
+export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit {
+
 
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('dt2') dt2: Table | undefined;
   loadingDyeingFabrics: boolean = true;
-  selectedStoredYarnsArrayValues: any[] = [];
-  selectedFabricCodes: any[] = []
-  selectedFabricNames: any[] = []
-  selectedConsigmentYarn: any[] = []
+  selectedStoredDyedFabricsArrayValues: any[] = [];
+  selectedDyedFabricCodes: any[] = []
+  selectedDyedFabricNames: any[] = []
+  selectedConsigmentDyeing: any[] = []
   selectedWarehouses: any[] = []
-  selectedYarnLotCode: any[] = []
   selectedTypeOfRequisition: any[] = []
 
   //////////////////////////////////// PrimeNG /////////////////////////////////
@@ -53,7 +55,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
   addRequisitionForm = new FormGroup({
     id: new FormControl("", [Validators.required]),
     warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_ID, [Validators.required]),
-    wcFabricOrderRequisitionId: new FormControl("", [Validators.required]),
+    weDyedFabricOrderRequisitionId: new FormControl("", [Validators.required]),
     items: new FormArray([]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
@@ -61,32 +63,37 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
 
   ///////////////////////////////// General ////////////////////////////////////////////////
   requisitionDetails: any = []
-  orderedFabrics: any = []
-  storedWcFabrics: any = []
-  fabricOrderRequisitionId = ""
-  fabricOrderRequisitionDetailsId = ""
-  fabricOrderCurrentQuantity = "0"
+  orderedDyedFabrics: any = []
+  storedWeFabrics: any = []
+  colorCategories: any = []
+  colors: any = []
+  dyedFabricOrderRequisitionId = ""
+  dyedFabricOrderRequisitionDetailsId = ""
+  dyedFabricOrderCurrentQuantity = "0"
 
-  fabricsPricesDetails: any[] = [];
-  getListFabricPrices: any = []
+  dyedFabricsPricesDetails: any[] = [];
+  getListDyedFabricPrices: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
-  selectedStoredFabricsMap = new Map()
+  selectedStoredDyedFabricsMap = new Map()
   filter = "";
-  selectedStoredFabrics: any = {}
-  selectedOrderedFabric: any = {}
+  selectedStoredDyedFabrics: any = {}
+  selectedOrderedDyedFabric: any = {}
+  selectedColorCategories: any = {}
+  selectedColors: any = {}
   isShowAdd = true
-
 
   constructor(
     private _fabricService: FabricService,
-    private _fabricOrderRequisitionWcService: FabricOrderRequisitionWcService,
-    private _executeOrderRequisitionDetailsWcService: ExecuteOrderRequisitionDetailsWcService,
+    private _dyedFabricOrderRequisitionWeService: DyedFabricOrderRequisitionWeService,
+    private _executeOrderRequisitionDetailsWeService: ExecuteOrderRequisitionDetailsWeService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
     private _sessionManagerService: SessionManagerService,
-    private _reportWcService: ReportWcService,
+    private _reportWeService: ReportWeService,
+    private _colorCategoryService: ColorCategoryService,
+    private _colorService: ColorService,
     public _exportDataService: ExportDataService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
     private primengConfig: PrimeNGConfig,
@@ -101,26 +108,32 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
   ngOnInit(): void {
     this.getData()
 
-    this.customFilterForFabricCodes();
-    this.customFilterForFabricNames();
+    this.customFilterForDyedFabricCodes();
+    this.customFilterForDyedFabricNames();
+    this.customFilterForColorCategory();
+    this.customFilterForColorName();
 
     this.customFilterForWarehouse();
     this.customFilterForTypeOfRequisition();
-    this.customFilterForConsigmentManufacturing();
+    this.customFilterForConsigmentDyeing();
   }
 
   getData() {
     this.route.queryParams
       .subscribe(params => {
-        this._executeOrderRequisitionDetailsWcService.selectOne(params['id']).subscribe((response: any) => {
+        this._colorCategoryService.selectAll().subscribe((response: any) => {
+          this.colorCategories = response
+        })
+
+        this._executeOrderRequisitionDetailsWeService.selectOne(params['id']).subscribe((response: any) => {
           this.requisitionDetails = response
           
           this.addRequisitionForm.controls['id'].setValue(this.requisitionDetails[0]?.requisition_id)
-          this.addRequisitionForm.controls['wcFabricOrderRequisitionId'].setValue(this.requisitionDetails[0]?.wc_fabric_order_requisition_id)
+          this.addRequisitionForm.controls['weDyedFabricOrderRequisitionId'].setValue(this.requisitionDetails[0]?.we_dyed_fabric_order_requisition_id)
           this.addRequisitionForm.controls['warehouseId'].setValue(this.requisitionDetails[0]?.warehouse_id)
 
-          this._fabricOrderRequisitionWcService.selectFabricsOrderRequisition(this.requisitionDetails[0]?.wc_fabric_order_requisition_id).subscribe((response: any) => {
-            this.orderedFabrics = response
+          this._dyedFabricOrderRequisitionWeService.selectDyedFabricsOrderRequisition(this.requisitionDetails[0]?.we_dyed_fabric_order_requisition_id).subscribe((response: any) => {
+            this.orderedDyedFabrics = response
     
             // PrimeNG Table
             this.primengConfig.ripple = true;
@@ -134,71 +147,81 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
 
   selectRowFabric(objectData: any) {
     if (objectData) {
-      this._fabricService.selectStoredFabricsByFabricIdWc(objectData.fabric_id).subscribe((response: any) => {
-        this.storedWcFabrics = response
-        this.fabricOrderRequisitionId = objectData.requisition_id
-        this.fabricOrderRequisitionDetailsId = objectData.id
-        this.fabricOrderCurrentQuantity = objectData.current_quantity
+      this._fabricService.selectStoredDyedFabricsByDyedFabricByColorByColorCodeWe(objectData.dyed_fabric_id, objectData.color_id, objectData.color_code).subscribe((response: any) => {
+        this.storedWeFabrics = response
+        this.dyedFabricOrderRequisitionId = objectData.requisition_id
+        this.dyedFabricOrderRequisitionDetailsId = objectData.id
+        this.dyedFabricOrderCurrentQuantity = objectData.current_quantity
         // PrimeNG Table
         this.loading = false;
       })
     } else {
-      this.storedWcFabrics = []
-      this.fabricOrderRequisitionId = ""
-      this.fabricOrderRequisitionDetailsId = ""
-      this.fabricOrderCurrentQuantity = "0"
+      this.storedWeFabrics = []
+      this.dyedFabricOrderRequisitionId = ""
+      this.dyedFabricOrderRequisitionDetailsId = ""
+      this.dyedFabricOrderCurrentQuantity = "0"
     }
   }
 
-  getSelectedStoredFabrics(selectedStoredFabrics: any) {
+  getSelectedStoredDyedFabrics(selectedStoredDyedFabrics: any) {
 
-    if (this.selectedStoredYarnsArrayValues.filter(objOfArr =>
-      objOfArr.requisition_details_id == selectedStoredFabrics.requisition_details_id
+    if (this.selectedStoredDyedFabricsArrayValues.filter(objOfArr =>
+      objOfArr.requisition_details_id == selectedStoredDyedFabrics.requisition_details_id
     ).length < 1) {
-      this.selectedStoredFabricsMap.set(selectedStoredFabrics, selectedStoredFabrics?.current_quantity)
+      this.selectedStoredDyedFabricsMap.set(selectedStoredDyedFabrics, selectedStoredDyedFabrics?.current_quantity)
 
 
-      this.selectedStoredYarnsArrayValues.push(selectedStoredFabrics);
-      this.addItem(selectedStoredFabrics)
+      this.selectedStoredDyedFabricsArrayValues.push(selectedStoredDyedFabrics);
+      this.addItem(selectedStoredDyedFabrics)
       // Get Prices
-      this._reportWcService.selectPriceByFabricByConsigmentManufacturingInWc(selectedStoredFabrics.id, selectedStoredFabrics.consigment_manufacturing_id).subscribe((response: any) => {
-        this.fabricsPricesDetails = response
+      this._reportWeService.selectPriceWe(selectedStoredDyedFabrics.id).subscribe((response: any) => {
+        this.dyedFabricsPricesDetails = response
 
-        this.getListFabricPrices[this.selectedStoredYarnsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.fabricsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsPricesDetails), parseFloat(this.fabricsPricesDetails[0].latest_price)]
+        this.getListDyedFabricPrices[this.selectedStoredDyedFabricsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.dyedFabricsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.dyedFabricsPricesDetails), parseFloat(this.dyedFabricsPricesDetails[0].latest_price)]
       })
     }
 
   }
 
   // Initialize Form Builder
-  initItem(selectedStoredFabrics: any) {
+  initItem(selectedStoredDyedFabrics: any) {
     return new FormGroup({
-      typeOfRequisition: new FormControl(selectedStoredFabrics.type_of_requisition, [Validators.required]),
-      typeOfRequisitionTrans: new FormControl(selectedStoredFabrics.type_of_requisition_trans, [Validators.required]),
-      wcRequisitionDetailsId: new FormControl(selectedStoredFabrics.requisition_details_id, [Validators.required]),
-      wcFabricOrderRequisitionId: new FormControl(this.fabricOrderRequisitionId, [Validators.required]),
-      wcFabricOrderRequisitionDetailsId: new FormControl(this.fabricOrderRequisitionDetailsId, [Validators.required]),
-      fabricId: new FormControl(selectedStoredFabrics.id, [Validators.required]),
-      fabricCode: new FormControl(selectedStoredFabrics.code),
-      fabricName: new FormControl(selectedStoredFabrics.name),
-      fromWarehouseId: new FormControl(selectedStoredFabrics.warehouse_id, [Validators.required]),
-      fromConsigmentManufacturingId: new FormControl(selectedStoredFabrics.consigment_manufacturing_id, [Validators.required]),
-      consigmentManufacturingNumber: new FormControl(selectedStoredFabrics.consigment_manufacturing_number, [Validators.required]),
-      newConsigmentManufacturingNumber: new FormControl(this.orderedFabrics[0].order_name, [Validators.required]),
-      wcId: new FormControl(selectedStoredFabrics.wc_id, [Validators.required]),
+      typeOfRequisition: new FormControl(selectedStoredDyedFabrics.type_of_requisition, [Validators.required]),
+      typeOfRequisitionTrans: new FormControl(selectedStoredDyedFabrics.type_of_requisition_trans, [Validators.required]),
+      weRequisitionDetailsId: new FormControl(selectedStoredDyedFabrics.requisition_details_id, [Validators.required]),
+      weDyedFabricOrderRequisitionId: new FormControl(this.dyedFabricOrderRequisitionId, [Validators.required]),
+      weDyedFabricOrderRequisitionDetailsId: new FormControl(this.dyedFabricOrderRequisitionDetailsId, [Validators.required]),
+      dyedFabricId: new FormControl(selectedStoredDyedFabrics.id, [Validators.required]),
+      dyedFabricCode: new FormControl(selectedStoredDyedFabrics.code),
+      dyedFabricName: new FormControl(selectedStoredDyedFabrics.name),
+      fromWarehouseId: new FormControl(selectedStoredDyedFabrics.warehouse_id, [Validators.required]),
+      fromConsigmentDyeingId: new FormControl(selectedStoredDyedFabrics.consigment_dyeing_id, [Validators.required]),
+      consigmentDyeingNumber: new FormControl(selectedStoredDyedFabrics.consigment_dyeing_number, [Validators.required]),
+      newConsigmentDyeingNumber: new FormControl(this.orderedDyedFabrics[0].order_name, [Validators.required]),
+      weId: new FormControl(selectedStoredDyedFabrics.we_id, [Validators.required]),
+      colorCategoryId: new FormControl(selectedStoredDyedFabrics.color_category_id, [Validators.required]),
+      colorCategoryName: new FormControl(selectedStoredDyedFabrics.color_category_name, [Validators.required]),
+      colorId: new FormControl(selectedStoredDyedFabrics.color_id, [Validators.required]),
+      colorName: new FormControl(selectedStoredDyedFabrics.color_name_code),
+      colorCode: new FormControl(selectedStoredDyedFabrics.color_code),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      quantity: new FormControl((this.fabricOrderCurrentQuantity <= selectedStoredFabrics.current_quantity) ? this.fabricOrderCurrentQuantity : selectedStoredFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      validQuantity: new FormControl(selectedStoredFabrics.current_quantity),
+      quantity: new FormControl((this.dyedFabricOrderCurrentQuantity <= selectedStoredDyedFabrics.current_quantity) ? this.dyedFabricOrderCurrentQuantity : selectedStoredDyedFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      validQuantity: new FormControl(selectedStoredDyedFabrics.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
 
-  addItem(selectedStoredFabrics: any) {
-    this.selectedStoredYarnsArrayValues.indexOf(selectedStoredFabrics)
+  addItem(selectedStoredDyedFabrics: any) {
+    this.selectedStoredDyedFabricsArrayValues.indexOf(selectedStoredDyedFabrics)
     const control = <FormArray>this.addRequisitionForm.get('items');
-    let row = this.initItem(selectedStoredFabrics)
+    let row = this.initItem(selectedStoredDyedFabrics)
     control.push(row);
     this.goalQuantityOfOrder()
+
+    // get Colors
+    this._colorService.selectByCategory(selectedStoredDyedFabrics.color_category_id).subscribe((response: any) => {
+      this.colors[control.length] = response        
+    })
   }
 
   getItem(form: any) {
@@ -210,8 +233,8 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
     control.removeAt(index);
 
     // Price
-    this.getListFabricPrices.splice(index, 1)
-    this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.selectedStoredFabricsMap, index, objectData, this.selectedStoredYarnsArrayValues)
+    this.getListDyedFabricPrices.splice(index, 1)
+    this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.selectedStoredDyedFabricsMap, index, objectData, this.selectedStoredDyedFabricsArrayValues)
   }
 
 
@@ -236,15 +259,17 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
   goalQuantityOfOrder() {
     const control = <FormArray>this.addRequisitionForm.get('items');
 
-    for (let i = 0; i < this.orderedFabrics.length; i++) {
-      const orderedYarn = this.orderedFabrics[i];
-      orderedYarn.added_quantity = 0
+    for (let i = 0; i < this.orderedDyedFabrics.length; i++) {
+      const orderedDyedFabric = this.orderedDyedFabrics[i];
+      orderedDyedFabric.added_quantity = 0
 
       for (let j = 0; j < control.controls.length; j++) {
         const controls = control.controls[j];
 
-        if (orderedYarn.fabric_id == controls['controls']['fabricId'].value) {
-          orderedYarn.added_quantity = parseFloat(orderedYarn.added_quantity + parseFloat(controls['controls']['quantity'].value))
+        if (orderedDyedFabric.dyed_fabric_id == controls['controls']['dyedFabricId'].value &&
+        orderedDyedFabric.color_id == controls['controls']['colorId'].value &&
+        orderedDyedFabric.color_code == controls['controls']['colorCode'].value ) {
+          orderedDyedFabric.added_quantity = parseFloat(orderedDyedFabric.added_quantity + parseFloat(controls['controls']['quantity'].value))
         }
       }
 
@@ -259,14 +284,14 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
     if (this.addRequisitionForm.valid && this.addRequisitionForm.get('items')!['controls'].length > 0) {
       if (
         this._quantityOccurrencesValidationService.validateQuantityDynamic(
-          this.selectedStoredFabricsMap, this.addRequisitionForm.controls['items'].value,
-          'id', 'fabricId',
-          'consigment_manufacturing_id', 'consigmentManufacturingId',
+          this.selectedStoredDyedFabricsMap, this.addRequisitionForm.controls['items'].value,
+          'id', 'dyedFabricId',
+          'consigment_dyeing_id', 'consigmentDyeingId',
           'wcFabricOrderRequisitionDetailsId', 'id',
           'quantity', 'name')) {
 
         this._constantsService.spinner.show()
-        this._executeOrderRequisitionDetailsWcService.add(this.addRequisitionForm.value).subscribe(response => {
+        this._executeOrderRequisitionDetailsWeService.add(this.addRequisitionForm.value).subscribe(response => {
           this._constantsService.spinner.hide();
           if (response.msg == "data inserted") {
             this._constantsService.successAddMessage()
@@ -330,12 +355,12 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
     });
   }
 
-  customFilterForConsigmentManufacturing() {
-    const customFilterName = "consigment-manufacturing-number-filter";
+  customFilterForConsigmentDyeing() {
+    const customFilterName = "consigment-dyeing-number-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedConsigmentYarn
+      filter = this.selectedConsigmentDyeing
 
-      if (this.selectedConsigmentYarn[0] != null) {
+      if (this.selectedConsigmentDyeing[0] != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
@@ -347,7 +372,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
 
           // for (let i = 0; i < value.length; i++) {
           for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].consigment_manufacturing_number) {
+            if (value == filter[j].consigment_dyeing_number) {
               // count++
               // if (count == filter.length) {
               return true;
@@ -402,15 +427,14 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
   clear(table: Table) {
     table.clear();
     table.reset();
-    this.selectedConsigmentYarn = []
+    this.selectedConsigmentDyeing = []
     this.selectedWarehouses = []
-    this.selectedYarnLotCode = []
     this.selectedTypeOfRequisition = []
     // this.getData();
   }
 
-  onMultiselectedConsigmentYarn(event) {
-    this.selectedConsigmentYarn = event
+  onMultiselectedConsigmentDyeing(event) {
+    this.selectedConsigmentDyeing = event
     this.dt2?._filter()
   }
 
@@ -419,22 +443,17 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
     this.dt1?._filter()
   }
 
-  onMultiselectedYarnLotCodes(event) {
-    this.selectedYarnLotCode = event
-    this.dt1?._filter()
-  }
-
   onMultiselectedTypeOfRequisition(event) {
     this.selectedTypeOfRequisition = event
     this.dt1?._filter()
   }
 
-  customFilterForFabricCodes() {
-    const customFilterName = "fabric-code-filter";
+  customFilterForDyedFabricCodes() {
+    const customFilterName = "dyed-fabric-code-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedFabricCodes
+      filter = this.selectedDyedFabricCodes
 
-      if (this.selectedFabricCodes[0] != null) {
+      if (this.selectedDyedFabricCodes[0] != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
@@ -446,7 +465,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
 
           // for (let i = 0; i < value.length; i++) {
           for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].fabric_code) {
+            if (value == filter[j].dyed_fabric_code) {
               // count++
               // if (count == filter.length) {
               return true;
@@ -464,12 +483,12 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
   }
 
 
-  customFilterForFabricNames() {
-    const customFilterName = "fabric-name-filter";
+  customFilterForDyedFabricNames() {
+    const customFilterName = "dyed-fabric-name-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedFabricNames
+      filter = this.selectedDyedFabricNames
 
-      if (this.selectedFabricNames[0] != null) {
+      if (this.selectedDyedFabricNames[0] != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
@@ -481,7 +500,76 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
 
           // for (let i = 0; i < value.length; i++) {
           for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].fabric_name) {
+            if (value == filter[j].dyed_fabric_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  
+  customFilterForColorCategory() {
+    const customFilterName = "color-category-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedColorCategories
+
+      if (this.selectedColorCategories[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].color_category_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForColorName() {
+    const customFilterName = "color-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedColors
+
+      if (this.selectedColors[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].color_name) {
               // count++
               // if (count == filter.length) {
               return true;
@@ -501,18 +589,30 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
   clearOrderFabrics(table: Table) {
     table.clear();
     table.reset();
-    this.selectedFabricCodes = []
-    this.selectedFabricNames = []
+    this.selectedDyedFabricCodes = []
+    this.selectedDyedFabricNames = []
+    this.selectedColorCategories = []
+    this.selectedColors = []
   }
 
-  onMultiselectedFabricCodes(event) {
-    this.selectedFabricCodes = event
+  onMultiselectedDyedFabricCodes(event) {
+    this.selectedDyedFabricCodes = event
     this.dt2?._filter()
   }
 
-  onMultiselectedFabricNames(event) {
-    this.selectedFabricNames = event
+  onMultiselectedDyedFabricNames(event) {
+    this.selectedDyedFabricNames = event
     this.dt2?._filter()
+  }
+
+  onMultiselectedColorCategory(event) {
+    this.selectedColorCategories = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedColorName(event) {
+    this.selectedColors = event
+    this.dt1?._filter()
   }
 
 

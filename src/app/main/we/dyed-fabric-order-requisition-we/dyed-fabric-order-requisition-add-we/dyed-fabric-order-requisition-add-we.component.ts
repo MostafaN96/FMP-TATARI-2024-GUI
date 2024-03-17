@@ -234,10 +234,7 @@ removeItem(index: number){
     }
     else {
       this._colorService.selectByCategory(event.itemData.id).subscribe((response: any) => {
-        this.colors[index] = response
-
-        console.log(this.colors);
-        
+        this.colors[index] = response        
       })
     }
   }

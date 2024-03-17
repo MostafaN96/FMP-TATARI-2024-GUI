@@ -162,6 +162,17 @@ export class FabricService {
     return this._http.get(url);
   }
 
+  selectStoredDyedFabricsByDyedFabricByColorByColorCodeWe(dyedFabricId: string, colorId: string, colorCode: string): Observable<any> {
+    this.urlService = this.urlServiceDyed
+    const url = `${this._constantsService.BASE_URL}${this.urlService}stored-dyed-fabrics-by-dyed-fabric-by-color-by-color-code-we/${dyedFabricId}/${colorId}/${colorCode}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   selectRemainingInWdOfDyeing(id: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}remaining-in-wd-of-dyeing/${id}`;
     return this._http.get(url);

@@ -202,7 +202,12 @@
                                                         <th>
                                                             كود القماش الجاهز
                                                         </th>
-
+                                                        <th>
+                                                            فئة اللون
+                                                        </th>
+                                                        <th>
+                                                            اللون
+                                                        </th>
                                                         <th>
                                                             الكمية المطلوبة
                                                         </th>
@@ -232,6 +237,14 @@
 
                                                         <td>
                                                             {{ requestionDetailsData.dyed_fabric_code}}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ requestionDetailsData.color_category_name}}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ requestionDetailsData.color_name}} ({{ requestionDetailsData.color_code}})
                                                         </td>
 
                                                         <td>
@@ -281,11 +294,12 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td>الإجمالي</td>
-                                                        <td></td>
+                                                        <td [colSpan]="3"></td>
                                                         <td>
                                                             {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
                                                             'quantity') | number}}
                                                         </td>
+                                                       
                                                         <td>
                                                             {{
                                                                 _sharedComponentService.getTotalQuantity(element.requestionDetails,

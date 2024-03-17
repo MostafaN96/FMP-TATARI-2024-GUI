@@ -381,6 +381,10 @@ const routes: Routes = [
         { path: 'show-all-closed-dyed-fabric-order-requisition-we', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/dyed-fabric-order-requisition-we-modules/dyed-fabric-order-requisition-show-all-we-module/dyed-fabric-order-requisition-show-all-we-module.module').then(m => m.DyedFabricOrderRequisitionShowAllWeModuleModule) },
         { path: 'show-all-closed-dyed-fabric-order-requisition-we/closed-details', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/dyed-fabric-order-requisition-we-modules/dyed-fabric-order-requisition-details-we-module/dyed-fabric-order-requisition-details-we-module.module').then(m => m.DyedFabricOrderRequisitionDetailsWeModuleModule) },
 
+        // add-execute-order
+        { path: 'add-execute-order-requisition-we', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/execute-order-requisition-we-modules/execute-order-requisition-add-we-module/execute-order-requisition-add-we-module.module').then(m => m.ExecuteOrderRequisitionAddWeModuleModule) },
+        { path: 'show-all-execute-order-requisition-we', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/execute-order-requisition-we-modules/execute-order-requisition-show-all-we-module/execute-order-requisition-show-all-we-module.module').then(m => m.ExecuteOrderRequisitionShowAllWeModuleModule) },
+        { path: 'show-all-execute-order-requisition-we/details', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/execute-order-requisition-we-modules/execute-order-requisition-details-we-module/execute-order-requisition-details-we-module.module').then(m => m.ExecuteOrderRequisitionDetailsWeModuleModule) },
 
         // Reports
         { path: 'daily-report', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/reports-modules/daily-report-by-date-module/daily-report-by-date-module.module').then(m => m.DailyReportByDateModuleModule) },

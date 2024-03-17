@@ -1,0 +1,13 @@
+.table > :not(caption) > * > * {
+    padding: 0.6px;
+}
+
+td table tbody tr {
+    border: 1px solid #ccc;
+}
+
+td table tfoot tr {
+    border: 1px solid #ccc;
+    color: var(--primary-color-3) !important;
+    background-color: var(--primary-color-1) !important;
+}

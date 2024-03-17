@@ -10,14 +10,14 @@ import * as moment from 'moment';
 import { SharedComponentService } from "src/app/services/shared-component.service";
 
 // Call Service
-import { ExecuteOrderRequisitionWcService } from "src/app/services/main/wc/execute-order-requisition-wc.service";
+import { ExecuteOrderRequisitionWeService } from "src/app/services/main/we/execute-order-requisition-we.service";
 
 @Component({
-  selector: 'app-execute-order-requisition-show-all-wc',
-  templateUrl: './execute-order-requisition-show-all-wc.component.html',
-  styleUrls: ['./execute-order-requisition-show-all-wc.component.css']
+  selector: 'app-execute-order-requisition-show-all-we',
+  templateUrl: './execute-order-requisition-show-all-we.component.html',
+  styleUrls: ['./execute-order-requisition-show-all-we.component.css']
 })
-export class ExecuteOrderRequisitionShowAllWcComponent implements OnInit {
+export class ExecuteOrderRequisitionShowAllWeComponent implements OnInit {
 
   /////////////////// Variables ///////////////////
   executeOrderRequisitions: any[] = []
@@ -33,7 +33,7 @@ export class ExecuteOrderRequisitionShowAllWcComponent implements OnInit {
 
   constructor(
     public _sharedComponentService: SharedComponentService,
-    private _executeOrderRequisitionWcService: ExecuteOrderRequisitionWcService,
+    private _executeOrderRequisitionWeService: ExecuteOrderRequisitionWeService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
   ) {
@@ -48,7 +48,7 @@ export class ExecuteOrderRequisitionShowAllWcComponent implements OnInit {
 
   getData() {
     this.loading = true;
-    this._executeOrderRequisitionWcService.selectAll().subscribe((response: any) => {
+    this._executeOrderRequisitionWeService.selectAll().subscribe((response: any) => {
       this.executeOrderRequisitions = response
 
          // PrimeNG Table
@@ -76,7 +76,7 @@ export class ExecuteOrderRequisitionShowAllWcComponent implements OnInit {
   
             // for (let i = 0; i < value.length; i++) {
             for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].fabric_order_name) {
+              if (value == filter[j].dyed_fabric_order_name) {
                 // count++
                 // if (count == filter.length) {
                 return true;

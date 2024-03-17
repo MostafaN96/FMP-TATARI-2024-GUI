@@ -35,9 +35,9 @@ export class DyedFabricOrderRequisitionWeService {
       });
   }
 
-  // selectFabricsOrderRequisition
-  selectFabricsOrderRequisition(fabricOrderRequisitionId: string): Observable<any> {
-    let url = `${this._constantsService.BASE_URL}${this.urlService}fabrics-order-requisition/${fabricOrderRequisitionId}`;
+  // selectDyedFabricsOrderRequisition
+  selectDyedFabricsOrderRequisition(dyedFabricOrderRequisitionId: string): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}dyed-fabrics-order-requisition/${dyedFabricOrderRequisitionId}`;
 
     return this._http.get(url,
       {

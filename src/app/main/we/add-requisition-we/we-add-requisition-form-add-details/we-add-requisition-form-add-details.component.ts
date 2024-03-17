@@ -171,6 +171,7 @@ this.route.queryParams.subscribe(params => {
       colorCategoryId: new FormControl(null, [Validators.required]),
       colorId: new FormControl(null, [Validators.required]),
       colorCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
+      consigmentDyeingNumber: new FormControl("", [Validators.required]),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       dyeingCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),

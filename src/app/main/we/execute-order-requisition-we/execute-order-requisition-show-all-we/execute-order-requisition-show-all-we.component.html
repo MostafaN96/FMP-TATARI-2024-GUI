@@ -3,7 +3,7 @@
     <div [class]="_sharedComponentService.titlePageClass">
         <!-- Sub Title Page -->
         <div [class]="_sharedComponentService.subTitlePageClass">
-            <h2 [class]="_sharedComponentService.TitleTextClass">إظهار جميع اذونات تنفيذ الطلبية قماش خام</h2>
+            <h2 [class]="_sharedComponentService.TitleTextClass">إظهار جميع اذونات تنفيذ الطلبية قماش جاهز</h2>
         </div>
     </div>
     <!-- Form Section -->
@@ -41,16 +41,16 @@
                                             </div>
     
                                             <div class="col">
-                                                <p-columnFilter field="fabric_order_name" matchMode="order-name-filter" [showMenu]="false"
+                                                <p-columnFilter field="dyed_fabric_order_name" matchMode="order-name-filter" [showMenu]="false"
                                                     [showClearButton]="false">
                                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                                         <p-multiSelect [ngModel]="selectedOrderName"
-                                                            [options]="_sharedComponentService.uniqueArray(executeOrderRequisitions, 'fabric_order_name')"
+                                                            [options]="_sharedComponentService.uniqueArray(executeOrderRequisitions, 'dyed_fabric_order_name')"
                                                             (onChange)="onMultiselectedOrderName($event.value)"
-                                                            placeholder="البحث بـ الطلبية" optionLabel="fabric_order_name">
+                                                            placeholder="البحث بـ الطلبية" optionLabel="dyed_fabric_order_name">
                                                             <ng-template let-option pTemplate="item">
                                                                 <div class="p-multiselect-representative-option">
-                                                                    <span class="ml-1">{{option.fabric_order_name}}</span>
+                                                                    <span class="ml-1">{{option.dyed_fabric_order_name}}</span>
                                                                 </div>
                                                             </ng-template>
                                                         </p-multiSelect>
@@ -106,11 +106,11 @@
                                                 </div>
                                             </th>
     
-                                            <!-- fabric_order_name Column -->
-                                            <th pResizableColumn pSortableColumn="fabric_order_name">
+                                            <!-- dyed_fabric_order_name Column -->
+                                            <th pResizableColumn pSortableColumn="dyed_fabric_order_name">
                                                 <div class="flex justify-content-between align-items-center">
                                                     طلبية
-                                                    <p-sortIcon data-html2canvas-ignore="true" field="fabric_order_name">
+                                                    <p-sortIcon data-html2canvas-ignore="true" field="dyed_fabric_order_name">
                                                     </p-sortIcon>
                                                 </div>
                                             </th>
@@ -161,9 +161,9 @@
                                                 {{element.date | date:'EEEE, d/M/y' }}
                                             </td>
                                             
-                                            <!-- fabric_order_name Column -->
+                                            <!-- dyed_fabric_order_name Column -->
                                             <td>
-                                                {{ element.fabric_order_name }}
+                                                {{ element.dyed_fabric_order_name }}
                                             </td>
 
                                              <!-- requisition_details Column -->
@@ -172,12 +172,17 @@
                                                 <thead>
                                                     <tr>
                                                         <th>
-                                                            نوع القماش الخام
+                                                            نوع القماش الجاهز
                                                         </th>
                                                         <th>
-                                                            كود القماش الخام
+                                                            كود القماش الجاهز
                                                         </th>
-            
+                                                        <th>
+                                                            فئة اللون
+                                                        </th>
+                                                        <th>
+                                                            اللون
+                                                        </th>
                                                         <th>
                                                             الكمية
                                                         </th>
@@ -188,11 +193,19 @@
                                                     <tr *ngFor="let requestionDetailsData of element.details">
 
                                                         <td>
-                                                            {{ requestionDetailsData.fabric_name}}
+                                                            {{ requestionDetailsData.dyed_fabric_name}}
                                                         </td>
 
                                                         <td>
-                                                            {{ requestionDetailsData.fabric_code}}
+                                                            {{ requestionDetailsData.dyed_fabric_code}}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ requestionDetailsData.color_category_name}}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ requestionDetailsData.color_name}} ({{ requestionDetailsData.color_code}})
                                                         </td>
 
                                                         <td>
@@ -204,7 +217,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td>الإجمالي</td>
-                                                        <td></td>
+                                                        <td [colSpan]="3"></td>
                                                         <td>
                                                             {{_sharedComponentService.getTotalQuantity(element.details,
                                                             'quantity') | number}}

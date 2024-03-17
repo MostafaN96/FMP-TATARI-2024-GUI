@@ -159,6 +159,17 @@
                                 <td mat-footer-cell *matFooterCellDef></td>
                             </ng-container>
 
+                            <!-- consigment_dyeing_number Column -->
+                            <ng-container matColumnDef="consigment_dyeing_number">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>رقم الرسالة </b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.consigment_dyeing_number}}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef></td>
+                            </ng-container>
+
                             <!-- work_order_number_details Column -->
                             <ng-container matColumnDef="work_order_number_details">
                                 <th mat-header-cell mat-sort-header *matHeaderCellDef>

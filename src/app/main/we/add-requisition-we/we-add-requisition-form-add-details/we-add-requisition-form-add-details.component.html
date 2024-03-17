@@ -43,6 +43,10 @@
                                         كود اللون
                                     </th>
 
+                                    <th style="max-width: 100px;">
+                                        رقم الرسالة
+                                    </th>
+
                                     <th style="width: 60px;">
                                         السعر
                                     </th>
@@ -194,6 +198,28 @@
                                                     </mat-error>
                                             </mat-form-field>
                                         </td>
+
+                                        <td class="table-td" style="max-width: 120px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>رقم الرسالة</mat-label>
+                                                <input autocomplete="off" matInput
+                                                    formControlName="consigmentDyeingNumber" placeholder="مثال: 6" [matAutocomplete]="auto"
+                                                    required>
+                                                    <mat-error *ngIf="row.get('consigmentDyeingNumber').hasError('required') && (row.get('consigmentDyeingNumber').dirty 
+                                                    || row.get('consigmentDyeingNumber').touched)">
+                                                        <label [innerHTML]="_sharedComponentService.required_field">
+                                                        </label>
+                                                    </mat-error>
+                                                    <mat-error *ngIf="row.get('consigmentDyeingNumber').hasError('required')">
+                                                        <label [innerHTML]="_sharedComponentService.required_field">
+                                                        </label>
+                                                    </mat-error>
+                                                    <mat-error *ngIf="row.get('consigmentDyeingNumber').hasError('pattern')">
+                                                        <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                        </label>
+                                                    </mat-error>
+                                            </mat-form-field>
+                                </td>
 
                                          <!-- Price -->
                                         <td class="table-td" style="max-width: 60px;">
@@ -387,7 +413,7 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="7"></td>
+                                  <td colspan="8"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td colspan="7"></td>

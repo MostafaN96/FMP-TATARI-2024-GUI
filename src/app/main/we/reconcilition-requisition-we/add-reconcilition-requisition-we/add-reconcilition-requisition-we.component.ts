@@ -119,6 +119,7 @@ export class AddReconcilitionRequisitionWeComponent implements OnInit {
       colorId: new FormControl(data.color_id, [Validators.required]),
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
+      consigmentDyeingNumber: new FormControl(data.consigment_dyeing_number),
       price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),

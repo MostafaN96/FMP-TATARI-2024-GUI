@@ -38,6 +38,7 @@ export class AddRequisitionDetailsWeComponent implements OnInit {
   'color_name',
   'color_code',
   'dyeing_code',
+  'consigment_dyeing_number',
   'work_order_number_details',
   'quantity','price','total', 'fabric_piece','storage_place', 'document','statement','update','report'];
   filter = "";

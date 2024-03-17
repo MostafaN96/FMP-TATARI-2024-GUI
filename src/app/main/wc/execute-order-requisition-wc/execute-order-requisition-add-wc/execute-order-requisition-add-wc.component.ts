@@ -39,10 +39,9 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   loadingDyeingFabrics: boolean = true;
   selectedStoredFabricsArrayValues: any[] = [];
   selectedFabricCodes: any[] = []
-  selectedYarnNames: any[] = []
-  selectedConsigmentYarn: any[] = []
+  selectedFabricNames: any[] = []
+  selectedConsigmentManufacturing: any[] = []
   selectedWarehouses: any[] = []
-  selectedYarnLotCode: any[] = []
   selectedTypeOfRequisition: any[] = []
 
   //////////////////////////////////// PrimeNG /////////////////////////////////
@@ -279,14 +278,14 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
     const control = <FormArray>this.addRequisitionForm.get('items');
     
     for (let i = 0; i < this.orderedFabrics.length; i++) {
-      const orderedYarn = this.orderedFabrics[i];
-      orderedYarn.added_quantity = 0
+      const orderedFabric = this.orderedFabrics[i];
+      orderedFabric.added_quantity = 0
 
       for (let j = 0; j < control.controls.length; j++) {
         const controls = control.controls[j] ;
         
-      if(orderedYarn.fabric_id == controls['controls']['fabricId'].value) {
-        orderedYarn.added_quantity = parseFloat(orderedYarn.added_quantity + parseFloat(controls['controls']['quantity'].value))
+      if(orderedFabric.fabric_id == controls['controls']['fabricId'].value) {
+        orderedFabric.added_quantity = parseFloat(orderedFabric.added_quantity + parseFloat(controls['controls']['quantity'].value))
       }
       }
       
@@ -382,9 +381,9 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   customFilterForConsigmentManufacturing() {
     const customFilterName = "consigment-manufacturing-number-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedConsigmentYarn
+      filter = this.selectedConsigmentManufacturing
 
-      if (this.selectedConsigmentYarn[0] != null) {
+      if (this.selectedConsigmentManufacturing[0] != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
@@ -451,25 +450,19 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   clear(table: Table) {
     table.clear();
     table.reset();
-    this.selectedConsigmentYarn = []
+    this.selectedConsigmentManufacturing = []
     this.selectedWarehouses = []
-    this.selectedYarnLotCode = []
     this.selectedTypeOfRequisition = []
     // this.getData();
   }
   
   onMultiselectedConsigmentManufacturing(event) {
-    this.selectedConsigmentYarn = event
+    this.selectedConsigmentManufacturing = event
     this.dt2?._filter()
   }
 
   onMultiselectedWarehouses(event) {
     this.selectedWarehouses = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedYarnLotCodes(event) {
-    this.selectedYarnLotCode = event
     this.dt1?._filter()
   }
 
@@ -516,9 +509,9 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   customFilterForFabricNames() {
     const customFilterName = "fabric-name-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedYarnNames
+      filter = this.selectedFabricNames
 
-      if (this.selectedYarnNames[0] != null) {
+      if (this.selectedFabricNames[0] != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
@@ -551,7 +544,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
     table.clear();
     table.reset();
     this.selectedFabricCodes = []
-    this.selectedYarnNames = []
+    this.selectedFabricNames = []
   }
 
   onMultiselectedFabricCodes(event) {
@@ -560,7 +553,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   }
 
   onMultiselectedFabricNames(event) {
-    this.selectedYarnNames = event
+    this.selectedFabricNames = event
     this.dt2?._filter()
   }
 

@@ -135,6 +135,15 @@
                                 </div>
                             </th>
 
+                            <!-- consigment_dyeing_number Column -->
+                            <th pResizableColumn pSortableColumn="consigment_dyeing_number">
+                                <div class="flex justify-content-between align-items-center">
+                                    رقم الرسالة
+                                    <p-sortIcon data-html2canvas-ignore="true" field="consigment_dyeing_number">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
                             <!-- Price Column -->
                             <th data-html2canvas-ignore="true">
                                 <div class="flex justify-content-between align-items-center">
@@ -228,6 +237,11 @@
                             <td>
                                 {{ element.color_code }}
                             </td>
+                            
+                            <!-- consigment_dyeing_number Column -->
+                            <td>
+                                {{ element.consigment_dyeing_number }}
+                            </td>
 
                             <!-- Price Column -->
                             <td data-html2canvas-ignore="true">
@@ -275,7 +289,7 @@
                     </ng-template>
                     <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                         <tr>
-                            <td colspan="10">لا يوجد بيانات</td>
+                            <td colspan="11">لا يوجد بيانات</td>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="footer">
@@ -299,6 +313,9 @@
                             <td></td>
 
                             <!-- color_code Column -->
+                            <td></td>
+
+                            <!-- consigment_dyeing_number Column -->
                             <td></td>
 
                             <!-- Price Column -->

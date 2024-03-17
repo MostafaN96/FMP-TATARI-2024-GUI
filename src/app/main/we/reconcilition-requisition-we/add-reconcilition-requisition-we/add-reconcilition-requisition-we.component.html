@@ -95,6 +95,10 @@
                                         كود اللون
                                     </th>
 
+                                    <th style="width: 120px;">
+                                        رقم الرسالة
+                                    </th>
+
                                     <th style="max-width: 120px;">
                                         السعر 
                                     </th>
@@ -198,6 +202,16 @@
                                                 </mat-label>
                                                 <input [disabled]="true" matInput placeholder="كود اللون" readonly
                                                     formControlName="colorCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    رقم الرسالة
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="رقم الرسالة" readonly
+                                                    formControlName="consigmentDyeingNumber">
                                             </mat-form-field>
                                         </td>
 
@@ -335,7 +349,7 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="8"></td>
+                                  <td colspan="9"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(reconcilitionRequisitionWEForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(reconcilitionRequisitionWEForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td colspan="4"></td>

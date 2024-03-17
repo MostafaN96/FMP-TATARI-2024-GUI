@@ -115,6 +115,13 @@
                                                 </div>
                                             </th>
 
+                                            <!-- requisition_details Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                نوع الخيط
+                                            </div>
+                                        </th>
+
                                               <!-- warehouse_name Column -->
                                               <th pResizableColumn pSortableColumn="warehouse_name">
                                                 <div class="flex justify-content-between align-items-center">
@@ -158,6 +165,55 @@
                                             <td>
                                                 {{ element.yarn_order_name }}
                                             </td>
+
+                                            <!-- requisition_details Column -->
+                                        <td>
+                                            <table class="table" *ngIf="element.details.length > 0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            نوع الخيط
+                                                        </th>
+                                                        <th>
+                                                            كود الخيط
+                                                        </th>
+            
+                                                        <th>
+                                                            الكمية
+                                                        </th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let requestionDetailsData of element.details">
+
+                                                        <td>
+                                                            {{ requestionDetailsData.yarn_name}}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ requestionDetailsData.yarn_code}}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ requestionDetailsData.quantity | number}}
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td>الإجمالي</td>
+                                                        <td></td>
+                                                        <td>
+                                                            {{_sharedComponentService.getTotalQuantity(element.details,
+                                                            'quantity') | number}}
+                                                        </td>
+                                 
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </td>
 
                                             <!-- warehouse_name Column -->
                                             <td>

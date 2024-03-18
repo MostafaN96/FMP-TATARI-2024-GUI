@@ -375,6 +375,9 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
     else if (typeOfRequisition == 'اذن تنفيذ طلبية') {
       return `/dashboard/show-all-execute-order-requisition-wa/details`
     }
+    else if (typeOfRequisition == 'اذن نقل بين المخازن') {
+      return `/dashboard/show-all-transition-between-wh-requisition-wa/details`
+    }
     return
   }
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////

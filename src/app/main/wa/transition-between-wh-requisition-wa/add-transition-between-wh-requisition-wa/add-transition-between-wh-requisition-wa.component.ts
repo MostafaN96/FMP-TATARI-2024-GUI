@@ -186,7 +186,7 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
   }
 
   getData() {
-    this._warehouseService.selectAll().subscribe((response: any) => {
+    this._warehouseService.selectWhereInWa().subscribe((response: any) => {
       this.fromWarehouses = response
     })
 
@@ -422,38 +422,4 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
     }
   }
 
-  //  Get Average Inputes Price
-  notZero(n) {
-    n = +n;  // Coerce to number.
-    if (!n) {  // Matches +0, -0, NaN
-      n = 1
-    }
-    return n;
-  }
-
-  // Get Avg Inputes Price
-  getTotalAmountQuantityInput(yarns) {
-    return yarns.details.map(function (a) { return (a.input_output == '1') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
-  }
-
-  getInputAmount(yarns) {
-    return yarns.details.map(function (a) { return (a.input_output == '1') ? (parseFloat(a['quantity']) * parseFloat(a['price'])) : 0 }).reduce((acc, value) => acc + value, 0);
-  }
-
-  getAvgInputesPrice(yarns){
-    return this.getInputAmount(yarns) / this.notZero(this.getTotalAmountQuantityInput(yarns))
-  }
-
-  // AVG Price
-  getOutputAmount(yarns) {
-    return yarns.details.map(function (a) { return (a.input_output == '0') ? (parseFloat(a['quantity']) * parseFloat(a['price'])) : 0 }).reduce((acc, value) => acc + value, 0);
-  }
-
-  getItemAmount(yarns) {
-    return this.getInputAmount(yarns) - this.getOutputAmount(yarns)
-  }
-
-  getAvgPrice(yarns) {
-    return this.getItemAmount(yarns) / this.notZero(yarns.current_quantity)
- }
 }

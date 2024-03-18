@@ -184,6 +184,9 @@
                                                             اللون
                                                         </th>
                                                         <th>
+                                                            رقم الرسالة
+                                                        </th>
+                                                        <th>
                                                             الكمية
                                                         </th>
 
@@ -209,6 +212,10 @@
                                                         </td>
 
                                                         <td>
+                                                            {{ requestionDetailsData.consigment_dyeing_number}}
+                                                        </td>
+
+                                                        <td>
                                                             {{ requestionDetailsData.quantity | number}}
                                                         </td>
 
@@ -217,7 +224,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td>الإجمالي</td>
-                                                        <td [colSpan]="3"></td>
+                                                        <td [colSpan]="4"></td>
                                                         <td>
                                                             {{_sharedComponentService.getTotalQuantity(element.details,
                                                             'quantity') | number}}

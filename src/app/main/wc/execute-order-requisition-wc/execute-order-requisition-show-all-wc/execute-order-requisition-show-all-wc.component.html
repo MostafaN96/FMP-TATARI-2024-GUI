@@ -177,7 +177,9 @@
                                                         <th>
                                                             كود القماش الخام
                                                         </th>
-            
+                                                        <th>
+                                                            رقم الرسالة
+                                                        </th>
                                                         <th>
                                                             الكمية
                                                         </th>
@@ -196,6 +198,10 @@
                                                         </td>
 
                                                         <td>
+                                                            {{ requestionDetailsData.consigment_manufacturing_number}}
+                                                        </td>
+
+                                                        <td>
                                                             {{ requestionDetailsData.quantity | number}}
                                                         </td>
 
@@ -204,7 +210,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td>الإجمالي</td>
-                                                        <td></td>
+                                                        <td colspan="2"></td>
                                                         <td>
                                                             {{_sharedComponentService.getTotalQuantity(element.details,
                                                             'quantity') | number}}

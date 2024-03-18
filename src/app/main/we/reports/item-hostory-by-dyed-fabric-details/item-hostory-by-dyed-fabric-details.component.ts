@@ -652,6 +652,9 @@ customFilterForColorCategory() {
     else if (typeOfRequisition == 'اذن مرتجع صرف') {
       return `/dashboard/show-all-return-sell-requisition-we/details`
     }
+    else if (typeOfRequisition == 'اذن نقل بين المخازن') {
+      return `/dashboard/show-all-transition-between-wh-requisition-we/details`
+    }
     return
   }
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////

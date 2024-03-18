@@ -250,6 +250,9 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
     else if (typeOfRequisition == 'اذن نقل من (D) الى (C)') {
       return `/dashboard/show-all-transport-wd-wc-requisition/details`
     }
+    else if (typeOfRequisition == 'اذن نقل بين المخازن') {
+      return `/dashboard/show-all-transition-between-wh-requisition-wc/details`
+    }
     return
   }
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////

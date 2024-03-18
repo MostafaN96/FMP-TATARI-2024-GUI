@@ -588,6 +588,16 @@ export class ConstantsService {
       'add-execute-order-requisition-we', // [191]
       'show-all-execute-order-requisition-we', // [192]
       'show-all-execute-order-requisition-we/details', // [193]
+
+      // we
+      'add-transition-between-wh-requisition-we', // [194]
+      'show-all-transition-between-wh-requisition-we', // [195]
+      'show-all-transition-between-wh-requisition-we/details', // [196]
+      
+      // wc
+      'add-transition-between-wh-requisition-wc', // [197]
+      'show-all-transition-between-wh-requisition-wc', // [198]
+      'show-all-transition-between-wh-requisition-wc/details', // [199]
     ]
   }
 

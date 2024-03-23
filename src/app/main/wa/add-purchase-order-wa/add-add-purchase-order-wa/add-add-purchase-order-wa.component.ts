@@ -9,7 +9,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 import { YarnService } from "src/app/services/main/yarn.service";
 import { BussinessmanService } from "src/app/services/main/bussinessman.service";
 import { AddPurchaseOrderWaService } from "src/app/services/main/wa/add-purchase-order-wa.service";
-import { DyeingOrderWdService } from "src/app/services/main/wd/dyeing-order-wd.service";
+import { DyedFabricOrderRequisitionWeService } from "src/app/services/main/we/dyed-fabric-order-requisition-we.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -74,7 +74,7 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
   // maps the appropriate column to fields property
   public fieldsRequisitionOrderName: Object = { value: "id", text: "name" };
   // set the placeholder to the AutoComplete input
-  public textRequisitionsOrderName: string = "اسم طلبية المصبغة"
+  public textRequisitionsOrderName: string = "اسم طلبية الجاهز"
 
 
   public onFilteringRequisitionOrderName(e: any) {
@@ -91,7 +91,7 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
     private _yarnService: YarnService,
     private _bussinessmanService: BussinessmanService,
     private _addPurchaseOrderWaService: AddPurchaseOrderWaService,
-    private _dyeingOrderWdService: DyeingOrderWdService,
+    private _dyedFabricOrderRequisitionWeService: DyedFabricOrderRequisitionWeService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
@@ -119,7 +119,7 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
       this.yarns = response
     })
 
-    this._dyeingOrderWdService.selectAll('opened').subscribe((response: any) => {
+    this._dyedFabricOrderRequisitionWeService.selectAll('opened').subscribe((response: any) => {
       this.requisitionsOrder = response
     })
 
@@ -195,13 +195,18 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
   // Start Yarn Autocomplete Section
   //  Yarn
   selectYarn(index: { itemData: any; }, row: FormGroup) {
+    console.log("index.itemData ::: ", index.itemData);
+    
     let indexData = this.yarns.indexOf(index.itemData)
+    console.log("indexData ::: ", indexData);
+
     if (this.yarns[indexData] !== index.itemData) {
       row.controls['yarnId'].setValue("")
       row.controls['yarnName'].setValue("")
       row.controls['yarnCode'].setValue("")
     }
     else {
+      row.controls['yarnId'].setValue(index.itemData.id)
       row.controls['yarnName'].setValue(index.itemData.name)
       row.controls['yarnCode'].setValue(index.itemData.code)
     }

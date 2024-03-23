@@ -48,7 +48,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     dyeingId: new FormControl("", [Validators.required]),
     warehouseId: new FormControl(this._constantsService.DEFAULT_WE_WAREHOUSE_ID, [Validators.required]),
-    releaseProcess: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
+    releaseProcess: new FormControl(0, [Validators.pattern(this.patterns.validator_pattern.number)]),
     isCalcDyeingNet: new FormControl("", [Validators.required]),
     items: new FormArray([]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),

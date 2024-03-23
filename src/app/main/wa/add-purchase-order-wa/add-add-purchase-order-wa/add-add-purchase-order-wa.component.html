@@ -136,7 +136,7 @@
                                             <ejs-autocomplete [dataSource]='yarns' [fields]='fieldsYarn'
                                                 (filtering)="onFilteringYarnName($event)" [placeholder]='textYarn'
                                                 [autofill]='autofill' formControlName="yarnName"
-                                                (change)='selectYarn($event, row)' [errorStateMatcher]="matcher">
+                                                (select)='selectYarn($event, row)' [errorStateMatcher]="matcher">
                                             </ejs-autocomplete>
                                             <small class="text-danger" *ngIf="row.get('yarnId').hasError('pattern')"
                                                 [innerHTML]="_sharedComponentService.invalid_message">

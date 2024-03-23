@@ -145,6 +145,13 @@
                                             </div>
                                         </th>
 
+                                        <!-- wc_fabric_order_requisition Column -->
+                                        <th data-html2canvas-ignore="true">
+                                            <div class="flex justify-content-between align-items-center">
+                                                طلبية الخام
+                                            </div>
+                                        </th>
+
                                         <!-- close_order Column -->
                                         <th data-html2canvas-ignore="true"
                                             *ngIf="router.url == '/dashboard/show-all-opened-dyed-fabric-order-requisition-we'">
@@ -363,6 +370,35 @@
                   
                                         </td>
 
+                                        <!-- wc_fabric_order_requisition Column -->
+                                        <td data-html2canvas-ignore="true">
+                                            <ng-container *ngIf="element.fabricOrders.length < 1">
+                                                <a
+                                                [routerLink]="[goToRequisitionPage('add_fabric_order_requisition', element)]"
+                                                [queryParams]="{ id: element.id}">
+                                                    <i class="fa-solid fa-square-plus update-symbol"></i>
+                                                </a>
+                                            </ng-container>
+
+                                            <ng-container *ngFor="let fabricOrder of element.fabricOrders">
+                                                
+                                                <a class="pb-2" *ngIf="fabricOrder.is_order == '0'; else elseBlockFabricOrder"
+                                                [routerLink]="[goToRequisitionPage('show_all_closed_fabric_order_requisition', element)]"
+                                                [queryParams]="{ id: fabricOrder.wc_fabric_order_requisition_id}">
+                                                    {{fabricOrder.order_number}}
+                                                </a>
+    
+                                                <ng-template #elseBlockFabricOrder>
+                                                    <a class="pb-2" [routerLink]="[goToRequisitionPage('show_all_opened_fabric_order_requisition', element)]"
+                                                    [queryParams]="{ id: fabricOrder.wc_fabric_order_requisition_id}">
+                                                    {{fabricOrder.order_number}}
+                                                    </a>
+                                                </ng-template>
+                                                <br>
+                                            </ng-container>
+                  
+                                        </td>
+
                                         <!-- close_order Column -->
                                         <td data-html2canvas-ignore="true"
                                             *ngIf="router.url == '/dashboard/show-all-opened-dyed-fabric-order-requisition-we'">
@@ -390,7 +426,7 @@
                                 </ng-template>
                                 <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                     <tr>
-                                        <td colspan="10">لا يوجد بيانات</td>
+                                        <td colspan="11">لا يوجد بيانات</td>
                                     </tr>
                                 </ng-template>
                             </p-table>

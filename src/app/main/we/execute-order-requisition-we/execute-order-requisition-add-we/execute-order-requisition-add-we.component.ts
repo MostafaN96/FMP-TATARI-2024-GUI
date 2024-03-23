@@ -249,10 +249,18 @@ this.customFilterForColorCategory();
       this.selectedStoredFabricsArrayValues.push(selectedStoredDyedFabrics);
       this.addItem(selectedStoredDyedFabrics)
       // Get Prices
-      this._reportWeService.selectPriceWe(selectedStoredDyedFabrics.id).subscribe((response: any) => {
+      this._reportWeService.selectPriceWe(selectedStoredDyedFabrics.id,
+        selectedStoredDyedFabrics.color_id,
+        selectedStoredDyedFabrics.color_code
+        ).subscribe((response: any) => {
         this.dyedFabricsPricesDetails = response
 
-        this.getListDyedFabricPrices[this.selectedStoredFabricsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.dyedFabricsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.dyedFabricsPricesDetails), parseFloat(this.dyedFabricsPricesDetails[0].latest_price)]
+        this.getListDyedFabricPrices[this.selectedStoredFabricsArrayValues.length - 1] = 
+        [
+          this._sharedComponentService.getAvgPrice(this.dyedFabricsPricesDetails), 
+          this._sharedComponentService.getAvgInputesPrice(this.dyedFabricsPricesDetails), 
+          parseFloat(this.dyedFabricsPricesDetails[0].latest_price)
+        ]        
       })
     }
 

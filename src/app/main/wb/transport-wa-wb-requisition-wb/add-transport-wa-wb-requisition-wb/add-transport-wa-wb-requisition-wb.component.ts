@@ -191,9 +191,9 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
       this.selectByWarehouseWa();
     })
 
-    this._yarnService.selectRemaining().subscribe((response: any) => {
-      this.yarns = response
-    })
+    // this._yarnService.selectRemaining().subscribe((response: any) => {
+    //   this.yarns = response
+    // })
 
     this._bussinessmanService.selectManufacturer().subscribe((response: any) => {
       this.industries = response

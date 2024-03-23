@@ -174,7 +174,11 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
       this.selectedStoredDyedFabricsArrayValues.push(selectedStoredDyedFabrics);
       this.addItem(selectedStoredDyedFabrics)
       // Get Prices
-      this._reportWeService.selectPriceWe(selectedStoredDyedFabrics.id).subscribe((response: any) => {
+      this._reportWeService.selectPriceWe(
+        selectedStoredDyedFabrics.id, 
+        selectedStoredDyedFabrics.color_id, 
+        selectedStoredDyedFabrics.color_code
+        ).subscribe((response: any) => {
         this.dyedFabricsPricesDetails = response
 
         this.getListDyedFabricPrices[this.selectedStoredDyedFabricsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.dyedFabricsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.dyedFabricsPricesDetails), parseFloat(this.dyedFabricsPricesDetails[0].latest_price)]
@@ -204,7 +208,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
       colorId: new FormControl(selectedStoredDyedFabrics.color_id, [Validators.required]),
       colorName: new FormControl(selectedStoredDyedFabrics.color_name_code),
       colorCode: new FormControl(selectedStoredDyedFabrics.color_code),
-      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl(selectedStoredDyedFabrics.price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.dyedFabricOrderCurrentQuantity <= selectedStoredDyedFabrics.current_quantity) ? this.dyedFabricOrderCurrentQuantity : selectedStoredDyedFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredDyedFabrics.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),

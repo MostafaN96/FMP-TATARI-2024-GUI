@@ -10,7 +10,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 // Call Service
 import { FabricService } from "src/app/services/main/fabric.service";
 import { BussinessmanService } from "src/app/services/main/bussinessman.service";
-import { DyeingOrderWdService } from "src/app/services/main/wd/dyeing-order-wd.service";
+import { DyedFabricOrderRequisitionWeService } from "src/app/services/main/we/dyed-fabric-order-requisition-we.service";
 import { FabricOrderRequisitionWcService } from "src/app/services/main/wc/fabric-order-requisition-wc.service";
 
 // Shared Service
@@ -93,7 +93,7 @@ export class FabricOrderRequisitionAddWcComponent implements OnInit {
   // maps the appropriate column to fields property
   public fieldsRequisitionOrderName: Object = { value: "id", text: "name" };
   // set the placeholder to the AutoComplete input
-  public textRequisitionsOrderName: string = "طلبية المصبغة"
+  public textRequisitionsOrderName: string = "طلبية الجاهز"
 
 
   public onFilteringRequisitionOrderName(e: any) {
@@ -111,7 +111,7 @@ export class FabricOrderRequisitionAddWcComponent implements OnInit {
     private _fabricOrderRequisitionWcService: FabricOrderRequisitionWcService,
     private _fabricService: FabricService,
     private _bussinessmanService: BussinessmanService,
-    private _dyeingOrderWdService: DyeingOrderWdService,
+    private _dyedFabricOrderRequisitionWeService: DyedFabricOrderRequisitionWeService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
@@ -139,7 +139,7 @@ export class FabricOrderRequisitionAddWcComponent implements OnInit {
       this.fabrics = response
     })
 
-    this._dyeingOrderWdService.selectAll('opened').subscribe((response: any) => {
+    this._dyedFabricOrderRequisitionWeService.selectAll('opened').subscribe((response: any) => {
       this.requisitionsOrder = response
     })
 

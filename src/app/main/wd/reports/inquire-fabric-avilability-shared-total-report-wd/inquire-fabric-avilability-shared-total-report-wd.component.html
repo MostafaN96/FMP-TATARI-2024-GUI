@@ -8,7 +8,7 @@
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">
-                        <th [colSpan]="4">
+                        <th [colSpan]="5">
                             <h4>
                                 مخزن الجاهز
                             </h4>
@@ -20,6 +20,9 @@
                         </th>
                         <th>
                             اللون
+                        </th>
+                        <th>
+                            الكمية المطلوبة
                         </th>
                         <th>
                             متاح في المخزن
@@ -36,6 +39,9 @@
                         </td>
                         <td>
                             {{ weFabric.color_name }} ({{ weFabric.color_code }})
+                        </td>
+                        <td>
+                            {{weFabric.ordered_quantity | number}}
                         </td>
                         <td>
                             {{weFabric.current_quantity | number}}
@@ -55,6 +61,10 @@
                             
                         </td>
 
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.weFabrics, 'ordered_quantity') |
+                            number}}
+                        </td>
                         <td>
                             {{ _sharedComponentService.getTotalQuantity(dataReport.weFabrics, 'current_quantity') |
                             number}}
@@ -163,7 +173,7 @@
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">
-                        <th [colSpan]="3">
+                        <th [colSpan]="4">
                             <h4>
                                 مخزن الخام
                             </h4>
@@ -172,6 +182,9 @@
                     <tr>
                         <th>
                             نوع القماش
+                        </th>
+                        <th>
+                            الكمية المطلوبة
                         </th>
                         <th>
                             متاح في المخزن
@@ -187,6 +200,9 @@
                             {{wcFabric.name }} ({{wcFabric.code }})
                         </td>
                         <td>
+                            {{wcFabric.ordered_quantity | number}}
+                        </td>
+                        <td>
                             {{wcFabric.current_quantity | number}}
                         </td>
                         <td>
@@ -199,6 +215,12 @@
                         <td>
                             الإجمالي
                         </td>
+
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wcFabrics, 'ordered_quantity') |
+                            number}}
+                        </td>
+
                         <td>
                             {{ _sharedComponentService.getTotalQuantity(dataReport.wcFabrics, 'current_quantity') |
                             number}}
@@ -270,7 +292,7 @@
             <table class="table table-style">
                 <thead>
                     <tr class="table-header-title">
-                        <th [colSpan]="4">
+                        <th [colSpan]="5">
                             <h4>
                                 مخزن الخيوط
                             </h4>
@@ -282,6 +304,9 @@
                         </th>
                         <th>
                             كود الخيط
+                        </th>
+                        <th>
+                            الكمية المطلوبة
                         </th>
                         <th>
                             متاح في المخزن
@@ -301,6 +326,9 @@
                             {{waYarn.code}}
                         </td>
                         <td>
+                            {{waYarn.ordered_quantity | number}}
+                        </td>
+                        <td>
                             {{waYarn.existed_quantity | number}}
                         </td>
                         <td>
@@ -315,6 +343,10 @@
                         </td>
                         <td [colSpan]="1">
 
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.waYarns, 'ordered_quantity') |
+                            number}}
                         </td>
                         <td>
                             {{ _sharedComponentService.getTotalQuantity(dataReport.waYarns, 'existed_quantity') |

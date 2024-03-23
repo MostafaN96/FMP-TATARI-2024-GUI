@@ -249,6 +249,15 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
     else if (typeOfRequisition == 'show_all_closed_yarn_order_requisition') {
       return `/dashboard/${this._constantsService.ROUTING_LINKS[175]}`
     }
+    else if (typeOfRequisition == 'add_fabric_order_requisition') {
+      return `/dashboard/${this._constantsService.ROUTING_LINKS[177]}`
+    }
+    else if (typeOfRequisition == 'show_all_opened_fabric_order_requisition') {
+      return `/dashboard/${this._constantsService.ROUTING_LINKS[179]}`
+    }
+    else if (typeOfRequisition == 'show_all_closed_fabric_order_requisition') {
+      return `/dashboard/${this._constantsService.ROUTING_LINKS[181]}`
+    }
     else if (typeOfRequisition == 'add_manufacturing_order_requisition') {
       return `/dashboard/${this._constantsService.ROUTING_LINKS[131]}`
     }

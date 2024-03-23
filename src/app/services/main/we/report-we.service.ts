@@ -12,8 +12,8 @@ export class ReportWeService {
   constructor(private _http: HttpClient,
     private _constantsService: ConstantsService) { }
 
-    selectPriceWe(id: string): Observable<any> {
-      const url = `${this._constantsService.BASE_URL}${this.urlService}select-price/${id}`;
+    selectPriceWe(id: string, colorId: string, colorCode: string): Observable<any> {
+      const url = `${this._constantsService.BASE_URL}${this.urlService}select-price/${id}/${colorId}/${colorCode}`;
       return this._http.get(url,
         {
           headers: new HttpHeaders({

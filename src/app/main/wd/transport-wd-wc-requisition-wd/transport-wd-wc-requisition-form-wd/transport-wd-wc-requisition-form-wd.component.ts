@@ -52,6 +52,7 @@ export class TransportWdWcRequisitionFormWdComponent implements OnInit {
   consigments: any = []
   groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   listFabricPrices:any = []
+  listFabricPricesDollar:any = []
   dyersDetails:any = []
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
@@ -138,6 +139,7 @@ private _reportWdService: ReportWdService
       consigmentDyeingId: new FormControl("", [Validators.required]),
       consigmentManufacturingNumber: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
       price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -184,6 +186,7 @@ private _reportWdService: ReportWdService
       this._reportWdService.selectInverntoryByFabricAndDyeingForPriceInWd(event.itemData.id, this.transportWdWcRequisitionForm.controls['dyeingId'].value!).subscribe((response: any) => {
         this.dyersDetails = response
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice2(this.dyersDetails[0]) , this._sharedComponentService.getAvgInputesPrice2(this.dyersDetails[0]), parseFloat(this.dyersDetails[0].latest_price)]
+        this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgInputesPriceDynamicDetails(this.dyersDetails[0], 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPrice2DynamicDetails(this.dyersDetails[0], 'quantity', 'price_dollar'), parseFloat(this.dyersDetails[0].latest_price_dollar)]
       })
     }
     this.validate(row, index)
@@ -207,11 +210,21 @@ private _reportWdService: ReportWdService
       row.controls['quantity'].setValue("")
       this.currentQuantity[index] = 0
       this.listFabricPrices[index] = []
+      this.listFabricPricesDollar[index] = []
     } else {
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
       row.controls['consigmentManufacturingNumber'].setValue(event.itemData.number)
 
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

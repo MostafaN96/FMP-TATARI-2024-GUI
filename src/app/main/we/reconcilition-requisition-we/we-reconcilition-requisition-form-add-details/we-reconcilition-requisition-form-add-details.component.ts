@@ -51,6 +51,7 @@ export class WeReconcilitionRequisitionFormAddDetailsComponent implements OnInit
   currentQuantity: any = []
   fabricsDetails: any
   listFabricPrices: any = []
+  listFabricPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر صباغة", "آخر سعر"]
 
   constructor(
@@ -100,9 +101,16 @@ export class WeReconcilitionRequisitionFormAddDetailsComponent implements OnInit
 
   getPrices(data: any, formIndex) {
     // Get Prices
-    this._reportWeService.selectByFabric(data.dyed_fabric_id).subscribe((response: any) => {
+    this._reportWeService.selectPriceWe(data.dyed_fabric_id, data.color_id, data.color_code).subscribe((response: any) => {
       this.fabricsDetails = response
       this.listFabricPrices[formIndex] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), this.fabricsDetails[0].latest_dyeing_price, this.fabricsDetails[0].latest_price]
+    
+      this.listFabricPricesDollar[formIndex] = [
+        this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), 
+        this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), 
+        this.fabricsDetails[0].latest_dyeing_price_dollar, 
+        this.fabricsDetails[0].latest_price_dollar
+      ]
     })
   }
 
@@ -124,8 +132,9 @@ export class WeReconcilitionRequisitionFormAddDetailsComponent implements OnInit
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
       consigmentDyeingNumber: new FormControl(data.consigment_dyeing_number),
-      price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
       inputOutput: new FormControl('1', [Validators.required]),
@@ -151,6 +160,7 @@ export class WeReconcilitionRequisitionFormAddDetailsComponent implements OnInit
       if (element.index == index) {
         control.removeAt(i)
         this.listFabricPrices.splice(i, 1);
+        this.listFabricPricesDollar.splice(i, 1);
       }
     }
   }
@@ -163,6 +173,15 @@ export class WeReconcilitionRequisitionFormAddDetailsComponent implements OnInit
     else {
       row.controls['quantity'].setErrors({ 'incorrect': null });
       row.controls['quantity'].updateValueAndValidity()
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

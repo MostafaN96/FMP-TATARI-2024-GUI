@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
 
 // Call Service
 import { FabricOrderRequisitionDetailsWcService } from "src/app/services/main/wc/fabric-order-requisition-details-wc.service";
@@ -43,6 +44,7 @@ export class FabricOrderRequisitionDetailsWcComponent implements OnInit {
     'quantity',
     'completed_quantity',
     'current_quantity',
+    'over_current_quantity',
     'fabric_width',
     'fabric_quantity_m2',
     'note2',
@@ -57,10 +59,12 @@ export class FabricOrderRequisitionDetailsWcComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _fabricOrderRequisitionDetailsWcService: FabricOrderRequisitionDetailsWcService,
     public _exportDataService: ExportDataService,
+    private _constantsService: ConstantsService,
     private router: Router
 
   ) {
-    if(this.router.url.split('/')[3].split('?')[0] === 'closed-details') {
+    if(this.router.url.split('/')[2] + '/' + this.router.url.split('/')[3].split('?')[0] 
+    === this._constantsService.ROUTING_LINKS[181]) {
       this.getData("closed")
     }
     else {

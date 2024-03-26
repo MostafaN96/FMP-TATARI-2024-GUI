@@ -170,6 +170,17 @@
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
 
+                                <!-- price_dollar Column -->
+                                <ng-container matColumnDef="price_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>السعر دولار</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.price_dollar }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
                                 <!-- Total Column -->
                                 <ng-container matColumnDef="total">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -180,6 +191,19 @@
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef> 
                                         {{_sharedComponentService.getTotalCollectTimes(dataSourceSearchTabel?.filteredData, 'quantity', 'price') | number}} 
+                                    </td>
+                                </ng-container>
+
+                                <!-- total_dollar Column -->
+                                <ng-container matColumnDef="total_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b><b> الإجمالي دولار </b></b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{_sharedComponentService.getCollectTimes(element.quantity, element.price_dollar) | number}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> 
+                                        {{_sharedComponentService.getTotalCollectTimes(dataSourceSearchTabel?.filteredData, 'quantity', 'price_dollar') | number}} 
                                     </td>
                                 </ng-container>
 
@@ -204,6 +228,19 @@
                                         number}}
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef>{{getTotalPriceXQuantityWithWast() | number}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- total_with_wast_dollar Column -->
+                                <ng-container matColumnDef="total_with_wast_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الاجمالي مع الهالك دولار</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ getTotalWithWast(element.price_dollar, element.quantity, element.wast_ratio) |
+                                        number}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef>{{getTotalPriceXQuantityWithWastDollar() | number}}
                                     </td>
                                 </ng-container>
 
@@ -259,5 +296,8 @@
 <app-update-manufacturing-input *ngIf="showInputUpdate" [selectedData]="selectedDataToUpdate">
 </app-update-manufacturing-input>
 
-<app-wb-manufacturing-requisition-output-details-order #ManufacturingRequisitionOutputDetailsWb [data]="totalPriceXQuantityWithWast">
+<app-wb-manufacturing-requisition-output-details-order #ManufacturingRequisitionOutputDetailsWb 
+[data]="totalPriceXQuantityWithWast"
+[dataDollar]="totalPriceXQuantityWithWastDollar"
+>
 </app-wb-manufacturing-requisition-output-details-order>

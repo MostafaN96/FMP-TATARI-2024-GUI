@@ -29,6 +29,7 @@ export class WaReconciliationRequisitionUpdateComponent implements OnInit {
     date: new FormControl(null, [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     inputOutput: new FormControl(null, [Validators.required]),
@@ -58,10 +59,20 @@ export class WaReconciliationRequisitionUpdateComponent implements OnInit {
   ngOnChanges() {
     this.waCottonReconciliationRequisitionForm.controls['date'].setValue(this.selectedData?.date)
     this.waCottonReconciliationRequisitionForm.controls['price'].setValue(this.selectedData?.price)
+    this.waCottonReconciliationRequisitionForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.waCottonReconciliationRequisitionForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.waCottonReconciliationRequisitionForm.controls['statement'].setValue(this.selectedData?.statement)
     this.waCottonReconciliationRequisitionForm.controls['note'].setValue(this.selectedData?.note)
     this.waCottonReconciliationRequisitionForm.controls['inputOutput'].setValue(String(this.selectedData?.input_output))
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.waCottonReconciliationRequisitionForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.waCottonReconciliationRequisitionForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

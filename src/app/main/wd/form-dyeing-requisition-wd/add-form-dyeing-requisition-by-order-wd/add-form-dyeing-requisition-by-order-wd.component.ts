@@ -78,6 +78,7 @@ export class AddFormDyeingRequisitionByOrderWdComponent implements OnInit {
   dyeingServicesData: any
   fabricsDetails: any[] = [];
   getListFabricPrices: any = []
+  listFabricPricesDollar: any = []
   selectedSeller: any = []
   dyeingOrderDetails: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
@@ -220,6 +221,7 @@ export class AddFormDyeingRequisitionByOrderWdComponent implements OnInit {
       this.fabricsDetails = response
       
       this.getListFabricPrices[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), parseFloat(this.fabricsDetails[0].latest_price)]
+      this.listFabricPricesDollar[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), parseFloat(this.fabricsDetails[0].latest_price_dollar)]
     })
   }
 
@@ -263,6 +265,7 @@ export class AddFormDyeingRequisitionByOrderWdComponent implements OnInit {
       consigmentDyeingId: new FormControl(selectedRowFabric.consigment_dyeing_id, [Validators.required]),
       consigmentDyeingNumber: new FormControl(selectedRowFabric.consigment_dyeing_number, [Validators.required]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(String((selectedOrderedFabric.form_current_quantity > selectedRowFabric.current_quantity) ? selectedRowFabric.current_quantity : selectedOrderedFabric.form_current_quantity), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedRowFabric.current_quantity),
       colorCategoryId: new FormControl(null, [Validators.required]),
@@ -305,6 +308,7 @@ export class AddFormDyeingRequisitionByOrderWdComponent implements OnInit {
 
     // Price
     this.getListFabricPrices.splice(index, 1)
+    this.listFabricPricesDollar.splice(index, 1)
 
     this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.fabricMap, index, objectData, this.selectArrayValues)
   }
@@ -653,6 +657,15 @@ export class AddFormDyeingRequisitionByOrderWdComponent implements OnInit {
     return this.addRequisitionForm.controls.items.value.map(function (a) { return (((parseFloat(a['quantity']) * parseFloat(a['wastRatio'])) / 100) + parseFloat(a['quantity'])) }).reduce((acc:any, value:any) => parseFloat(acc) + parseFloat(value), 0);
   }
 
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
+  }
+  
   async onAddRequisition() {
     this.isShowAdd = false
 

@@ -170,6 +170,7 @@ setTimeout(() => {
     return yarns?.map(function (a) { return (a.input_output == '1' && (parseFloat(a['price']) >= 0)) ? (parseFloat(a['quantity']) * parseFloat(a['price'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
 
+
   getAvgInputesPrice(yarns) {
     return this.getInputAmount(yarns) / this.notZero(this.getTotalAmountQuantityInput(yarns))
   }
@@ -179,15 +180,16 @@ setTimeout(() => {
     return yarns?.map(function (a) { return (a.input_output == '0' && (parseFloat(a['price']) >= 0)) ? (parseFloat(a['quantity']) * parseFloat(a['price'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
 
-  getItemAmount(yarns) {
-    return this.getInputAmount(yarns) - this.getOutputAmount(yarns)
-  }
 
   getTotalInputQuantity(yarns) {
     return yarns?.map(function (a) { return (a.input_output == '1') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
   getTotalOutputQuantity(yarns) {
     return yarns?.map(function (a) { return (a.input_output == '0') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
+  }
+  
+  getItemAmount(yarns) {
+    return this.getInputAmount(yarns) - this.getOutputAmount(yarns)
   }
 
   getTotalBalance(yarns) {
@@ -196,6 +198,51 @@ setTimeout(() => {
 
   getAvgPrice(yarns) {
     return this.getItemAmount(yarns) / this.notZero(this.getTotalBalance(yarns))
+  }
+
+  
+  getInputAmountDynamic(yarns, quantity, price) {
+    return yarns?.map(function (a) { return (a.input_output == '1' && (parseFloat(a[price]) >= 0)) ? (parseFloat(a[quantity]) * parseFloat(a[price])) : 0 }).reduce((acc, value) => acc + value, 0);
+  }
+  getOutputAmountDybamic(yarns, quantity, price) {
+    return yarns?.map(function (a) { return (a.input_output == '0' && (parseFloat(a[price]) >= 0)) ? (parseFloat(a[quantity]) * parseFloat(a[price])) : 0 }).reduce((acc, value) => acc + value, 0);
+  }
+
+  getItemAmountDynamic(yarns, quantity, price) {
+    return this.getInputAmountDynamic(yarns, quantity, price) - this.getOutputAmountDybamic(yarns, quantity, price)
+  }
+
+  getAvgPriceDynamic(yarns, quantity, price) {
+    return this.getItemAmountDynamic(yarns, quantity, price) / this.notZero(this.getTotalBalance(yarns))
+  }
+  
+  getAvgInputesPriceDynamic(yarns, quantity, price) {
+    return this.getInputAmountDynamic(yarns, quantity, price) / this.notZero(this.getTotalAmountQuantityInput(yarns))
+  }
+
+  
+  
+  getItemAmountDynamicDetails(yarns, quantity, price) {
+    return this.getInputAmountDynamicDetails(yarns, quantity, price) - this.getOutputAmountDynamicDetails(yarns, quantity, price)
+  }
+
+  getInputAmountDynamicDetails(yarns, quantity, price) {
+    return yarns.details?.map(function (a) { return (a.input_output == '1' && (parseFloat(a[price]) >= 0)) ? (parseFloat(a[quantity]) * parseFloat(a[price])) : 0 }).reduce((acc, value) => acc + value, 0);
+  }
+  getOutputAmountDynamicDetails(yarns, quantity, price) {
+    return yarns.details?.map(function (a) { return (a.input_output == '0' && (parseFloat(a[price]) >= 0)) ? (parseFloat(a[quantity]) * parseFloat(a[price])) : 0 }).reduce((acc, value) => acc + value, 0);
+  }
+
+  getAvgInputesPriceDynamicDetails(yarns, quantity, price) {
+    return this.getItemAmountDynamicDetails(yarns, quantity, price) / this.notZero(yarns.current_quantity)
+  }
+
+  getTotalAmountQuantityInputDynamicDetails(yarns, quantity) {
+    return yarns.details?.map(function (a) { return (a.input_output == '1') ? (parseFloat(a[quantity])) : 0 }).reduce((acc, value) => acc + value, 0);
+  }
+
+  getAvgInputesPrice2DynamicDetails(yarns, quantity, price) {
+    return this.getInputAmountDynamicDetails(yarns, quantity, price) / this.notZero(this.getTotalAmountQuantityInputDynamicDetails(yarns, quantity))
   }
 
   // WB

@@ -151,6 +151,7 @@ export class AddAddRequisitionFormWcComponent implements OnInit {
       isNewConsigment: new FormControl(false, [Validators.required]),
       consigmentNumber: new FormControl(""),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),     
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),     
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -188,6 +189,15 @@ export class AddAddRequisitionFormWcComponent implements OnInit {
     let indexData = this.consigments.indexOf(event.itemData)
     if (this.consigments[indexData] !== event.itemData) {
       row.controls['consigmentManufacturingId'].setValue("")
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

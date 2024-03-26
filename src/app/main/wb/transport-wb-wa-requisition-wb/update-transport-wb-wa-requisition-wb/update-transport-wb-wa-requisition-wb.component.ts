@@ -30,6 +30,7 @@ export class UpdateTransportWbWaRequisitionWbComponent implements OnInit {
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl("", [Validators.required]),
     price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -61,9 +62,19 @@ export class UpdateTransportWbWaRequisitionWbComponent implements OnInit {
     this.transportWbWaRequisitionWbForm.controls['date'].setValue(this.selectedData?.date)
     this.transportWbWaRequisitionWbForm.controls['note'].setValue(this.selectedData?.note)
     this.transportWbWaRequisitionWbForm.controls['price'].setValue(this.selectedData?.price)
+    this.transportWbWaRequisitionWbForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.transportWbWaRequisitionWbForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.transportWbWaRequisitionWbForm.controls['document'].setValue(this.selectedData?.document)
     this.transportWbWaRequisitionWbForm.controls['statement'].setValue(this.selectedData?.statement)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.transportWbWaRequisitionWbForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.transportWbWaRequisitionWbForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

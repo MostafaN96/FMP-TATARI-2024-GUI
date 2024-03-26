@@ -36,7 +36,9 @@ export class SellRequisitionDetailsWcComponent implements OnInit {
     'consigment_manufacturing_number',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'document',
     'statement',
     'update'];

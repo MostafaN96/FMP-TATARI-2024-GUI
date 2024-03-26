@@ -30,6 +30,7 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
   isShowAvgPrice = false
   isShowAvgInputes = false
   isShowLatestPrice = true
+  isShowLatestPriceDollar = true
   isShowLatestManufacturingPrice = true
   isShowClosedBalances = false
 
@@ -89,10 +90,10 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
       filter = this.selectedCodesTotal
 
       if (this.selectedCodesTotal[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -123,10 +124,10 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
       filter = this.selectedNamesTotal
 
       if (this.selectedNamesTotal[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -157,10 +158,10 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
       filter = this.selectedDyeingCodes
 
       if (this.selectedDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

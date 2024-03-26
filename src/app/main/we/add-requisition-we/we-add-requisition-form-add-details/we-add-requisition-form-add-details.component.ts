@@ -175,6 +175,7 @@ this.route.queryParams.subscribe(params => {
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       dyeingCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       workOrderNumber: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
@@ -232,6 +233,15 @@ this.route.queryParams.subscribe(params => {
   selectWarehouse(event: { itemData: any; }, row: FormGroup) {
     if (!this.warehouses.includes(event.itemData)) {
       row.controls['warehouseId'].setValue("")
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

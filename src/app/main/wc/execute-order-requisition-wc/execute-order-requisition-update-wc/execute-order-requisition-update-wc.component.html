@@ -49,7 +49,7 @@
                         <mat-form-field appearance="outline" class="example-full-width w-100">
                             <mat-label>السعر*</mat-label>
                             <input type="text" matInput formControlName="price" placeholder="مثال: 15"
-                                [errorStateMatcher]="matcher"
+                                [errorStateMatcher]="matcher" (change)="changePrice('priceEG')"
                                 oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
                             <mat-error *ngIf="executeOrderRequisitionForm.controls['price'].hasError('required') && (executeOrderRequisitionForm.controls['price'].dirty 
                                     || executeOrderRequisitionForm.controls['price'].touched)">
@@ -67,6 +67,28 @@
                         </mat-form-field>
                     </div>
                     
+                    <!-- priceDollar -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>السعر دولار</mat-label>
+                            <input type="text" matInput formControlName="priceDollar" placeholder="مثال: 15"
+                                [errorStateMatcher]="matcher" (change)="changePrice('priceDollar')"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="executeOrderRequisitionForm.controls['priceDollar'].hasError('required') && (executeOrderRequisitionForm.controls['priceDollar'].dirty 
+                                    || executeOrderRequisitionForm.controls['priceDollar'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="executeOrderRequisitionForm.controls['priceDollar'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="executeOrderRequisitionForm.controls['priceDollar'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
                     <!-- Quantity -->
                     <div class="col">

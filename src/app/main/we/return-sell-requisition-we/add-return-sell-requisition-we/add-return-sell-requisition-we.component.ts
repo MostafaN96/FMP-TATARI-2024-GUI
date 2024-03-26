@@ -136,6 +136,7 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
       price: new FormControl(String(data.price), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(String(data.price_dollar), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity:new FormControl(data.current_quantity),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),

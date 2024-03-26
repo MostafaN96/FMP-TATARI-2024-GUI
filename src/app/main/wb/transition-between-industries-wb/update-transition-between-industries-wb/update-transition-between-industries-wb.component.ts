@@ -26,9 +26,10 @@ export class UpdateTransitionBetweenIndustriesWbComponent implements OnInit {
   @Input() selectedData: any
   transitionBetweenIndustriesRequisitionWcForm: FormGroup = new FormGroup({
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    date: new FormControl(null, [Validators.required]),
-    price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    date: new FormControl("", [Validators.required]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
@@ -56,9 +57,19 @@ export class UpdateTransitionBetweenIndustriesWbComponent implements OnInit {
     this.transitionBetweenIndustriesRequisitionWcForm.controls['date'].setValue(this.selectedData?.date)
     this.transitionBetweenIndustriesRequisitionWcForm.controls['note'].setValue(this.selectedData?.note)
     this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].setValue(this.selectedData?.price)
+    this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.transitionBetweenIndustriesRequisitionWcForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.transitionBetweenIndustriesRequisitionWcForm.controls['document'].setValue(this.selectedData?.document)
     this.transitionBetweenIndustriesRequisitionWcForm.controls['statement'].setValue(this.selectedData?.statement)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

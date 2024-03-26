@@ -42,7 +42,9 @@ export class ReturnSellRequisitionDetailsWeComponent implements OnInit {
     'color_code',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'work_order_number',
     'statement',
     'update'];

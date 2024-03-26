@@ -565,14 +565,14 @@ export class ConstantsService {
       'add-add-requisition-by-order-wa', // [173]
       'show-all-add-requisition/order-details', // [174]
 
-      'show-all-closed-yarn-order-requisition-wa/closed-details', // [175]
+      'show-all-closed-yarn-order-requisition-wa/details', // [175]
 
       'add-fabric-order-requisition-wc', // [176]
       'add-fabric-order-requisition-related-order-wc', // [177]
       'show-all-opened-fabric-order-requisition-wc', // [178]
       'show-all-opened-fabric-order-requisition-wc/details', // [179]
       'show-all-closed-fabric-order-requisition-wc', // [180]
-      'show-all-closed-fabric-order-requisition-wc/closed-details', // [181]
+      'show-all-closed-fabric-order-requisition-wc/details', // [181]
 
       'add-execute-order-requisition-wc', // [182]
       'show-all-execute-order-requisition-wc', // [183]
@@ -583,7 +583,7 @@ export class ConstantsService {
       'show-all-opened-dyed-fabric-order-requisition-we', // [187]
       'show-all-opened-dyed-fabric-order-requisition-we/details', // [188]
       'show-all-closed-dyed-fabric-order-requisition-we', // [189]
-      'show-all-closed-dyed-fabric-order-requisition-we/closed-details', // [190]
+      'show-all-closed-dyed-fabric-order-requisition-we/details', // [190]
       
       'add-execute-order-requisition-we', // [191]
       'show-all-execute-order-requisition-we', // [192]

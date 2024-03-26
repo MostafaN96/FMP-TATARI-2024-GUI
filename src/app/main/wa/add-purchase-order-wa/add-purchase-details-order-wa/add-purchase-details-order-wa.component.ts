@@ -16,6 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 // Child Components
 import { UpdatePurchaseOrderWaComponent } from "../update-purchase-order-wa/update-purchase-order-wa.component";
+import { ConstantsService } from 'src/app/services/constants.service';
 
 @Component({
   selector: 'app-add-purchase-details-order-wa',
@@ -44,6 +45,7 @@ export class AddPurchaseDetailsOrderWaComponent implements OnInit {
     'quantity',
     'completed_quantity',
     'current_quantity',
+    'over_current_quantity',
     'note2',
     'close_order',
     // 'open_order',
@@ -56,10 +58,12 @@ export class AddPurchaseDetailsOrderWaComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _addPurchaseOrderDetailsWaService: AddPurchaseOrderDetailsWaService,
     public _exportDataService: ExportDataService,
+    private _constantsService: ConstantsService,
     private router: Router
 
   ) {
-    if(this.router.url.split('/')[3].split('?')[0] === 'closed-details') {
+    if(this.router.url.split('/')[2] + '/' + this.router.url.split('/')[3].split('?')[0] 
+    === this._constantsService.ROUTING_LINKS[172]) {
       this.getData("closed")
     }
     else {

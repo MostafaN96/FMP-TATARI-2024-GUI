@@ -26,12 +26,13 @@ export class WbReconciliationRequisitionUpdateComponent implements OnInit {
 
   @Input() selectedData: any
   reconciliationRequisitionForm: FormGroup = new FormGroup({
-    date: new FormControl(null, [Validators.required]),
+    date: new FormControl("", [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    inputOutput: new FormControl(null, [Validators.required]),
+    inputOutput: new FormControl("", [Validators.required]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   })
@@ -63,10 +64,20 @@ export class WbReconciliationRequisitionUpdateComponent implements OnInit {
     this.getData();
     this.reconciliationRequisitionForm.controls['date'].setValue(this.selectedData?.date)
     this.reconciliationRequisitionForm.controls['price'].setValue(this.selectedData?.price)
+    this.reconciliationRequisitionForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.reconciliationRequisitionForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.reconciliationRequisitionForm.controls['statement'].setValue(this.selectedData?.statement)
     this.reconciliationRequisitionForm.controls['note'].setValue(this.selectedData?.note)
     this.reconciliationRequisitionForm.controls['inputOutput'].setValue(String(this.selectedData?.input_output))
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.reconciliationRequisitionForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.reconciliationRequisitionForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

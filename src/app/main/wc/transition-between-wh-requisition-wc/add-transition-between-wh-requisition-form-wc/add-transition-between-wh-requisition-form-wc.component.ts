@@ -49,7 +49,8 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
   fabricsDetails:any = []
   getListFabricPrices:any = []
   listFabricPrices:any = []
-  groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
+  listFabricPricesDollar:any = []
+  groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر تصنيع", "آخر سعر"]
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -176,6 +177,7 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
       newConsigmentManufacturingNumber: new FormControl(''),
       fromConsigmentManufacturingId: new FormControl("", [Validators.required]),
       price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -199,6 +201,8 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
     // Price
     this.listFabricPrices[index] = delete this.listFabricPrices[index];
     this.listFabricPrices.splice(index, 1);
+    this.listFabricPricesDollar[index] = delete this.listFabricPricesDollar[index];
+    this.listFabricPricesDollar.splice(index, 1);
    }
 
   //  Fabric
@@ -283,6 +287,7 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
         console.log("this._sharedComponentService.getAvgPrice(this.fabricsDetails) ?? 0 :: ", this._sharedComponentService.getAvgPrice(this.fabricsDetails) ?? 0);
         
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails) ?? 0, this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails) ?? 0, this.fabricsDetails[0].latest_price]
+        this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this.fabricsDetails[0].latest_manufacturing_price_dollar, this.fabricsDetails[0].latest_price_dollar]
       })
     }    
   }
@@ -313,6 +318,15 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
     }.00
   }
   // End to Consigment Manufacturing Autocomplete Section
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
+  }
 
   async onAddTransitionIndustriesRequisition() {
     this.addtransitionIndustriesRequisitionForm.markAllAsTouched();

@@ -30,6 +30,7 @@ export class ItemHostoryByDyedFabricTotalWeComponent implements OnInit {
   isShowAvgPrice = false
   isShowAvgInputes = false
   isShowLatestPrice = true
+  isShowLatestPriceDollar = true
   isShowClosedBalances  = false
 
   //////////////////////////////////// PrimeNG /////////////////////////////////
@@ -86,10 +87,10 @@ export class ItemHostoryByDyedFabricTotalWeComponent implements OnInit {
       filter = this.selectedTotalFabricNames
       
       if (this.selectedTotalFabricNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -120,10 +121,10 @@ export class ItemHostoryByDyedFabricTotalWeComponent implements OnInit {
       filter = this.selectedTotalCodes
 
       if (this.selectedTotalCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -154,10 +155,10 @@ export class ItemHostoryByDyedFabricTotalWeComponent implements OnInit {
       filter = this.selectedTotalDyeingCodes
 
       if (this.selectedTotalDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

@@ -52,6 +52,7 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
   yarns:any
   yarnsDetails:any
   getListYarnPrices:any = []
+  listYarnPricesDollar: any = []
   groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   isShowAdd = true
 
@@ -127,6 +128,7 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
       this._reportWbService.selectPriceInWb(objectData.yarn_id, this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? "").subscribe((response: any) => {
         this.yarnsDetails = response
         this.getListYarnPrices[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), parseFloat(this.yarnsDetails[0].latest_price)]
+        this.listYarnPricesDollar[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'price_dollar', 'quantity'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'price_dollar', 'quantity'), parseFloat(this.yarnsDetails[0].latest_price_dollar)]
       })
     }
   }
@@ -143,6 +145,7 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
       consigmentYarnId: new FormControl(data.consigment_yarn_id, [Validators.required]),
       consigmentYarnNumber: new FormControl(data.consigment_yarn_number),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       wastRatio: new FormControl(data.wast_ratio, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
@@ -169,6 +172,7 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
         control.removeAt(i)
         // Remove index Price
         this.getListYarnPrices.splice(i, 1)
+        this.listYarnPricesDollar.splice(i, 1)
       }
     }
     
@@ -177,7 +181,7 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
   validate(row: FormGroup, index) {
     // (1) 17-1-2022
     // let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value)).toFixed(2)) || ''
-    let quantityWithWaste = ((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value) || ''
+    let quantityWithWaste = ((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value) || 0
     if(quantityWithWaste  > parseFloat(row.controls['validQuantity'].value)) {
       row.controls['quantity'].setErrors({'incorrect': true});
       row.controls['quantity'].markAsTouched()
@@ -193,6 +197,15 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
 
   getTotalPriceXQuantityWithWast() {
     return this.addManufacturingRequisitionForm.controls.items.value.map(function(a) {return (parseFloat(a['quantity']) * parseFloat(a['price'])) + (((parseFloat(a['price']) * parseFloat(a['quantity'])) * parseFloat(a['wastRatio'])) / 100)}).reduce((acc, value) => acc + value, 0);
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
   }
 
   async onAddRequisition(){

@@ -72,7 +72,8 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   requisitionsOrder: any
   yarnsPricesDetails: any[] = [];
   getListYarnPrices: any = []
-  groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
+  listYarnPricesDollar: any = []
+  groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر", "آخر سعر الرسالة"]
   selectedStoredYarnsMap = new Map()
   filter = "";
   selectedStoredYarns: any = {}
@@ -208,7 +209,8 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
     this._reportWaService.selectPriceWa(selectedStoredYarns.id, selectedStoredYarns.consigment_yarn_id).subscribe((response: any) => {
       this.yarnsPricesDetails = response
 
-      this.getListYarnPrices[this.selectedStoredYarnsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.yarnsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsPricesDetails), parseFloat(this.yarnsPricesDetails[0].latest_price)]
+      this.getListYarnPrices[this.selectedStoredYarnsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.yarnsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsPricesDetails), parseFloat(this.yarnsPricesDetails[0].latest_price), this.yarnsPricesDetails[0].latest_consigment_price]
+      this.listYarnPricesDollar[this.selectedStoredYarnsArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsPricesDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsPricesDetails, 'quantity', 'price_dollar'), this.yarnsPricesDetails[0].latest_price_dollar, this.yarnsPricesDetails[0].latest_consigment_price]
     })
     }
 
@@ -233,6 +235,7 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
       yarnLotCode: new FormControl(selectedStoredYarns.yarn_lot_code, [Validators.required]),
       waId: new FormControl(selectedStoredYarns.wa_id, [Validators.required]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.yarnOrderCurrentQuantity <= selectedStoredYarns.current_quantity) ? this.yarnOrderCurrentQuantity : selectedStoredYarns.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredYarns.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -257,6 +260,7 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
 
     // Price
     this.getListYarnPrices.splice(index, 1)
+    this.listYarnPricesDollar.splice(index, 1)
     this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.selectedStoredYarnsMap, index, objectData, this.selectedStoredYarnsArrayValues)
   }
 
@@ -302,6 +306,15 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   selectWarehouse(event: { itemData: any; }) {
     if (!this.warehouses.includes(event.itemData)) {
       this.addRequisitionForm.controls['warehouseId'].setValue(null)
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

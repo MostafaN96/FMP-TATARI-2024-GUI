@@ -25,11 +25,12 @@ export class UpdateReturnSellRequisitionWeComponent implements OnInit {
 
   @Input() selectedData: any
   returnRequisitionWeForm: FormGroup = new FormGroup({
-    weReturnSellRequisitionId: new FormControl(null, [Validators.required]),
+    weReturnSellRequisitionId: new FormControl("", [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    date: new FormControl(null, [Validators.required]),
-    price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    date: new FormControl("", [Validators.required]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     isDefect: new FormControl(0, [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -59,6 +60,7 @@ export class UpdateReturnSellRequisitionWeComponent implements OnInit {
     this.returnRequisitionWeForm.controls['note'].setValue(this.selectedData?.note)
     this.returnRequisitionWeForm.controls['date'].setValue(this.selectedData?.date)
     this.returnRequisitionWeForm.controls['price'].setValue(this.selectedData?.price)
+    this.returnRequisitionWeForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.returnRequisitionWeForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.returnRequisitionWeForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
     this.returnRequisitionWeForm.controls['statement'].setValue(this.selectedData?.statement)
@@ -67,6 +69,15 @@ export class UpdateReturnSellRequisitionWeComponent implements OnInit {
 
   isChecked(control, value) {
     this.returnRequisitionWeForm.controls[control].setValue(value)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.returnRequisitionWeForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.returnRequisitionWeForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

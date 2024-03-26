@@ -51,6 +51,7 @@ export class AddReturnRequisitionWcComponent implements OnInit {
   currentQuantity: any = []
   fabricsDetails: any
   listFabricPrices: any = []
+  listFabricPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر تصنيع", "آخر سعر"]
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
@@ -161,6 +162,7 @@ export class AddReturnRequisitionWcComponent implements OnInit {
       fabricCode: new FormControl(""),
       consigmentManufacturingId: new FormControl("", [Validators.required]),
       price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)])
@@ -183,6 +185,8 @@ export class AddReturnRequisitionWcComponent implements OnInit {
     // Price
     this.listFabricPrices[index] = delete this.listFabricPrices[index];
     this.listFabricPrices.splice(index, 1);
+    this.listFabricPricesDollar[index] = delete this.listFabricPricesDollar[index];
+    this.listFabricPricesDollar.splice(index, 1);
   }
 
   //  Fabric
@@ -247,6 +251,7 @@ export class AddReturnRequisitionWcComponent implements OnInit {
       this.consigments = []
       this.fabrics = []
       this.listFabricPrices = []
+      this.listFabricPricesDollar = []
     } else {
       this.selectBySupplierByWarehouseWc(this.returnRequisitionWCForm.controls['supplierId'].value!, event.itemData.id)
     }
@@ -272,15 +277,26 @@ export class AddReturnRequisitionWcComponent implements OnInit {
       row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0
       this.listFabricPrices[index] = []
+      this.listFabricPricesDollar[index] = []
     } else {
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
 
       // Get Prices
-      this._reportWcService.selectByWarehouseByConsigmentForPriceWc(row.controls['fabricId'].value!, event.itemData.id).subscribe((response: any) => {
+      this._reportWcService.selectPriceByFabricByConsigmentManufacturingInWc(row.controls['fabricId'].value!, event.itemData.id).subscribe((response: any) => {
         this.fabricsDetails = response
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), this.fabricsDetails[0].latest_manufacturing_price, this.fabricsDetails[0].latest_price]
+        this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this.fabricsDetails[0].latest_manufacturing_price_dollar, this.fabricsDetails[0].latest_price_dollar]
       })
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

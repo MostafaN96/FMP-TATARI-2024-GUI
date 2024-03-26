@@ -28,6 +28,7 @@ export class UpdateSellRequisitionWaComponent implements OnInit {
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl(null, [Validators.required]),
     price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -57,10 +58,20 @@ export class UpdateSellRequisitionWaComponent implements OnInit {
     this.sellRequisitionWaForm.controls['date'].setValue(this.selectedData?.date)
     this.sellRequisitionWaForm.controls['note'].setValue(this.selectedData?.note)
     this.sellRequisitionWaForm.controls['price'].setValue(this.selectedData?.price)
+    this.sellRequisitionWaForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.sellRequisitionWaForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.sellRequisitionWaForm.controls['document'].setValue(this.selectedData?.document)
     this.sellRequisitionWaForm.controls['statement'].setValue(this.selectedData?.statement)
     this.sellRequisitionWaForm.controls['waSellRequisitionId'].setValue(this.selectedData?.requisition_id)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.sellRequisitionWaForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.sellRequisitionWaForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

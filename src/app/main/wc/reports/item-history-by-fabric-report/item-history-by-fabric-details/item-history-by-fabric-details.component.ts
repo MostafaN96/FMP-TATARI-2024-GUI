@@ -82,10 +82,10 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
       filter = this.selectedTypeOfRequisition
 
       if (this.selectedTypeOfRequisition[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -116,10 +116,10 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
       filter = this.selectedSideOf
 
       if (this.selectedSideOf[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -149,10 +149,10 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
       filter = this.dateFilters
 
       if (event != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

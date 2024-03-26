@@ -65,10 +65,10 @@ export class ShowAllTransitionBetweenIndustriesWbComponent implements OnInit {
       filter = this.selectedFromIndustryName
 
       if (this.selectedFromIndustryName[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -100,10 +100,10 @@ export class ShowAllTransitionBetweenIndustriesWbComponent implements OnInit {
         filter = this.selectedToIndustryName
   
         if (this.selectedToIndustryName[0] != null) {
-          if (filter === undefined || filter === null || filter == []) {
+          if (filter === undefined || filter === null || !filter.length) {
             return true;
           }
-          if (value === undefined || value === null || value === []) {
+          if (value === undefined || value === null || value.length == 0) {
             return false;
           }
           if (filter.length > 0) {
@@ -134,10 +134,10 @@ export class ShowAllTransitionBetweenIndustriesWbComponent implements OnInit {
       filter = this.dateFilters
       
       if (event != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

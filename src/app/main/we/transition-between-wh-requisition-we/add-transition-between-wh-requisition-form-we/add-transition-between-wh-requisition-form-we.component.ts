@@ -134,6 +134,7 @@ initItem(data:any, index:number) {
   fromConsigmentDyeingNumber: new FormControl(data.consigment_dyeing_number, [Validators.required]),
   fromConsigmentDyeingId: new FormControl(data.consigment_dyeing_id, [Validators.required]),
   price: new FormControl(data.price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+  priceDollar: new FormControl(data.price_dollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
   quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
   validQuantity:new FormControl(data.current_quantity),
   numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -185,6 +186,15 @@ validate(row: FormGroup) {
     }
   }
   // End to Consigment Dyeing Autocomplete Section
+
+  // price
+changePrice(type, row: FormGroup) {
+  if(type == "priceEG") {
+    row.controls['priceDollar'].setValue("0")
+  } else if (type == "priceDollar") {
+    row.controls['price'].setValue("0")
+  }
+}
 
 async onTransitionBetweenWhRequisition(){
   this.isShowAdd = false

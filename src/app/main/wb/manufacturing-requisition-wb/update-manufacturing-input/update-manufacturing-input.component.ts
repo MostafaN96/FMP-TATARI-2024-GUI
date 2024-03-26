@@ -30,6 +30,7 @@ export class UpdateManufacturingInputComponent implements OnInit {
     yarnId: new FormControl("", [Validators.required]),
     yarnLotId: new FormControl("", [Validators.required]),
     price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantityWithWaste: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     wastRatio: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -66,6 +67,7 @@ export class UpdateManufacturingInputComponent implements OnInit {
     this.inputManufacturedWbForm.controls['yarnLotId'].setValue(this.selectedData?.yarn_lot_id)
     this.inputManufacturedWbForm.controls['wastRatio'].setValue(String(this.selectedData?.wast_ratio))
     this.inputManufacturedWbForm.controls['price'].setValue(String(this.selectedData?.price))
+    this.inputManufacturedWbForm.controls['priceDollar'].setValue(String(this.selectedData?.price_dollar))
     this.inputManufacturedWbForm.controls['quantity'].setValue(String(this.selectedData?.quantity))
     this.inputManufacturedWbForm.controls['quantityWithWaste'].setValue(String(this.selectedData?.quantity_with_waste))
     this.inputManufacturedWbForm.controls['statement'].setValue(this.selectedData?.statement)
@@ -75,6 +77,15 @@ export class UpdateManufacturingInputComponent implements OnInit {
     this.inputManufacturedWbForm.controls['quantityWithWaste'].setValue(
       String(((parseFloat(this.inputManufacturedWbForm.controls['quantity'].value) * parseFloat(this.inputManufacturedWbForm.controls['wastRatio'].value)) / 100) + parseFloat(this.inputManufacturedWbForm.controls['quantity'].value))
       )
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.inputManufacturedWbForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.inputManufacturedWbForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

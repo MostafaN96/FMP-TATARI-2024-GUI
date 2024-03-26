@@ -204,6 +204,7 @@ export class ConfirmDirectSellWeComponent implements OnInit {
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
       price: new FormControl(data.direct_price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(data.direct_price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((data.direct_quantity >= data.current_quantity) ? String(data.current_quantity) : String(data.direct_quantity), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       numberFabricPieces: new FormControl(String(data.direct_fabric_piece), [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -251,6 +252,14 @@ export class ConfirmDirectSellWeComponent implements OnInit {
     }
   }
 
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
+  }
 
   async onConfirmSellRequisition() {
     this.isShowAdd = false

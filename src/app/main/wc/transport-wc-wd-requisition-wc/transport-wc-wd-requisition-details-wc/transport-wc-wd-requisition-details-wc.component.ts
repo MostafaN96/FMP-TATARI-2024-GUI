@@ -38,7 +38,9 @@ export class TransportWcWdRequisitionDetailsWcComponent implements OnInit {
     'dyer_name',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'document',
     'statement',
     'update'];

@@ -228,6 +228,10 @@
                                                        </th>
 
                                                        <th>
+                                                        الكمية الزائدة
+                                                        </th>
+
+                                                       <th>
                                                         عرض القماش
                                                     </th>
                                                     <th>
@@ -290,6 +294,10 @@
                                                         </td>
 
                                                         <td>
+                                                            {{ requestionDetailsData.over_current_quantity}}
+                                                        </td>
+
+                                                        <td>
                                                             {{ requestionDetailsData.fabric_width}}
                                                         </td>
 
@@ -320,8 +328,16 @@
                                                             {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
                                                             'current_quantity') | number}}
                                                         </td>
+
+                                                        <td>
+                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
+                                                            'over_current_quantity') | number}}
+                                                        </td>
+
                                                         <td></td>
+
                                                         <td></td>
+
                                                     </tr>
                                                 </tfoot>
                                             </table>

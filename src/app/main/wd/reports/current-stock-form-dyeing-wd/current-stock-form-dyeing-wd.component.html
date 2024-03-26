@@ -263,10 +263,24 @@
                                 </div>
                             </th>
 
+                            <!-- price_dollar Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    السعر دولار
+                                </div>
+                            </th>
+
                             <!-- amount Column -->
                             <th pResizableColumn>
                                 <div class="flex justify-content-between align-items-center">
                                     القيمة
+                                </div>
+                            </th>
+
+                            <!-- amount_dollar Column -->
+                            <th pResizableColumn>
+                                <div class="flex justify-content-between align-items-center">
+                                    القيمة دولار
                                 </div>
                             </th>
 
@@ -437,9 +451,20 @@
                                 {{ element.price | number }}
                             </td>
 
+                            <!-- price_dollar Column -->
+                            <td>
+                                {{ element.price_dollar | number }}
+                            </td>
+
                             <!-- amount Column -->
                             <td>
                                 {{_sharedComponentService.getCollectTimes(element.current_quantity, element.price) |
+                                number}}
+                            </td>
+
+                            <!-- amount_dollar Column -->
+                            <td>
+                                {{_sharedComponentService.getCollectTimes(element.current_quantity, element.price_dollar) |
                                 number}}
                             </td>
 
@@ -572,10 +597,19 @@
                             <!-- price Column -->
                             <td></td>
 
+                            <!-- price_dollar Column -->
+                            <td></td>
+
                             <!-- amount Column -->
                             <td>
                                 {{_sharedComponentService.getTotalCollectTimes(dt1.filteredValue == null ? formDyeingFabricsByDyer:  dt1.filteredValue,
                                 "current_quantity", "price") | number}}
+                            </td>
+
+                            <!-- amount_dollar Column -->
+                            <td>
+                                {{_sharedComponentService.getTotalCollectTimes(dt1.filteredValue == null ? formDyeingFabricsByDyer:  dt1.filteredValue,
+                                "current_quantity", "price_dollar") | number}}
                             </td>
 
                             <!-- date Column -->

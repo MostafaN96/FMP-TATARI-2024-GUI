@@ -31,7 +31,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
 
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   reconcilitionRequisitionForm = new FormGroup({
-    id: new FormControl(null, [Validators.required]),
+    id: new FormControl("", [Validators.required]),
     industryId: new FormControl("", [Validators.required]),
     items: new FormArray([
       this.initItem(),
@@ -49,6 +49,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   currentQuantity: any = []
   yarnsDetails: any
   listYarnPrices: any = []
+  listYarnPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
@@ -164,16 +165,17 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
-      yarnId: new FormControl(null, [Validators.required]),
-      yarnName: new FormControl(null),
-      yarnCode: new FormControl(null),
+      yarnId: new FormControl("", [Validators.required]),
+      yarnName: new FormControl(""),
+      yarnCode: new FormControl(""),
       yarnLotId: new FormControl("", [Validators.required]),
       consigmentYarnId: new FormControl("", [Validators.required]),
       fabricToBeManufacturedId: new FormControl("", [Validators.required]),
-      fabricCode: new FormControl(null),
-      quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      fabricCode: new FormControl(""),
+      quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
       inputOutput: new FormControl('1', [Validators.required]),
     });
@@ -195,6 +197,8 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
     // Price
     this.listYarnPrices[index] = delete this.listYarnPrices[index];
     this.listYarnPrices.splice(index, 1);
+    this.listYarnPricesDollar[index] = delete this.listYarnPricesDollar[index];
+    this.listYarnPricesDollar.splice(index, 1);
   }
 
   //  Yarn
@@ -224,6 +228,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
       this._reportWbService.selectPriceInWb(event.itemData.id, event.itemData.industry_id).subscribe((response: any) => {
         this.yarnsDetails = response
         this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price]
+        this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar]
       })
     }
     this.validate(row, index)
@@ -280,6 +285,15 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
     }    
   }
   // End Consigment Yarn Autocomplete Section
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
+  }
 
   async onReconcilitionRequisition() {
     this.reconcilitionRequisitionForm.markAllAsTouched();

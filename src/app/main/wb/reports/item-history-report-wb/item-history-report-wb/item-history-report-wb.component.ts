@@ -32,6 +32,7 @@ export class ItemHistoryReportWbComponent implements OnInit {
   isShowAvgPrice = false
   isShowAvgInputes = false
   isShowLatestPrice = true
+  isShowLatestPriceDollar = true
   isShowClosedBalances  = false
 
   //////////////////////////////////// PrimeNG /////////////////////////////////
@@ -102,10 +103,10 @@ export class ItemHistoryReportWbComponent implements OnInit {
       filter = this.selectedManufacturers
       
       if (this.selectedManufacturers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -136,10 +137,10 @@ export class ItemHistoryReportWbComponent implements OnInit {
       filter = this.selectedCodes
       
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -170,10 +171,10 @@ export class ItemHistoryReportWbComponent implements OnInit {
       filter = this.selectedNames
       
       if (this.selectedNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -204,10 +205,10 @@ export class ItemHistoryReportWbComponent implements OnInit {
       filter = this.selectedLotCodes
       
       if (this.selectedLotCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -238,10 +239,10 @@ export class ItemHistoryReportWbComponent implements OnInit {
       filter = this.selectedConsigmentNumber
 
       if (this.selectedConsigmentNumber[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

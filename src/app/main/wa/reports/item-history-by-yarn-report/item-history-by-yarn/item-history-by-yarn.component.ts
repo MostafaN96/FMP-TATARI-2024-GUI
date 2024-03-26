@@ -31,6 +31,7 @@ export class ItemHistoryByYarnComponent implements OnInit {
   isShowAvgPrice = false
   isShowAvgInputes = false
   isShowLatestPrice = true
+  isShowLatestPriceDollar = true
   isShowClosedBalances  = false
 
   //////////////////////////////////// PrimeNG /////////////////////////////////

@@ -59,10 +59,10 @@ export class ItemHistoryByCircularKnittingMachinesManufacturingReportWbComponent
       filter = this.selectedDyeingServices
       
       if (this.selectedDyeingServices[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -92,10 +92,10 @@ export class ItemHistoryByCircularKnittingMachinesManufacturingReportWbComponent
       filter = this.selectedFabrics
       
       if (this.selectedFabrics[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -125,10 +125,10 @@ export class ItemHistoryByCircularKnittingMachinesManufacturingReportWbComponent
       filter = this.selectedFabricQuantityM2
       
       if (this.selectedFabricQuantityM2[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -157,10 +157,10 @@ export class ItemHistoryByCircularKnittingMachinesManufacturingReportWbComponent
       filter = this.selectedCircularKnittingMachine
       
       if (this.selectedCircularKnittingMachine[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {          

@@ -80,10 +80,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedFabrics
 
       if (this.selectedFabrics[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -114,10 +114,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedFabricCodes
 
       if (this.selectedFabricCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -148,10 +148,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedColorCodes
 
       if (this.selectedColorCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -182,10 +182,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedColorCategories
 
       if (this.selectedColorCategories[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -216,10 +216,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedColors
 
       if (this.selectedColors[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -250,10 +250,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedDyedFabrics
 
       if (this.selectedDyedFabrics[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -284,10 +284,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedDyedFabricCodes
 
       if (this.selectedDyedFabricCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -318,10 +318,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedSellerOrdersNumbers
 
       if (this.selectedSellerOrdersNumbers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -352,10 +352,10 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter = this.selectedConsigmentNumber
 
       if (this.selectedConsigmentNumber[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

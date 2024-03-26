@@ -71,6 +71,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   requisitionsOrder: any
   fabricsPricesDetails: any[] = [];
   getListFabricPrices: any = []
+  listFabricPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   selectedStoredYarnsMap = new Map()
   filter = "";
@@ -206,6 +207,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
       this.fabricsPricesDetails = response
 
       this.getListFabricPrices[this.selectedStoredFabricsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.fabricsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsPricesDetails), parseFloat(this.fabricsPricesDetails[0].latest_price)]
+      this.listFabricPricesDollar[this.selectedStoredFabricsArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsPricesDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsPricesDetails, 'quantity', 'price_dollar'), parseFloat(this.fabricsPricesDetails[0].latest_price_dollar)]
     })
     }
 
@@ -228,6 +230,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
       newConsigmentManufacturingNumber: new FormControl(this.requisitionsOrder[0].name, [Validators.required]),
       wcId: new FormControl(selectedStoredFabrics.wc_id, [Validators.required]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.fabricOrderCurrentQuantity <= selectedStoredFabrics.current_quantity) ? this.fabricOrderCurrentQuantity : selectedStoredFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredFabrics.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -252,6 +255,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
 
     // Price
     this.getListFabricPrices.splice(index, 1)
+    this.listFabricPricesDollar.splice(index, 1)
     this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.selectedStoredYarnsMap, index, objectData, this.selectedStoredFabricsArrayValues)
   }
 
@@ -297,6 +301,15 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   selectWarehouse(event: { itemData: any; }) {
     if (!this.warehouses.includes(event.itemData)) {
       this.addRequisitionForm.controls['warehouseId'].setValue(null)
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

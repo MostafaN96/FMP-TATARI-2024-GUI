@@ -53,6 +53,7 @@ export class AddTransportWbWaRequisitionWbComponent implements OnInit {
   currentQuantity: any = []
   yarnsDetails: any = []
   listYarnPrices: any = []
+  listYarnPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
@@ -187,6 +188,7 @@ export class AddTransportWbWaRequisitionWbComponent implements OnInit {
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
@@ -204,6 +206,12 @@ export class AddTransportWbWaRequisitionWbComponent implements OnInit {
   removeItem(index: number) {
     const control = <FormArray>this.transportWbWaRequisitionForm.get('items');
     control.removeAt(index);
+
+    // Price
+    this.listYarnPrices[index] = delete this.listYarnPrices[index];
+    this.listYarnPrices.splice(index, 1);
+    this.listYarnPricesDollar[index] = delete this.listYarnPricesDollar[index];
+    this.listYarnPricesDollar.splice(index, 1);
   }
 
   //  Yarn
@@ -245,6 +253,7 @@ export class AddTransportWbWaRequisitionWbComponent implements OnInit {
       this._reportWbService.selectPriceInWb(event.itemData.id, this.transportWbWaRequisitionForm.controls['industryId'].value!).subscribe((response: any) => {
         this.yarnsDetails = response
         this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails) , this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price]
+        this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar]
       })
     }
     this.validate(row, index)
@@ -322,6 +331,15 @@ export class AddTransportWbWaRequisitionWbComponent implements OnInit {
   selectWarehouse(event: { itemData: any; }) {
     if (!this.warehouses.includes(event.itemData)) {
       this.transportWbWaRequisitionForm.controls['warehouseId'].setValue(null)
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

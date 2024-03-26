@@ -38,7 +38,9 @@ export class ExecuteOrderRequisitionDetailsWeComponent implements OnInit {
     'consigment_dyeing_number',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'note',
     'update'];
   filter = "";

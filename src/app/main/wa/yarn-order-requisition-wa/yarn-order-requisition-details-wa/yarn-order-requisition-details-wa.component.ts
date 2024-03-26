@@ -10,6 +10,7 @@ import { ExportDataService } from "src/app/services/export-data.service";
 
 // Call Service
 import { YarnOrderRequisitionDetailsWaService } from "src/app/services/main/wa/yarn-order-requisition-details-wa.service";
+import { ConstantsService } from 'src/app/services/constants.service';
 
 // Route
 import { ActivatedRoute, Router } from '@angular/router';
@@ -43,6 +44,7 @@ export class YarnOrderRequisitionDetailsWaComponent implements OnInit {
     'quantity',
     'completed_quantity',
     'current_quantity',
+    'over_current_quantity',
     'note2',
     'close_order',
     // 'open_order',
@@ -55,10 +57,13 @@ export class YarnOrderRequisitionDetailsWaComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _yarnOrderRequisitionDetailsWaService: YarnOrderRequisitionDetailsWaService,
     public _exportDataService: ExportDataService,
+    private _constantsService: ConstantsService,
     private router: Router
 
-  ) {
-    if(this.router.url.split('/')[3].split('?')[0] === 'closed-details') {
+  ) {    
+    if(this.router.url.split('/')[2] + '/' + this.router.url.split('/')[3].split('?')[0] 
+    === this._constantsService.ROUTING_LINKS[175]) {
+      
       this.getData("closed")
     }
     else {

@@ -24,6 +24,7 @@ export class WbManufacturingRequisitionOutputDetailsOrderComponent implements On
   /////////////////// Variables ///////////////////
   manufacturingRequisitionDetails: any[] = []
   @Input() data: any
+  @Input() dataDollar: any
   selectedDataToUpdate: any
   showOutputUpdate = false
   isShowOrder = false
@@ -39,8 +40,11 @@ export class WbManufacturingRequisitionOutputDetailsOrderComponent implements On
     'quantity',
     'manufacturing_fee',
     'total_with_wast',
+    'total_with_wast_dollar',
     'total_cost',
+    'total_cost_dollar',
     'avg_price',
+    'avg_price_dollar',
     'circular_knitting_machine_name',
     'consigment_number',
     'warehouse_name',
@@ -96,8 +100,16 @@ export class WbManufacturingRequisitionOutputDetailsOrderComponent implements On
     return ((parseFloat(quantity) * parseFloat(manufacturingFee)) + this.data)
   }
 
+  totalCostDollar(quantity: string, manufacturingFee: string) {
+    return ((parseFloat(quantity) * parseFloat(manufacturingFee)) + this.dataDollar)
+  }
+
   avgCost(quantity: string, manufacturingFee: string) {
     return (((parseFloat(quantity) * parseFloat(manufacturingFee)) + this.data) / parseFloat(quantity))
+  }
+
+    avgCostDollar(quantity: string, manufacturingFee: string) {
+    return (((parseFloat(quantity) * parseFloat(manufacturingFee)) + this.dataDollar) / parseFloat(quantity))
   }
 
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////

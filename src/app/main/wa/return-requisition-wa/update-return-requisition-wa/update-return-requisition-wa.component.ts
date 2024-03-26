@@ -30,6 +30,7 @@ export class UpdateReturnRequisitionWaComponent implements OnInit {
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl(null, [Validators.required]),
     price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     waReturnRequisitionId: new FormControl(null, [Validators.required]),
@@ -60,9 +61,19 @@ export class UpdateReturnRequisitionWaComponent implements OnInit {
     this.returnRequisitionWaForm.controls['date'].setValue(this.selectedData?.date)
     this.returnRequisitionWaForm.controls['note'].setValue(this.selectedData?.note)
     this.returnRequisitionWaForm.controls['price'].setValue(this.selectedData?.price)
+    this.returnRequisitionWaForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.returnRequisitionWaForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.returnRequisitionWaForm.controls['statement'].setValue(this.selectedData?.statement)
     this.returnRequisitionWaForm.controls['waReturnRequisitionId'].setValue(this.selectedData?.requisition_id)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.returnRequisitionWaForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.returnRequisitionWaForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

@@ -37,7 +37,9 @@ export class SellRequisitionDetailsComponent implements OnInit {
     'consigment_yarn_number',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'document',
     'statement',
     'update'];

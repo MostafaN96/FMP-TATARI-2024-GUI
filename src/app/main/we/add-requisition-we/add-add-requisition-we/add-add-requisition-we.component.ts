@@ -217,6 +217,7 @@ export class AddAddRequisitionWeComponent implements OnInit {
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       dyeingCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       workOrderNumber: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
@@ -286,6 +287,15 @@ export class AddAddRequisitionWeComponent implements OnInit {
     }
   }
 
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
+  }
+  
   async onAddRequisition() {
     this.addRequisitionForm.markAllAsTouched();
     if (this.addRequisitionForm.valid) {

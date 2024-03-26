@@ -126,7 +126,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
       dyeingFee: new FormControl(String(data.color_price), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       dyeingQuantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       costPrice: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      price: new FormControl(data.price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl((data.price != 0) ? data.price : data.price_dollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),

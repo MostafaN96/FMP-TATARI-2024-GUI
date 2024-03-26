@@ -122,10 +122,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedWarehouses
 
       if (this.selectedWarehouses[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -156,10 +156,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedOptions
 
       if (this.selectedOptions[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -216,10 +216,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedFabricNames
 
       if (this.selectedFabricNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -250,10 +250,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedCodes
 
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -284,10 +284,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedDyeingCodes
 
       if (this.selectedDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -318,10 +318,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedDyeingSupplier
 
       if (this.selectedDyeingSupplier[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -352,10 +352,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedRequisitionNumber
 
       if (this.selectedRequisitionNumber[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -386,10 +386,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedColorCodes
 
       if (this.selectedColorCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -420,10 +420,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedColorCategories
 
       if (this.selectedColorCategories[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -454,10 +454,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedColors
 
       if (this.selectedColors[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -488,10 +488,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedWorkOrdersNumbers
 
       if (this.selectedWorkOrdersNumbers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -522,10 +522,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedDyeingCodes2
 
       if (this.selectedDyeingCodes2[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -556,10 +556,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedOrderNumber
 
       if (this.selectedOrderNumber[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -591,10 +591,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedOrderCustomerName
 
       if (this.selectedOrderCustomerName[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -625,10 +625,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedStoragePlace
 
       if (this.selectedStoragePlace[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -659,10 +659,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedNote1
 
       if (this.selectedNote1[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -693,10 +693,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedNote2
 
       if (this.selectedNote2[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -727,10 +727,10 @@ export class CurrentStockReportWeComponent implements OnInit {
       filter = this.selectedConsigmentDyeingNumber
       
       if (this.selectedConsigmentDyeingNumber[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

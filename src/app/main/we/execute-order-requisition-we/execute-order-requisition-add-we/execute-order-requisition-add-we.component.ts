@@ -39,7 +39,7 @@ export class ExecuteOrderRequisitionAddWeComponent implements OnInit {
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('dt2') dt2: Table | undefined;
   loadingDyeingFabrics: boolean = true;
-  selectedStoredFabricsArrayValues: any[] = [];
+  selectedStoredDyedFabricsArrayValues: any[] = [];
   selectedDyedFabricCodes: any[] = []
   selectedDyedFabricNames: any[] = []
   selectedConsigmentDyeing: any[] = []
@@ -75,6 +75,7 @@ export class ExecuteOrderRequisitionAddWeComponent implements OnInit {
   requisitionsOrder: any
   dyedFabricsPricesDetails: any[] = [];
   getListDyedFabricPrices: any = []
+  listFabricPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   selectedStoredDyedFabricsMap = new Map()
   filter = "";
@@ -241,12 +242,12 @@ this.customFilterForColorCategory();
 
   getSelectedStoredDyedFabrics(selectedStoredDyedFabrics: any) {
 
-    if (this.selectedStoredFabricsArrayValues.filter(objOfArr =>
+    if (this.selectedStoredDyedFabricsArrayValues.filter(objOfArr =>
       objOfArr.requisition_details_id == selectedStoredDyedFabrics.requisition_details_id
     ).length < 1) {
       this.selectedStoredDyedFabricsMap.set(selectedStoredDyedFabrics, selectedStoredDyedFabrics?.current_quantity)
 
-      this.selectedStoredFabricsArrayValues.push(selectedStoredDyedFabrics);
+      this.selectedStoredDyedFabricsArrayValues.push(selectedStoredDyedFabrics);
       this.addItem(selectedStoredDyedFabrics)
       // Get Prices
       this._reportWeService.selectPriceWe(selectedStoredDyedFabrics.id,
@@ -255,12 +256,19 @@ this.customFilterForColorCategory();
         ).subscribe((response: any) => {
         this.dyedFabricsPricesDetails = response
 
-        this.getListDyedFabricPrices[this.selectedStoredFabricsArrayValues.length - 1] = 
+        this.getListDyedFabricPrices[this.selectedStoredDyedFabricsArrayValues.length - 1] = 
         [
           this._sharedComponentService.getAvgPrice(this.dyedFabricsPricesDetails), 
           this._sharedComponentService.getAvgInputesPrice(this.dyedFabricsPricesDetails), 
           parseFloat(this.dyedFabricsPricesDetails[0].latest_price)
-        ]        
+        ]
+
+        this.listFabricPricesDollar[this.selectedStoredDyedFabricsArrayValues.length - 1] = 
+        [
+          this._sharedComponentService.getAvgPriceDynamic(this.dyedFabricsPricesDetails, 'quantity', 'price_dollar'), 
+          this._sharedComponentService.getAvgInputesPriceDynamic(this.dyedFabricsPricesDetails, 'quantity', 'price_dollar'), 
+          parseFloat(this.dyedFabricsPricesDetails[0].latest_price_dollar)
+        ]
       })
     }
 
@@ -288,6 +296,7 @@ this.customFilterForColorCategory();
       colorName: new FormControl(selectedStoredDyedFabrics.color_name_code),
       colorCode: new FormControl(selectedStoredDyedFabrics.color_code),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.dyedFabricOrderCurrentQuantity <= selectedStoredDyedFabrics.current_quantity) ? this.dyedFabricOrderCurrentQuantity : selectedStoredDyedFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredDyedFabrics.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -295,7 +304,7 @@ this.customFilterForColorCategory();
   }
 
   addItem(selectedStoredDyedFabrics: any) {
-    this.selectedStoredFabricsArrayValues.indexOf(selectedStoredDyedFabrics)
+    this.selectedStoredDyedFabricsArrayValues.indexOf(selectedStoredDyedFabrics)
     const control = <FormArray>this.addRequisitionForm.get('items');
     let row = this.initItem(selectedStoredDyedFabrics)
     control.push(row);
@@ -317,7 +326,8 @@ this.customFilterForColorCategory();
 
     // Price
     this.getListDyedFabricPrices.splice(index, 1)
-    this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.selectedStoredDyedFabricsMap, index, objectData, this.selectedStoredFabricsArrayValues)
+    this.listFabricPricesDollar.splice(index, 1)
+    this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.selectedStoredDyedFabricsMap, index, objectData, this.selectedStoredDyedFabricsArrayValues)
   }
 
 
@@ -364,6 +374,15 @@ this.customFilterForColorCategory();
   selectWarehouse(event: { itemData: any; }) {
     if (!this.warehouses.includes(event.itemData)) {
       this.addRequisitionForm.controls['warehouseId'].setValue(null)
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

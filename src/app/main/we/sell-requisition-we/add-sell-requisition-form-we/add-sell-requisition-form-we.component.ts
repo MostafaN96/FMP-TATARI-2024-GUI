@@ -95,8 +95,9 @@ sellRequisitionFormWe = new FormGroup({
       colorCategoryName: new FormControl(data.color_category_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
-      price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity:new FormControl(data.current_quantity),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       workOrderNumber: new FormControl(data.work_order_number, [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -135,6 +136,15 @@ sellRequisitionFormWe = new FormGroup({
       row.controls['quantity'].updateValueAndValidity()
     }
   }
+
+// price
+changePrice(type, row: FormGroup) {
+  if(type == "priceEG") {
+    row.controls['priceDollar'].setValue("0")
+  } else if (type == "priceDollar") {
+    row.controls['price'].setValue("0")
+  }
+}
 
   async onSellRequisition(){
     this.isShowAdd = false

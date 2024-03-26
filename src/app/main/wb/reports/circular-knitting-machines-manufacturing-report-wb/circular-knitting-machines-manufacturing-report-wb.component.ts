@@ -62,10 +62,10 @@ export class CircularKnittingMachinesManufacturingReportWbComponent implements O
       filter = this.dateFilters
 
       if (event != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -114,10 +114,10 @@ export class CircularKnittingMachinesManufacturingReportWbComponent implements O
       filter = this.selectedCodes
 
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -148,10 +148,10 @@ export class CircularKnittingMachinesManufacturingReportWbComponent implements O
       filter = this.selectedIndustry
 
       if (this.selectedIndustry[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

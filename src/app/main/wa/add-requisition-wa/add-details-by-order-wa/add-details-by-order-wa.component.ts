@@ -209,6 +209,7 @@ export class AddDetailsByOrderWaComponent implements OnInit {
       yarnLotCode: new FormControl("", [Validators.required]),
       consigmentYarnNumber: new FormControl("", [Validators.required]),
       price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       neededQuantity: new FormControl(data.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -257,6 +258,15 @@ export class AddDetailsByOrderWaComponent implements OnInit {
   selectWarehouse(event: { itemData: any; }, row: FormGroup) {
     if (!this.warehouses.includes(event.itemData)) {
       row.controls['warehouseId'].setValue("")
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

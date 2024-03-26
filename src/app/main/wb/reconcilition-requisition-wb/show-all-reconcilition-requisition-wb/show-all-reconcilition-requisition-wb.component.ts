@@ -66,10 +66,10 @@ export class ShowAllReconcilitionRequisitionWbComponent implements OnInit {
       filter = this.selectedIndustryName
 
       if (this.selectedIndustryName[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -101,10 +101,10 @@ export class ShowAllReconcilitionRequisitionWbComponent implements OnInit {
         filter = this.selectedCreatorId
   
         if (this.selectedCreatorId[0] != null) {
-          if (filter === undefined || filter === null || filter == []) {
+          if (filter === undefined || filter === null || !filter.length) {
             return true;
           }
-          if (value === undefined || value === null || value === []) {
+          if (value === undefined || value === null || value.length == 0) {
             return false;
           }
           if (filter.length > 0) {
@@ -135,10 +135,10 @@ export class ShowAllReconcilitionRequisitionWbComponent implements OnInit {
       filter = this.dateFilters
       
       if (event != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

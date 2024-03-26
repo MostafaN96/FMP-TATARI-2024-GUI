@@ -72,19 +72,20 @@ export class UpdateFormDyeingRequisitionWdComponent implements OnInit {
 
   @Input() selectedData: any
   inputDyeingWdForm: FormGroup = new FormGroup({
-    colorCategoryId: new FormControl(null, [Validators.required]),
-    dyeingColorsPricesId: new FormControl(null, [Validators.required]),
-    dyeingId: new FormControl(null, [Validators.required]),
+    colorCategoryId: new FormControl("", [Validators.required]),
+    dyeingColorsPricesId: new FormControl("", [Validators.required]),
+    dyeingId: new FormControl("", [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    date: new FormControl(null, [Validators.required]),
-    price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    date: new FormControl("", [Validators.required]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     colorName: new FormControl("", [Validators.required]),
     colorCode: new FormControl(""),
     workOrderNumber: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
-    fabricWidth: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    fabricQuantityM2: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    fabricWidth: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    fabricQuantityM2: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   })
@@ -118,6 +119,7 @@ export class UpdateFormDyeingRequisitionWdComponent implements OnInit {
       this.inputDyeingWdForm.controls['note'].setValue(this.selectedData?.note)
       this.inputDyeingWdForm.controls['date'].setValue(this.selectedData?.date)
       this.inputDyeingWdForm.controls['price'].setValue(this.selectedData?.price)
+      this.inputDyeingWdForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
       this.inputDyeingWdForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
       this.inputDyeingWdForm.controls['workOrderNumber'].setValue(String(this.selectedData?.work_order_number))
       this.inputDyeingWdForm.controls['fabricWidth'].setValue(this.selectedData?.fabric_width)
@@ -166,6 +168,15 @@ export class UpdateFormDyeingRequisitionWdComponent implements OnInit {
     else {
       this.inputDyeingWdForm.controls['colorCode'].setValue(event.itemData.code)
       this.inputDyeingWdForm.controls['dyeingColorsPricesId'].setValue(event.itemData.dyeing_colors_prices_id)
+    }
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.inputDyeingWdForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.inputDyeingWdForm.controls['price'].setValue("0")
     }
   }
 

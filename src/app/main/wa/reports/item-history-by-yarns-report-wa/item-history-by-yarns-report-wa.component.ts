@@ -73,10 +73,10 @@ export class ItemHistoryByYarnsReportWaComponent implements OnInit {
       filter = this.selectedWarehousesWa
 
       if (this.selectedWarehousesWa[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -107,10 +107,10 @@ export class ItemHistoryByYarnsReportWaComponent implements OnInit {
       filter = this.selectedYarnLotCodeWa
 
       if (this.selectedYarnLotCodeWa[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -141,10 +141,10 @@ export class ItemHistoryByYarnsReportWaComponent implements OnInit {
       filter = this.selectedConsigmentYarnWa
 
       if (this.selectedConsigmentYarnWa[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -175,10 +175,10 @@ export class ItemHistoryByYarnsReportWaComponent implements OnInit {
       filter = this.selectedTypeOfRequisitionWa
 
       if (this.selectedTypeOfRequisitionWa[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -209,10 +209,10 @@ export class ItemHistoryByYarnsReportWaComponent implements OnInit {
       filter = this.selectedSideOfWa
 
       if (this.selectedSideOfWa[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -243,10 +243,10 @@ export class ItemHistoryByYarnsReportWaComponent implements OnInit {
       filter = this.selectedDocumentWa
 
       if (this.selectedDocumentWa[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

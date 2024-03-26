@@ -71,10 +71,10 @@ export class RestoreCircularKnittingMachineComponent implements OnInit {
       filter = this.selectedManufacturers
 
       if (this.selectedManufacturers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -105,10 +105,10 @@ export class RestoreCircularKnittingMachineComponent implements OnInit {
       filter = this.selectedTypes
 
       if (this.selectedTypes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -139,10 +139,10 @@ export class RestoreCircularKnittingMachineComponent implements OnInit {
       filter = this.selectedDiameters
 
       if (this.selectedDiameters[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -173,10 +173,10 @@ export class RestoreCircularKnittingMachineComponent implements OnInit {
       filter = this.selectedSmoothness
 
       if (this.selectedTypes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -207,10 +207,10 @@ export class RestoreCircularKnittingMachineComponent implements OnInit {
       filter = this.selectedModels
 
       if (this.selectedModels[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

@@ -25,13 +25,14 @@ export class WcReconciliationRequisitionUpdateComponent implements OnInit {
   requisitionId: string = "";
 
   @Input() selectedData: any
-  wcCottonReconciliationRequisitionForm: FormGroup = new FormGroup({
-    date: new FormControl(null, [Validators.required]),
+  wcReconciliationRequisitionForm: FormGroup = new FormGroup({
+    date: new FormControl("", [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    inputOutput: new FormControl(null, [Validators.required]),
+    inputOutput: new FormControl("", [Validators.required]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   })
@@ -58,19 +59,29 @@ export class WcReconciliationRequisitionUpdateComponent implements OnInit {
 
 
   ngOnChanges() {
-    this.wcCottonReconciliationRequisitionForm.controls['date'].setValue(this.selectedData?.date)
-    this.wcCottonReconciliationRequisitionForm.controls['price'].setValue(this.selectedData?.price)
-    this.wcCottonReconciliationRequisitionForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
-    this.wcCottonReconciliationRequisitionForm.controls['statement'].setValue(this.selectedData?.statement)
-    this.wcCottonReconciliationRequisitionForm.controls['note'].setValue(this.selectedData?.note)
-    this.wcCottonReconciliationRequisitionForm.controls['inputOutput'].setValue(String(this.selectedData?.input_output))
+    this.wcReconciliationRequisitionForm.controls['date'].setValue(this.selectedData?.date)
+    this.wcReconciliationRequisitionForm.controls['price'].setValue(this.selectedData?.price)
+    this.wcReconciliationRequisitionForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
+    this.wcReconciliationRequisitionForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
+    this.wcReconciliationRequisitionForm.controls['statement'].setValue(this.selectedData?.statement)
+    this.wcReconciliationRequisitionForm.controls['note'].setValue(this.selectedData?.note)
+    this.wcReconciliationRequisitionForm.controls['inputOutput'].setValue(String(this.selectedData?.input_output))
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.wcReconciliationRequisitionForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.wcReconciliationRequisitionForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {
-    this.wcCottonReconciliationRequisitionForm.markAllAsTouched();
-    if (this.wcCottonReconciliationRequisitionForm.valid) {
+    this.wcReconciliationRequisitionForm.markAllAsTouched();
+    if (this.wcReconciliationRequisitionForm.valid) {
       this._constantsService.spinner.show()
-      this._reconcilitionRequisitionDetailsWcService.update(this.wcCottonReconciliationRequisitionForm.value, this.selectedData.id).subscribe((response: any) => {
+      this._reconcilitionRequisitionDetailsWcService.update(this.wcReconciliationRequisitionForm.value, this.selectedData.id).subscribe((response: any) => {
         this._constantsService.spinner.hide();
         if (response.msg === "data updated") {
           this._constantsService.successUpdateMessage()

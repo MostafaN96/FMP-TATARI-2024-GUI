@@ -39,7 +39,9 @@ export class ReturnRequisitionDetailsWcComponent implements OnInit {
     'consigment_number',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'statement',
     'update'];
   filter = "";

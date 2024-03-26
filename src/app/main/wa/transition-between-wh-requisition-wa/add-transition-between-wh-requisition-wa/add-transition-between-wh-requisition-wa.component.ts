@@ -52,6 +52,7 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
   yarnsDetails:any = []
   getListYarnPrices:any = []
   listYarnPrices:any = []
+  listYarnPricesDollar:any = []
   toWarehouses:any
   groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
 
@@ -212,6 +213,7 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
       newConsigmentYarnNumber: new FormControl(''),
       fromConsigmentYarnId: new FormControl("", [Validators.required]),
       price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -235,6 +237,8 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
     // Price
     this.listYarnPrices[index] = delete this.listYarnPrices[index];
     this.listYarnPrices.splice(index, 1);
+    this.listYarnPricesDollar[index] = delete this.listYarnPricesDollar[index];
+    this.listYarnPricesDollar.splice(index, 1);
    }
 
   //  Yarn
@@ -278,6 +282,7 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
       this._reportWaService.selectPriceWa(event.itemData.id, row.controls['fromConsigmentYarnId'].value!).subscribe((response: any) => {
         this.yarnsDetails = response
         this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price, this.yarnsDetails[0].latest_consigment_price]
+        this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar, this.yarnsDetails[0].latest_consigment_price_dollar]
       })
 
       for (let i = 0; i < this.addtransitionIndustriesRequisitionForm.controls.items['controls'].length; i++) {

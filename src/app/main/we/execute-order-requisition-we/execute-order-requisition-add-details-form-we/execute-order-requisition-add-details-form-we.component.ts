@@ -73,6 +73,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
 
   dyedFabricsPricesDetails: any[] = [];
   getListDyedFabricPrices: any = []
+  listFabricPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   selectedStoredDyedFabricsMap = new Map()
   filter = "";
@@ -182,6 +183,13 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
         this.dyedFabricsPricesDetails = response
 
         this.getListDyedFabricPrices[this.selectedStoredDyedFabricsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.dyedFabricsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.dyedFabricsPricesDetails), parseFloat(this.dyedFabricsPricesDetails[0].latest_price)]
+      
+        this.listFabricPricesDollar[this.selectedStoredDyedFabricsArrayValues.length - 1] = 
+        [
+          this._sharedComponentService.getAvgPriceDynamic(this.dyedFabricsPricesDetails, 'quantity', 'price_dollar'), 
+          this._sharedComponentService.getAvgInputesPriceDynamic(this.dyedFabricsPricesDetails, 'quantity', 'price_dollar'), 
+          parseFloat(this.dyedFabricsPricesDetails[0].latest_price_dollar)
+        ]
       })
     }
 
@@ -209,6 +217,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
       colorName: new FormControl(selectedStoredDyedFabrics.color_name_code),
       colorCode: new FormControl(selectedStoredDyedFabrics.color_code),
       price: new FormControl(selectedStoredDyedFabrics.price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(selectedStoredDyedFabrics.price_dollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.dyedFabricOrderCurrentQuantity <= selectedStoredDyedFabrics.current_quantity) ? this.dyedFabricOrderCurrentQuantity : selectedStoredDyedFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredDyedFabrics.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -276,9 +285,16 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
           orderedDyedFabric.added_quantity = parseFloat(orderedDyedFabric.added_quantity + parseFloat(controls['controls']['quantity'].value))
         }
       }
-
     }
+  }
 
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
   }
 
   async onAddRequisition() {

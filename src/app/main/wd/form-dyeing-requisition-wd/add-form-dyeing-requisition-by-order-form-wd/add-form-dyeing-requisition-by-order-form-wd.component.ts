@@ -78,6 +78,7 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
   dyeingServicesData: any
   fabricsDetails: any[] = [];
   getListFabricPrices: any = []
+  listFabricPricesDollar: any = []
   selectedSeller: any = []
   dyeingOrderDetails: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
@@ -215,6 +216,7 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
     this._reportWdService.selectPriceByFabricByDyeingByConsigmentDyeingInWd(selectedRowFabric.fabric_id, selectedRowFabric.dyeing_id, selectedRowFabric.consigment_dyeing_id).subscribe((response: any) => {
       this.fabricsDetails = response
       this.getListFabricPrices[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), parseFloat(this.fabricsDetails[0].latest_price)]
+      this.listFabricPricesDollar[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), parseFloat(this.fabricsDetails[0].latest_price_dollar)]
     })
   }
 
@@ -258,6 +260,7 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
       consigmentDyeingId: new FormControl(selectedRowFabric.consigment_dyeing_id, [Validators.required]),
       consigmentDyeingNumber: new FormControl(selectedRowFabric.consigment_dyeing_number, [Validators.required]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(String((selectedOrderedFabric.form_current_quantity > selectedRowFabric.current_quantity) ? selectedRowFabric.current_quantity : selectedOrderedFabric.form_current_quantity), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedRowFabric.current_quantity),
       colorCategoryId: new FormControl(null, [Validators.required]),
@@ -300,6 +303,7 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
 
     // Price
     this.getListFabricPrices.splice(index, 1)
+    this.listFabricPricesDollar.splice(index, 1)
 
     this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.fabricMap, index, objectData, this.selectArrayValues)
   }
@@ -313,10 +317,10 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
       filter = this.selectedCodes
 
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -359,10 +363,10 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
       filter = this.selectedFabricCodes
 
       if (this.selectedFabricCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -394,10 +398,10 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
       filter = this.selectedFabricDyeingCodes
 
       if (this.selectedFabricDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -429,10 +433,10 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
       filter = this.selectedFabricNames
 
       if (this.selectedFabricNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -464,10 +468,10 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
       filter = this.selectedConsigmentDyeingNumbers
 
       if (this.selectedConsigmentDyeingNumbers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -627,6 +631,15 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
 
   sumInputQuantity() {
     return this.addRequisitionForm.controls.items.value.map(function (a) { return (((parseFloat(a['quantity']) * parseFloat(a['wastRatio'])) / 100) + parseFloat(a['quantity'])) }).reduce((acc:any, value:any) => parseFloat(acc) + parseFloat(value), 0);
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
   }
 
   async onAddRequisition() {

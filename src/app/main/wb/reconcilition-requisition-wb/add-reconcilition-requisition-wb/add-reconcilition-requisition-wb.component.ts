@@ -52,6 +52,7 @@ export class AddReconcilitionRequisitionWbComponent implements OnInit {
   yarnsDetails:any = []
   getListYarnPrices:any = []
   listYarnPrices:any = []
+  listYarnPricesDollar: any = []
   groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
@@ -189,7 +190,8 @@ export class AddReconcilitionRequisitionWbComponent implements OnInit {
       consigmentYarnId: new FormControl("", [Validators.required]),
       fabricToBeManufacturedId: new FormControl("", [Validators.required]),
       fabricCode: new FormControl(null),
-      price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -213,6 +215,8 @@ export class AddReconcilitionRequisitionWbComponent implements OnInit {
     // Price
     this.listYarnPrices[index] = delete this.listYarnPrices[index];
     this.listYarnPrices.splice(index, 1);
+    this.listYarnPricesDollar[index] = delete this.listYarnPricesDollar[index];
+    this.listYarnPricesDollar.splice(index, 1);
    }
 
   //  Yarn
@@ -241,6 +245,7 @@ export class AddReconcilitionRequisitionWbComponent implements OnInit {
       this._reportWbService.selectPriceInWb(event.itemData.id, this.reconcilitionRequisitionWBForm.controls['industryId'].value!).subscribe((response: any) => {
         this.yarnsDetails = response
         this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails) , this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price]
+        this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar]
       })
     }
     this.validate(row, index)    
@@ -322,6 +327,15 @@ export class AddReconcilitionRequisitionWbComponent implements OnInit {
     else {
       row.controls['fabricCode'].setValue(index.itemData.code)
     }    
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
   }
 
   async onReconcilitionRequisitionWB(){

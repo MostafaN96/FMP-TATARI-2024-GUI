@@ -36,7 +36,9 @@ export class ExecuteOrderRequisitionDetailsWcComponent implements OnInit {
     'consigment_manufacturing_number',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'note',
     'update'];
   filter = "";

@@ -230,7 +230,7 @@
                             {{wcFabric.ordered_quantity | number}}
                         </td>
                         <td>
-                            {{wcFabric.current_quantity | number}}
+                            {{wcFabric.existed_quantity | number}}
                         </td>
                         <td>
                             {{wcFabric.needed_quantity | number}}
@@ -250,7 +250,7 @@
                             number}}
                         </td>
                         <td>
-                            {{ _sharedComponentService.getTotalQuantity(dataReport.wcFabrics, 'current_quantity') |
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wcFabrics, 'existed_quantity') |
                             number}}
                         </td>
                         <td>

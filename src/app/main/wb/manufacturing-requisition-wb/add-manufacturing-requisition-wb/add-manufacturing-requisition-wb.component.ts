@@ -57,6 +57,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     fabricId: new FormControl(null, [Validators.required]),
     fabricCode: new FormControl(null),
     fabricPrice: new FormControl(""),
+    fabricPriceDollar: new FormControl(""),
     fabricQuantity: new FormControl(this.inputesQuantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     manufacturingFee: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     consigmentNumber: new FormControl(null),
@@ -77,6 +78,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
   industries: any = []
   yarnsDetails: any = []
   getListYarnPrices: any = []
+  listYarnPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   isShowAdd = true
 
@@ -231,6 +233,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
       this._reportWbService.selectPriceInWb(objectData.yarn_id, this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? "").subscribe((response: any) => {
         this.yarnsDetails = response
         this.getListYarnPrices[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), parseFloat(this.yarnsDetails[0].latest_price)]
+        this.listYarnPricesDollar[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'price_dollar', 'quantity'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'price_dollar', 'quantity'), parseFloat(this.yarnsDetails[0].latest_price_dollar)]
       })
     }
   }
@@ -247,6 +250,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
       consigmentYarnId: new FormControl(data.consigment_yarn_id, [Validators.required]),
       consigmentYarnNumber: new FormControl(data.consigment_yarn_number),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       ratio: new FormControl(String(data.ratio), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       wastRatio: new FormControl(String(data.wast_ratio), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -274,6 +278,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
         control.removeAt(i)
         // Remove index Price
         this.getListYarnPrices.splice(i, 1)
+        this.listYarnPricesDollar.splice(i, 1)
       }
     }
 
@@ -349,7 +354,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
   validate(row: FormGroup, index) {
     // (1) 17-1-2022
     // let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value)).toFixed(2)) || ''
-    let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value)).toFixed(3)) || ''
+    let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value)).toFixed(3)) || 0
     if (quantityWithWaste > parseFloat(row.controls['validQuantity'].value)) {
       row.controls['quantity'].setErrors({ 'incorrect': true });
       row.controls['quantity'].markAsTouched()
@@ -442,8 +447,22 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     return this.addManufacturingRequisitionForm.controls.items.value.map(function (a) { return (parseFloat(a['quantity']) * parseFloat(a['price'])) + (((parseFloat(a['price']) * parseFloat(a['quantity'])) * parseFloat(a['wastRatio'])) / 100) }).reduce((acc, value) => acc + value, 0);
   }
 
+  getTotalPriceXQuantityWithWastDollar() {
+    return this.addManufacturingRequisitionForm.controls.items.value.map(function (a) { return (parseFloat(a['quantity']) * parseFloat(a['priceDollar'])) + (((parseFloat(a['priceDollar']) * parseFloat(a['quantity'])) * parseFloat(a['wastRatio'])) / 100) }).reduce((acc, value) => acc + value, 0);
+  }
+
   avgCost() {
     this.addManufacturingRequisitionForm.controls['fabricPrice'].setValue(String(((parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!) * parseFloat(this.addManufacturingRequisitionForm.controls['manufacturingFee'].value!)) + this.getTotalPriceXQuantityWithWast()) / parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!)))
+    this.addManufacturingRequisitionForm.controls['fabricPriceDollar'].setValue(String(((parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!) * parseFloat(this.addManufacturingRequisitionForm.controls['manufacturingFee'].value!)) + this.getTotalPriceXQuantityWithWastDollar()) / parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!)))
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
   }
 
   async onAddRequisition() {

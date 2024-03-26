@@ -148,6 +148,11 @@
                                                         <th>
                                                             الكمية المتبقية
                                                        </th>
+                                                       
+                                                       <th style="width: 200px;">
+                                                        الكمية الزائدة
+                                                        </th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -195,6 +200,11 @@
                                                         <td>
                                                             {{ requestionDetailsData.current_quantity}}
                                                         </td>
+                                                        
+                                                        <td>
+                                                            {{ requestionDetailsData.over_current_quantity}}
+                                                        </td>
+
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
@@ -218,6 +228,12 @@
                                                             {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
                                                             'current_quantity') | number}}
                                                         </td>
+                                                        
+                                                        <td>
+                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
+                                                            'over_current_quantity') | number}}
+                                                        </td>
+
                                                     </tr>
                                                 </tfoot>
                                             </table>

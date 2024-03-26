@@ -40,7 +40,17 @@ export class AddRequisitionDetailsWeComponent implements OnInit {
   'dyeing_code',
   'consigment_dyeing_number',
   'work_order_number_details',
-  'quantity','price','total', 'fabric_piece','storage_place', 'document','statement','update','report'];
+  'quantity',
+  'price',
+  'price_dollar',
+  'total', 
+  'total_dollar', 
+  'fabric_piece',
+  'storage_place', 
+  'document',
+  'statement',
+  'update',
+  'report'];
   filter = "";
   dataSourceSearchTabel: any;
 

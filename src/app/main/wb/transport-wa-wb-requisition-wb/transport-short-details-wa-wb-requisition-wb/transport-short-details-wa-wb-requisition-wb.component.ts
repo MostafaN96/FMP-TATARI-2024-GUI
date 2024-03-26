@@ -37,7 +37,9 @@ export class TransportShortDetailsWaWbRequisitionWbComponent implements OnInit {
     'quantity',
     // 'current_quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'document',
     'statement'];
   filter = "";

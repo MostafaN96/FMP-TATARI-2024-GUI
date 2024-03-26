@@ -26,9 +26,10 @@ export class UpdateTransitionBetweenDyersWdComponent implements OnInit {
   @Input() selectedData: any
   transitionBetweenDyersRequisitionWdForm:FormGroup = new FormGroup({
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    date: new FormControl(null, [Validators.required]),
-    price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    date: new FormControl("", [Validators.required]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
@@ -57,9 +58,19 @@ export class UpdateTransitionBetweenDyersWdComponent implements OnInit {
     this.transitionBetweenDyersRequisitionWdForm.controls['date'].setValue(this.selectedData?.date)    
     this.transitionBetweenDyersRequisitionWdForm.controls['note'].setValue(this.selectedData?.note)   
     this.transitionBetweenDyersRequisitionWdForm.controls['price'].setValue(this.selectedData?.price)
+    this.transitionBetweenDyersRequisitionWdForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.transitionBetweenDyersRequisitionWdForm.controls['quantity'].setValue(this.selectedData?.quantity)
     this.transitionBetweenDyersRequisitionWdForm.controls['document'].setValue(this.selectedData?.document)
     this.transitionBetweenDyersRequisitionWdForm.controls['statement'].setValue(this.selectedData?.statement)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.transitionBetweenDyersRequisitionWdForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.transitionBetweenDyersRequisitionWdForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

@@ -768,7 +768,7 @@
                     </ng-template>
                     <ng-template pTemplate="footer">
                         <tr>
-                            <td data-html2canvas-ignore="true" style="max-width: 80px"></td>
+                            <td [hidden]="!isShowSelection" data-html2canvas-ignore="true" style="max-width: 80px"></td>
                             <td style="max-width: 100%">الإجمالي</td>
                             <td style="max-width: 100%"></td>
                             <td style="max-width: 80px"></td>

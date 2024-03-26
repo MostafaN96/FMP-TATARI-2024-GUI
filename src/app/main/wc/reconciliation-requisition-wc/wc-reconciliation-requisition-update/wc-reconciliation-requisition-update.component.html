@@ -2,7 +2,7 @@
     <!-- Form Section -->
     <!-- Main Page Form -->
     <div id="update-form" [class]="_sharedComponentService.mainPageFormClass">
-        <form [formGroup]="wcCottonReconciliationRequisitionForm" (ngSubmit)="onUpdate()">
+        <form [formGroup]="wcReconciliationRequisitionForm" (ngSubmit)="onUpdate()">
             <div [class]="_sharedComponentService.subMainPageFormClass">
                 <!-- Form Body -->
                 <div [class]="_sharedComponentService.gridFormClass">
@@ -15,15 +15,15 @@
                             <mat-datepicker [disabled]="false" #datepicker>
                               
                             </mat-datepicker>
-                            <mat-error *ngIf="!wcCottonReconciliationRequisitionForm.controls['date'].hasError('required')">
+                            <mat-error *ngIf="!wcReconciliationRequisitionForm.controls['date'].hasError('required')">
                                 <label [innerHTML]="_sharedComponentService.invalid_message">
                                 </label>
                             </mat-error>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['date'].hasError('required')">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['date'].hasError('required')">
                                 <label [innerHTML]="_sharedComponentService.required_field">
                                 </label>
                             </mat-error>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['date'].hasError('pattern')">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['date'].hasError('pattern')">
                                 <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
                                 </label>
                             </mat-error>
@@ -35,7 +35,7 @@
                         <mat-form-field appearance="outline" class="example-full-width w-100">
                             <mat-label> الملاحظات </mat-label>
                             <textarea matInput rows="1" placeholder="الملاحظات" formControlName="note"></textarea>
-                                <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['note'].hasError('pattern')">
+                                <mat-error *ngIf="wcReconciliationRequisitionForm.controls['note'].hasError('pattern')">
                                     <label [innerHTML]="_sharedComponentService.invalid_message">
                                     </label>
                                 </mat-error>
@@ -47,18 +47,41 @@
                         <mat-form-field appearance="outline" class="example-full-width w-100">
                             <mat-label>السعر</mat-label>
                             <input type="text" matInput formControlName="price" placeholder="مثال: 15"
-                                [errorStateMatcher]="matcher"
+                                [errorStateMatcher]="matcher" (change)="changePrice('priceEG')"
                                 oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" required/>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['price'].hasError('required') && (wcCottonReconciliationRequisitionForm.controls['price'].dirty 
-                                    || wcCottonReconciliationRequisitionForm.controls['price'].touched)">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['price'].hasError('required') && (wcReconciliationRequisitionForm.controls['price'].dirty 
+                                    || wcReconciliationRequisitionForm.controls['price'].touched)">
                                 <label [innerHTML]="_sharedComponentService.required_field">
                                 </label>
                             </mat-error>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['price'].hasError('required')">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['price'].hasError('required')">
                                 <label [innerHTML]="_sharedComponentService.required_field">
                                 </label>
                             </mat-error>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['price'].hasError('pattern')">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['price'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    
+                    <!-- priceDollar -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>السعر دولار</mat-label>
+                            <input type="text" matInput formControlName="priceDollar" placeholder="مثال: 15"
+                                [errorStateMatcher]="matcher" (change)="changePrice('priceDollar')"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" required/>
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['priceDollar'].hasError('required') && (wcReconciliationRequisitionForm.controls['priceDollar'].dirty 
+                                    || wcReconciliationRequisitionForm.controls['priceDollar'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['priceDollar'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['priceDollar'].hasError('pattern')">
                                 <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
                                 </label>
                             </mat-error>
@@ -73,19 +96,19 @@
                                 [errorStateMatcher]="matcher"
                                 oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" required/>
                             <mat-error class="text-danger"
-                                *ngIf="wcCottonReconciliationRequisitionForm.controls['quantity'].hasError('incorrect')">
+                                *ngIf="wcReconciliationRequisitionForm.controls['quantity'].hasError('incorrect')">
                                 الكمية المدخلة غير متوفرة
                             </mat-error>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['quantity'].hasError('required') && (wcCottonReconciliationRequisitionForm.controls['quantity'].dirty 
-                                    || wcCottonReconciliationRequisitionForm.controls['quantity'].touched)">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['quantity'].hasError('required') && (wcReconciliationRequisitionForm.controls['quantity'].dirty 
+                                    || wcReconciliationRequisitionForm.controls['quantity'].touched)">
                                 <label [innerHTML]="_sharedComponentService.required_field">
                                 </label>
                             </mat-error>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['quantity'].hasError('required')">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['quantity'].hasError('required')">
                                 <label [innerHTML]="_sharedComponentService.required_field">
                                 </label>
                             </mat-error>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['quantity'].hasError('pattern')">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['quantity'].hasError('pattern')">
                                 <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
                                 </label>
                             </mat-error>
@@ -97,12 +120,12 @@
                         <mat-form-field appearance="outline" class="example-full-width w-100">
                             <mat-label> البيان </mat-label>
                             <textarea matInput rows="1" placeholder="البيان" formControlName="statement"></textarea>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['statement'].hasError('invalid') && (wcCottonReconciliationRequisitionForm.controls['statement'].dirty 
-                                    || wcCottonReconciliationRequisitionForm.controls['statement'].touched)">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['statement'].hasError('invalid') && (wcReconciliationRequisitionForm.controls['statement'].dirty 
+                                    || wcReconciliationRequisitionForm.controls['statement'].touched)">
                                 <label [innerHTML]="_sharedComponentService.invalid_message">
                                 </label>
                             </mat-error>
-                            <mat-error *ngIf="wcCottonReconciliationRequisitionForm.controls['statement'].hasError('pattern')">
+                            <mat-error *ngIf="wcReconciliationRequisitionForm.controls['statement'].hasError('pattern')">
                                 <label [innerHTML]="_sharedComponentService.invalid_message">
                                 </label>
                             </mat-error>

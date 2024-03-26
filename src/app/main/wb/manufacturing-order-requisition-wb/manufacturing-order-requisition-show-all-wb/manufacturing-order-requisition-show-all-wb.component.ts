@@ -79,10 +79,10 @@ export class ManufacturingOrderRequisitionShowAllWbComponent implements OnInit {
       filter = this.selectedSellerName
 
       if (this.selectedSellerName[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -113,10 +113,10 @@ export class ManufacturingOrderRequisitionShowAllWbComponent implements OnInit {
       filter = this.dateFilters
       
       if (event != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

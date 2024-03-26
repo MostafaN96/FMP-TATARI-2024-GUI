@@ -35,6 +35,7 @@ export class ItemHistoryReportWdComponent implements OnInit {
   isShowAvgInputes = false
   isShowAvgWast = true
   isShowLatestPrice = true
+  isShowLatestPriceDollar = true
   isShowClosedBalances  = false
 
   //////////////////////////////////// PrimeNG /////////////////////////////////
@@ -109,10 +110,10 @@ export class ItemHistoryReportWdComponent implements OnInit {
       filter = this.selectedDyers
       
       if (this.selectedDyers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -143,10 +144,10 @@ export class ItemHistoryReportWdComponent implements OnInit {
       filter = this.selectedNames
       
       if (this.selectedNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -177,10 +178,10 @@ export class ItemHistoryReportWdComponent implements OnInit {
       filter = this.selectedCodes
       
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -211,10 +212,10 @@ export class ItemHistoryReportWdComponent implements OnInit {
       filter = this.selectedDyeingCodes
       
       if (this.selectedDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -245,10 +246,10 @@ export class ItemHistoryReportWdComponent implements OnInit {
       filter = this.selectedConsigmentNumber
 
       if (this.selectedConsigmentNumber[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

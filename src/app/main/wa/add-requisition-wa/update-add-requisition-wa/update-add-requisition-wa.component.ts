@@ -34,6 +34,7 @@ export class UpdateAddRequisitionWaComponent implements OnInit {
     date: new FormControl(null, [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -88,6 +89,7 @@ export class UpdateAddRequisitionWaComponent implements OnInit {
   ngOnChanges() {
     this.addRequisitionWaForm.controls['date'].setValue(this.selectedData?.date)
     this.addRequisitionWaForm.controls['price'].setValue(this.selectedData?.price)
+    this.addRequisitionWaForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.addRequisitionWaForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.addRequisitionWaForm.controls['document'].setValue(this.selectedData?.document)
     this.addRequisitionWaForm.controls['statement'].setValue(this.selectedData?.statement)
@@ -104,6 +106,15 @@ export class UpdateAddRequisitionWaComponent implements OnInit {
     }
   }
   // End Supplier Autocomplete Section
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.addRequisitionWaForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.addRequisitionWaForm.controls['price'].setValue("0")
+    }
+  }
 
   onUpdate() {
     this.addRequisitionWaForm.markAllAsTouched();

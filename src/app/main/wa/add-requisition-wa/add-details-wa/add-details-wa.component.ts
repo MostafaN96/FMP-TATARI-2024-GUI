@@ -146,6 +146,7 @@ export class AddDetailsWaComponent implements OnInit {
       yarnLotCode: new FormControl("", [Validators.required]),
       consigmentYarnNumber: new FormControl("", [Validators.required]),
       price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -184,6 +185,15 @@ export class AddDetailsWaComponent implements OnInit {
     }
   }
   // End Yarn Autocomplete Section
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
+  }
 
   async onAddDetails() {
     this.isShowAdd = false

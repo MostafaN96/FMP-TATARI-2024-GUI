@@ -48,6 +48,7 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
   dyersDetails: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   listFabricPrices: any = []
+  listFabricPricesDollar: any = []
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -138,6 +139,7 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
       fabricCode: new FormControl(""),
       consigmentDyeingId: new FormControl("", [Validators.required]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
       inputOutput: new FormControl('1', [Validators.required]),
@@ -160,6 +162,8 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
     // Price
     this.listFabricPrices[index] = delete this.listFabricPrices[index];
     this.listFabricPrices.splice(index, 1);
+    this.listFabricPricesDollar[index] = delete this.listFabricPricesDollar[index];
+    this.listFabricPricesDollar.splice(index, 1);
   }
 
   //  Fabric
@@ -173,6 +177,7 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
       row.controls['consigmentDyeingId'].setValue("")
       this.currentQuantity[index] = 0
       this.listFabricPrices[index] = []
+      this.listFabricPricesDollar[index] = []
     }
     else {
       row.controls['fabricCode'].setValue(event.itemData.fabric_code)
@@ -185,6 +190,7 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
       this._reportWdService.selectInverntoryByFabricAndDyeingForPriceInWd(event.itemData.fabric_id, this.reconcilitionRequisitionWDForm.controls['dyeingId'].value!).subscribe((response: any) => {
         this.dyersDetails = response
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice2(this.dyersDetails[0]), this._sharedComponentService.getAvgInputesPrice2(this.dyersDetails[0]), parseFloat(this.dyersDetails[0].latest_price)]
+        this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgInputesPriceDynamicDetails(this.dyersDetails[0], 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPrice2DynamicDetails(this.dyersDetails[0], 'quantity', 'price_dollar'), parseFloat(this.dyersDetails[0].latest_price_dollar)]
       })
 
     }
@@ -224,9 +230,19 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
       row.controls['quantity'].setValue("")
       this.currentQuantity[index] = 0
       this.listFabricPrices[index] = []
+      this.listFabricPricesDollar[index] = []
     } else {
       this.currentQuantity[index] = event.itemData.current_quantity
 
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

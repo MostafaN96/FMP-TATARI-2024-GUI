@@ -28,6 +28,7 @@ export class ExecuteOrderRequisitionUpdateWeComponent implements OnInit {
     requisitionNote: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl(null, [Validators.required]),
     price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     weDyedFabricOrderRequisitionId: new FormControl("", [Validators.required]),
@@ -58,11 +59,21 @@ export class ExecuteOrderRequisitionUpdateWeComponent implements OnInit {
     this.executeOrderRequisitionForm.controls['date'].setValue(this.selectedData?.date)
     this.executeOrderRequisitionForm.controls['requisitionNote'].setValue(this.selectedData?.requisition_note)
     this.executeOrderRequisitionForm.controls['price'].setValue(this.selectedData?.price)
+    this.executeOrderRequisitionForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.executeOrderRequisitionForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.executeOrderRequisitionForm.controls['note'].setValue(this.selectedData?.note)
     this.executeOrderRequisitionForm.controls['weDyedFabricOrderRequisitionId'].setValue(this.selectedData?.we_dyed_fabric_order_requisition_id)
     this.executeOrderRequisitionForm.controls['weDyedFabricOrderRequisitionDetailsId'].setValue(this.selectedData?.we_dyed_fabric_order_requisition_details_id)
     this.executeOrderRequisitionForm.controls['weId'].setValue(this.selectedData?.we_id)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.executeOrderRequisitionForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.executeOrderRequisitionForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

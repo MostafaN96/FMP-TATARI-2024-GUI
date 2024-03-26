@@ -75,10 +75,10 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
       filter = this.selectedSellerName
 
       if (this.selectedSellerName[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -110,10 +110,10 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
         filter = this.selectedManufactureName
   
         if (this.selectedManufactureName[0] != null) {
-          if (filter === undefined || filter === null || filter == []) {
+          if (filter === undefined || filter === null || !filter.length) {
             return true;
           }
-          if (value === undefined || value === null || value === []) {
+          if (value === undefined || value === null || value.length == 0) {
             return false;
           }
           if (filter.length > 0) {
@@ -145,10 +145,10 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
       filter = this.selectedFabricCode
 
       if (this.selectedFabricCode[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -180,10 +180,10 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
         filter = this.selectedFabricName
   
         if (this.selectedFabricName[0] != null) {
-          if (filter === undefined || filter === null || filter == []) {
+          if (filter === undefined || filter === null || !filter.length) {
             return true;
           }
-          if (value === undefined || value === null || value === []) {
+          if (value === undefined || value === null || value.length == 0) {
             return false;
           }
           if (filter.length > 0) {
@@ -215,10 +215,10 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
       filter = this.selectedOrderNumber
 
       if (this.selectedOrderNumber[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -249,10 +249,10 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
       filter = this.dateFilters
       
       if (event != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

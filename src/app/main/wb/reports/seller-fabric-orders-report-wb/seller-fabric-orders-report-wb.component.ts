@@ -73,10 +73,10 @@ export class SellerFabricOrdersReportWbComponent implements OnInit {
       filter = this.selectedCodes
       
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -107,10 +107,10 @@ export class SellerFabricOrdersReportWbComponent implements OnInit {
       filter = this.selectedSellers
       
       if (this.selectedSellers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -141,10 +141,10 @@ export class SellerFabricOrdersReportWbComponent implements OnInit {
       filter = this.selectedNumbers
       
       if (this.selectedNumbers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

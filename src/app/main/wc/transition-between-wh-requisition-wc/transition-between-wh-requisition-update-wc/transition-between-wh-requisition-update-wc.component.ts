@@ -28,6 +28,7 @@ export class TransitionBetweenWhRequisitionUpdateWcComponent implements OnInit {
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl("", [Validators.required]),
     price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -57,9 +58,19 @@ export class TransitionBetweenWhRequisitionUpdateWcComponent implements OnInit {
     this.transitionBetweenWhRequisitionWeForm.controls['date'].setValue(this.selectedData?.date)
     this.transitionBetweenWhRequisitionWeForm.controls['note'].setValue(this.selectedData?.note)
     this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue(String(this.selectedData?.price))
+    this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].setValue(String(this.selectedData?.price_dollar))
     this.transitionBetweenWhRequisitionWeForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.transitionBetweenWhRequisitionWeForm.controls['document'].setValue(this.selectedData?.document)
     this.transitionBetweenWhRequisitionWeForm.controls['statement'].setValue(this.selectedData?.statement)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {

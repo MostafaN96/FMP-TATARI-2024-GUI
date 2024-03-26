@@ -37,7 +37,9 @@ export class TransitionBetweenDyersDetailsWdComponent implements OnInit {
     'consigment_dyeing_number',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'document',
     'statement',
     'update'];

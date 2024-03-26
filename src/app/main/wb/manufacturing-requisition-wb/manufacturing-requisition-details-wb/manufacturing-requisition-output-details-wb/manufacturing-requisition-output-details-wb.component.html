@@ -79,6 +79,16 @@
                                     </td>
                                 </ng-container>
 
+                                <!-- total_with_wast_dollar Column -->
+                                <ng-container matColumnDef="total_with_wast_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الاجمالي مع الهالك دولار</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{dataDollar | number}}
+                                    </td>
+                                </ng-container>
+
                                 <!-- total_cost Column -->
                                 <ng-container matColumnDef="total_cost">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -89,6 +99,16 @@
                                     </td>
                                 </ng-container>
 
+                                <!-- total_cost_dollar Column -->
+                                <ng-container matColumnDef="total_cost_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>اجمالي التكلفة دولار</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{totalCostDollar(element.quantity, element.manufacturing_fee) | number}}
+                                    </td>
+                                </ng-container>
+
                                 <!-- avg_price Column -->
                                 <ng-container matColumnDef="avg_price">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -96,6 +116,16 @@
                                     </th>
                                     <td mat-cell *matCellDef="let element">
                                         {{avgCost(element.quantity, element.manufacturing_fee) | number}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- avg_price_dollar Column -->
+                                <ng-container matColumnDef="avg_price_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>وسطي سعر الكيلو دولار</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{avgCostDollar(element.quantity, element.manufacturing_fee) | number}}
                                     </td>
                                 </ng-container>
 

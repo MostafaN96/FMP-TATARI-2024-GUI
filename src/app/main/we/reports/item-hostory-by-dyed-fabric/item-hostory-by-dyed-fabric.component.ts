@@ -30,6 +30,7 @@ export class ItemHostoryByDyedFabricComponent implements OnInit {
   isShowAvgPrice = false
   isShowAvgInputes = false
   isShowLatestPrice = true
+  isShowLatestPriceDollar = true
   isShowClosedBalances  = false
 
   //////////////////////////////////// PrimeNG /////////////////////////////////
@@ -88,10 +89,10 @@ export class ItemHostoryByDyedFabricComponent implements OnInit {
       filter = this.selectedWarehouseNames
       
       if (this.selectedWarehouseNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -122,10 +123,10 @@ export class ItemHostoryByDyedFabricComponent implements OnInit {
       filter = this.selectedFabricNames
       
       if (this.selectedFabricNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -156,10 +157,10 @@ export class ItemHostoryByDyedFabricComponent implements OnInit {
       filter = this.selectedCodes
 
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -190,10 +191,10 @@ export class ItemHostoryByDyedFabricComponent implements OnInit {
       filter = this.selectedDyeingCodes
 
       if (this.selectedDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

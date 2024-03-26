@@ -30,12 +30,13 @@ export class UpdateSellRequisitionWeComponent implements OnInit {
 
   @Input() selectedData: any
   sellRequisitionWeForm: FormGroup = new FormGroup({
-    weSellRequisitionId: new FormControl(null, [Validators.required]),
+    weSellRequisitionId: new FormControl("", [Validators.required]),
     deliveryCarId: new FormControl('', [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    date: new FormControl(null, [Validators.required]),
-    price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    date: new FormControl("", [Validators.required]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -94,11 +95,21 @@ export class UpdateSellRequisitionWeComponent implements OnInit {
     this.sellRequisitionWeForm.controls['date'].setValue(this.selectedData?.date)
     this.sellRequisitionWeForm.controls['note'].setValue(this.selectedData?.note)
     this.sellRequisitionWeForm.controls['price'].setValue(String(this.selectedData?.price))
+    this.sellRequisitionWeForm.controls['priceDollar'].setValue(String(this.selectedData?.price_dollar))
     this.sellRequisitionWeForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.sellRequisitionWeForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
     this.sellRequisitionWeForm.controls['document'].setValue(this.selectedData?.document)
     this.sellRequisitionWeForm.controls['statement'].setValue(this.selectedData?.statement)
   }
+
+// price
+changePrice(type) {
+  if(type == "priceEG") {
+    this.sellRequisitionWeForm.controls['priceDollar'].setValue("0")
+  } else if (type == "priceDollar") {
+    this.sellRequisitionWeForm.controls['price'].setValue("0")
+  }
+}
 
   onUpdate() {
     this.sellRequisitionWeForm.markAllAsTouched();

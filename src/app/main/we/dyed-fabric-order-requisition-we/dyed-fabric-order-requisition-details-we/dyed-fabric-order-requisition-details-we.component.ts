@@ -10,6 +10,7 @@ import { ExportDataService } from "src/app/services/export-data.service";
 
 // Call Service
 import { DyedFabricOrderRequisitionDetailsWeService } from "src/app/services/main/we/dyed-fabric-order-requisition-details-we.service";
+import { ConstantsService } from 'src/app/services/constants.service';
 
 // Route
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,6 +45,7 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     'quantity',
     'completed_quantity',
     'current_quantity',
+    'over_current_quantity',
     'color_category_name',
     'color_name',
     'fabric_width',
@@ -60,13 +62,15 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _dyedFabricOrderRequisitionDetailsWeService: DyedFabricOrderRequisitionDetailsWeService,
     public _exportDataService: ExportDataService,
+    private _constantsService: ConstantsService,
     private router: Router
 
   ) {
   }
 
   ngOnInit(): void {
-    if(this.router.url.split('/')[3].split('?')[0] === 'closed-details') {
+    if(this.router.url.split('/')[2] + '/' + this.router.url.split('/')[3].split('?')[0] 
+    === this._constantsService.ROUTING_LINKS[190]) {
       this.getData("closed")
     }
     else {

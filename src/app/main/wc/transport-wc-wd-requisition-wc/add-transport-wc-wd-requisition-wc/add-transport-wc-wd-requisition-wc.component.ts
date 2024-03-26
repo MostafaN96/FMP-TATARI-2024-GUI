@@ -51,6 +51,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
   fabricsDetails: any
   getListFabricPrices: any = []
   listFabricPrices: any = []
+  listFabricPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر تصنيع", "آخر سعر"]
   fabricMap = new Map()
   isShowAdd = true
@@ -171,6 +172,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
       fabricName: new FormControl(""),
       fabricCode: new FormControl(""),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       consigmentDyeingNumber: new FormControl('', [Validators.required]),
@@ -195,6 +197,8 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
     // Price
     this.listFabricPrices[index] = delete this.listFabricPrices[index];
     this.listFabricPrices.splice(index, 1);
+    this.listFabricPricesDollar[index] = delete this.listFabricPricesDollar[index];
+    this.listFabricPricesDollar.splice(index, 1);
   }
 
   //  Fabric
@@ -274,6 +278,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
       row.controls['quantity'].setValue(null)
       this.currentQuantity[index] = 0
       this.listFabricPrices[index] = []
+      this.listFabricPricesDollar[index] = []
     } else {
       console.log("event.itemData ::: ", event.itemData);
       this.currentQuantity[index] = event.itemData.current_quantity
@@ -284,8 +289,18 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
       this._reportWcService.selectPriceByFabricByConsigmentManufacturingInWc(row.controls['fabricId'].value, event.itemData.id).subscribe((response: any) => {
         this.fabricsDetails = response
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), this.fabricsDetails[0].latest_manufacturing_price, this.fabricsDetails[0].latest_price]
+        this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this.fabricsDetails[0].latest_manufacturing_price_dollar, this.fabricsDetails[0].latest_price_dollar]
       })
 
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

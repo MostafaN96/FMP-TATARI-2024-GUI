@@ -30,6 +30,7 @@ export class WbManufacturingRequisitionInputDetailsOrderComponent implements OnI
   /////////////////// Variables ///////////////////
   manufacturingRequisitionDetails: any[] = []
   totalPriceXQuantityWithWast: any
+  totalPriceXQuantityWithWastDollar: any
   selectedDataToUpdate: any
   showInputUpdate = false
   showAddDetails = false
@@ -49,9 +50,12 @@ export class WbManufacturingRequisitionInputDetailsOrderComponent implements OnI
     'quantity',
     'quantity_with_waste',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'wast_ratio',
     'total_with_wast',
+    'total_with_wast_dollar',
     'statement',
     'update'];
   filter = "";
@@ -109,6 +113,11 @@ export class WbManufacturingRequisitionInputDetailsOrderComponent implements OnI
   getTotalPriceXQuantityWithWast() {
     this.totalPriceXQuantityWithWast = this.dataSourceSearchTabel?.filteredData.map(function (a) { return (parseFloat(a['quantity']) * parseFloat(a['price'])) + (((parseFloat(a['price']) * parseFloat(a['quantity'])) * parseFloat(a.wast_ratio)) / 100) }).reduce((acc, value) => acc + value, 0);
     return this.totalPriceXQuantityWithWast
+  }
+
+  getTotalPriceXQuantityWithWastDollar() {
+    this.totalPriceXQuantityWithWastDollar = this.dataSourceSearchTabel?.filteredData.map(function (a) { return (parseFloat(a['quantity']) * parseFloat(a['price_dollar'])) + (((parseFloat(a['price_dollar']) * parseFloat(a['quantity'])) * parseFloat(a.wast_ratio)) / 100) }).reduce((acc, value) => acc + value, 0);
+    return this.totalPriceXQuantityWithWastDollar
   }
 
   getTotalWithWast(price: string, quantity: string, wastRatio: string) {

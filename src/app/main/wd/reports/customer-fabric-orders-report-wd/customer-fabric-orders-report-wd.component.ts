@@ -80,10 +80,10 @@ export class CustomerFabricOrdersReportWdComponent implements OnInit {
       filter = this.selectedCodes
       
       if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -114,10 +114,10 @@ export class CustomerFabricOrdersReportWdComponent implements OnInit {
       filter = this.selectedDyeingCodes
       
       if (this.selectedDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -148,10 +148,10 @@ export class CustomerFabricOrdersReportWdComponent implements OnInit {
       filter = this.selectedCustomers
       
       if (this.selectedCustomers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -182,10 +182,10 @@ export class CustomerFabricOrdersReportWdComponent implements OnInit {
       filter = this.selectedWorkOrderNumbers
       
       if (this.selectedWorkOrderNumbers[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -216,10 +216,10 @@ export class CustomerFabricOrdersReportWdComponent implements OnInit {
       filter = this.selectedColorCategories
       
       if (this.selectedColorCategories[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -249,10 +249,10 @@ export class CustomerFabricOrdersReportWdComponent implements OnInit {
       filter = this.selectedColors
       
       if (this.selectedColors[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

@@ -125,6 +125,10 @@
                             </th>
 
                             <th style="max-width: 60px;">
+                                السعر دولار
+                            </th>
+
+                            <th style="max-width: 60px;">
                                 نسبة الهالك
                             </th>
 
@@ -133,7 +137,15 @@
                             </th>
 
                             <th style="max-width: 100px;">
+                                الاجمالي دولار
+                            </th>
+
+                            <th style="max-width: 100px;">
                                 الاجمالي مع الهالك
+                            </th>
+
+                            <th style="max-width: 100px;">
+                                الاجمالي مع الهالك دولار
                             </th>
 
                             <th>
@@ -240,12 +252,13 @@
                                     <mat-form-field class="example-full-width w-100">
                                         <mat-label>السعر</mat-label>
                                         <input type="text" matInput formControlName="price" required
-                                            placeholder="مثال: 15" [matAutocomplete]="autoGroup"
-                                            oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
-                                        <mat-autocomplete #autoGroup="matAutocomplete">
+                                            placeholder="مثال: 15" [matAutocomplete]="autoGroup2"
+                                            oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                            (change)="changePrice('priceEG', row)">
+                                        <mat-autocomplete #autoGroup2="matAutocomplete">
                                             <ng-container
                                                 *ngFor="let item of getListYarnPrices[index]; let i = index">
-                                                <mat-optgroup [label]="groupPrices[i]"
+                                                <mat-optgroup [label]="groupPrices[i]" (click)="changePrice('priceEG', row)"
                                                     [disabled]="groupPrices[i].disabled">
                                                     <mat-option value="{{item | number}}">
                                                         {{item | number}}
@@ -264,6 +277,43 @@
                                             </label>
                                         </mat-error>
                                         <mat-error *ngIf="row.get('price').hasError('pattern')">
+                                            <label
+                                                [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                            </label>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td>
+
+                                <!-- priceDollar -->
+                                <td class="table-td" style="max-width: 60px">
+                                    <mat-form-field class="example-full-width w-100">
+                                        <mat-label>السعر دولار</mat-label>
+                                        <input type="text" matInput formControlName="priceDollar" required
+                                            placeholder="مثال: 15" [matAutocomplete]="autoGroup"
+                                            oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                     (change)="changePrice('priceDollar', row)">
+                                        <mat-autocomplete #autoGroup="matAutocomplete">
+                                            <ng-container
+                                                *ngFor="let item of listYarnPricesDollar[index]; let i = index">
+                                                <mat-optgroup [label]="groupPrices[i]" (click)="changePrice('priceDollar', row)"
+                                                    [disabled]="groupPrices[i].disabled">
+                                                    <mat-option value="{{item | number}}">
+                                                        {{item | number}}
+                                                    </mat-option>
+                                                </mat-optgroup>
+                                            </ng-container>
+                                        </mat-autocomplete>
+                                        <mat-error
+                                            *ngIf="row.get('priceDollar').hasError('required') && (row.get('priceDollar').dirty 
+                                                                                    || row.get('priceDollar').touched)">
+                                            <label [innerHTML]="_sharedComponentService.required_field">
+                                            </label>
+                                        </mat-error>
+                                        <mat-error *ngIf="row.get('priceDollar').hasError('required')">
+                                            <label [innerHTML]="_sharedComponentService.required_field">
+                                            </label>
+                                        </mat-error>
+                                        <mat-error *ngIf="row.get('priceDollar').hasError('pattern')">
                                             <label
                                                 [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
                                             </label>
@@ -304,10 +354,26 @@
                                     </span>
                                 </td>
 
+                                <!-- total_dollar -->
+                                <td class="align-middle text-center">
+                                    <span>
+                                        {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value,
+                                        row.controls['quantity'].value) | number}}
+                                    </span>
+                                </td>
+
                                   <!-- wast total -->
                                   <td class="align-middle text-center">
                                     <span>
                                         {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantityWithWaste'].value) | number}}
+                                    </span>
+                                </td>
+
+                                <!-- wast total_dollar -->
+                                <td class="align-middle text-center">
+                                    <span>
+                                        {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value,
+                                        row.controls['quantityWithWaste'].value) | number}}
                                     </span>
                                 </td>
 
@@ -342,7 +408,9 @@
                           <td>{{_sharedComponentService.getTotalQuantityForm(addManufacturingRequisitionForm, 'items', 'quantityWithWaste') | number}}</td>
                           <td colspan="2"></td>
                           <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addManufacturingRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
+                          <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addManufacturingRequisitionForm, 'items', 'quantity', 'priceDollar') | number}}</td>
                           <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addManufacturingRequisitionForm, 'items', 'quantityWithWaste', 'price') | number}}</td>
+                          <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addManufacturingRequisitionForm, 'items', 'quantityWithWaste', 'priceDollar') | number}}</td>
                           <td colspan="2"></td>
                         </tr>
                       </tfoot>

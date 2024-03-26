@@ -37,6 +37,7 @@ export class TransportDetailsWdWcRequisitionWdComponent implements OnInit {
     'consigment_manufacturing_number',
     'quantity',
     'price',
+    'price_dollar',
     'document',
     'statement',
   'update'];

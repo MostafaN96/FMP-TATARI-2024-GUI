@@ -77,10 +77,10 @@ export class SalesReportWeComponent implements OnInit {
       filter = this.selectedSellerNames
 
       if (this.selectedSellerNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -111,10 +111,10 @@ export class SalesReportWeComponent implements OnInit {
       filter = this.selectedColorCodes
 
       if (this.selectedColorCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -145,10 +145,10 @@ export class SalesReportWeComponent implements OnInit {
       filter = this.selectedColors
 
       if (this.selectedColors[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -179,10 +179,10 @@ export class SalesReportWeComponent implements OnInit {
       filter = this.selectedFabricNames
 
       if (this.selectedFabricNames[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -213,10 +213,10 @@ export class SalesReportWeComponent implements OnInit {
       filter = this.selectedFabricCodes
 
       if (this.selectedFabricCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -247,10 +247,10 @@ export class SalesReportWeComponent implements OnInit {
       filter = this.selectedDyeingCodes
 
       if (this.selectedDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -281,10 +281,10 @@ export class SalesReportWeComponent implements OnInit {
       filter = this.selectedTypeOfRequisition
       
       if (this.selectedTypeOfRequisition[0] != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {
@@ -314,10 +314,10 @@ export class SalesReportWeComponent implements OnInit {
       filter = this.dateFilters
       
       if (event != null) {
-        if (filter === undefined || filter === null || filter == []) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-        if (value === undefined || value === null || value === []) {
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
         if (filter.length > 0) {

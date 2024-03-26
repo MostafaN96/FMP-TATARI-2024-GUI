@@ -179,6 +179,11 @@
                                                         <th>
                                                             الكمية المتبقية
                                                        </th>
+                                                       
+                                                       <th style="width: 200px;">
+                                                        الكمية الزائدة
+                                                        </th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -226,6 +231,11 @@
                                                         <td>
                                                             {{ requestionDetailsData.current_quantity}}
                                                         </td>
+
+                                                        <td>
+                                                            {{ requestionDetailsData.over_current_quantity}}
+                                                        </td>
+
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
@@ -249,6 +259,12 @@
                                                             {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
                                                             'current_quantity') | number}}
                                                         </td>
+                                                        
+                                                        <td>
+                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
+                                                            'over_current_quantity') | number}}
+                                                        </td>
+
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -276,7 +292,7 @@
                                             </a>
 
                                             <a *ngIf="element.is_order == '0'"
-                                            [routerLink]="['closed-details']" [queryParams]="{ id: element.id}">
+                                            [routerLink]="['details']" [queryParams]="{ id: element.id}">
                                                 <i class="fas fa-angle-double-right update-symbol"></i>
                                             </a>
                                         </td>

@@ -46,6 +46,7 @@ export class WcReconciliationRequisitionFormAddDetailsComponent implements OnIni
   currentQuantity: any = []
   fabricsDetails: any
   listFabricPrices: any = []
+  listYarnPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر تصنيع", "آخر سعر"]
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
@@ -128,6 +129,7 @@ export class WcReconciliationRequisitionFormAddDetailsComponent implements OnIni
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
       inputOutput: new FormControl('1', [Validators.required]),
     });
@@ -149,6 +151,8 @@ export class WcReconciliationRequisitionFormAddDetailsComponent implements OnIni
     // Price
     this.listFabricPrices[index] = delete this.listFabricPrices[index];
     this.listFabricPrices.splice(index, 1);
+    this.listYarnPricesDollar[index] = delete this.listYarnPricesDollar[index];
+    this.listYarnPricesDollar.splice(index, 1);
   }
 
   //  Fabric
@@ -174,6 +178,7 @@ export class WcReconciliationRequisitionFormAddDetailsComponent implements OnIni
       this._reportWcService.selectPriceWc(event.itemData.id).subscribe((response: any) => {
         this.fabricsDetails = response
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), this.fabricsDetails[0].latest_price]
+        this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this.fabricsDetails[0].latest_manufacturing_price, this.fabricsDetails[0].latest_price]
       })
     }
     this.validate(row, index)
@@ -199,10 +204,20 @@ export class WcReconciliationRequisitionFormAddDetailsComponent implements OnIni
 
       this.currentQuantity[index] = 0
       this.listFabricPrices[index] = []
+      this.listYarnPricesDollar[index] = []
     } else {
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
 
+    }
+  }
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
     }
   }
 

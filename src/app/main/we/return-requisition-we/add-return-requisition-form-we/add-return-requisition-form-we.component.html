@@ -41,8 +41,12 @@
                                     كود اللون
                                 </th>
 
-                                <th style="max-width: 120px">
+                                <th style="max-width: 80px">
                                     السعر
+                                </th>
+
+                                <th style="max-width: 80px">
+                                    السعر دولار
                                 </th>
 
                                 <th style="max-width: 120px;">
@@ -53,8 +57,12 @@
                                     الكمية
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     الاجمالي
+                                </th>
+
+                                <th style="max-width: 80px;">
+                                    الاجمالي دولار
                                 </th>
 
                                 <th>
@@ -138,7 +146,7 @@
                                     </td>
 
                                     <!-- Price -->
-                                    <td class="table-td" style="max-width: 100px;">
+                                    <td class="table-td" style="max-width: 80px;">
                                         <mat-form-field class="example-full-width w-100">
                                             <mat-label>السعر*</mat-label>
                                             <input type="text" 
@@ -152,6 +160,27 @@
                                                     </label>
                                                 </mat-error>
                                                 <mat-error *ngIf="row.get('price').hasError('pattern')">
+                                                    <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                        </mat-form-field>
+                                    </td>
+
+                                    <!-- priceDollar -->
+                                    <td class="table-td" style="max-width: 80px;">
+                                        <mat-form-field class="example-full-width w-100">
+                                            <mat-label>السعر دولار</mat-label>
+                                            <input type="text" 
+                                             matInput formControlName="priceDollar" placeholder="مثال: 15"
+                                                [errorStateMatcher]="matcher" 
+                                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                [disabled]="true" readonly/>
+                                                <mat-error *ngIf="row.get('priceDollar').hasError('required') && (row.get('priceDollar').dirty 
+                                                || row.get('priceDollar').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('priceDollar').hasError('pattern')">
                                                     <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
                                                     </label>
                                                 </mat-error>
@@ -199,9 +228,16 @@
                                     </td>
 
                                      <!-- total -->
-                                     <td class="align-middle text-center">
+                                     <td style="max-width: 80px;" class="align-middle text-center">
                                         <span>
                                             {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantity'].value) | number}}
+                                        </span>
+                                    </td>
+
+                                     <!-- total priceDollar -->
+                                     <td style="max-width: 80px;" class="align-middle text-center">
+                                        <span>
+                                            {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value, row.controls['quantity'].value) | number}}
                                         </span>
                                     </td>
 
@@ -258,9 +294,10 @@
                             <tr>
                               <td>الاجمالي</td>
                             
-                              <td colspan="8"></td>
+                              <td colspan="9"></td>
                               <td>{{_sharedComponentService.getTotalQuantityForm(returnRequisitionForm, 'items', 'quantity') | number}}</td>
                               <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(returnRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
+                              <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(returnRequisitionForm, 'items', 'quantity', 'priceDollar') | number}}</td>
                               <td colspan="4"></td>
                             </tr>
                           </tfoot>

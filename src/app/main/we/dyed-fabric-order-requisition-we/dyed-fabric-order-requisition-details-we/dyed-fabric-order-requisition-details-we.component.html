@@ -169,6 +169,19 @@
                                             {{_sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'current_quantity') | number}}
                                              </td>
                                     </ng-container>
+
+                                    <!-- over_current_quantity Column -->
+                                    <ng-container matColumnDef="over_current_quantity">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>الكمية الزائدة</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.over_current_quantity | number}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef>
+                                            {{_sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'over_current_quantity') | number}}
+                                             </td>
+                                    </ng-container>
                                     
                                     <!-- Color Category Column -->
                                     <ng-container matColumnDef="color_category_name">

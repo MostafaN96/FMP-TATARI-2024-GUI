@@ -44,6 +44,29 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- priceDollar -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>السعر دولار</mat-label>
+                            <input type="text" matInput formControlName="priceDollar" placeholder="مثال: 15"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="transitionBetweenWhRequisitionForm.controls['priceDollar'].hasError('required') && (transitionBetweenWhRequisitionForm.controls['priceDollar'].dirty 
+                                    || transitionBetweenWhRequisitionForm.controls['priceDollar'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="transitionBetweenWhRequisitionForm.controls['priceDollar'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="transitionBetweenWhRequisitionForm.controls['priceDollar'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
                     <!-- Price -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

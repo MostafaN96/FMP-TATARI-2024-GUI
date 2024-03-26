@@ -33,14 +33,15 @@ export class UpdateAddRequisitionWeComponent implements OnInit {
   addRequisitionWeForm: FormGroup = new FormGroup({
     workOrderNumber: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    date: new FormControl(null, [Validators.required]),
-    price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    date: new FormControl("", [Validators.required]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
     dyeingCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
-    colorId: new FormControl(null, [Validators.required]),
-    colorCode: new FormControl(null),
-    colorCategoryId: new FormControl(null, [Validators.required]),
+    colorId: new FormControl("", [Validators.required]),
+    colorCode: new FormControl(""),
+    colorCategoryId: new FormControl("", [Validators.required]),
     storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -116,6 +117,7 @@ export class UpdateAddRequisitionWeComponent implements OnInit {
     this.addRequisitionWeForm.controls['workOrderNumber'].setValue(this.selectedData?.work_order_number_details)
     this.addRequisitionWeForm.controls['note'].setValue(this.selectedData?.note)
     this.addRequisitionWeForm.controls['price'].setValue(this.selectedData?.price)
+    this.addRequisitionWeForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.addRequisitionWeForm.controls['quantity'].setValue(String(this.selectedData?.quantity))
     this.addRequisitionWeForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
     this.addRequisitionWeForm.controls['dyeingCode'].setValue(this.selectedData?.dyeing_code)
@@ -141,6 +143,15 @@ export class UpdateAddRequisitionWeComponent implements OnInit {
     if (!this.colors.includes(event.itemData)) {
       this.addRequisitionWeForm.controls['colorId'].setValue(null)
       this.addRequisitionWeForm.controls['colorCode'].setValue(null)
+    }
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.addRequisitionWeForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.addRequisitionWeForm.controls['price'].setValue("0")
     }
   }
 

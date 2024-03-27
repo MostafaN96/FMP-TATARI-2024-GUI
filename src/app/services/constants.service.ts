@@ -266,8 +266,33 @@ export class ConstantsService {
   }
 
 
+  get WB_MANUFACTURING_STATUS(): any {
+    return [
+      {
+        name: 'غير مفحوص',
+        value: 'new'
+      },
+      {
+        name: 'مقبول بعد مفحوص',
+        value: 'good_after_check'
+      },
+      {
+        name: 'غير مقبول',
+        value: 'not_good_after_check'
+      },
+      {
+        name: 'ابيض',
+        value: 'white'
+      },
+    ];
+  }
+
   get DEFAULT_WA_WAREHOUSE_ID(): string {
     return '20229917115148716';
+  }
+
+  get DEFAULT_WA_WAREHOUSE_NOT_ARRIVED_ID(): string {
+    return '202421311224215241';
   }
 
   get DEFAULT_WC_WAREHOUSE_ID(): string {

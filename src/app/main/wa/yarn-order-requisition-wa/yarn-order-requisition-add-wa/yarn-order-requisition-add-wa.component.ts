@@ -129,7 +129,7 @@ export class YarnOrderRequisitionAddWaComponent implements OnInit {
   }
 
   getData() {
-    this._bussinessmanService.selectAll().subscribe((response: any) => {
+    this._bussinessmanService.selectSeller().subscribe((response: any) => {
       this.sellers = response
     })
 

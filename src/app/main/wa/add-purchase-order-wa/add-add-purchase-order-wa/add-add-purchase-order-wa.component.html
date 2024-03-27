@@ -38,6 +38,22 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- requisitionsOrder -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='requisitionsOrder' [fields]='fieldsRequisitionOrderName'
+                            (filtering)="onFilteringRequisitionOrderName($event)"
+                            [placeholder]='textRequisitionsOrderName' [autofill]='autofill' formControlName="orderId"
+                            class="ejs-autocomplete w-100" (change)="selectRequisitionsOrderName($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="addOrderForm.controls['orderId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="addOrderForm.controls['orderId'].hasError('required') && (addOrderForm.controls['orderId'].dirty 
+                            || addOrderForm.controls['orderId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
                     <!-- Name -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">
@@ -59,22 +75,28 @@
                         </mat-form-field>
                     </div>
 
-                    <!-- requisitionsOrder -->
+                    <!-- Supplier -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='requisitionsOrder' [fields]='fieldsRequisitionOrderName'
-                            (filtering)="onFilteringRequisitionOrderName($event)"
-                            [placeholder]='textRequisitionsOrderName' [autofill]='autofill' formControlName="orderId"
-                            class="ejs-autocomplete w-100" (change)="selectRequisitionsOrderName($event)">
+                        <ejs-autocomplete [dataSource]='suppliers' [fields]='fieldsSupplier' 
+                        class="ejs-autocomplete w-100"
+                        (filtering)="onFilteringSupplier($event)"
+                            [placeholder]='textSupplier' [autofill]='autofill'
+                            formControlName="supplierId"
+                            (change)="selectSupplier($event)"
+                            style="width: 260px;">
                         </ejs-autocomplete>
-                        <small class="text-danger" *ngIf="addOrderForm.controls['orderId'].hasError('pattern')"
-                            [innerHTML]="_sharedComponentService.invalid_message">
+                        <small class="text-danger"
+                        *ngIf="addOrderForm.controls['supplierId'].hasError('pattern')"
+                        [innerHTML]="_sharedComponentService.invalid_message">
                         </small>
-                        <small class="text-danger" *ngIf="addOrderForm.controls['orderId'].hasError('required') && (addOrderForm.controls['orderId'].dirty 
-                            || addOrderForm.controls['orderId'].touched)"
+                        <small class="text-danger"
+                            *ngIf="addOrderForm.controls['supplierId'].hasError('required') && 
+                            (addOrderForm.controls['supplierId'].dirty 
+                            || addOrderForm.controls['supplierId'].touched)"
                             [innerHTML]="_sharedComponentService.required_field">
                         </small>
                     </div>
-
+                    
                     <!-- Note -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">
@@ -104,6 +126,10 @@
                                         التسلسل
                                     </th>
 
+                                    <th style="max-width: 180px;">
+                                        المخزن
+                                    </th>
+
                                     <th style="max-width: 130px;">
                                         نوع الخيط
                                     </th>
@@ -115,12 +141,28 @@
                                     <th style="max-width: 60px;">
                                         الكمية
                                     </th>
+                                    
+                                    <th style="max-width: 40px;">
+                                        السعر
+                                    </th>
+
+                                    <th style="max-width: 40px;">
+                                        السعر دولار
+                                    </th>
+                                    
+                                    <th style="max-width: 40px;">
+                                        الاجمالي
+                                    </th>
+
+                                    <th style="max-width: 40px;">
+                                        الاجمالي دولار
+                                    </th>
 
                                     <th style="max-width: 100px;">
                                         الملاحظات
                                     </th>
 
-                                    <th style="width: 60px;">
+                                    <th style="max-width: 40px;">
                                         حذف
                                     </th>
                                 </tr>
@@ -130,6 +172,26 @@
                                     <ng-container [formGroupName]="index">
                                         <td>
                                             <label style="width: 5px;">{{index+1}}</label>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' 
+                                            (filtering)="onFilteringWarehouse($event)"
+                                            (change)="selectWarehouse($event, row)"
+                                                [placeholder]='textWarehouse' [autofill]='autofill'
+                                                formControlName="warehouseId" 
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('warehouseId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('warehouseId').hasError('required') && (row.get('warehouseId').dirty 
+                                                || row.get('warehouseId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
                                         </td>
 
                                         <td class="table-td" style="max-width: 180px;">
@@ -147,7 +209,7 @@
                                             </small>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 100px;">
+                                        <td class="table-td" style="max-width: 60px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
                                                     كود الخيط
@@ -184,6 +246,58 @@
                                             </mat-form-field>
                                         </td>
 
+                                         <!-- Price -->
+                                         <td class="table-td" style="max-width: 40px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>السعر*</mat-label>
+                                                <input autocomplete="off" type="text" matInput formControlName="price" placeholder="مثال: 15"
+                                                    [errorStateMatcher]="matcher" (change)="changePrice('priceEG', row)"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
+                                                    <mat-error *ngIf="row.get('price').hasError('required') && (row.get('price').dirty 
+                                                    || row.get('price').touched)">
+                                                        <label [innerHTML]="_sharedComponentService.required_field">
+                                                        </label>
+                                                    </mat-error>
+                                                    <mat-error *ngIf="row.get('price').hasError('pattern')">
+                                                        <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                        </label>
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                         <!-- priceDollar -->
+                                        <td class="table-td" style="max-width: 40px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>السعر دولار</mat-label>
+                                                <input autocomplete="off" type="text" matInput formControlName="priceDollar" placeholder="مثال: 15"
+                                                    [errorStateMatcher]="matcher" (change)="changePrice('priceDollar', row)"
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
+                                                    <mat-error *ngIf="row.get('priceDollar').hasError('required') && (row.get('priceDollar').dirty 
+                                                    || row.get('priceDollar').touched)">
+                                                        <label [innerHTML]="_sharedComponentService.required_field">
+                                                        </label>
+                                                    </mat-error>
+                                                    <mat-error *ngIf="row.get('priceDollar').hasError('pattern')">
+                                                        <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                        </label>
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </td>
+                                        
+                                        <!-- total -->
+                                        <td style="max-width: 40px;" class="align-middle text-center">
+                                            <span>
+                                                {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantity'].value) | number}}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- total priceDollar -->
+                                        <td style="max-width: 40px;" class="align-middle text-center">
+                                            <span>
+                                                {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value, row.controls['quantity'].value) | number}}
+                                            </span>
+                                        </td>
+
                                         <!-- Note -->
                                         <td style="max-width: 100px;">
                                             <mat-form-field class="w-100">
@@ -202,7 +316,7 @@
                                             </mat-form-field>
                                         </td>
 
-                                        <td>
+                                        <td style="max-width: 40px;">
                                             <button *ngIf="index !== 0" class="btn-del-item"
                                                 (click)="removeItem(index)">
                                                 -
@@ -216,9 +330,12 @@
                                 <tr>
                                     <td>الاجمالي</td>
 
-                                    <td colspan="2"></td>
+                                    <td colspan="3"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(addOrderForm, 'items',
                                         'quantity') | number}}</td>
+                                    <td colspan="2"></td>
+                                    <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addOrderForm, 'items', 'quantity', 'price') | number}}</td>
+                                    <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addOrderForm, 'items', 'quantity', 'priceDollar') | number}}</td>
                                     <td colspan="6"></td>
                                 </tr>
                             </tfoot>

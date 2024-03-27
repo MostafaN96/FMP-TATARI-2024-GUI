@@ -25,11 +25,13 @@ export class UpdatePurchaseOrderWaComponent implements OnInit {
   quantityWithWaste = 0
 
   @Input() selectedData: any
-  manufacturingOrderWdForm: FormGroup = new FormGroup({
-    date: new FormControl(null, [Validators.required]),
+  purchaseOrderWaForm: FormGroup = new FormGroup({
+    date: new FormControl("", [Validators.required]),
     name: new FormControl('', [Validators.required, Validators.maxLength(90), Validators.minLength(3), Validators.pattern(this.patterns.validator_pattern.shortText)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-    quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     note2: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
@@ -53,18 +55,29 @@ export class UpdatePurchaseOrderWaComponent implements OnInit {
   }
 
   ngOnChanges() {
-    this.manufacturingOrderWdForm.controls['date'].setValue(this.selectedData?.date)
-    this.manufacturingOrderWdForm.controls['name'].setValue(this.selectedData?.order_name)
-    this.manufacturingOrderWdForm.controls['note'].setValue(this.selectedData?.note)
-    this.manufacturingOrderWdForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
-    this.manufacturingOrderWdForm.controls['note2'].setValue(this.selectedData?.note2)
+    this.purchaseOrderWaForm.controls['date'].setValue(this.selectedData?.date)
+    this.purchaseOrderWaForm.controls['name'].setValue(this.selectedData?.order_name)
+    this.purchaseOrderWaForm.controls['note'].setValue(this.selectedData?.note)
+    this.purchaseOrderWaForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
+    this.purchaseOrderWaForm.controls['price'].setValue(this.selectedData?.price)
+    this.purchaseOrderWaForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
+    this.purchaseOrderWaForm.controls['note2'].setValue(this.selectedData?.note2)
+  }
+
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.purchaseOrderWaForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.purchaseOrderWaForm.controls['price'].setValue("0")
+    }
   }
 
   onUpdate() {
-    this.manufacturingOrderWdForm.markAllAsTouched();
-    if (this.manufacturingOrderWdForm.valid) {
+    this.purchaseOrderWaForm.markAllAsTouched();
+    if (this.purchaseOrderWaForm.valid) {
       this._constantsService.spinner.show()
-      this._addPurchaseOrderDetailsWaService.update(this.manufacturingOrderWdForm.value, this.selectedData.id).subscribe((response: any) => {
+      this._addPurchaseOrderDetailsWaService.update(this.purchaseOrderWaForm.value, this.selectedData.id).subscribe((response: any) => {
         this._constantsService.spinner.hide();
         if (response.msg == "data updated") {
           this._constantsService.successUpdateMessage()

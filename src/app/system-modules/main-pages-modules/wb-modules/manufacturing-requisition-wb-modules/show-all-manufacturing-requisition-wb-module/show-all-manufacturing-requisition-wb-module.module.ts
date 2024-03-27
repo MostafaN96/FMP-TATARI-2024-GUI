@@ -4,10 +4,13 @@ import { NgModule } from '@angular/core';
 import { ShowAllManufacturingRequisitionWbModuleRoutingModule } from './show-all-manufacturing-requisition-wb-module-routing.module';
 
 // Component
-import { ShowAllManufacturingRequisitionWbComponent } from '../../../../../main/wb/manufacturing-requisition-wb/show-all-manufacturing-requisition-wb/show-all-manufacturing-requisition-wb.component';
+import { ShowAllManufacturingRequisitionWbComponent } from 'src/app/main/wb/manufacturing-requisition-wb/show-all-manufacturing-requisition-wb/show-all-manufacturing-requisition-wb.component';
 
 // Shared Module
-import { SharedModule } from '../../../../../shared-modules/shared.module';
+import { SharedModule } from 'src/app/shared-modules/shared.module';
+
+// Shared Components
+import { SharedComponentsModule } from 'src/app/shared-components/shared-wb-components.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +18,14 @@ import { SharedModule } from '../../../../../shared-modules/shared.module';
   ],
   imports: [
     SharedModule,
-    ShowAllManufacturingRequisitionWbModuleRoutingModule
+    ShowAllManufacturingRequisitionWbModuleRoutingModule,
+
+    // Shared Components
+    SharedComponentsModule
+  ],
+  exports: [
+    // Shared Components
+    SharedComponentsModule
   ]
 })
 export class ShowAllManufacturingRequisitionWbModuleModule { }

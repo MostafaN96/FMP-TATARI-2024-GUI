@@ -23,11 +23,13 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
 
   /////////////////// Variables ///////////////////
   yarns: any[] = []
+  selectedDataToUpdate: any
 
    //////////////////////////////////// PrimeNG /////////////////////////////////
    @ViewChild('dt1') dt1: Table | undefined;
    loading: boolean = true;
    selectedSellerName: any[] = []
+   selectedStatusName: any[] = []
    selectedManufactureName: any[] = []
    selectedFabricCode: any[] = []
    selectedFabricName: any[] = []
@@ -49,6 +51,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.customFilterForSellerName();
+    this.customFilterForStatusName();
     this.customFilterForManufactureName();
     this.customFilterForFabricCode();
     this.customFilterForFabricName();
@@ -66,6 +69,10 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
       this.loading = false;
 
     })
+  }
+
+  getSelectedData(selectedData: any) {
+    this.selectedDataToUpdate = selectedData
   }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
@@ -87,6 +94,40 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
           // for (let i = 0; i < value.length; i++) {
           for (let j = 0; j < filter.length; j++) {
             if (value == filter[j].seller_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForStatusName() {
+    const customFilterName = "status-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedStatusName
+
+      if (this.selectedStatusName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].status_name) {
               // count++
               // if (count == filter.length) {
               return true;
@@ -290,6 +331,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     table.clear();
     table.reset();
     this.selectedSellerName = []
+    this.selectedStatusName = []
     this.selectedManufactureName = []
     this.selectedFabricCode = []
     this.selectedFabricName = []
@@ -299,6 +341,11 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
 
   onMultiselectedSellerName(event) {
     this.selectedSellerName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedStatusName(event) {
+    this.selectedStatusName = event
     this.dt1?._filter()
   }
 

@@ -6,6 +6,7 @@ import { ValidatorPatternService } from 'src/app/services/validator-pattern.serv
 import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.service';
 
 // Call Service
+import { WarehouseService } from "src/app/services/main/warehouse.service";
 import { YarnService } from "src/app/services/main/yarn.service";
 import { BussinessmanService } from "src/app/services/main/bussinessman.service";
 import { AddPurchaseOrderWaService } from "src/app/services/main/wa/add-purchase-order-wa.service";
@@ -30,9 +31,11 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
 
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   addOrderForm = new FormGroup({
+    addType: new FormControl("add"),
     date: new FormControl(new Date(), [Validators.required]),
     name: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
+    supplierId: new FormControl('', [Validators.required]),
     orderId: new FormControl(""),
     orderName: new FormControl(""),
     items: new FormArray([
@@ -47,6 +50,8 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
   yarns: any
   yarnsOrderData: any
   requisitionsOrder: any
+  suppliers: any = []
+  warehouses: any = []
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -87,7 +92,40 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
     e.updateData(this.requisitionsOrder, query);
   }
 
+  // --------------- Supplier --------------
+  // maps the appropriate column to fields property
+  public fieldsSupplier: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textSupplier: string = "المورد"
+
+  public onFilteringSupplier(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.suppliers, query);
+  }
+
+  // --------------- Warehouse --------------
+  // maps the appropriate column to fields property
+  public fieldsWarehouse: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textWarehouse: string = "المخزن"
+
+  public onFilteringWarehouse(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.warehouses, query);
+  }
+
   constructor(
+    private _warehouseService: WarehouseService,
     private _yarnService: YarnService,
     private _bussinessmanService: BussinessmanService,
     private _addPurchaseOrderWaService: AddPurchaseOrderWaService,
@@ -111,7 +149,7 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
   }
 
   getData() {
-    this._bussinessmanService.selectAll().subscribe((response: any) => {
+    this._bussinessmanService.selectSeller().subscribe((response: any) => {
       this.sellers = response
     })
 
@@ -132,6 +170,14 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
       this.initItem()
     }
 
+    this._bussinessmanService.selectSupplier().subscribe((response: any) => {
+      this.suppliers = response
+    })
+    
+    this._warehouseService.selectAll().subscribe((response: any) => {
+      this.warehouses = response
+    })
+
   }
 
   getYarnsOrderData(dyeingOrderRequisition) {
@@ -139,7 +185,7 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
     this._addPurchaseOrderWaService.inquireYarnsOfFabricForOrderWa(dyeingOrderRequisition).subscribe((response: any) => {
       this.yarnsOrderData = response
       
-      this.addOrderForm.controls['name'].setValue(this.yarnsOrderData[0].dyeingOrderRequisition.order_name)
+      // this.addOrderForm.controls['name'].setValue(this.yarnsOrderData[0].dyeingOrderRequisition.order_name)
       this.addOrderForm.controls['orderId'].setValue(dyeingOrderRequisition)
       this.addOrderForm.controls['orderName'].setValue(this.yarnsOrderData[0].dyeingOrderRequisition.order_name)
 
@@ -155,10 +201,15 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_NOT_ARRIVED_ID, [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       yarnName: new FormControl(""),
       yarnCode: new FormControl(""),
       quantity: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      yarnLotCode: new FormControl("1", [Validators.required]),
+      consigmentYarnNumber: new FormControl(""),
       note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
@@ -170,10 +221,15 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
 
   initItemByData(data) {
     return new FormGroup({
+      warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_NOT_ARRIVED_ID, [Validators.required]),
       yarnId: new FormControl(data.id, [Validators.required]),
       yarnName: new FormControl(data.name, [Validators.required]),
       yarnCode: new FormControl(data.code),
       quantity: new FormControl(data.needed_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      yarnLotCode: new FormControl("1", [Validators.required]),
+      consigmentYarnNumber: new FormControl(""),
       note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
@@ -222,18 +278,48 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
     if (this.requisitionsOrder.includes(event.itemData)) {
       this.addOrderForm.controls['orderId'].setValue(event.itemData.id)
       this.addOrderForm.controls['orderName'].setValue(event.itemData.name)
-      this.addOrderForm.controls['name'].setValue(event.itemData.name)
+      // this.addOrderForm.controls['name'].setValue(event.itemData.name)
       this.getYarnsOrderData(event.itemData.id)
     } else {
       this.addOrderForm.controls['orderId'].setValue("")
       this.addOrderForm.controls['orderName'].setValue("")
-      this.addOrderForm.controls['name'].setValue("")
+      // this.addOrderForm.controls['name'].setValue("")
+    }
+  }
+
+  // Start Supplier Autocomplete Section
+  //  Supplier
+  selectSupplier(event: { itemData: any; }) {
+    if (!this.suppliers.includes(event.itemData)) {
+      this.addOrderForm.controls['supplierId'].setValue(null)
+    }
+  }
+  // End Supplier Autocomplete Section
+  
+  // price
+  changePrice(type, row: FormGroup) {
+    this.setConsigmentYarnNumberData()    
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
+  }
+
+  setConsigmentYarnNumberData() {
+    const control = <FormArray>this.addOrderForm.get('items');
+    
+    for (let index = 0; index < control.controls.length; index++) {
+      const element = control.controls[index];
+
+      element['controls']['consigmentYarnNumber'].setValue(this.addOrderForm.controls['name'].value)
     }
   }
 
   async onAddRequisition() {
     this.addOrderForm.markAllAsTouched();
     if (this.addOrderForm.valid) {
+      this.setConsigmentYarnNumberData()
       this._constantsService.spinner.show()
       this._addPurchaseOrderWaService.add(this.addOrderForm.value).subscribe(response => {
         this._constantsService.spinner.hide();

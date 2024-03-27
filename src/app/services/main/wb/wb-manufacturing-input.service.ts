@@ -32,7 +32,6 @@ export class WbManufacturingInputService {
         })
       });
   }
-
   
   // Add Details
   add(obj: any): Observable<any> {

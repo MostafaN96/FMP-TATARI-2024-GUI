@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -41,7 +41,7 @@
                     <div class="col">
                         <ejs-autocomplete [dataSource]='dyers' [fields]='fieldsDyeing' 
                             (filtering)="onFilteringDyeing($event)" [placeholder]='textDyeing' [autofill]='autofill'
-                            formControlName="dyeingId" class="ejs-autocomplete" (change)="selectDyeing($event)">
+                            formControlName="dyeingId" class="ejs-autocomplete w-100" (change)="selectDyeing($event)">
                         </ejs-autocomplete>
                         <small class="text-danger" *ngIf="addRequisitionForm.controls['dyeingId'].hasError('pattern')"
                             [innerHTML]="_sharedComponentService.invalid_message">

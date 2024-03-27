@@ -11,10 +11,12 @@
     <div [class]="_sharedComponentService.mainPageFormClass">
         <form [formGroup]="addOrderForm" (ngSubmit)="onAddRequisition()">
             <div [class]="_sharedComponentService.subMainPageForm2Class">
+
                 <!-- Form Body -->
                 <div [class]="_sharedComponentService.gridForm3Class">
+
+                    <!-- Date -->
                     <div class="col">
-                        <!-- Date -->
                         <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">

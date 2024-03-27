@@ -57,4 +57,15 @@ export class ManufacturingRequisitionWbService {
       });
   }
 
+  
+  update(obj: any, id: string): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}${id}`;
+    return this._http.put(url, obj,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 }

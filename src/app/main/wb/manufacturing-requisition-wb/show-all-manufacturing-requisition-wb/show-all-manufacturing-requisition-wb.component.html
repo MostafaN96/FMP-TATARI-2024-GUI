@@ -128,6 +128,24 @@
                                                 </ng-template>
                                             </p-columnFilter>
                                         </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="status_name" matchMode="status-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedStatusName"
+                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'status_name')"
+                                                        (onChange)="onMultiselectedStatusName($event.value)"
+                                                        placeholder="البحث بـ حالة الجودة" optionLabel="status_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.status_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
                                         
                                         <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
@@ -203,6 +221,15 @@
                                                 </p-sortIcon>
                                             </div>
                                         </th>
+
+                                        <!-- status_name Column -->
+                                        <th pResizableColumn pSortableColumn="status_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                حالة الجودة
+                                                <p-sortIcon data-html2canvas-ignore="true" field="status_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
                                         
                                       
                                         <!-- note Column -->
@@ -213,12 +240,20 @@
                                             </div>
                                         </th>                           
 
+                                        <!-- update Column -->
+                                        <th data-html2canvas-ignore="true">
+                                            <div class="flex justify-content-between align-items-center">
+                                                تعديل حالة الجودة
+                                            </div>
+                                        </th>
+
                                         <!-- Details Column -->
                                         <th data-html2canvas-ignore="true">
                                             <div class="flex justify-content-between align-items-center">
                                                 تفاصيل الإذن
                                             </div>
                                         </th>
+
                                     </tr>
 
                                 </ng-template>
@@ -260,9 +295,22 @@
                                             {{ element.seller_name }}
                                         </td>
 
+                                        <!-- status_name Column -->
+                                        <td>
+                                            {{ element.status_name }}
+                                        </td>
+
                                         <!-- note Column -->
                                         <td>
                                             {{ element.note }}
+                                        </td>
+
+                                        <!-- update Column -->
+                                        <td data-html2canvas-ignore="true">
+                                            <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                                (click)="getSelectedData(element)">
+                                                <i class="fas fa-edit update-symbol"></i>
+                                            </a>
                                         </td>
 
                                         <!-- Details Column -->
@@ -283,7 +331,7 @@
                                 </ng-template>
                                 <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                     <tr>
-                                        <td colspan="9">لا يوجد بيانات</td>
+                                        <td colspan="10">لا يوجد بيانات</td>
                                     </tr>
                                 </ng-template>
                             </p-table>
@@ -295,3 +343,5 @@
         </div>
     </div>
 </section>
+
+<app-update-manufacturing-requisition-status-wb *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-update-manufacturing-requisition-status-wb>

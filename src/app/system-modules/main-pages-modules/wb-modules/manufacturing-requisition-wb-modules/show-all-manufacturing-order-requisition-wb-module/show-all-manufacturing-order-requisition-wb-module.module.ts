@@ -9,13 +9,23 @@ import { ShowAllManufacturingOrderRequisitionWbComponent } from 'src/app/main/wb
 // Shared Module
 import { SharedModule } from 'src/app/shared-modules/shared.module';
 
+// Shared Components
+import { SharedComponentsModule } from 'src/app/shared-components/shared-wb-components.module';
+
 @NgModule({
   declarations: [
     ShowAllManufacturingOrderRequisitionWbComponent
   ],
   imports: [
     SharedModule,
-    ShowAllManufacturingOrderRequisitionWbModuleRoutingModule
+    ShowAllManufacturingOrderRequisitionWbModuleRoutingModule,
+
+    // Shared Components
+    SharedComponentsModule
+  ],
+  exports: [
+    // Shared Components
+    SharedComponentsModule
   ]
 })
 export class ShowAllManufacturingOrderRequisitionWbModuleModule { }

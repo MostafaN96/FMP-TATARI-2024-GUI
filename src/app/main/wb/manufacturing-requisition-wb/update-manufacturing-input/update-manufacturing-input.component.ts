@@ -27,6 +27,7 @@ export class UpdateManufacturingInputComponent implements OnInit {
   inputManufacturedWbForm: FormGroup = new FormGroup({
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl("", [Validators.required]),
+    status: new FormControl("", [Validators.required]),
     yarnId: new FormControl("", [Validators.required]),
     yarnLotId: new FormControl("", [Validators.required]),
     price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -63,6 +64,7 @@ export class UpdateManufacturingInputComponent implements OnInit {
 
     this.inputManufacturedWbForm.controls['date'].setValue(this.selectedData?.date)
     this.inputManufacturedWbForm.controls['note'].setValue(this.selectedData?.note)
+    this.inputManufacturedWbForm.controls['stauts'].setValue(this.selectedData?.stauts)
     this.inputManufacturedWbForm.controls['yarnId'].setValue(this.selectedData?.yarn_id)
     this.inputManufacturedWbForm.controls['yarnLotId'].setValue(this.selectedData?.yarn_lot_id)
     this.inputManufacturedWbForm.controls['wastRatio'].setValue(String(this.selectedData?.wast_ratio))

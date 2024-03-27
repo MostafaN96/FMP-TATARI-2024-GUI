@@ -33,12 +33,15 @@ export class AddInternalTransportWbComponent implements OnInit {
 
   @Input() internalSelectedData: any
   internalTransportWbForm:FormGroup = new FormGroup({
-    industryId: new FormControl(null, [Validators.required]),
-    yarnId: new FormControl(null, [Validators.required]),
-    yarnLotId: new FormControl(null, [Validators.required]),
+    requisitionType: new FormControl("", [Validators.required]),
+    industryId: new FormControl("", [Validators.required]),
+    yarnId: new FormControl("", [Validators.required]),
+    yarnLotId: new FormControl("", [Validators.required]),
     consigmentYarnId: new FormControl("", [Validators.required]),
-    fabricToBeManufacturedId: new FormControl(null, [Validators.required]),
-    quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    consigmentYarnNumber: new FormControl("", [Validators.required]),
+    fromConsigmentYarnId: new FormControl(""),
+    fabricToBeManufacturedId: new FormControl("", [Validators.required]),
+    quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   })
@@ -88,14 +91,17 @@ export class AddInternalTransportWbComponent implements OnInit {
   }
 
   ngOnChanges() {
-    console.log("this.internalSelectedData :::: ", this.internalSelectedData);
+    // console.log("this.internalSelectedData :::: ", this.internalSelectedData);
     
     this.yarnName = this.internalSelectedData.name || this.internalSelectedData.yarn_name
 
+    this.internalTransportWbForm.controls['requisitionType'].setValue(this.internalSelectedData.requisition_type)
     this.internalTransportWbForm.controls['industryId'].setValue(this.internalSelectedData.industryId || this.internalSelectedData.manufacturer_id)
     this.internalTransportWbForm.controls['yarnId'].setValue(this.internalSelectedData.yarn_id)
     this.internalTransportWbForm.controls['yarnLotId'].setValue(this.internalSelectedData.yarn_lot_id)
     this.internalTransportWbForm.controls['consigmentYarnId'].setValue(this.internalSelectedData.consigment_yarn_id)
+    this.internalTransportWbForm.controls['consigmentYarnNumber'].setValue(this.internalSelectedData.consigment_yarn_number)
+    this.internalTransportWbForm.controls['fromConsigmentYarnId'].setValue(this.internalSelectedData.from_consigment_yarn_id)
     this.internalTransportWbForm.controls['quantity'].setValue(String(this.internalSelectedData.current_quantity))
   }
 
@@ -118,7 +124,7 @@ export class AddInternalTransportWbComponent implements OnInit {
   }
 
   validate(event: any) {
-    console.log(this.internalSelectedData);
+    // console.log(this.internalSelectedData);
     
     if(parseFloat(event.target.value) > parseFloat(this.internalSelectedData.current_quantity)) {
       this.internalTransportWbForm.controls['quantity'].setErrors({'incorrect': true});

@@ -36,7 +36,7 @@ export class TransportDetailsWaWbRequisitionWbComponent implements OnInit {
     'yarn_name',
     'yarn_code',
     'yarn_lot_code',
-    'consigment_yarn_number',
+    'from_consigment_yarn_number',
     'manufacturer_name',
     // 'transport_initial_quantity',
     'quantity',
@@ -47,6 +47,7 @@ export class TransportDetailsWaWbRequisitionWbComponent implements OnInit {
     'total_dollar',
     'fabric_name',
     'fabric_code',
+    'consigment_yarn_number',
     'document',
     'statement',
     'update',
@@ -86,6 +87,7 @@ export class TransportDetailsWaWbRequisitionWbComponent implements OnInit {
   }
 
   getInternalSelectedDataToUpdate(selectedData: any) {
+    selectedData.consigment_yarn_id = selectedData.from_consigment_yarn_id
     this.internalSelectedDataToUpdate = selectedData
   }
 

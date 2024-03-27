@@ -38,6 +38,7 @@ export class ItemHistoryTotalReportDetailsWbComponent implements OnInit {
   selectedLotCodes: any[] = []
   selectedTypeOfRequisition: any[] = []
   selectedConsigmentNumber: any[] = []
+  selectedFromConsigmentNumber: any[] = []
   selectedFabricCode: any[] = []
   selectedFabricName: any[] = []
   selectedSideOf: any[] = []
@@ -59,6 +60,7 @@ export class ItemHistoryTotalReportDetailsWbComponent implements OnInit {
     this.customFilterForLotCode();
     this.customFilterForTypeOfRequisition();
     this.customFilterForConsigmentNumber();
+    this.customFilterForFromConsigmentNumber();
     this.customFilterForFabricCode();
     this.customFilterForFabricName();
     this.customFilterForSideOf();
@@ -190,6 +192,40 @@ export class ItemHistoryTotalReportDetailsWbComponent implements OnInit {
           // for (let i = 0; i < value.length; i++) {
           for (let j = 0; j < filter.length; j++) {
             if (value == filter[j].consigment_yarn_number) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForFromConsigmentNumber() {
+    const customFilterName = "from-consigment-number-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedFromConsigmentNumber
+
+      if (this.selectedFromConsigmentNumber[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].to_consigment_yarn_number) {
               // count++
               // if (count == filter.length) {
               return true;
@@ -356,6 +392,7 @@ export class ItemHistoryTotalReportDetailsWbComponent implements OnInit {
     this.selectedLotCodes = []
     this.selectedTypeOfRequisition = []
     this.selectedConsigmentNumber = []
+    this.selectedFromConsigmentNumber = []
     this.selectedFabricCode = []
     this.selectedFabricName = []
     this.selectedSideOf = []
@@ -373,6 +410,11 @@ export class ItemHistoryTotalReportDetailsWbComponent implements OnInit {
 
   onMultiselectedConsigmentNumber(event) {
     this.selectedConsigmentNumber = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedFromConsigmentNumber(event) {
+    this.selectedFromConsigmentNumber = event
     this.dt1?._filter()
   }
 

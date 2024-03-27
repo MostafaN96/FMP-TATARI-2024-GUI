@@ -34,7 +34,9 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
   @ViewChild('dt1') dt1: Table | undefined;
   loading: boolean = true;
   selectedTypeOfRequisition: any[] = []
+  selectedToConsigmentYarn: any[] = []
   selectedSideOf: any[] = []
+  orderPurchaseName: any[] = []
   selectedDocument: any[] = []
 
   constructor(
@@ -50,7 +52,9 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.getData()
     this.customFilterForTypeOfRequisition();
+    this.customFilterForToConsigmentYarn();  
     this.customFilterForSideOf();
+    this.customFilterForOrderPurchaseName();  
     this.customFilterForDocument();
   }
 
@@ -115,6 +119,40 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
     });
   }
 
+  customFilterForToConsigmentYarn() {
+    const customFilterName = "to-consigment-yarn-number-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedToConsigmentYarn
+
+      if (this.selectedToConsigmentYarn[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].to_consigment_yarn_number ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   customFilterForSideOf() {
     const customFilterName = "side-of-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -139,6 +177,40 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
               // }
             }
           }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForOrderPurchaseName() {
+    const customFilterName = "order-purchase-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.orderPurchaseName
+
+      if (this.orderPurchaseName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].order_purchase_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
           // }
         }
         return false;
@@ -188,7 +260,9 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
     table.clear();
     table.reset();
     this.selectedTypeOfRequisition = []
+    this.selectedToConsigmentYarn = []
     this.selectedSideOf = []
+    this.orderPurchaseName = []
     this.selectedDocument = []
   }
 
@@ -197,8 +271,18 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
     this.dt1?._filter()
   }
 
+  onMultiselectedToConsigmentYarn(event) {
+    this.selectedToConsigmentYarn = event
+    this.dt1?._filter()
+  }
+
   onMultiselectedSideOf(event) {
     this.selectedSideOf = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedOrderPurchaseName(event) {
+    this.orderPurchaseName = event
     this.dt1?._filter()
   }
 

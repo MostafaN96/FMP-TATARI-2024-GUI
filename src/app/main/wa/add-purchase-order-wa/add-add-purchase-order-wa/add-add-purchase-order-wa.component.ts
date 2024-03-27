@@ -195,10 +195,10 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
   // Start Yarn Autocomplete Section
   //  Yarn
   selectYarn(index: { itemData: any; }, row: FormGroup) {
-    console.log("index.itemData ::: ", index.itemData);
+    // console.log("index.itemData ::: ", index.itemData);
     
     let indexData = this.yarns.indexOf(index.itemData)
-    console.log("indexData ::: ", indexData);
+    // console.log("indexData ::: ", indexData);
 
     if (this.yarns[indexData] !== index.itemData) {
       row.controls['yarnId'].setValue("")
@@ -215,7 +215,10 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
 
   //  Dyeing
   selectRequisitionsOrderName(event: { itemData: any; }) {
-    
+    const formGroup = <FormGroup>this.addOrderForm;
+      formGroup.removeControl('items');
+      formGroup.addControl('items', new FormArray([]));
+      
     if (this.requisitionsOrder.includes(event.itemData)) {
       this.addOrderForm.controls['orderId'].setValue(event.itemData.id)
       this.addOrderForm.controls['orderName'].setValue(event.itemData.name)

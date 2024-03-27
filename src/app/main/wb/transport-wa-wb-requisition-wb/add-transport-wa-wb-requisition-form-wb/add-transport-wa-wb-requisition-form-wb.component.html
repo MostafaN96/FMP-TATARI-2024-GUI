@@ -135,23 +135,23 @@
                                         </small>
                                     </td>
 
-                                    <!-- Consigment Yarn -->
+                                    <!-- From Consigment Yarn -->
                                     <td class="table-td" style="max-width: 180px;">
-                                        <ejs-autocomplete [dataSource]='consigmentsYarns[index]' [fields]='fieldsConsigmentYarn' 
-                                        (filtering)="onFilteringConsigmentYarn($event, index)"
-                                        (change)='selectConsigmentYarn($event, row, index)'
-                                            [placeholder]='textConsigmentYarn' [autofill]='autofill'
-                                            formControlName="consigmentYarnId"
+                                        <ejs-autocomplete [dataSource]='fromConsigmentsYarns[index]' [fields]='fieldsFromConsigmentYarn' 
+                                        (filtering)="onFilteringFromConsigmentYarn($event, index)"
+                                        (change)='selectFromConsigmentYarn($event, row, index)'
+                                            [placeholder]='textFromConsigmentYarn' [autofill]='autofill'
+                                            formControlName="fromConsigmentYarnId"
                                             [errorStateMatcher]="matcher" 
                                             >
                                         </ejs-autocomplete>
                                         <small class="text-danger"
-                                        *ngIf="row.get('consigmentYarnId').hasError('pattern')"
+                                        *ngIf="row.get('fromConsigmentYarnId').hasError('pattern')"
                                         [innerHTML]="_sharedComponentService.invalid_message">
                                         </small>
                                         <small class="text-danger"
-                                            *ngIf="row.get('consigmentYarnId').hasError('required') && (row.get('consigmentYarnId').dirty 
-                                            || row.get('consigmentYarnId').touched)"
+                                            *ngIf="row.get('fromConsigmentYarnId').hasError('required') && (row.get('fromConsigmentYarnId').dirty 
+                                            || row.get('fromConsigmentYarnId').touched)"
                                             [innerHTML]="_sharedComponentService.required_field">
                                         </small>
                                     </td>

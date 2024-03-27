@@ -31,7 +31,7 @@ export class TransportShortDetailsWaWbRequisitionWbComponent implements OnInit {
     'yarn_name',
     'yarn_code',
     'yarn_lot_code',
-    'consigment_yarn_number',
+    'from_consigment_yarn_number',
     'manufacturer_name',
     // 'transport_initial_quantity',
     'quantity',
@@ -40,6 +40,7 @@ export class TransportShortDetailsWaWbRequisitionWbComponent implements OnInit {
     'price_dollar',
     'total',
     'total_dollar',
+    'consigment_yarn_number',
     'document',
     'statement'];
   filter = "";

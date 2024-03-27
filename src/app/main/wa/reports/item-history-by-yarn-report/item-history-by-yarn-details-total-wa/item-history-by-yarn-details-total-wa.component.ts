@@ -39,6 +39,8 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
   selectedSideOf: any[] = []
   selectedDocument: any[] = []
   selectedConsigmentYarn: any[] = []
+  selectedToConsigmentYarn: any[] = []
+  orderPurchaseName: any[] = []
 
   constructor(
     private route: ActivatedRoute,
@@ -58,6 +60,8 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
     this.customFilterForSideOf();  
     this.customFilterForDocument();  
     this.customFilterForConsigmentYarn();  
+    this.customFilterForToConsigmentYarn();  
+    this.customFilterForOrderPurchaseName();  
   }
 
  
@@ -187,6 +191,40 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
     });
   }
 
+  customFilterForToConsigmentYarn() {
+    const customFilterName = "to-consigment-yarn-number-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedToConsigmentYarn
+
+      if (this.selectedToConsigmentYarn[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].to_consigment_yarn_number ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   customFilterForTypeOfRequisition() {
     const customFilterName = "type-of-requisition-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -255,6 +293,40 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
     });
   }
 
+  customFilterForOrderPurchaseName() {
+    const customFilterName = "order-purchase-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.orderPurchaseName
+
+      if (this.orderPurchaseName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].order_purchase_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   customFilterForDocument() {
     const customFilterName = "document-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -299,6 +371,7 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
     this.selectedSideOf = []
     this.selectedDocument = []
     this.selectedConsigmentYarn = []
+    this.selectedToConsigmentYarn = []
   }
 
   onMultiselectedWarehouses(event) {
@@ -321,6 +394,11 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
     this.dt1?._filter()
   }
 
+  onMultiselectedOrderPurchaseName(event) {
+    this.orderPurchaseName = event
+    this.dt1?._filter()
+  }
+
   onMultiselectedDocument(event) {
     this.selectedDocument = event
     this.dt1?._filter()
@@ -328,6 +406,11 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
 
   onMultiselectedConsigmentYarn(event) {
     this.selectedConsigmentYarn = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedToConsigmentYarn(event) {
+    this.selectedToConsigmentYarn = event
     this.dt1?._filter()
   }
   

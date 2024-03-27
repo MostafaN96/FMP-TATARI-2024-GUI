@@ -15,6 +15,7 @@ import { ReportWaService } from "src/app/services/main/wa/report-wa.service";
 import { FabricService } from "src/app/services/main/fabric.service";
 import { WaService } from "src/app/services/main/wa/wa.service";
 import { WarehouseService } from "src/app/services/main/warehouse.service";
+import { ConsigmentYarnService } from "src/app/services/main/consigment-yarn.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -48,6 +49,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
   warehouses: any = []
   yarns: any = []
   lots: any = []
+  fromConsigmentsYarns: any = []
   consigmentsYarns: any = []
   industries: any = []
   fabrics: any = []
@@ -145,20 +147,36 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
     e.updateData(this.lots, query);
   }
 
-  // --------------- consigment Yarn --------------
+  // --------------- From Consigment Yarn --------------
   // maps the appropriate column to fields property
-  public fieldsConsigmentYarn: Object = { value: "id", text: "number" };
+  public fieldsFromConsigmentYarn: Object = { value: "id", text: "number" };
   // set the placeholder to the AutoComplete input
-  public textConsigmentYarn: string = "رقم الرسالة"
+  public textFromConsigmentYarn: string = "رقم الرسالة"
 
-  public onFilteringConsigmentYarn(e: any, index) {
+  public onFilteringFromConsigmentYarn(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('number', 'contains', e.text);
     var query = new Query();
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.consigmentsYarns[index], query);
+    e.updateData(this.fromConsigmentsYarns[index], query);
+  }
+
+  // --------------- consigment Yarn --------------
+  // maps the appropriate column to fields property
+  public fieldsConsigmentYarn: Object = { value: "number", text: "number" };
+  // set the placeholder to the AutoComplete input
+  public textConsigmentYarn: string = "الى رقم الرسالة"
+
+  public onFilteringConsigmentYarn(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('number', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.consigmentsYarns, query);
   }
 
   constructor(
@@ -175,6 +193,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
     private _sessionManagerService: SessionManagerService,
     private _reportWaService: ReportWaService,
     private _fabricService: FabricService,
+    private _consigmentYarnService: ConsigmentYarnService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
 
   ) {
@@ -204,6 +223,10 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
       this.fabrics = response
     })
 
+    this._consigmentYarnService.selectAll().subscribe((response: any) => {
+      this.consigmentsYarns = response
+    })
+
   }
 
   // Initialize Form Builder
@@ -216,7 +239,9 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
       yarnName: new FormControl(""),
       yarnCode: new FormControl(""),
       yarnLotId: new FormControl("", [Validators.required]),
-      consigmentYarnId: new FormControl("", [Validators.required]),
+      fromConsigmentYarnId: new FormControl("", [Validators.required]),
+      consigmentYarnId: new FormControl(""),
+      consigmentYarnNumber: new FormControl("", [Validators.required]),
       price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -274,7 +299,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
       row.controls['yarnName'].setValue("")
       row.controls['quantity'].setValue("")
       row.controls['yarnLotId'].setValue("")
-      row.controls['consigmentYarnId'].setValue("")
+      row.controls['fromConsigmentYarnId'].setValue("")
       this.currentQuantity[index] = 0
     }
     else {
@@ -335,7 +360,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
     let indexData = this.lots.indexOf(event.itemData)
     if (this.lots[indexData] !== event.itemData) {
       row.controls['yarnLotId'].setValue(null)
-      row.controls['consigmentYarnId'].setValue("")
+      row.controls['fromConsigmentYarnId'].setValue("")
       this.currentQuantity[index] = 0
     } else {
       this.getRemainingByWarehouseByYarnByLotWa(this.transportWaWbForm.controls['warehouseId'].value!,
@@ -349,17 +374,17 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
       warehouseId,
       yarnId,
       lotId).subscribe((response: any) => {
-        this.consigmentsYarns[index] = response
+        this.fromConsigmentsYarns[index] = response
       })
   }
   // End Yarn Lot Autocomplete Section
 
   // Start Consigment Yarn Autocomplete Section
   //  Consigment Yarn
-  selectConsigmentYarn(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.consigmentsYarns[index].indexOf(event.itemData)
-    if (this.consigmentsYarns[index][indexData] !== event.itemData) {
-      row.controls['consigmentYarnId'].setValue(null)
+  selectFromConsigmentYarn(event: { itemData: any; }, row: FormGroup, index: number) {
+    let indexData = this.fromConsigmentsYarns[index].indexOf(event.itemData)
+    if (this.fromConsigmentsYarns[index][indexData] !== event.itemData) {
+      row.controls['fromConsigmentYarnId'].setValue(null)
       row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0
     }
@@ -378,6 +403,13 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
   }
   // End Consigment Yarn Autocomplete Section
 
+  //  ConsigmentYarn
+  selectConsigmentYarn(event: { itemData: any; }, row: FormGroup) {
+    if (!this.consigmentsYarns.includes(event.itemData)) {
+      row.controls['consigmentYarnId'].setValue("")
+    }
+  }
+
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
@@ -394,7 +426,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
     if (this.transportWaWbForm.valid) {
       if (this._quantityOccurrencesValidationService.validateCurrentQuantity(
         this.transportWaWbForm.controls.items.value, this.transportWaWbForm.controls.items.value, 
-        'consigmentYarnId', 'consigmentYarnId', 
+        'fromConsigmentYarnId', 'fromConsigmentYarnId', 
         'yarnLotId', 'yarnLotId', 
         'yarnId', 'yarnId', 
         'quantity', 'yarnName', 'validQuantity')) {

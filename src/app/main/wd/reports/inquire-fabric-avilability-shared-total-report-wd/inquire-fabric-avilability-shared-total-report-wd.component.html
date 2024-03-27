@@ -266,7 +266,7 @@
                             {{wbYarn.yarn_code}}
                         </td>
                         <td>
-                            {{wbYarn.current_quantity | number}}
+                            {{wbYarn.existed_quantity | number}}
                         </td>
                     </tr>
                 </tbody>
@@ -279,7 +279,7 @@
 
                         </td>
                         <td>
-                            {{ _sharedComponentService.getTotalQuantity(dataReport.wbYarns, 'current_quantity') |
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wbYarns, 'existed_quantity') |
                             number}}
                         </td>
                     </tr>

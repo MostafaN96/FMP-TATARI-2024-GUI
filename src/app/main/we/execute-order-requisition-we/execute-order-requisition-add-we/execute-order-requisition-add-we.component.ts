@@ -71,6 +71,8 @@ export class ExecuteOrderRequisitionAddWeComponent implements OnInit {
   dyedFabricOrderRequisitionId = ""
   dyedFabricOrderRequisitionDetailsId = ""
   dyedFabricOrderCurrentQuantity = "0"
+  dyedFabricOrderPrice = "0"
+  dyedFabricOrderPriceDollar = "0"
 
   requisitionsOrder: any
   dyedFabricsPricesDetails: any[] = [];
@@ -229,6 +231,8 @@ this.customFilterForColorCategory();
         this.dyedFabricOrderRequisitionId = objectData.requisition_id
         this.dyedFabricOrderRequisitionDetailsId = objectData.id
         this.dyedFabricOrderCurrentQuantity = objectData.current_quantity
+        this.dyedFabricOrderPrice = objectData.price
+        this.dyedFabricOrderPriceDollar = objectData.price_dollar
         // PrimeNG Table
         this.loading = false;
       })
@@ -237,6 +241,8 @@ this.customFilterForColorCategory();
       this.dyedFabricOrderRequisitionId = ""
       this.dyedFabricOrderRequisitionDetailsId = ""
       this.dyedFabricOrderCurrentQuantity = "0"
+      this.dyedFabricOrderPrice = "0"
+      this.dyedFabricOrderPriceDollar = "0"
     }
   }
 
@@ -295,8 +301,8 @@ this.customFilterForColorCategory();
       colorId: new FormControl(selectedStoredDyedFabrics.color_id, [Validators.required]),
       colorName: new FormControl(selectedStoredDyedFabrics.color_name_code),
       colorCode: new FormControl(selectedStoredDyedFabrics.color_code),
-      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl(this.dyedFabricOrderPrice, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(this.dyedFabricOrderPriceDollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.dyedFabricOrderCurrentQuantity <= selectedStoredDyedFabrics.current_quantity) ? this.dyedFabricOrderCurrentQuantity : selectedStoredDyedFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredDyedFabrics.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),

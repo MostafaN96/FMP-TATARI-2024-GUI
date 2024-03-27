@@ -174,6 +174,8 @@ initItem() {
     quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
   });
 }
@@ -281,6 +283,15 @@ removeItem(index: number){
   //   state: {data: data.value}
   // }).then(result => { window.open('/' + location.pathname.split("/")[1] + "/"+ this._constantsService.ROUTING_LINKS[154], '_blank') });
 }
+  }
+  
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
   }
 
   async onAddRequisition() {

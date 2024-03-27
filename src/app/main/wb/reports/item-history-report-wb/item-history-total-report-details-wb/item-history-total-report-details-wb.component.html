@@ -105,6 +105,24 @@
                                         </div>
 
                                         <div class="col">
+                                            <p-columnFilter field="from_consigment_yarn_number" matchMode="from-consigment-number-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedToConsigmentNumber"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByYranWbDetails, 'from_consigment_yarn_number')"
+                                                        (onChange)="onMultiselectedFromConsigmentNumber($event.value)"
+                                                        placeholder="البحث بـ من رقم الرسالة" optionLabel="from_consigment_yarn_number">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.from_consigment_yarn_number}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
                                             <p-columnFilter field="consigment_yarn_number" matchMode="consigment-number-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -265,6 +283,13 @@
                                             </div>
                                         </th>
 
+                                        <!-- from_consigment_yarn_number Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                من رقم الرسالة
+                                            </div>
+                                        </th>
+
                                         <!-- consigment_yarn_number Column -->
                                         <th pResizableColumn>
                                             <div class="flex justify-content-between align-items-center">
@@ -406,6 +431,13 @@
                                             </ng-container>
                                         </td>
 
+                                        <!-- from_consigment_yarn_number Column -->
+                                        <td>
+                                            <ng-container>
+                                                {{ element.from_consigment_yarn_number}}
+                                            </ng-container>
+                                        </td>
+
                                         <!-- consigment_yarn_number Column -->
                                         <td>
                                             <ng-container>
@@ -525,6 +557,9 @@
                                             null ? reportByYranWbDetails: dt1.filteredValue) | number}}
                                         </td>
 
+                                        <!-- from_consigment_yarn_number Column -->
+                                        <td></td>
+                                        
                                         <!-- consigment_yarn_number Column -->
                                         <td></td>
                                         

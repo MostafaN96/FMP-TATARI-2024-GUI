@@ -33,6 +33,8 @@ export class DyedFabricOrderRequisitionUpdateWeComponent implements OnInit {
     sellerId: new FormControl("", [Validators.required]),
     fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     note2: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
@@ -63,9 +65,21 @@ export class DyedFabricOrderRequisitionUpdateWeComponent implements OnInit {
     this.manufacturingOrderWdForm.controls['sellerId'].setValue(this.selectedData?.id)
     this.manufacturingOrderWdForm.controls['fabricWidth'].setValue(this.selectedData?.fabric_width)
     this.manufacturingOrderWdForm.controls['fabricQuantityM2'].setValue(this.selectedData?.fabric_quantity_m2)
+    this.manufacturingOrderWdForm.controls['price'].setValue(this.selectedData?.price)
+    this.manufacturingOrderWdForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.manufacturingOrderWdForm.controls['note2'].setValue(this.selectedData?.note2)
   }
 
+  
+  // price
+  changePrice(type) {
+    if(type == "priceEG") {
+      this.manufacturingOrderWdForm.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      this.manufacturingOrderWdForm.controls['price'].setValue("0")
+    }
+  }
+  
   onUpdate() {
     this.manufacturingOrderWdForm.markAllAsTouched();
     if (this.manufacturingOrderWdForm.valid) {

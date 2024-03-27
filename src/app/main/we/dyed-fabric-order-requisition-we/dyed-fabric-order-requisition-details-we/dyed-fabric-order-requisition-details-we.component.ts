@@ -50,6 +50,8 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     'color_name',
     'fabric_width',
     'fabric_quantity_m2',
+    'price',
+    'price_dollar',
     'note2',
     'close_order',
     // 'open_order',

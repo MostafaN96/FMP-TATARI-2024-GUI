@@ -42,6 +42,11 @@
                                 <th>اللوط:</th>
                                 <td>{{yarnLotCode}} </td>
                             </tr>
+
+                            <tr>
+                                <th>رقم الرسالة:</th>
+                                <td>{{reportByYranWaDetails[0]?.consigment_yarn_number}} </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -104,6 +109,24 @@
                                             </p-columnFilter>
                                         </div>
 
+                                        <!-- to_consigment_yarn_number -->
+                                        <div class="col">
+                                            <p-columnFilter field="to_consigment_yarn_number" matchMode="to-consigment-yarn-number-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedToConsigmentYarn" [options]="_sharedComponentService.uniqueArray(reportByYranWaDetails, 'to_consigment_yarn_number')"
+                                                        (onChange)="onMultiselectedToConsigmentYarn($event.value)"
+                                                        placeholder="البحث بـ الى رقم الرسالة" optionLabel="to_consigment_yarn_number">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.to_consigment_yarn_number}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
                                         <!-- side_of -->
                                         <div class="col">
                                             <p-columnFilter field="side_of" matchMode="side-of-filter"
@@ -116,6 +139,25 @@
                                                         <ng-template let-option pTemplate="item">
                                                             <div class="p-multiselect-representative-option">
                                                                 <span class="ml-1">{{option.side_of}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <!-- order_purchase_name -->
+                                        <div class="col">
+                                            <p-columnFilter field="order_purchase_name" matchMode="order-purchase-name-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="orderPurchaseName"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByYranWaDetails, 'order_purchase_name')"
+                                                        (onChange)="onMultiselectedOrderPurchaseName($event.value)"
+                                                        placeholder="البحث بـ طلبية الشراء" optionLabel="order_purchase_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.order_purchase_name}}</span>
                                                             </div>
                                                         </ng-template>
                                                     </p-multiSelect>
@@ -208,6 +250,13 @@
                                             </div>
                                         </th>
 
+                                        <!-- to_consigment_yarn_number Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                الى رقم الرسالة
+                                            </div>
+                                        </th>
+
                                         <!-- requisition_number Column -->
                                         <th pResizableColumn>
                                             <div class="flex justify-content-between align-items-center">
@@ -233,6 +282,13 @@
                                         <th pResizableColumn>
                                             <div class="flex justify-content-between align-items-center">
                                                 الجهة
+                                            </div>
+                                        </th>
+
+                                        <!-- order_purchase_name Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                طلبية شراء
                                             </div>
                                         </th>
 
@@ -309,6 +365,11 @@
                                             </ng-container>
                                         </td>
 
+                                        <!-- to_consigment_yarn_number Column -->
+                                        <td>
+                                            {{ element.to_consigment_yarn_number}}
+                                        </td>
+
                                         <!-- requisition_number Column -->
                                         <td>
                                             <a [routerLink]="[goToRequisitionPage(element.type_of_requisition)]"
@@ -330,6 +391,11 @@
                                         <!-- side_of Column -->
                                         <td>
                                             {{ element.side_of }}
+                                        </td>
+
+                                        <!-- order_purchase_name Column -->
+                                        <td>
+                                            {{ element.order_purchase_name }}
                                         </td>
 
                                         <!-- document Column -->
@@ -392,6 +458,9 @@
                                             null ? reportByYranWaDetails: dt1.filteredValue) | number}}
                                         </td>
 
+                                        <!-- to_consigment_yarn_number Column -->
+                                        <td></td>
+
                                         <!-- requisition_number Column -->
                                         <td></td>
 
@@ -404,6 +473,9 @@
                                         <!-- side_of Column -->
                                         <td></td>
 
+                                        <!-- order_purchase_name Column -->
+                                        <td></td>
+                                        
                                         <!-- document Column -->
                                         <td> </td>
 

@@ -48,6 +48,7 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     'over_current_quantity',
     'color_category_name',
     'color_name',
+    'waste_ratio',
     'fabric_width',
     'fabric_quantity_m2',
     'price',

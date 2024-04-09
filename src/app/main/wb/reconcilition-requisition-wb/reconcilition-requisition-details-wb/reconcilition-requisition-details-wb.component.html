@@ -122,9 +122,16 @@
                                             </th>
     
                                             <!-- Price Column -->
-                                            <th>
+                                            <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                                 <div class="flex justify-content-between align-items-center">
                                                     السعر
+                                                </div>
+                                            </th>
+    
+                                            <!-- price_dollar Column -->
+                                            <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
+                                                <div class="flex justify-content-between align-items-center">
+                                                    السعر دولار
                                                 </div>
                                             </th>
     
@@ -183,8 +190,13 @@
                                             </td>
     
                                             <!-- Price Column -->
-                                            <td>
+                                            <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                                 {{ element.price }}
+                                            </td>
+    
+                                            <!-- price_dollar Column -->
+                                            <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
+                                                {{ element.price_dollar }}
                                             </td>
     
                                             <!-- Statement Column -->
@@ -234,7 +246,10 @@
                                             </td>
     
                                             <!-- Price Column -->
-                                            <td></td>
+                                            <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])"></td>
+    
+                                            <!-- price_dollar Column -->
+                                            <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])"></td>
     
                                             <!-- Statement Column -->
                                             <td></td>

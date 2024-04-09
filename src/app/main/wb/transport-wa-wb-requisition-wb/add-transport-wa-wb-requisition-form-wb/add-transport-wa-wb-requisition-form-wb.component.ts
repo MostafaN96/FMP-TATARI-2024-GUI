@@ -172,9 +172,9 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
     private _wbTransportWaWbRequisitionDetailsService: WbTransportWaWbRequisitionDetailsService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
-    private _sessionManagerService: SessionManagerService,
+    public _sessionManagerService: SessionManagerService,
     private _reportWaService: ReportWaService,
     private _fabricService: FabricService,
     private _consigmentYarnService: ConsigmentYarnService,
@@ -355,19 +355,26 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
   selectFromConsigmentYarn(event: { itemData: any; }, row: FormGroup, index: number) {
     let indexData = this.fromConsigmentsYarns[index].indexOf(event.itemData)
     if (this.fromConsigmentsYarns[index][indexData] !== event.itemData) {
-      row.controls['fromConsigmentYarnId'].setValue(null)
-      row.controls['validQuantity'].setValue(null)
+      row.controls['fromConsigmentYarnId'].setValue("")
+      row.controls['consigmentYarnId'].setValue("")
+      row.controls['consigmentYarnNumber'].setValue("")
+      row.controls['validQuantity'].setValue("")
       this.currentQuantity[index] = 0
     }
     else {
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
 
+      row.controls['consigmentYarnId'].setValue(event.itemData.id)
+      row.controls['consigmentYarnNumber'].setValue(event.itemData.number)
+
       // Get Prices
       this._reportWaService.selectPriceWa(row.controls['yarnId'].value, event.itemData.id).subscribe((response: any) => {
         this.yarnsDetails = response
         this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price, this.yarnsDetails[0].latest_consigment_price]
         this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar, this.yarnsDetails[0].latest_consigment_price_dollar]
+        row.controls['price'].setValue(this.yarnsDetails[0].latest_price)
+        row.controls['priceDollar'].setValue(this.yarnsDetails[0].latest_price_dollar)
       })
     }    
   }

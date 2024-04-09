@@ -45,7 +45,8 @@
                     </div>
 
                     <!-- Price -->
-                    <div class="col">
+                    <div class="col"
+                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">
                         <mat-form-field appearance="outline" class="example-full-width w-100">
                             <mat-label>السعر*</mat-label>
                             <input type="text" matInput formControlName="price" placeholder="مثال: 15"
@@ -68,7 +69,8 @@
                     </div>
 
                     <!-- priceDollar -->
-                    <div class="col">
+                    <div class="col"
+                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">
                         <mat-form-field appearance="outline" class="example-full-width w-100">
                             <mat-label>السعر دولار</mat-label>
                             <input type="text" matInput formControlName="priceDollar" placeholder="مثال: 15"

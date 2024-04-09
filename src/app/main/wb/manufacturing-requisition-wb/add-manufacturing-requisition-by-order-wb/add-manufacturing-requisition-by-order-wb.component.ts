@@ -64,7 +64,7 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
     industryId: new FormControl("", [Validators.required]),
     sellerId: new FormControl("", [Validators.required]),
     consigmentManufacturingId: new FormControl(""),
-    circularKnittingMachineId: new FormControl("", [Validators.required]),
+    circularKnittingMachineId: new FormControl(""),
     isNewConsigment: new FormControl(false, [Validators.required]),
     warehouseId: new FormControl(this._constantsService.DEFAULT_WC_WAREHOUSE_ID, [Validators.required]),
     items: new FormArray([]),
@@ -76,6 +76,7 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
     fabricQuantity: new FormControl(this.inputesQuantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     manufacturingFee: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     consigmentNumber: new FormControl(null),
+    numberFabricPieces: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
@@ -220,9 +221,9 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
     private _wbManufacturingOutputService: WbManufacturingOutputService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
-    private _sessionManagerService: SessionManagerService,
+    public _sessionManagerService: SessionManagerService,
     private _reportWbService: ReportWbService,
     private _circularKnittingMachineBussinessmanService: CircularKnittingMachineBussinessmanService,
     private _consigmentManufacturingService: ConsigmentManufacturingService,
@@ -268,14 +269,19 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
       this.removeItem(indexData)
     }
     else {
-      this.selectArrayValues.push(objectData);
 
-      this.addItem(objectData)
       // Get Prices
       this._reportWbService.selectPriceInWb(objectData.yarn_id, this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? "").subscribe((response: any) => {
         this.yarnsDetails = response
         this.getListYarnPrices[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), parseFloat(this.yarnsDetails[0].latest_price)]
         this.listYarnPricesDollar[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'price_dollar', 'quantity'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'price_dollar', 'quantity'), parseFloat(this.yarnsDetails[0].latest_price_dollar)]
+        
+        objectData.latest_price = this.yarnsDetails[0].latest_price
+        objectData.latest_price_dollar = this.yarnsDetails[0].latest_price_dollar
+
+        this.selectArrayValues.push(objectData);
+        this.addItem(objectData)
+
       })
     }
   }
@@ -290,8 +296,8 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
       yarnLotId: new FormControl(data.yarn_lot_id, [Validators.required]),
       yarnLotCode: new FormControl(data.yarn_lot_code, [Validators.required]),
       consigmentYarnId: new FormControl(data.consigment_yarn_id, [Validators.required]),
-      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl(data.latest_price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(data.latest_price_dollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       ratio: new FormControl(String(data.ratio), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       wastRatio: new FormControl(String(data.wast_ratio), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),

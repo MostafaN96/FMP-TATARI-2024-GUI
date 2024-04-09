@@ -94,9 +94,9 @@ export class WcReconciliationRequisitionFormAddDetailsComponent implements OnIni
     private _reconcilitionRequisitionDetailsWcService: ReconcilitionRequisitionDetailsWcService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
-    private _sessionManagerService: SessionManagerService,
+    public _sessionManagerService: SessionManagerService,
     private _reportWcService: ReportWcService
 
   ) {
@@ -130,6 +130,7 @@ export class WcReconciliationRequisitionFormAddDetailsComponent implements OnIni
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      numberFabricPieces: new FormControl('0', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
       inputOutput: new FormControl('1', [Validators.required]),
     });
@@ -179,6 +180,8 @@ export class WcReconciliationRequisitionFormAddDetailsComponent implements OnIni
         this.fabricsDetails = response
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), this.fabricsDetails[0].latest_price]
         this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this.fabricsDetails[0].latest_manufacturing_price, this.fabricsDetails[0].latest_price]
+        row.controls['price'].setValue(this.fabricsDetails[0].latest_price)
+        row.controls['priceDollar'].setValue(this.fabricsDetails[0].latest_price_dollar)
       })
     }
     this.validate(row, index)

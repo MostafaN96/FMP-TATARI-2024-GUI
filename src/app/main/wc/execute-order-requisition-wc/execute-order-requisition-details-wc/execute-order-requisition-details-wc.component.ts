@@ -7,6 +7,8 @@ import { MatSort } from '@angular/material/sort';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { ExecuteOrderRequisitionDetailsWcService } from "src/app/services/main/wc/execute-order-requisition-details-wc.service";
@@ -34,6 +36,7 @@ export class ExecuteOrderRequisitionDetailsWcComponent implements OnInit {
     'fabric_name',
     'fabric_code',
     'consigment_manufacturing_number',
+    'fabric_piece',
     'quantity',
     'price',
     'price_dollar',
@@ -49,6 +52,8 @@ export class ExecuteOrderRequisitionDetailsWcComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _executeOrderRequisitionDetailsWcService: ExecuteOrderRequisitionDetailsWcService,
     public _exportDataService: ExportDataService,
+    private _constantsService: ConstantsService,
+    private _sessionManagerService: SessionManagerService,
   ) {
   }
 
@@ -64,6 +69,18 @@ export class ExecuteOrderRequisitionDetailsWcComponent implements OnInit {
           this.dataSourceSearchTabel = new MatTableDataSource(this.requisitionDetails);
 
           this.dataSourceSearchTabel.sort = this.sortColumns;
+
+          if(!this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[12])) {
+            let index = this.displayedColumns.indexOf('price');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('price_dollar');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total_dollar');
+            this.displayedColumns.splice(index, 1);
+          }
+
         })
       });
 

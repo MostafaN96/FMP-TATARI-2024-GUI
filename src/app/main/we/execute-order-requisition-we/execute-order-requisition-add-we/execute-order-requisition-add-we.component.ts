@@ -247,6 +247,8 @@ this.customFilterForColorCategory();
   }
 
   getSelectedStoredDyedFabrics(selectedStoredDyedFabrics: any) {
+    console.log("selectedStoredDyedFabrics ::: ", selectedStoredDyedFabrics);
+    
 
     if (this.selectedStoredDyedFabricsArrayValues.filter(objOfArr =>
       objOfArr.requisition_details_id == selectedStoredDyedFabrics.requisition_details_id
@@ -402,7 +404,7 @@ this.customFilterForColorCategory();
           this.selectedStoredDyedFabricsMap, this.addRequisitionForm.controls['items'].value,
           'id', 'dyedFabricId',
           'consigment_dyeing_id', 'fromConsigmentDyeingId',
-          'weDyedFabricOrderRequisitionDetailsId', 'id',
+          'requisition_details_id', 'weRequisitionDetailsId',
           'quantity', 'name')) {
 
         this._constantsService.spinner.show()

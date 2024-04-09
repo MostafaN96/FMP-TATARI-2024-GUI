@@ -7,11 +7,13 @@ import { Table } from 'primeng/table';
 import { FilterService } from 'primeng/api';
 
 // Shared Service
-import { SharedComponentService } from "../../../../../services/shared-component.service";
-import { ExportDataService } from "../../../../../services/export-data.service";
+import { SharedComponentService } from "src/app/services/shared-component.service";
+import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
-import { ReportWaService } from "../../../../../services/main/wa/report-wa.service";
+import { ReportWaService } from "src/app/services/main/wa/report-wa.service";
 
 @Component({
   selector: 'app-item-history-by-yarn',
@@ -50,6 +52,8 @@ export class ItemHistoryByYarnComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
     
   ) {
     this._sharedComponentService.angularMaterialTableConfig()

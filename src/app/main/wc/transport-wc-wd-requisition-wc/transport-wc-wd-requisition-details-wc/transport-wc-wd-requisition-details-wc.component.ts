@@ -10,6 +10,8 @@ import { ExportDataService } from "src/app/services/export-data.service";
 
 // Call Service
 import { WdTransportWcWdRequisitionDetailsService } from "src/app/services/main/wc/wd-transport-wc-wd-requisition-details.service";
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
+import { ConstantsService } from 'src/app/services/constants.service';
 
 // Route
 import { ActivatedRoute } from '@angular/router';
@@ -52,6 +54,8 @@ export class TransportWcWdRequisitionDetailsWcComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _wdTransportWcWdRequisitionDetailsService: WdTransportWcWdRequisitionDetailsService,
     public _exportDataService: ExportDataService,
+    private _sessionManagerService: SessionManagerService,
+    private _constantsService: ConstantsService,
   ) {
   }
 
@@ -71,6 +75,17 @@ export class TransportWcWdRequisitionDetailsWcComponent implements OnInit {
           this.dataSourceSearchTabel.sort = this.sortColumns;
         })
       });
+
+      if(!this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[0])) {
+        let index = this.displayedColumns.indexOf('price');
+        this.displayedColumns.splice(index, 1);
+        index = this.displayedColumns.indexOf('price_dollar');
+        this.displayedColumns.splice(index, 1);
+        index = this.displayedColumns.indexOf('total');
+        this.displayedColumns.splice(index, 1);
+        index = this.displayedColumns.indexOf('total_dollar');
+        this.displayedColumns.splice(index, 1);
+      }
 
   }
 

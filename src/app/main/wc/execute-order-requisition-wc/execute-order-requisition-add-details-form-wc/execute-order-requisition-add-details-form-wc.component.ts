@@ -66,6 +66,8 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
   fabricOrderRequisitionId = ""
   fabricOrderRequisitionDetailsId = ""
   fabricOrderCurrentQuantity = "0"
+  fabricOrderPrice = "0"
+  fabricOrderPriceDollar = "0"
 
   fabricsPricesDetails: any[] = [];
   getListFabricPrices: any = []
@@ -84,9 +86,9 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
     private _executeOrderRequisitionDetailsWcService: ExecuteOrderRequisitionDetailsWcService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
-    private _sessionManagerService: SessionManagerService,
+    public _sessionManagerService: SessionManagerService,
     private _reportWcService: ReportWcService,
     public _exportDataService: ExportDataService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
@@ -148,6 +150,8 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
       this.fabricOrderRequisitionId = ""
       this.fabricOrderRequisitionDetailsId = ""
       this.fabricOrderCurrentQuantity = "0"
+      this.fabricOrderPrice = "0"
+      this.fabricOrderPriceDollar = "0"
     }
   }
 
@@ -167,7 +171,8 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
 
         this.getListFabricPrices[this.selectedStoredFabricsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.fabricsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsPricesDetails), parseFloat(this.fabricsPricesDetails[0].latest_price)]
         this.listFabricPricesDollar[this.selectedStoredFabricsArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsPricesDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsPricesDetails, 'quantity', 'price_dollar'), parseFloat(this.fabricsPricesDetails[0].latest_price_dollar)]
-
+        this.fabricOrderPrice = this.fabricsPricesDetails[0].latest_price
+        this.fabricOrderPriceDollar = this.fabricsPricesDetails[0].latest_price_dollar
       })
     }
 
@@ -189,10 +194,11 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
       consigmentManufacturingNumber: new FormControl(selectedStoredFabrics.consigment_manufacturing_number, [Validators.required]),
       newConsigmentManufacturingNumber: new FormControl(this.orderedFabrics[0].order_name, [Validators.required]),
       wcId: new FormControl(selectedStoredFabrics.wc_id, [Validators.required]),
-      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl(this.fabricOrderPrice, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(this.fabricOrderPriceDollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.fabricOrderCurrentQuantity <= selectedStoredFabrics.current_quantity) ? this.fabricOrderCurrentQuantity : selectedStoredFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredFabrics.current_quantity),
+      numberFabricPieces: new FormControl('0', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
@@ -276,7 +282,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWcComponent implements OnInit 
           this.selectedStoredFabricsMap, this.addRequisitionForm.controls['items'].value,
           'id', 'fabricId',
           'consigment_manufacturing_id', 'consigmentManufacturingId',
-          'wcFabricOrderRequisitionDetailsId', 'id',
+          'requisition_details_id', 'wcRequisitionDetailsId',
           'quantity', 'name')) {
 
         this._constantsService.spinner.show()

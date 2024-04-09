@@ -9,6 +9,8 @@ import * as moment from 'moment';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
@@ -45,6 +47,8 @@ export class ItemHistoryByFabricDetailsTotalWcComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
   ) {
   }
 
@@ -295,6 +299,28 @@ this.loading = true;
       }
     }
     return balance
+  }
+
+  
+  getInputFabricPiece(index) {
+    let balanceFabricPiece = parseFloat(this.reportByFabricWcDetails[0]?.fabric_piece)
+    for (let i = 0; i < index; i++) {
+      let fabricPiece = parseFloat(this.reportByFabricWcDetails[i + 1].fabric_piece);
+      if (this.reportByFabricWcDetails[i + 1].input_output == '1') {
+        balanceFabricPiece = balanceFabricPiece + fabricPiece
+      }
+      else {
+        balanceFabricPiece = balanceFabricPiece - fabricPiece
+      }
+    }
+    return balanceFabricPiece
+  }
+
+  getTotalBalanceFabricPiece() {
+    let data = this.dt1?.filteredValue == null ? this.reportByFabricWcDetails: this.dt1?.filteredValue
+    return this._sharedComponentService.getTotalQuantityWithCondition(data,
+      "fabric_piece", "input_output", "1") - this._sharedComponentService.getTotalQuantityWithCondition(data,
+        "fabric_piece", "input_output", "0")
   }
 
   getAvgInputesPrice(){

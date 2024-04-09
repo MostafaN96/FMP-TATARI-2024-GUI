@@ -3,7 +3,7 @@
     <div [class]="_sharedComponentService.titlePageClass">
         <!-- Sub Title Page -->
         <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
-            <h2 [class]="_sharedComponentService.TitleTextClass">اذن نقل بين المخازن قماش خام</h2>
+            <h2 [class]="_sharedComponentService.TitleTextClass">اذن نقل بين مخازن قماش الخام</h2>
         </div>
     </div>
     <!-- Form Section -->
@@ -123,6 +123,19 @@
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
 
+                            <!-- fabric_piece Column -->
+                            <ng-container matColumnDef="fabric_piece">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>عدد الاثواب</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.fabric_piece }}
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef> 
+                                    {{ _sharedComponentService.getTotalCollectSum(dataSourceSearchTabel?.filteredData, 'fabric_piece') | number}}
+                                </td>
+                            </ng-container>
+                            
                                 <!-- price Column -->
                                 <ng-container matColumnDef="price">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>

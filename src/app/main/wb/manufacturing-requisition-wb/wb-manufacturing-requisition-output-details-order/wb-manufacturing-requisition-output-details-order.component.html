@@ -69,6 +69,16 @@
                                     </td>
                                 </ng-container>
 
+                            <!-- fabric_piece Column -->
+                            <ng-container matColumnDef="fabric_piece">
+                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <b>عدد الاثواب</b>
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.fabric_piece }}
+                                </td>
+                            </ng-container>
+
                                 <!-- quantity Column -->
                                 <ng-container matColumnDef="quantity">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>

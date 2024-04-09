@@ -313,7 +313,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
           this.selectedStoredDyedFabricsMap, this.addRequisitionForm.controls['items'].value,
           'id', 'dyedFabricId',
           'consigment_dyeing_id', 'consigmentDyeingId',
-          'wcFabricOrderRequisitionDetailsId', 'id',
+          'requisition_details_id', 'weRequisitionDetailsId',
           'quantity', 'name')) {
 
         this._constantsService.spinner.show()

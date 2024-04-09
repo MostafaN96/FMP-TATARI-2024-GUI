@@ -132,9 +132,9 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
     private _reconcilitionRequisitionDetailsWbService: ReconcilitionRequisitionDetailsWbService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
-    private _sessionManagerService: SessionManagerService,
+    public _sessionManagerService: SessionManagerService,
     private _reportWbService: ReportWbService,
     private _fabricService: FabricService,
 
@@ -229,6 +229,8 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
         this.yarnsDetails = response
         this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price]
         this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar]
+        row.controls['price'].setValue(this.yarnsDetails[0].latest_price)
+        row.controls['priceDollar'].setValue(this.yarnsDetails[0].latest_price_dollar)
       })
     }
     this.validate(row, index)

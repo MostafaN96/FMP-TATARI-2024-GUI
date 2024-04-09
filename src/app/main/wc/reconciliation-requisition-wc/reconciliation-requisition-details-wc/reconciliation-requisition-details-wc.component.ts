@@ -7,6 +7,8 @@ import { Table } from 'primeng/table';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from "src/app/services/constants.service";
+import { SessionManagerService } from "src/app/services/main/session-manager.service";
 
 // Call Service
 import { ReconcilitionRequisitionDetailsWcService } from "src/app/services/main/wc/reconcilition-requisition-details-wc.service";
@@ -36,6 +38,8 @@ export class ReconciliationRequisitionDetailsWcComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _reconcilitionRequisitionDetailsWcService: ReconcilitionRequisitionDetailsWcService,
     public _exportDataService: ExportDataService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
     private primengConfig: PrimeNGConfig,
   ) {
   }

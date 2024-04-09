@@ -223,28 +223,32 @@
                                         </th>
 
                                         <!-- input_price Column -->
-                                        <th pResizableColumn>
+                                        <th pResizableColumn
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             <div class="flex justify-content-between align-items-center">
                                                 سعر الإدخال
                                             </div>
                                         </th>
 
                                         <!-- output_price Column -->
-                                        <th pResizableColumn>
+                                        <th pResizableColumn
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             <div class="flex justify-content-between align-items-center">
                                                 سعر الإخراج
                                             </div>
                                         </th>
 
                                         <!-- input_amount Column -->
-                                        <th pResizableColumn>
+                                        <th pResizableColumn
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             <div class="flex justify-content-between align-items-center">
                                                 قيمة المدخلات
                                             </div>
                                         </th>
 
                                         <!-- output_amount Column -->
-                                        <th pResizableColumn>
+                                        <th pResizableColumn
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             <div class="flex justify-content-between align-items-center">
                                                 قيمة المخرجات
                                             </div>
@@ -336,21 +340,21 @@
                                         </td>
 
                                         <!-- input_price Column -->
-                                        <td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             <ng-container *ngIf="element.input_output == '1'">
                                                 {{ element.price | number}}
                                             </ng-container>
                                         </td>
 
                                         <!-- output_price Column -->
-                                        <td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             <ng-container *ngIf="element.input_output == '0'">
                                                 {{ element.price | number}}
                                             </ng-container>
                                         </td>
 
                                         <!-- input_amount Column -->
-                                        <td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             <ng-container *ngIf="element.input_output == '1'">
                                                 {{_sharedComponentService.getCollectTimes(element.quantity,
                                                 element.price) | number}}
@@ -358,7 +362,7 @@
                                         </td>
 
                                         <!-- output_amount Column -->
-                                        <td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             <ng-container *ngIf="element.input_output == '0'">
                                                 {{_sharedComponentService.getCollectTimes(element.quantity,
                                                 element.price) | number}}
@@ -441,19 +445,19 @@
                                         </td>
 
                                         <!-- input_price Column -->
-                                        <td></td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])"></td>
 
                                         <!-- output_price Column -->
-                                        <td> </td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])"> </td>
 
                                         <!-- input_amount Column -->
-                                        <td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             {{_sharedComponentService.getInputAmount(dt1.filteredValue ==
                                             null ? reportByYranWaDetails: dt1.filteredValue) | number}}
                                         </td>
 
                                         <!-- output_amount Column -->
-                                        <td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                             {{_sharedComponentService.getOutputAmount(dt1.filteredValue ==
                                             null ? reportByYranWaDetails: dt1.filteredValue) | number}}
                                         </td>
@@ -487,7 +491,7 @@
                         </div>
 
                         <table id="table-data-2" class="table table-style mt-4">
-                            <tbody>
+                            <tbody *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[5])">
                                 <tr>
                                     <th>
                                         قيمة الصنف:

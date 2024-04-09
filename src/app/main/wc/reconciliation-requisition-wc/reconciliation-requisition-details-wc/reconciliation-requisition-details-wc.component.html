@@ -114,6 +114,13 @@
                                             </div>
                                         </th>
 
+                                        <!-- fabric_piece Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                عدد الاثواب
+                                            </div>
+                                        </th>
+
                                         <!-- Input Quantity Column -->
                                         <th>
                                             <div class="flex justify-content-between align-items-center">
@@ -129,14 +136,16 @@
                                         </th>
 
                                         <!-- Price Column -->
-                                        <th>
+                                        <th
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                             <div class="flex justify-content-between align-items-center">
                                                 السعر
                                             </div>
                                         </th>
 
                                         <!-- price_dollar Column -->
-                                        <th>
+                                        <th
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                             <div class="flex justify-content-between align-items-center">
                                                 السعر دولار
                                             </div>
@@ -181,6 +190,11 @@
                                         <td>
                                             {{ element.consigment_manufacturing_number }}
                                         </td>
+                                        
+                                        <!-- fabric_piece Column -->
+                                        <td>
+                                            {{ element.fabric_piece }}
+                                        </td>
 
                                         <!-- Input Quantity Column -->
                                         <td>
@@ -197,12 +211,14 @@
                                         </td>
 
                                         <!-- Price Column -->
-                                        <td>
+                                        <td
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                             {{ element.price }}
                                         </td>
 
                                         <!-- price_dollar Column -->
-                                        <td>
+                                        <td
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                             {{ element.price_dollar }}
                                         </td>
 
@@ -240,6 +256,9 @@
                                         <!-- consigment_manufacturing_number Column -->
                                         <td></td>
 
+                                        <!-- fabric_piece Column -->
+                                        <td></td>
+
                                         <!-- Input Quantity Column -->
                                         <td>
                                             {{_sharedComponentService.getTotalQuantityWithCondition(dt1.filteredValue ==
@@ -253,10 +272,12 @@
                                         </td>
 
                                         <!-- Price Column -->
-                                        <td></td>
+                                        <td
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])"></td>
 
                                         <!-- price_dollar Column -->
-                                        <td></td>
+                                        <td
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])"></td>
 
                                         <!-- Statement Column -->
                                         <td></td>

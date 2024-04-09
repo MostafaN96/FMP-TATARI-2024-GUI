@@ -152,9 +152,9 @@ export class AddTransitionBetweenWhRequisitionWcComponent implements OnInit {
     private _transitionBetweenWhRequisitionWcService: TransitionBetweenWhRequisitionWcService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
-    private _sessionManagerService: SessionManagerService,
+    public _sessionManagerService: SessionManagerService,
     private _reportWcService: ReportWcService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
 
@@ -195,6 +195,7 @@ export class AddTransitionBetweenWhRequisitionWcComponent implements OnInit {
       priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      numberFabricPieces: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
@@ -302,6 +303,8 @@ export class AddTransitionBetweenWhRequisitionWcComponent implements OnInit {
         
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails) ?? 0, this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails) ?? 0, this.fabricsDetails[0].latest_manufacturing_price, this.fabricsDetails[0].latest_price ?? 0]
         this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this.fabricsDetails[0].latest_manufacturing_price_dollar, this.fabricsDetails[0].latest_price_dollar]
+        row.controls['price'].setValue(this.fabricsDetails[0].latest_price)
+        row.controls['priceDollar'].setValue(this.fabricsDetails[0].latest_price_dollar)
       })
     }    
   }

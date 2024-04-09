@@ -32,6 +32,10 @@
                                     رقم الرسالة
                                 </th>
 
+                                <th style="max-width: 60px;">
+                                    عدد الاثواب
+                                </th>
+
                                 <th style="max-width: 120px;">
                                     الكمية المتوفرة
                                 </th>
@@ -40,11 +44,13 @@
                                     الكمية
                                 </th>
 
-                                <th style="max-width: 120px;">
+                                <th style="max-width: 120px;"
+                                *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[13])">
                                     السعر 
                                 </th>
 
-                                <th style="max-width: 120px;">
+                                <th style="max-width: 120px;"
+                                *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[13])">
                                     السعر دولار 
                                 </th>
 
@@ -133,6 +139,27 @@
                                     </small>
                                 </td>
 
+                                        <!-- numberFabricPieces -->
+                                        <td style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>عدد الاثواب</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="numberFabricPieces" placeholder="مثال: 10"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('required') && (row.get('numberFabricPieces').dirty 
+                                                    || row.get('numberFabricPieces').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
                                     <td class="table-td" style="max-width: 120px;">
                                         <mat-form-field class="w-100">
                                             <mat-label> 
@@ -173,7 +200,8 @@
                                     </td>
 
                                     <!-- Price -->
-                                    <td class="table-td" style="max-width: 120px">
+                                    <td class="table-td" style="max-width: 120px"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[13])">
                                         <mat-form-field class="example-full-width w-100">
                                             <mat-label>السعر</mat-label>
                                             <input type="text" matInput formControlName="price" required placeholder="مثال: 15" [matAutocomplete]="autoGroup"
@@ -206,7 +234,8 @@
                                     </td>
 
                                     <!-- priceDollar -->
-                                    <td class="table-td" style="max-width: 120px">
+                                    <td class="table-td" style="max-width: 120px"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[13])">
                                         <mat-form-field class="example-full-width w-100">
                                             <mat-label>السعر دولار</mat-label>
                                             <input type="text" matInput formControlName="priceDollar" required placeholder="مثال: 15" [matAutocomplete]="autoGroup2"
@@ -315,12 +344,19 @@
                         <tfoot>
                             <tr>
                               <td>الاجمالي</td>
-                            
-                              <td colspan="5"></td>
-                              <td>{{_sharedComponentService.getTotalQuantityForm(addtransitionIndustriesRequisitionForm, 'items', 'quantity') | number}}</td>
-                              <td colspan="6"></td>
+                              <td colspan="4"></td>
+                                <td>{{_sharedComponentService.getTotalQuantityForm(addtransitionIndustriesRequisitionForm, 'items',
+                                    'numberFabricPieces') | number}}
+                                    </td>
+                                <td colspan="1"></td>
+                                <td>{{_sharedComponentService.getTotalQuantityForm(addtransitionIndustriesRequisitionForm, 'items', 'quantity') |
+                                    number}}
+                                </td>
+                            <td colspan="2"
+                            *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[13])"></td>
+                            <td colspan="4"></td>
                             </tr>
-                          </tfoot>
+                            </tfoot>
 
                     </table>
 

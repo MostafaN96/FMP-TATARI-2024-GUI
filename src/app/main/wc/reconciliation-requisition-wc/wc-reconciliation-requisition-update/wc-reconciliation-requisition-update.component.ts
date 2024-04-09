@@ -31,6 +31,7 @@ export class WcReconciliationRequisitionUpdateComponent implements OnInit {
     price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    numberFabricPieces: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     inputOutput: new FormControl("", [Validators.required]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
@@ -43,8 +44,8 @@ export class WcReconciliationRequisitionUpdateComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public matcher: MyErrorStateMatcher,
     private _reconcilitionRequisitionDetailsWcService: ReconcilitionRequisitionDetailsWcService,
-    private _constantsService: ConstantsService,
-    private _sessionManagerService: SessionManagerService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
 
   ) {
   }
@@ -63,6 +64,7 @@ export class WcReconciliationRequisitionUpdateComponent implements OnInit {
     this.wcReconciliationRequisitionForm.controls['price'].setValue(this.selectedData?.price)
     this.wcReconciliationRequisitionForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.wcReconciliationRequisitionForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
+    this.wcReconciliationRequisitionForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
     this.wcReconciliationRequisitionForm.controls['statement'].setValue(this.selectedData?.statement)
     this.wcReconciliationRequisitionForm.controls['note'].setValue(this.selectedData?.note)
     this.wcReconciliationRequisitionForm.controls['inputOutput'].setValue(String(this.selectedData?.input_output))

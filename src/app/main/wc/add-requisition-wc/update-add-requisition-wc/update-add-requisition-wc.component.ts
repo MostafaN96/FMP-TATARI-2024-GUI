@@ -29,6 +29,7 @@ export class UpdateAddRequisitionWcComponent implements OnInit {
     price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    numberFabricPieces: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
   })
@@ -56,6 +57,7 @@ export class UpdateAddRequisitionWcComponent implements OnInit {
     this.addRequisitionWcForm.controls['note'].setValue(this.selectedData?.note)
     this.addRequisitionWcForm.controls['price'].setValue(this.selectedData?.price)
     this.addRequisitionWcForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
+    this.addRequisitionWcForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
     this.addRequisitionWcForm.controls['quantity'].setValue(String(this.selectedData?.quantity))
     this.addRequisitionWcForm.controls['document'].setValue(this.selectedData?.document)
     this.addRequisitionWcForm.controls['statement'].setValue(this.selectedData?.statement)

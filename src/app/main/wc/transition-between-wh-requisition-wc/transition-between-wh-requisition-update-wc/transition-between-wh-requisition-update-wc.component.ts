@@ -30,6 +30,7 @@ export class TransitionBetweenWhRequisitionUpdateWcComponent implements OnInit {
     price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    numberFabricPieces: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
@@ -42,8 +43,8 @@ export class TransitionBetweenWhRequisitionUpdateWcComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public matcher: MyErrorStateMatcher,
     private _transitionBetweenWhRequisitionDetailsWcService: TransitionBetweenWhRequisitionDetailsWcService,
-    private _constantsService: ConstantsService,
-    private _sessionManagerService: SessionManagerService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
 
   ) { }
 
@@ -60,6 +61,7 @@ export class TransitionBetweenWhRequisitionUpdateWcComponent implements OnInit {
     this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue(String(this.selectedData?.price))
     this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].setValue(String(this.selectedData?.price_dollar))
     this.transitionBetweenWhRequisitionWeForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
+    this.transitionBetweenWhRequisitionWeForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
     this.transitionBetweenWhRequisitionWeForm.controls['document'].setValue(this.selectedData?.document)
     this.transitionBetweenWhRequisitionWeForm.controls['statement'].setValue(this.selectedData?.statement)
   }

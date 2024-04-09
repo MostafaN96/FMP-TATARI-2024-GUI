@@ -35,11 +35,13 @@
                                         رقم الرسالة
                                     </th>
     
-                                    <th style="max-width: 120px">
+                                    <th style="max-width: 120px"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                         السعر
                                     </th>
     
-                                    <th style="max-width: 120px">
+                                    <th style="max-width: 120px"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                         السعر دولار
                                     </th>
     
@@ -51,11 +53,13 @@
                                         الكمية
                                     </th>
     
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 100px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                         الاجمالي
                                     </th>
     
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 100px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                         الاجمالي دولار
                                     </th>
 
@@ -155,7 +159,8 @@
                                         </td>
     
                                         <!-- Price -->
-                                        <td class="table-td" style="max-width: 120px">
+                                        <td class="table-td" style="max-width: 120px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر</mat-label>
                                                 <input type="text" matInput formControlName="price" required placeholder="مثال: 15" [matAutocomplete]="autoGroup"
@@ -184,7 +189,8 @@
                                         </td>
     
                                         <!-- priceDollar -->
-                                        <td class="table-td" style="max-width: 120px">
+                                        <td class="table-td" style="max-width: 120px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر دولار</mat-label>
                                                 <input type="text" matInput formControlName="priceDollar" required placeholder="مثال: 15" [matAutocomplete]="autoGroup"
@@ -248,14 +254,16 @@
                                         </td>
     
                                           <!-- total -->
-                                          <td class="align-middle text-center">
+                                          <td class="align-middle text-center"
+                                          *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantity'].value) | number}}
                                             </span>
                                         </td>
     
                                           <!-- total_dollar -->
-                                          <td class="align-middle text-center">
+                                          <td class="align-middle text-center"
+                                          *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value, row.controls['quantity'].value) | number}}
                                             </span>
@@ -332,11 +340,15 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="7"></td>
+                                  <td colspan="4"></td>
+                                  <td colspan="2"
+                                  *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(reconcilitionRequisitionForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(reconcilitionRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(reconcilitionRequisitionForm, 'items', 'quantity', 'priceDollar') | number}}</td>
-                                  <td colspan="5"></td>
+                                  <td colspan="2"
+                                  *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[6])"></td>
+                                  <td colspan="3"></td>
                                 </tr>
                               </tfoot>
                               

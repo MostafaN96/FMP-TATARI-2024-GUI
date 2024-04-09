@@ -49,8 +49,8 @@ export class ShowAllCircularKnittingMachineComponent implements OnInit {
 
   ngOnInit(): void {
     this.customFilterForManufacturers();
-    this.customFilterForFabricName();
-    this.customFilterForFabricCode();
+    // this.customFilterForFabricName();
+    // this.customFilterForFabricCode();
     this.customFilterForTypes();
     this.customFilterForDiameters();
     this.customFilterForSmoothness();
@@ -104,72 +104,73 @@ export class ShowAllCircularKnittingMachineComponent implements OnInit {
       }
     });
   }
-  customFilterForFabricName() {
-    const customFilterName = "fabric-name-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedFabricName
+  // customFilterForFabricName() {
+  //   const customFilterName = "fabric-name-filter";
+  //   this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+  //     filter = this.selectedFabricName
 
-      if (this.selectedFabricName[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+  //     if (this.selectedFabricName[0] != null) {
+  //       if (filter === undefined || filter === null || !filter.length) {
+  //         return true;
+  //       }
+  //       if (value === undefined || value === null || value.length == 0) {
+  //         return false;
+  //       }
+  //       if (filter.length > 0) {
+  //         // let count = 0
 
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].fabric_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-  customFilterForFabricCode() {
-    const customFilterName = "fabric-code-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedFabricCode
+  //         // for (let i = 0; i < value.length; i++) {
+  //         for (let j = 0; j < filter.length; j++) {
+  //           if (value == filter[j].fabric_name) {
+  //             // count++
+  //             // if (count == filter.length) {
+  //             return true;
+  //             // }
+  //           }
+  //         }
+  //         // }
+  //       }
+  //       return false;
+  //     }
+  //     else {
+  //       return true;
+  //     }
+  //   });
+  // }
 
-      if (this.selectedFabricCode[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+  // customFilterForFabricCode() {
+  //   const customFilterName = "fabric-code-filter";
+  //   this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+  //     filter = this.selectedFabricCode
 
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].fabric_code) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
+  //     if (this.selectedFabricCode[0] != null) {
+  //       if (filter === undefined || filter === null || !filter.length) {
+  //         return true;
+  //       }
+  //       if (value === undefined || value === null || value.length == 0) {
+  //         return false;
+  //       }
+  //       if (filter.length > 0) {
+  //         // let count = 0
+
+  //         // for (let i = 0; i < value.length; i++) {
+  //         for (let j = 0; j < filter.length; j++) {
+  //           if (value == filter[j].fabric_code) {
+  //             // count++
+  //             // if (count == filter.length) {
+  //             return true;
+  //             // }
+  //           }
+  //         }
+  //         // }
+  //       }
+  //       return false;
+  //     }
+  //     else {
+  //       return true;
+  //     }
+  //   });
+  // }
 
   customFilterForTypes() {
     const customFilterName = "type-filter";
@@ -312,8 +313,8 @@ export class ShowAllCircularKnittingMachineComponent implements OnInit {
     table.clear();
     table.reset();
     this.selectedManufacturers = []
-    this.selectedFabricName = []
-    this.selectedFabricCode = []
+    // this.selectedFabricName = []
+    // this.selectedFabricCode = []
     this.selectedTypes = []
     this.selectedDiameters = []
     this.selectedSmoothness = []
@@ -325,15 +326,15 @@ export class ShowAllCircularKnittingMachineComponent implements OnInit {
     this.dt1?._filter()
   }
 
-  onMultiselectedFabricName(event) {
-    this.selectedFabricName = event
-    this.dt1?._filter()
-  }
+  // onMultiselectedFabricName(event) {
+  //   this.selectedFabricName = event
+  //   this.dt1?._filter()
+  // }
 
-  onMultiselectedFabricCode(event) {
-    this.selectedFabricCode = event
-    this.dt1?._filter()
-  }
+  // onMultiselectedFabricCode(event) {
+  //   this.selectedFabricCode = event
+  //   this.dt1?._filter()
+  // }
 
   onMultiselectedTypes(event) {
     this.selectedTypes = event

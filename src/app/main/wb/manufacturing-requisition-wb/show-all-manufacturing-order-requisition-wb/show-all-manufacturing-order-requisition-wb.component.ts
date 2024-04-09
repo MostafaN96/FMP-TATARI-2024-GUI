@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 // PrimeNG Table
 import { PrimeNGConfig } from 'primeng/api';
@@ -30,6 +30,7 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
    selectedFabricCode: any[] = []
    selectedFabricName: any[] = []
    selectedOrderNumber: any[] = []
+   selectedRequisitionNote: any[] = []
    startDate: any
    endDate: any
    dateFilters: any
@@ -50,6 +51,7 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
     this.customFilterForFabricCode();
     this.customFilterForFabricName();
     this.customFilterForOrderNumber();
+    this.customFilterForRequisitionNote();
 
   }
 
@@ -241,6 +243,40 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
     });
   }
   
+customFilterForRequisitionNote() {
+  const customFilterName = "requisition-note-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedRequisitionNote
+
+    if (this.selectedRequisitionNote[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        // let count = 0
+
+        // for (let i = 0; i < value.length; i++) {
+        for (let j = 0; j < filter.length; j++) {
+          if (value == filter[j].note) {
+            // count++
+            // if (count == filter.length) {
+            return true;
+            // }
+          }
+        }
+        // }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
    selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -292,6 +328,7 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
     this.selectedFabricCode = []
     this.selectedFabricName = []
     this.selectedOrderNumber = []
+    this.selectedRequisitionNote = []
     this.dateFilters = []
   }
 
@@ -317,6 +354,11 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
 
   onMultiselectedOrderNumber(event) {
     this.selectedOrderNumber = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedRequisitionNote(event) {
+    this.selectedRequisitionNote = event
     this.dt1?._filter()
   }
 

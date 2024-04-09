@@ -48,8 +48,8 @@ export class UpdateManufacturingInputComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public matcher: MyErrorStateMatcher,
     private _wbManufacturingInputService: WbManufacturingInputService,
-    private _constantsService: ConstantsService,
-    private _sessionManagerService: SessionManagerService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
   ) { }
 
   ngOnInit(): void {

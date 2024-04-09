@@ -43,8 +43,8 @@ export class UpdateTransportWaWbRequisitionWbComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public matcher: MyErrorStateMatcher,
     private _wbTransportWaWbRequisitionDetailsService: WbTransportWaWbRequisitionDetailsService,
-    private _constantsService: ConstantsService,
-    private _sessionManagerService: SessionManagerService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
 
   ) { }
 

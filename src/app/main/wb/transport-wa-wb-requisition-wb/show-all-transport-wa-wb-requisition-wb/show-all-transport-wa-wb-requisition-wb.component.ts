@@ -1,15 +1,16 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 
-
-// Angular Material Table
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortable } from '@angular/material/sort';
+// PrimeNG Table
+import { PrimeNGConfig } from 'primeng/api';
+import { Table } from 'primeng/table';
+import { FilterService } from 'primeng/api';
+import * as moment from 'moment';
 
 // Shared Service
-import { SharedComponentService } from "../../../../services/shared-component.service";
+import { SharedComponentService } from "src/app/services/shared-component.service";
 
 // Call Service
-import { TransportWaWbService } from "../../../../services/main/wb/transport-wa-wb-requisition-wb.service";
+import { TransportWaWbService } from "src/app/services/main/wb/transport-wa-wb-requisition-wb.service";
 
 @Component({
   selector: 'app-show-all-transport-wa-wb-requisition-wb',
@@ -22,64 +23,171 @@ export class ShowAllTransportWaWbRequisitionWbComponent implements OnInit {
   yarns: any[] = []
 
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
-  @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
-  displayedColumns: string[] = ['number', 'date', 'warehouse_name', 'note', 'details'];
-  filter = "";
-  dataSourceSearchTabel: any;
-  filterSelectObj = [
-    {
-      name: 'رقم الإذن',
-      columnProp: 'number',
-      options: []
-    }
-  ]
-  filterValues = {};
+  //////////////////////////////////// PrimeNG /////////////////////////////////
+  @ViewChild('dt1') dt1: Table | undefined;
+  loading: boolean = true;
+  selectedWarehouseName: any[] = []
+  selectedRequisitionNote: any[] = []
   startDate: any
   endDate: any
+  dateFilters: any
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _transportWaWbService: TransportWaWbService,
+    private primengConfig: PrimeNGConfig,
+    private filterService: FilterService,
   ) {
-    this._sharedComponentService.angularMaterialTableConfig()
   }
 
   ngOnInit(): void {
     this.getData();
-    this.sortColumns.sort(({ id: 'number', start: 'desc'}) as MatSortable);
+
+    this.customFilterForWarehouseName();
+    this.customFilterForRequisitionNote();
   }
 
   getData() {
     this._transportWaWbService.selectAll().subscribe((response: any) => {
       this.yarns = response
-      this.dataSourceSearchTabel = new MatTableDataSource(this.yarns);
 
-      this.dataSourceSearchTabel.sort = this.sortColumns;
-
-      // Setup Filter
-      this._sharedComponentService.setupFilter(response, this.dataSourceSearchTabel, this.filterSelectObj)
+      // PrimeNG Table
+      this.primengConfig.ripple = true;
+      this.loading = false;
     })
   }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  applyFilter(filterValue: string) {
-    this.dataSourceSearchTabel = new MatTableDataSource(this.yarns);
-    this.sortColumns.sort(({ id: 'number', start: 'desc'}) as MatSortable);
-    this.dataSourceSearchTabel.sort = this.sortColumns;
-    this.dataSourceSearchTabel.filter = filterValue.trim().toLowerCase();
+
+  customFilterForWarehouseName() {
+    const customFilterName = "warehouse-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedWarehouseName
+
+      if (this.selectedWarehouseName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].warehouse_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForRequisitionNote() {
+    const customFilterName = "requisition-note-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedRequisitionNote
+
+      if (this.selectedRequisitionNote[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].note) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  selectedDate(event) {
+    this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
+      filter = this.dateFilters
+
+      if (event != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+          if (filter[0] != null && filter[1] != null) {
+
+            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&
+              moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
+              return true;
+            }
+
+          } else if (filter[0] != null && filter[1] == null) {
+
+            if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    })
+    this.dt1?.filter(event, "date", "date-filter")
   }
 
   // Reset table filters
-  resetFilters(filterSelectObj) {
-    this.filterValues = {}
-    filterSelectObj.forEach((value, key) => {
-      value.modelValue = undefined;
-    })
-    this.dataSourceSearchTabel.filter = "";
-    this.startDate = null
-    this.endDate = null
-    this.getData();
+  clear(table: Table) {
+    table.clear();
+    table.reset();
+    this.selectedWarehouseName = []
+    this.selectedRequisitionNote = []
+    this.dateFilters = []
   }
+
+  onMultiselectedWarehouseName(event) {
+    this.selectedWarehouseName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedRequisitionNote(event) {
+    this.selectedRequisitionNote = event
+    this.dt1?._filter()
+  }
+
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
 
 }

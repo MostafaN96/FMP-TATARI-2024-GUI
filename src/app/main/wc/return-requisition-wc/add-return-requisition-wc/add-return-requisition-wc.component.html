@@ -116,6 +116,10 @@
                                         رقم الرسالة
                                     </th>
 
+                                    <th style="max-width: 60px;">
+                                        عدد الاثواب
+                                    </th>
+
                                     <th style="max-width: 120px;">
                                         السعر 
                                     </th>
@@ -202,6 +206,27 @@
                                                 || row.get('consigmentManufacturingId').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
+                                        </td>
+
+                                        <!-- numberFabricPieces -->
+                                        <td style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>عدد الاثواب</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="numberFabricPieces" placeholder="مثال: 10"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('required') && (row.get('numberFabricPieces').dirty 
+                                                    || row.get('numberFabricPieces').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
                                         </td>
 
                                         <!-- Price -->
@@ -357,7 +382,9 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="6"></td>
+                                  <td colspan="3"></td>
+                                  <td>{{_sharedComponentService.getTotalQuantityForm(returnRequisitionWCForm, 'items', 'numberFabricPieces') | number}}</td>
+                                  <td colspan="3"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(returnRequisitionWCForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(returnRequisitionWCForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(returnRequisitionWCForm, 'items', 'quantity', 'priceDollar') | number}}</td>

@@ -34,6 +34,7 @@ export class SellRequisitionDetailsWcComponent implements OnInit {
     'fabric_name', 
     'fabric_code',
     'consigment_manufacturing_number',
+    'fabric_piece',
     'quantity',
     'price',
     'price_dollar',

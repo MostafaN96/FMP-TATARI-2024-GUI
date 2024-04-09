@@ -9,6 +9,8 @@ import * as moment from 'moment';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { ReportWbService } from "src/app/services/main/wb/report-wb.service";
@@ -51,6 +53,8 @@ export class ItemHistoryTotalReportDetailsWbComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
   ) {
   }
 

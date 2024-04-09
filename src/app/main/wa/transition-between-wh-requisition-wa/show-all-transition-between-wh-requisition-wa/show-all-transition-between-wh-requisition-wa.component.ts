@@ -30,6 +30,7 @@ loading: boolean = true;
 selectedRequisitionNum: any[] = []
 selectedFromWarehouseName: any[] = []
 selectedToWarehouseName: any[] = []
+selectedRequisitionNote: any[] = []
 startDate: any
 endDate: any
 dateFilters: any
@@ -50,6 +51,7 @@ ngOnInit(): void {
 
   this.customFilterForFromWarehouseName();
   this.customFilterForToWarehouseName();
+  this.customFilterForRequisitionNote();
 }
 
 getData() {
@@ -136,6 +138,40 @@ customFilterForToWarehouseName() {
   });
 }
 
+customFilterForRequisitionNote() {
+  const customFilterName = "requisition-note-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedRequisitionNote
+
+    if (this.selectedRequisitionNote[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        // let count = 0
+
+        // for (let i = 0; i < value.length; i++) {
+        for (let j = 0; j < filter.length; j++) {
+          if (value == filter[j].note) {
+            // count++
+            // if (count == filter.length) {
+            return true;
+            // }
+          }
+        }
+        // }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
  selectedDate(event) {
   this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -184,6 +220,7 @@ clear(table: Table) {
   table.reset();
   this.selectedFromWarehouseName = []
   this.selectedToWarehouseName = []
+  this.selectedRequisitionNote = []
   this.dateFilters = []
 }
 
@@ -194,6 +231,11 @@ onMultiselectedFromWarehouseName(event) {
 
 onMultiselectedToWarehouseName(event) {
   this.selectedToWarehouseName = event
+  this.dt1?._filter()
+}
+
+onMultiselectedRequisitionNote(event) {
+  this.selectedRequisitionNote = event
   this.dt1?._filter()
 }
 ///////////////////// ----------- End Search Tabel ----------- /////////////////////

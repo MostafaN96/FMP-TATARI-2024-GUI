@@ -254,11 +254,13 @@
                                         الكمية مع الهالك
                                     </th>
 
-                                    <th style="max-width: 60px;">
+                                    <th style="max-width: 60px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         السعر
                                     </th>
 
-                                    <th style="max-width: 60px;">
+                                    <th style="max-width: 60px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         السعر دولار
                                     </th>
 
@@ -266,19 +268,23 @@
                                         نسبة الهالك
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 100px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         الاجمالي
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 100px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         الاجمالي دولار
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 100px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         الاجمالي مع الهالك
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 100px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         الاجمالي مع الهالك دولار
                                     </th>
 
@@ -402,7 +408,8 @@
                                         </td>
 
                                         <!-- Price -->
-                                        <td class="table-td" style="max-width: 60px">
+                                        <td class="table-td" style="max-width: 60px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر</mat-label>
                                                 <input type="text" matInput formControlName="price" required
@@ -439,7 +446,8 @@
                                         </td>
 
                                         <!-- priceDollar -->
-                                        <td class="table-td" style="max-width: 60px">
+                                        <td class="table-td" style="max-width: 60px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر دولار</mat-label>
                                                 <input type="text" matInput formControlName="priceDollar" required
@@ -503,7 +511,8 @@
                                         </td>
 
                                         <!-- total -->
-                                        <td class="align-middle text-center">
+                                        <td class="align-middle text-center"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value,
                                                 row.controls['quantity'].value) | number}}
@@ -511,7 +520,8 @@
                                         </td>
 
                                         <!-- total_dollar -->
-                                        <td class="align-middle text-center">
+                                        <td class="align-middle text-center"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value,
                                                 row.controls['quantity'].value) | number}}
@@ -519,7 +529,8 @@
                                         </td>
 
                                         <!-- wast total -->
-                                        <td class="align-middle text-center">
+                                        <td class="align-middle text-center"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value,
                                                 row.controls['quantityWithWaste'].value) | number}}
@@ -527,7 +538,8 @@
                                         </td>
 
                                         <!-- wast total_dollar -->
-                                        <td class="align-middle text-center">
+                                        <td class="align-middle text-center"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value,
                                                 row.controls['quantityWithWaste'].value) | number}}
@@ -566,17 +578,23 @@
                                         'items', 'quantity') | number}}</td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(addManufacturingRequisitionForm,
                                         'items', 'quantityWithWaste') | number}}</td>
-                                    <td colspan="3"></td>
-                                    <td class="text-center">
+                                    <td colspan="2"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])"></td>
+                                    <td colspan="1"></td>
+                                    <td class="text-center"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(addManufacturingRequisitionForm,
                                         'items', 'quantity', 'price') | number}}</td>
-                                    <td class="text-center">
+                                    <td class="text-center"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(addManufacturingRequisitionForm,
                                         'items', 'quantity', 'priceDollar') | number}}</td>
-                                    <td class="text-center">
+                                    <td class="text-center"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(addManufacturingRequisitionForm,
                                         'items', 'quantityWithWaste', 'price') | number}}</td>
-                                    <td class="text-center">
+                                    <td class="text-center"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(addManufacturingRequisitionForm,
                                         'items', 'quantityWithWaste', 'priceDollar') | number}}</td>
                                     <td colspan="2"></td>
@@ -655,6 +673,30 @@
                             </mat-error>
                             <mat-error
                                 *ngIf="addManufacturingRequisitionForm.controls['fabricQuantity'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Number Fabric Pieces -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>عدد الاثواب</mat-label>
+                            <input type="text" matInput formControlName="numberFabricPieces" placeholder="مثال: 10"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                required />
+                            <mat-error *ngIf="addManufacturingRequisitionForm.controls['numberFabricPieces'].hasError('required') && (addManufacturingRequisitionForm.controls['numberFabricPieces'].dirty 
+                                    || addManufacturingRequisitionForm.controls['numberFabricPieces'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addManufacturingRequisitionForm.controls['numberFabricPieces'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addManufacturingRequisitionForm.controls['numberFabricPieces'].hasError('pattern')">
                                 <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
                                 </label>
                             </mat-error>

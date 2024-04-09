@@ -38,22 +38,29 @@
                         </mat-checkbox>
                         <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalBalance">الرصيد
                         </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowTotalAmountInput">قيمة
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowTotalAmountInput"
+                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">قيمة
                             المدخلات
                         </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalAmountOutput">قيمة
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalAmountOutput"
+                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">قيمة
                             المخرجات
                         </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowItemValue">قيمة الصنف
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowItemValue"
+                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">قيمة الصنف
                         </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowAvgPrice">وسطي السعر
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowAvgPrice"
+                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">وسطي السعر
                         </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowAvgInputes">وسطي
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowAvgInputes"
+                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">وسطي
                             المدخلات
                         </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestPrice">آخر سعر
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestPrice"
+                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">آخر سعر
                         </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestPriceDollar">آخر سعر دولار</mat-checkbox>
+                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestPriceDollar"
+                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">آخر سعر دولار</mat-checkbox>
                         <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowClosedBalances"
                             (change)="getClosedBalances()">اظهار الارصدة المغلقة</mat-checkbox>
                     </div>
@@ -198,14 +205,16 @@
                                     </th>
 
                                     <!-- total_amount_input Column -->
-                                    <th pResizableColumn [hidden]="!isShowTotalAmountInput">
+                                    <th pResizableColumn [hidden]="!isShowTotalAmountInput"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         <div class="flex justify-content-between align-items-center">
                                             قيمة المدخلات
                                         </div>
                                     </th>
 
                                     <!-- total_amount_output Column -->
-                                    <th pResizableColumn [hidden]="!iShowTotalAmountOutput">
+                                    <th pResizableColumn [hidden]="!iShowTotalAmountOutput"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         <div class="flex justify-content-between align-items-center">
                                             قيمة المخرجات
                                         </div>
@@ -213,7 +222,8 @@
 
                                     <!-- item_amount Column -->
                                     <th pResizableColumn pSortableColumn="item_amount"
-                                        [hidden]="!iShowItemValue">
+                                        [hidden]="!iShowItemValue"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         <div class="flex justify-content-between align-items-center">
                                             قيمة الصنف
                                         </div>
@@ -221,7 +231,8 @@
 
                                     <!-- avg_price Column -->
                                     <th pResizableColumn pSortableColumn="avg_price"
-                                        [hidden]="!isShowAvgPrice">
+                                        [hidden]="!isShowAvgPrice"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         <div class="flex justify-content-between align-items-center">
                                             وسطي السعر
                                         </div>
@@ -229,7 +240,8 @@
 
                                     <!-- avg_inputes Column -->
                                     <th pResizableColumn pSortableColumn="avg_inputes"
-                                        [hidden]="!isShowAvgInputes">
+                                        [hidden]="!isShowAvgInputes"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         <div class="flex justify-content-between align-items-center">
                                             وسطي سعر المدخلات
                                         </div>
@@ -245,7 +257,8 @@
 
                                     <!-- latest_price Column -->
                                     <th pResizableColumn pSortableColumn="latest_price"
-                                        [hidden]="!isShowLatestPrice">
+                                        [hidden]="!isShowLatestPrice"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         <div class="flex justify-content-between align-items-center">
                                             آخر سعر
                                         </div>
@@ -253,7 +266,8 @@
 
                                                 <!-- latest_price_dollar Column -->
                                                 <th pResizableColumn pSortableColumn="latest_price_dollar"
-                                                    [hidden]="!isShowLatestPriceDollar">
+                                                    [hidden]="!isShowLatestPriceDollar"
+                                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                                     <div class="flex justify-content-between align-items-center">
                                                         آخر سعر دولار
                                                     </div>
@@ -312,29 +326,34 @@
                                     </td>
 
                                     <!-- total_amount_input Column -->
-                                    <td [hidden]="!isShowTotalAmountInput">
+                                    <td [hidden]="!isShowTotalAmountInput"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{ _sharedComponentService.getInputAmount(element.details) |
                                         number}}
                                     </td>
 
                                     <!-- total_amount_output Column -->
-                                    <td [hidden]="!iShowTotalAmountOutput">
+                                    <td [hidden]="!iShowTotalAmountOutput"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{ _sharedComponentService.getOutputAmount(element.details) |
                                         number}}
                                     </td>
 
                                     <!-- item_amount Column -->
-                                    <td [hidden]="!iShowItemValue">
+                                    <td [hidden]="!iShowItemValue"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{ _sharedComponentService.getItemAmount(element.details) | number}}
                                     </td>
 
                                     <!-- avg_price Column -->
-                                    <td [hidden]="!isShowAvgPrice">
+                                    <td [hidden]="!isShowAvgPrice"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{ _sharedComponentService.getAvgPrice(element.details) | number}}
                                     </td>
 
                                     <!-- avg_inputes Column -->
-                                    <td [hidden]="!isShowAvgInputes">
+                                    <td [hidden]="!isShowAvgInputes"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{ getAvgInputesPrice(element) | number}}
                                     </td>
 
@@ -345,12 +364,14 @@
                                     </td>
 
                                     <!-- latest_price Column -->
-                                    <td [hidden]="!isShowLatestPrice">
+                                    <td [hidden]="!isShowLatestPrice"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{ element.latest_price | number}}
                                     </td>
 
                                     <!-- latest_price_dollar Column -->
-                                    <td [hidden]="!isShowLatestPriceDollar">
+                                    <td [hidden]="!isShowLatestPriceDollar"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{ element.latest_price_dollar | number}}
                                     </td>
 
@@ -401,40 +422,47 @@
                                     </td>
 
                                     <!-- total_amount_input Column -->
-                                    <td [hidden]="!isShowTotalAmountInput">
+                                    <td [hidden]="!isShowTotalAmountInput"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{_sharedComponentService.getTotalTotalAmountQuantity(dt1.filteredValue
                                         == null ? yarns: dt1.filteredValue,
                                         "input_output", "1") | number}}
                                     </td>
 
                                     <!-- total_amount_output Column -->
-                                    <td [hidden]="!iShowTotalAmountOutput">
+                                    <td [hidden]="!iShowTotalAmountOutput"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{_sharedComponentService.getTotalTotalAmountQuantity(dt1.filteredValue
                                         == null ? yarns: dt1.filteredValue,
                                         "input_output", "0") | number}}
                                     </td>
 
                                     <!-- item_amount Column -->
-                                    <td [hidden]="!iShowItemValue">
+                                    <td [hidden]="!iShowItemValue"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{getTotalItemAmount() | number}}
                                     </td>
 
                                     <!-- avg_price Column -->
-                                    <td [hidden]="!isShowAvgPrice">
+                                    <td [hidden]="!isShowAvgPrice"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])">
                                         {{ getTotalAvgPrice() | number}}
                                     </td>
 
                                     <!-- avg_inputes Column -->
-                                    <td [hidden]="!isShowAvgInputes"></td>
+                                    <td [hidden]="!isShowAvgInputes"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])"></td>
 
                                     <!-- getAvgWast Column -->
                                     <td [hidden]="!isShowAvgWast"></td>
 
                                     <!-- latest_price Column -->
-                                    <td [hidden]="!isShowLatestPrice"></td>
+                                    <td [hidden]="!isShowLatestPrice"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])"></td>
 
                                     <!-- latest_price_dollar Column -->
-                                    <td [hidden]="!isShowLatestPriceDollar"></td>
+                                    <td [hidden]="!isShowLatestPriceDollar"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[8])"></td>
 
                                     <!-- Details Column -->
                                     <td data-html2canvas-ignore="true"></td>

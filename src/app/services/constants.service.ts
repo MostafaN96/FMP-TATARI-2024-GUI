@@ -307,6 +307,36 @@ export class ConstantsService {
     return '20220201721512782932';
   }
 
+  get ROUTING_LINKS_DETAILS(): any {
+    return [
+
+    // WD
+    'transport-wc-wd-price', // [0]
+
+    // WB
+    'confirm-manufacturing-status', // [1]
+
+    // WA
+    'show-price-transition-between-wh-requisition-wa', // [2]
+    'show-price-transport-wa-wb-requisition', // [3]
+    'show-price-execute-order-requisition-wa', // [4]
+    'show-price-report-by-yarn-wa', // [5]
+
+    // WB
+    'show-price-reconciliation-requisition-wb', // [6]
+    'show-price-transport-between-industries-requisition', // [7]
+    'show-price-report-wb', // [8]
+    'show-price-manufacturing-requisition-wb', // [9]
+
+    // WC
+    'show-pricel-reconciliation-requisition-wc', // [10]
+    'show-price-report-wc', // [11]
+    'show-price-execute-order-requisition-wc', // [12]
+    'show-price-transition-between-wh-requisition-wc', // [13]
+
+    ]
+  }
+
   // Start Links
   get ROUTING_LINKS(): any {
     return [

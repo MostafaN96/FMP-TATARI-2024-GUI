@@ -76,6 +76,24 @@
                                                 </p-columnFilter>
                                             </div>
                                             
+                                        <div class="col">
+                                            <p-columnFilter field="note" matchMode="requisition-note-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedRequisitionNote"
+                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'note')"
+                                                        (onChange)="onMultiselectedRequisitionNote($event.value)"
+                                                        placeholder="البحث بـ الملاحظات" optionLabel="note">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.note}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+                                        
                                             <div class="col">
                                                 <div data-html2canvas-ignore="true" class="flex">
                                                     <button data-html2canvas-ignore="true" pButton label="اعادة"

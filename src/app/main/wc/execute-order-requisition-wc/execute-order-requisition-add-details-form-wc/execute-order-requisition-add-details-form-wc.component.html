@@ -443,11 +443,17 @@
                                         نوع الاذن
                                     </th>
 
-                                    <th style="max-width: 70px;">
+                                    <th style="max-width: 60px;">
+                                        عدد الاثواب
+                                    </th>
+
+                                    <th style="max-width: 70px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                         السعر
                                     </th>
 
-                                    <th style="max-width: 70px;">
+                                    <th style="max-width: 70px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                         السعر دولار
                                     </th>
 
@@ -459,7 +465,13 @@
                                         الكمية
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 100px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
+                                        الاجمالي
+                                    </th>
+
+                                    <th style="max-width: 100px;"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                         الاجمالي دولار
                                     </th>
 
@@ -521,8 +533,30 @@
                                             </mat-form-field>
                                         </td>
 
+                                        <!-- numberFabricPieces -->
+                                        <td style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>عدد الاثواب</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="numberFabricPieces" placeholder="مثال: 10"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('required') && (row.get('numberFabricPieces').dirty 
+                                                    || row.get('numberFabricPieces').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
                                         <!-- Price -->
-                                        <td class="table-td" style="max-width: 70px">
+                                        <td class="table-td" style="max-width: 70px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر</mat-label>
                                                 <input type="text" matInput formControlName="price" required
@@ -554,7 +588,8 @@
                                         </td>
 
                                         <!-- priceDollar -->
-                                        <td class="table-td" style="max-width: 70px">
+                                        <td class="table-td" style="max-width: 70px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر دولار</mat-label>
                                                 <input type="text" matInput formControlName="priceDollar" required
@@ -623,7 +658,8 @@
                                         </td>
 
                                         <!-- total -->
-                                        <td class="align-middle text-center">
+                                        <td class="align-middle text-center"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value,
                                                 row.controls['quantity'].value) | number}}
@@ -631,7 +667,8 @@
                                         </td>
 
                                         <!-- total priceDollar -->
-                                        <td class="align-middle text-center">
+                                        <td class="align-middle text-center"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value,
                                                 row.controls['quantity'].value) | number}}
@@ -670,13 +707,21 @@
                                 <tr>
                                     <td>الاجمالي</td>
 
-                                    <td colspan="7"></td>
+                                    <td colspan="4"></td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
+                                        'numberFabricPieces') | number}}
+                                    </td>
+                                    <td colspan="2"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])"></td>
+                                    <td colspan="1"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
                                         'quantity') | number}}</td>
-                                    <td class="text-center">
+                                    <td class="text-center"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm,
                                         'items', 'quantity', 'price') | number}}</td>
-                                    <td class="text-center">
+                                    <td class="text-center"
+                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[12])">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm,
                                         'items', 'quantity', 'priceDollar') | number}}</td>
                                     <td colspan="2"></td>

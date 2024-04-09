@@ -3,7 +3,7 @@
     <div [class]="_sharedComponentService.titlePageClass">
         <!-- Sub Title Page -->
         <div [class]="_sharedComponentService.subTitlePageClass">
-            <h2 [class]="_sharedComponentService.TitleTextClass">إظهار جميع اذونات النقل بين المخازن</h2>
+            <h2 [class]="_sharedComponentService.TitleTextClass">إظهار جميع اذونات النقل بين مخازن الخيوط</h2>
         </div>
     </div>
     <!-- Form Section -->
@@ -62,6 +62,24 @@
                                                         <ng-template let-option pTemplate="item">
                                                             <div class="p-multiselect-representative-option">
                                                                 <span class="ml-1">{{option.to_warehouse_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="note" matchMode="requisition-note-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedRequisitionNote"
+                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'note')"
+                                                        (onChange)="onMultiselectedRequisitionNote($event.value)"
+                                                        placeholder="البحث بـ الملاحظات" optionLabel="note">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.note}}</span>
                                                             </div>
                                                         </ng-template>
                                                     </p-multiSelect>

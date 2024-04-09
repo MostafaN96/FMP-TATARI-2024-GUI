@@ -34,6 +34,7 @@ export class AddRequisitionDetailsWcComponent implements OnInit {
     'warehouse_name',
     'fabric_name', 
     'fabric_code',
+    'fabric_piece',
     'quantity',
     'price',
     'total',

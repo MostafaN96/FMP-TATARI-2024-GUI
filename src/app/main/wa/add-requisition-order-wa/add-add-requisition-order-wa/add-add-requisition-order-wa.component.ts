@@ -68,6 +68,8 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   yarnOrderRequisitionId = ""
   yarnOrderRequisitionDetailsId = ""
   yarnOrderCurrentQuantity = "0"
+  yarnOrderPrice = "0"
+  yarnOrderPriceDollar = "0"
 
   requisitionsOrder: any
   yarnsPricesDetails: any[] = [];
@@ -124,9 +126,9 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
     private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
-    private _sessionManagerService: SessionManagerService,
+    public _sessionManagerService: SessionManagerService,
     private _reportWaService: ReportWaService,
     public _exportDataService: ExportDataService,
     private _executeOrderRequisitionWaService: ExecuteOrderRequisitionWaService,
@@ -184,6 +186,8 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
         this.yarnOrderRequisitionId = objectData.requisition_id
         this.yarnOrderRequisitionDetailsId = objectData.id
         this.yarnOrderCurrentQuantity = objectData.current_quantity
+        // this.yarnOrderPrice = objectData.price
+        // this.yarnOrderPriceDollar = objectData.price_dollar
         // PrimeNG Table
         this.loading = false;
       })
@@ -192,6 +196,8 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
       this.yarnOrderRequisitionId = ""
       this.yarnOrderRequisitionDetailsId = ""
       this.yarnOrderCurrentQuantity = "0"
+      this.yarnOrderPrice = "0"
+      this.yarnOrderPriceDollar = "0"
     }
   }
 
@@ -202,15 +208,19 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
       ).length < 1) {
       this.selectedStoredYarnsMap.set(selectedStoredYarns, selectedStoredYarns?.current_quantity)
    
-      
-    this.selectedStoredYarnsArrayValues.push(selectedStoredYarns);
-    this.addItem(selectedStoredYarns)
+
     // Get Prices
     this._reportWaService.selectPriceWa(selectedStoredYarns.id, selectedStoredYarns.consigment_yarn_id).subscribe((response: any) => {
       this.yarnsPricesDetails = response
 
       this.getListYarnPrices[this.selectedStoredYarnsArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.yarnsPricesDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsPricesDetails), parseFloat(this.yarnsPricesDetails[0].latest_price), this.yarnsPricesDetails[0].latest_consigment_price]
-      this.listYarnPricesDollar[this.selectedStoredYarnsArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsPricesDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsPricesDetails, 'quantity', 'price_dollar'), this.yarnsPricesDetails[0].latest_price_dollar, this.yarnsPricesDetails[0].latest_consigment_price]
+      this.listYarnPricesDollar[this.selectedStoredYarnsArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsPricesDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsPricesDetails, 'quantity', 'price_dollar'), this.yarnsPricesDetails[0].latest_price_dollar, this.yarnsPricesDetails[0].latest_consigment_price_dollar]
+      this.yarnOrderPrice = this.yarnsPricesDetails[0].latest_price
+      this.yarnOrderPriceDollar = this.yarnsPricesDetails[0].latest_price_dollar
+      
+        // Add Item
+        this.selectedStoredYarnsArrayValues.push(selectedStoredYarns);
+        this.addItem(selectedStoredYarns)
     })
     }
 
@@ -234,8 +244,8 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
       yarnLotId: new FormControl(selectedStoredYarns.yarn_lot_id, [Validators.required]),
       yarnLotCode: new FormControl(selectedStoredYarns.yarn_lot_code, [Validators.required]),
       waId: new FormControl(selectedStoredYarns.wa_id, [Validators.required]),
-      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl(this.yarnOrderPrice, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(this.yarnOrderPriceDollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.yarnOrderCurrentQuantity <= selectedStoredYarns.current_quantity) ? this.yarnOrderCurrentQuantity : selectedStoredYarns.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredYarns.current_quantity),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -328,7 +338,7 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
           this.selectedStoredYarnsMap, this.addRequisitionForm.controls['items'].value,
           'id', 'yarnId',
           'consigment_yarn_id', 'fromConsigmentYarnId',
-          'waYarnOrderRequisitionDetailsId', 'id',
+          'requisition_details_id', 'waRequisitionDetailsId',
           'quantity', 'name')) {
 
         this._constantsService.spinner.show()

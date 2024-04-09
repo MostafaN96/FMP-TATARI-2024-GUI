@@ -8,6 +8,8 @@ import { FilterService } from 'primeng/api';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
@@ -48,6 +50,8 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
 
   ) {
     this._sharedComponentService.angularMaterialTableConfig()

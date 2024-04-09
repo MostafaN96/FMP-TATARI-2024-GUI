@@ -30,6 +30,7 @@ export class DyedFabricOrderRequisitionUpdateWeComponent implements OnInit {
     name: new FormControl('', [Validators.required, Validators.maxLength(90), Validators.minLength(3), Validators.pattern(this.patterns.validator_pattern.shortText)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    wasteRatio: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     sellerId: new FormControl("", [Validators.required]),
     fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -62,6 +63,7 @@ export class DyedFabricOrderRequisitionUpdateWeComponent implements OnInit {
     this.manufacturingOrderWdForm.controls['name'].setValue(this.selectedData?.order_name)
     this.manufacturingOrderWdForm.controls['note'].setValue(this.selectedData?.note)
     this.manufacturingOrderWdForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
+    this.manufacturingOrderWdForm.controls['wasteRatio'].setValue(this.selectedData?.waste_ratio)
     this.manufacturingOrderWdForm.controls['sellerId'].setValue(this.selectedData?.id)
     this.manufacturingOrderWdForm.controls['fabricWidth'].setValue(this.selectedData?.fabric_width)
     this.manufacturingOrderWdForm.controls['fabricQuantityM2'].setValue(this.selectedData?.fabric_quantity_m2)

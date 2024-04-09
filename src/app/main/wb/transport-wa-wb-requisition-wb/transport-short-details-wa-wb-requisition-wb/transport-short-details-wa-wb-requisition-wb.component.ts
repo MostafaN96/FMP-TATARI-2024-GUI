@@ -7,6 +7,8 @@ import { MatSort, MatSortable } from '@angular/material/sort';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
+import { ConstantsService } from 'src/app/services/constants.service';
 
 // Call Service
 import { WbTransportWaWbRequisitionDetailsService } from "src/app/services/main/wb/wb-transport-wa-wb-requisition-details.service";
@@ -51,6 +53,8 @@ export class TransportShortDetailsWaWbRequisitionWbComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _wbTransportWaWbRequisitionDetailsService: WbTransportWaWbRequisitionDetailsService,
     public _exportDataService: ExportDataService,
+    private _constantsService: ConstantsService,
+    private _sessionManagerService: SessionManagerService,
   ) {
   }
 
@@ -68,6 +72,17 @@ export class TransportShortDetailsWaWbRequisitionWbComponent implements OnInit {
 
           // this.sortColumns.sort(({ id: 'number', start: 'asc' }) as MatSortable);
           this.dataSourceSearchTabel.sort = this.sortColumns;
+
+          if(!this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[3])) {
+            let index = this.displayedColumns.indexOf('price');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('price_dollar');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total_dollar');
+            this.displayedColumns.splice(index, 1);
+          }
         })
       });
 

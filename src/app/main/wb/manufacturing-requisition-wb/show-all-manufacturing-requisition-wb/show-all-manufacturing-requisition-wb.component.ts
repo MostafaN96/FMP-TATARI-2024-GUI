@@ -13,6 +13,7 @@ import { ConstantsService } from "src/app/services/constants.service";
 
 // Call Service
 import { ManufacturingRequisitionWbService } from "src/app/services/main/wb/manufacturing-requisition-wb.service";
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 @Component({
   selector: 'app-show-all-manufacturing-requisition-wb',
@@ -34,6 +35,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
    selectedFabricCode: any[] = []
    selectedFabricName: any[] = []
    selectedOrderNumber: any[] = []
+   selectedRequisitionNote: any[] = []
    startDate: any
    endDate: any
    dateFilters: any
@@ -41,6 +43,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
   constructor(
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
     private _manufacturingRequisitionWbService: ManufacturingRequisitionWbService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
@@ -56,6 +59,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.customFilterForFabricCode();
     this.customFilterForFabricName();
     this.customFilterForOrderNumber();
+    this.customFilterForRequisitionNote();
 
   }
 
@@ -284,6 +288,40 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     });
   }
   
+customFilterForRequisitionNote() {
+  const customFilterName = "requisition-note-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedRequisitionNote
+
+    if (this.selectedRequisitionNote[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        // let count = 0
+
+        // for (let i = 0; i < value.length; i++) {
+        for (let j = 0; j < filter.length; j++) {
+          if (value == filter[j].note) {
+            // count++
+            // if (count == filter.length) {
+            return true;
+            // }
+          }
+        }
+        // }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
    selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -336,6 +374,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.selectedFabricCode = []
     this.selectedFabricName = []
     this.selectedOrderNumber = []
+    this.selectedRequisitionNote = []
     this.dateFilters = []
   }
 
@@ -369,5 +408,9 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.dt1?._filter()
   }
 
+  onMultiselectedRequisitionNote(event) {
+    this.selectedRequisitionNote = event
+    this.dt1?._filter()
+  }
 
 }

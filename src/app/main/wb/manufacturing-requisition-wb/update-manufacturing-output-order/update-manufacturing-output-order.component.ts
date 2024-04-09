@@ -27,6 +27,7 @@ export class UpdateManufacturingOutputOrderComponent implements OnInit {
   outputManufacturedWbForm:FormGroup = new FormGroup({
     price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    numberFabricPieces: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     manufacturingFee: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -54,6 +55,7 @@ export class UpdateManufacturingOutputOrderComponent implements OnInit {
   ngOnChanges() {
     this.outputManufacturedWbForm.controls['price'].setValue(String(this.selectedData?.price))
     this.outputManufacturedWbForm.controls['quantity'].setValue(String(this.selectedData?.quantity))
+    this.outputManufacturedWbForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
     this.outputManufacturedWbForm.controls['manufacturingFee'].setValue(this.selectedData?.manufacturing_fee)
     this.outputManufacturedWbForm.controls['document'].setValue(this.selectedData?.document)
     this.outputManufacturedWbForm.controls['statement'].setValue(this.selectedData?.statement)

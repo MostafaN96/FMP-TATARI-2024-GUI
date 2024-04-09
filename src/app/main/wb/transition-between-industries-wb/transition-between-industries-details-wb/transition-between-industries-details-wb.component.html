@@ -151,6 +151,17 @@
                                 <td mat-footer-cell *matFooterCellDef> </td>
                             </ng-container>
 
+                                <!-- price_dollar Column -->
+                                <ng-container matColumnDef="price_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>السعر دولار</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.price_dollar }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
                             <!-- Total Column -->
                             <ng-container matColumnDef="total">
                                 <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -162,6 +173,17 @@
                                 <td mat-footer-cell *matFooterCellDef> {{getTotalPriceXQuantity() | number}} </td>
                             </ng-container>
 
+                                <!-- total_dollar Column -->
+                                <ng-container matColumnDef="total_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b><b> الإجمالي دولار </b></b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{_sharedComponentService.getPriceXQuantity(element.price_dollar, element.quantity) | number}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> {{_sharedComponentService.getTotalCollectTimes(dataSourceSearchTabel?.filteredData, "price_dollar", "quantity") | number}} </td>
+                                </ng-container>
+                                
                                 <!-- document Column -->
                                 <ng-container matColumnDef="document">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>

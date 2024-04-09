@@ -7,6 +7,8 @@ import { MatSort } from '@angular/material/sort';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { ExecuteOrderRequisitionDetailsWaService } from "src/app/services/main/wa/execute-order-requisition-details-wa.service";
@@ -37,7 +39,9 @@ export class AddRequisitionDetailsOrderWaComponent implements OnInit {
     'consigment_yarn_number',
     'quantity',
     'price',
+    'price_dollar',
     'total',
+    'total_dollar',
     'note',
     'update'];
   filter = "";
@@ -48,6 +52,8 @@ export class AddRequisitionDetailsOrderWaComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _executeOrderRequisitionDetailsWaService: ExecuteOrderRequisitionDetailsWaService,
     public _exportDataService: ExportDataService,
+    private _constantsService: ConstantsService,
+    private _sessionManagerService: SessionManagerService,
   ) {
   }
 
@@ -63,6 +69,18 @@ export class AddRequisitionDetailsOrderWaComponent implements OnInit {
           this.dataSourceSearchTabel = new MatTableDataSource(this.requisitionDetails);
 
           this.dataSourceSearchTabel.sort = this.sortColumns;
+
+          if(!this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[4])) {
+            let index = this.displayedColumns.indexOf('price');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('price_dollar');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total_dollar');
+            this.displayedColumns.splice(index, 1);
+          }
+          
         })
       });
 

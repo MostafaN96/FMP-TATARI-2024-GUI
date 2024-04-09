@@ -7,6 +7,8 @@ import { MatSort, MatSortable } from '@angular/material/sort';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { WbManufacturingOutputService } from "src/app/services/main/wb/wb-manufacturing-output.service";
@@ -37,6 +39,7 @@ export class WbManufacturingRequisitionOutputDetailsOrderComponent implements On
     'order_number',
     'fabric_name',
     'fabric_code',
+    'fabric_piece',
     'quantity',
     'manufacturing_fee',
     'total_with_wast',
@@ -57,6 +60,8 @@ export class WbManufacturingRequisitionOutputDetailsOrderComponent implements On
   constructor(
     private route: ActivatedRoute,
     public _sharedComponentService: SharedComponentService,
+    private _constantsService: ConstantsService,
+    private _sessionManagerService: SessionManagerService,
     private _wbManufacturingOutputService: WbManufacturingOutputService,
     public _exportDataService: ExportDataService,
     private router: Router
@@ -76,6 +81,24 @@ export class WbManufacturingRequisitionOutputDetailsOrderComponent implements On
           this.dataSourceSearchTabel = new MatTableDataSource(this.manufacturingRequisitionDetails);
 
           this.dataSourceSearchTabel.sort = this.sortColumns;
+
+          if(!this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[9])) {
+            let index = this.displayedColumns.indexOf('manufacturing_fee');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total_with_wast');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total_with_wast_dollar');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total_cost');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('total_cost_dollar');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('avg_price');
+            this.displayedColumns.splice(index, 1);
+            index = this.displayedColumns.indexOf('avg_price_dollar');
+            this.displayedColumns.splice(index, 1);
+          }
+
         })
       });
   }

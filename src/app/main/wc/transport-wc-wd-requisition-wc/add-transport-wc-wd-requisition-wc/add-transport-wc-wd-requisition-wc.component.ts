@@ -248,6 +248,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
 
   //  Warehouse
   selectWarehouse(event: { itemData: any; }) {
+    
     if (!this.warehouses.includes(event.itemData)) {
       this.transportWcWdForm.controls['warehouseId'].setValue("")
       this.transportWcWdForm.controls.items.reset()

@@ -52,7 +52,7 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
   getListYarnPrices:any = []
   listYarnPrices:any = []
   listYarnPricesDollar:any = []
-  groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
+  groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر", "آخر سعر الرسالة"]
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -155,9 +155,9 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
     private _transitionBetweenWhRequisitionDetailsWaService: TransitionBetweenWhRequisitionDetailsWaService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
-    private _sessionManagerService: SessionManagerService,
+    public _sessionManagerService: SessionManagerService,
     private _reportWaService: ReportWaService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
     private route: ActivatedRoute,
@@ -196,8 +196,8 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
       consigmentYarnId: new FormControl(''),
       newConsigmentYarnNumber: new FormControl(''),
       fromConsigmentYarnId: new FormControl("", [Validators.required]),
-      price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -260,13 +260,6 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
             index
           )
         }
-      })
-
-      // Get Prices
-      this._reportWaService.selectPriceWa(event.itemData.id, row.controls['fromConsigmentYarnId'].value!).subscribe((response: any) => {
-        this.yarnsDetails = response
-        this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price, this.yarnsDetails[0].latest_consigment_price]
-        this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar, this.yarnsDetails[0].latest_consigment_price_dollar]
       })
 
       for (let i = 0; i < this.addtransitionIndustriesRequisitionForm.controls.items['controls'].length; i++) {
@@ -341,6 +334,18 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
     else {
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
+
+      row.controls['consigmentYarnId'].setValue(event.itemData.id)
+      row.controls['newConsigmentYarnNumber'].setValue(event.itemData.number)
+      
+      // Get Prices
+      this._reportWaService.selectPriceWa(row.controls['yarnId'].value, event.itemData.id).subscribe((response: any) => {
+        this.yarnsDetails = response
+        this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price, this.yarnsDetails[0].latest_consigment_price]
+        this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar, this.yarnsDetails[0].latest_consigment_price_dollar]
+        row.controls['price'].setValue(this.yarnsDetails[0].latest_price)
+        row.controls['priceDollar'].setValue(this.yarnsDetails[0].latest_price_dollar)
+      })
     }    
   }
   // End Consigment Yarn Autocomplete Section
@@ -370,6 +375,15 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
     }
   }
   // End to Consigment Yarn Autocomplete Section
+
+  // price
+  changePrice(type, row: FormGroup) {
+    if(type == "priceEG") {
+      row.controls['priceDollar'].setValue("0")
+    } else if (type == "priceDollar") {
+      row.controls['price'].setValue("0")
+    }
+  }
 
   async onAddTransitionIndustriesRequisition() {
     this.addtransitionIndustriesRequisitionForm.markAllAsTouched();

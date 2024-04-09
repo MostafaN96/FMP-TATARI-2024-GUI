@@ -141,10 +141,11 @@ initItem() {
     colorId: new FormControl("", [Validators.required]),
     colorCode: new FormControl("", [Validators.required]),
     quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    wastRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricWidth: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricQuantityM2: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
   });
 }
@@ -207,6 +208,11 @@ removeItem(index: number){
     } else if (type == "priceDollar") {
       row.controls['price'].setValue("0")
     }
+  }
+
+  // WasteRatio
+  changeWasteRatio(event) {    
+    // this.wastRatio = event.target.value
   }
 
   async onAddRequisition() {

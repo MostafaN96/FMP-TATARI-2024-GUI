@@ -205,6 +205,17 @@
                                         <td mat-footer-cell *matFooterCellDef></td>
                                     </ng-container>
 
+                                    <!-- waste_ratio Column -->
+                                    <ng-container matColumnDef="waste_ratio">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>نسبة الهالك</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.waste_ratio }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
+
                                     <!-- fabric_width Column -->
                                     <ng-container matColumnDef="fabric_width">
                                         <th mat-header-cell mat-sort-header *matHeaderCellDef>

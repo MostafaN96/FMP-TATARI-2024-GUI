@@ -69,9 +69,9 @@ export class AddCircularKnittingMachineComponent implements OnInit {
 
   // Form Group
   circularKnittingMachineForm: FormGroup = new FormGroup({
-    fabricId: new FormControl("", [Validators.required]),
+    // fabricId: new FormControl("", [Validators.required]),
     manufactureId: new FormControl("", [Validators.required]),
-    fabricCode: new FormControl(""),
+    // fabricCode: new FormControl(""),
     type: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     number: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     diameter: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
@@ -113,16 +113,16 @@ export class AddCircularKnittingMachineComponent implements OnInit {
   }
 
   //  Fabric
-  selectFabric(index: { itemData: any; }) {
-    let indexData = this.fabrics.indexOf(index.itemData)
-    if (this.fabrics[indexData] !== index.itemData) {
-      this.circularKnittingMachineForm.controls['fabricId'].setValue("")
-      this.circularKnittingMachineForm.controls['fabricCode'].setValue("")
-    }
-    else {
-      this.circularKnittingMachineForm.controls['fabricCode'].setValue(index.itemData.code)
-    }
-  }
+  // selectFabric(index: { itemData: any; }) {
+  //   let indexData = this.fabrics.indexOf(index.itemData)
+  //   if (this.fabrics[indexData] !== index.itemData) {
+  //     this.circularKnittingMachineForm.controls['fabricId'].setValue("")
+  //     this.circularKnittingMachineForm.controls['fabricCode'].setValue("")
+  //   }
+  //   else {
+  //     this.circularKnittingMachineForm.controls['fabricCode'].setValue(index.itemData.code)
+  //   }
+  // }
 
   onAddColor() {
     if (this.circularKnittingMachineForm.valid) {

@@ -7,6 +7,8 @@ import { MatSort, MatSortable } from '@angular/material/sort';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { WbManufacturingInputService } from "src/app/services/main/wb/wb-manufacturing-input.service";
@@ -64,6 +66,8 @@ export class WbManufacturingRequisitionInputDetailsOrderComponent implements OnI
   constructor(
     private route: ActivatedRoute,
     public _sharedComponentService: SharedComponentService,
+    private _constantsService: ConstantsService,
+    private _sessionManagerService: SessionManagerService,
     private _wbManufacturingInputService: WbManufacturingInputService,
     public _exportDataService: ExportDataService,
     private router: Router
@@ -90,6 +94,21 @@ export class WbManufacturingRequisitionInputDetailsOrderComponent implements OnI
           this.orderNumber = params['orderNumber']
           this.dataSourceSearchTabel.sort = this.sortColumns;
         })
+
+        if(!this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[9])) {
+          let index = this.displayedColumns.indexOf('price');
+          this.displayedColumns.splice(index, 1);
+          index = this.displayedColumns.indexOf('price_dollar');
+          this.displayedColumns.splice(index, 1);
+          index = this.displayedColumns.indexOf('total');
+          this.displayedColumns.splice(index, 1);
+          index = this.displayedColumns.indexOf('total_dollar');
+          this.displayedColumns.splice(index, 1);
+          index = this.displayedColumns.indexOf('total_with_wast');
+          this.displayedColumns.splice(index, 1);
+          index = this.displayedColumns.indexOf('total_with_wast_dollar');
+          this.displayedColumns.splice(index, 1);
+        }
 
       });
   }

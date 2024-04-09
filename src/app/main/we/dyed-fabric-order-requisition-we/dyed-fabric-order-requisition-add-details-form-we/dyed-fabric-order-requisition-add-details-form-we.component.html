@@ -39,6 +39,10 @@
                                 </th>
 
                                 <th style="max-width: 60px;">
+                                    نسبة الهالك
+                                </th>
+
+                                <th style="max-width: 60px;">
                                     عرض القماش
                                 </th>
 
@@ -163,6 +167,32 @@
                                             [innerHTML]="_sharedComponentService.required_field">
                                         </small>
                                     </td>
+
+                                        <!-- wast_ratio -->
+                                        <td class="table-td" style="max-width: 60px">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>نسبة الهالك</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="wastRatio" placeholder="مثال: 5"
+                                                    [errorStateMatcher]="matcher" (change)="changeWasteRatio($event)"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error
+                                                    *ngIf="row.get('wastRatio').hasError('required') && (row.get('wastRatio').dirty 
+                                                                                            || row.get('wastRatio').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('wastRatio').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('wastRatio').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
 
                                     <!-- fabricWidth -->
                                     <td style="max-width: 60px;">
@@ -295,7 +325,7 @@
                             
                               <td colspan="2"></td>
                               <td>{{_sharedComponentService.getTotalQuantityForm(addOrderForm, 'items', 'quantity') | number}}</td>
-                              <td colspan="9"></td>
+                              <td colspan="10"></td>
                             </tr>
                           </tfoot>
 

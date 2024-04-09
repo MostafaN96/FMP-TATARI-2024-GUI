@@ -69,7 +69,7 @@ export class InquireFabricAvilabilitySharedReportWdComponent implements OnInit {
     if (this.inquireFabricForm.valid) {
       this._reportWeService.inquireFabricAvilabilityReportWe(this.inquireFabricForm.value).subscribe((response: any) => {
         this.dataReport = response
-        console.log("this.dataReport :::::::::: ", this.dataReport);
+        // console.log("this.dataReport :::::::::: ", this.dataReport);
         
         
       })

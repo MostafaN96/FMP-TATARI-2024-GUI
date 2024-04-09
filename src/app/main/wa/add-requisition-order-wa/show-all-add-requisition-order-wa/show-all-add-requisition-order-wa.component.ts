@@ -27,6 +27,7 @@ export class ShowAllAddRequisitionOrderWaComponent implements OnInit {
    loading: boolean = true;
    selectedOrderName: any[] = []
    selectedWarehouseName: any[] = []
+   selectedRequisitionNote: any[] = []
    startDate: any
    endDate: any
    dateFilters: any
@@ -44,6 +45,7 @@ export class ShowAllAddRequisitionOrderWaComponent implements OnInit {
     this.getData();
     this.customFilterForOrderName();
     this.customFilterForWarehouseName();
+    this.customFilterForRequisitionNote();
   }
 
   getData() {
@@ -129,6 +131,40 @@ export class ShowAllAddRequisitionOrderWaComponent implements OnInit {
       });
     }
     
+customFilterForRequisitionNote() {
+  const customFilterName = "requisition-note-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedRequisitionNote
+
+    if (this.selectedRequisitionNote[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        // let count = 0
+
+        // for (let i = 0; i < value.length; i++) {
+        for (let j = 0; j < filter.length; j++) {
+          if (value == filter[j].note) {
+            // count++
+            // if (count == filter.length) {
+            return true;
+            // }
+          }
+        }
+        // }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
      ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
      selectedDate(event) {
       this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -177,6 +213,7 @@ export class ShowAllAddRequisitionOrderWaComponent implements OnInit {
       table.reset();
       this.selectedOrderName = []
       this.selectedWarehouseName = []
+      this.selectedRequisitionNote = []
       this.dateFilters = []
     }
   
@@ -187,6 +224,11 @@ export class ShowAllAddRequisitionOrderWaComponent implements OnInit {
 
     onMultiselectedWarehouseName(event) {
       this.selectedWarehouseName = event
+      this.dt1?._filter()
+    }
+
+    onMultiselectedRequisitionNote(event) {
+      this.selectedRequisitionNote = event
       this.dt1?._filter()
     }
 

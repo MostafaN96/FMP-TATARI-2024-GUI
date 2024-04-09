@@ -90,6 +90,30 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- Number Fabric Pieces -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>عدد الاثواب</mat-label>
+                            <input type="text" matInput formControlName="numberFabricPieces" placeholder="مثال: 10"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                required />
+                            <mat-error *ngIf="addRequisitionWcForm.controls['numberFabricPieces'].hasError('required') && (addRequisitionWcForm.controls['numberFabricPieces'].dirty 
+                                    || addRequisitionWcForm.controls['numberFabricPieces'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWcForm.controls['numberFabricPieces'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="addRequisitionWcForm.controls['numberFabricPieces'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
                     <!-- Quantity -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

@@ -8,6 +8,7 @@
     --primary-color-5: #f27316cc;
     --primary-color-6: #ce3737c7;
     --primary-color-7: #ebf216cc;
+    --primary-color-8: #48ad5ccc;
     --hover-color-1: #1858a8;
     --btn-hover-color-1: #292f91;
     --btn-hover-color-2: #801f1b;
@@ -307,6 +308,41 @@
   
   .undefinedreturn_buy_text {
     color: var(--primary-color-5) !important;
+  }
+
+  .manufacturing_status_new {
+    background-color: var(--primary-color-7) !important;
+    /* color: var(--primary-color-3) !important; */
+  }
+
+  .manufacturing_status_good_after_check {
+    background-color: var(--primary-color-8) !important;
+    color: var(--primary-color-3) !important;
+  }
+
+  .manufacturing_status_not_good_after_check {
+    background-color: var(--primary-color-6) !important;
+    color: var(--primary-color-3) !important;
+  }
+
+  .manufacturing_status_white {
+    background-color: var(--primary-color-3) !important;
+  }
+
+  .manufacturing_status_new_text {
+    color: var(--primary-color-7) !important;
+  }
+
+  .manufacturing_status_good_after_check_text {
+    color: var(--primary-color-8) !important;
+  }
+
+  .manufacturing_status_not_good_after_check_text {
+    color: var(--primary-color-6) !important;
+  }
+
+  .manufacturing_status_white_text {
+    color: var(--primary-color-3) !important;
   }
   
   /* End Mat menu style */

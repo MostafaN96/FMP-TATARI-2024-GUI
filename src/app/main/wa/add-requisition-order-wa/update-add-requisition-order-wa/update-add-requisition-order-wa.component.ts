@@ -28,6 +28,7 @@ export class UpdateAddRequisitionOrderWaComponent implements OnInit {
     requisitionNote: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl(null, [Validators.required]),
     price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     waYarnOrderRequisitionId: new FormControl("", [Validators.required]),
@@ -43,8 +44,8 @@ export class UpdateAddRequisitionOrderWaComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public matcher: MyErrorStateMatcher,
     private _executeOrderRequisitionDetailsWaService: ExecuteOrderRequisitionDetailsWaService,
-    private _constantsService: ConstantsService,
-    private _sessionManagerService: SessionManagerService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
   ) { }
 
   ngOnInit(): void {
@@ -58,6 +59,7 @@ export class UpdateAddRequisitionOrderWaComponent implements OnInit {
     this.executeOrderRequisitionForm.controls['date'].setValue(this.selectedData?.date)
     this.executeOrderRequisitionForm.controls['requisitionNote'].setValue(this.selectedData?.requisition_note)
     this.executeOrderRequisitionForm.controls['price'].setValue(this.selectedData?.price)
+    this.executeOrderRequisitionForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
     this.executeOrderRequisitionForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.executeOrderRequisitionForm.controls['note'].setValue(this.selectedData?.note)
     this.executeOrderRequisitionForm.controls['waYarnOrderRequisitionId'].setValue(this.selectedData?.wa_yarn_order_requisition_id)

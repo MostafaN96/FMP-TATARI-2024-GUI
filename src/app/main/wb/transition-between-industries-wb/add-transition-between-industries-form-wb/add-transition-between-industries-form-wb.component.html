@@ -39,11 +39,13 @@
                                     الكمية
                                 </th>
 
-                                <th style="max-width: 120px;">
+                                <th style="max-width: 120px;"
+                                *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])">
                                     السعر 
                                 </th>
 
-                                <th style="max-width: 120px;">
+                                <th style="max-width: 120px;"
+                                *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])">
                                     السعر دولار 
                                 </th>
 
@@ -182,7 +184,8 @@
 
                                     
                                         <!-- Price -->
-                                        <td class="table-td" style="max-width: 120px">
+                                        <td class="table-td" style="max-width: 120px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر</mat-label>
                                                 <input type="text" matInput formControlName="price" required placeholder="مثال: 15" [matAutocomplete]="autoGroup"
@@ -215,7 +218,8 @@
                                         </td>
                                     
                                         <!-- priceDollar -->
-                                        <td class="table-td" style="max-width: 120px">
+                                        <td class="table-td" style="max-width: 120px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر دولار</mat-label>
                                                 <input type="text" matInput formControlName="priceDollar" required placeholder="مثال: 15" [matAutocomplete]="autoGroup2"
@@ -333,7 +337,9 @@
                             <tr>
                               <td>الاجمالي</td>
                             
-                              <td colspan="5"></td>
+                              <td colspan="6"></td>
+                              <td colspan="2"
+                              *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])"></td>
                               <td>{{_sharedComponentService.getTotalQuantityForm(addtransitionIndustriesRequisitionForm, 'items', 'quantity') | number}}</td>
                               <td colspan="6"></td>
                             </tr>

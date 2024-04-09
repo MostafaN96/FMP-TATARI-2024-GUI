@@ -129,7 +129,7 @@
                                             </p-columnFilter>
                                         </div>
 
-                                        <div class="col">
+                                        <div class="col" *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])">
                                             <p-columnFilter field="status_name" matchMode="status-name-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -148,6 +148,24 @@
                                         </div>
                                         
                                         <div class="col">
+                                            <p-columnFilter field="note" matchMode="requisition-note-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedRequisitionNote"
+                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'note')"
+                                                        (onChange)="onMultiselectedRequisitionNote($event.value)"
+                                                        placeholder="البحث بـ الملاحظات" optionLabel="note">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.note}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+                                        
+                                        <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
                                                 <button data-html2canvas-ignore="true" pButton label="اعادة"
                                                     class="p-button-outlined" icon="pi pi-filter-slash"
@@ -157,6 +175,26 @@
 
                                     </div>
                                     <!-- End Filter Section -->
+
+                                    
+                                <div class="d-flex justify-content-end">
+                                    <div class="pe-2">
+                                        <i class="fas fa-square-full manufacturing_status_new_text"></i>
+                                        غير مفحوص
+                                    </div>
+                                    <div class="pe-2">
+                                        <i class="fas fa-square-full manufacturing_status_good_after_check_text"></i>
+                                        مقبول بعد الفحص
+                                    </div>
+                                    <div class="pe-2">
+                                        <i class="fas fa-square-full manufacturing_status_not_good_after_check_text"></i>
+                                        غير مقبول
+                                    </div>
+                                    <div class="pe-2">
+                                        <i class="fas fa-square-full manufacturing_status_white_text"></i>
+                                        ابيض
+                                    </div>
+                                </div>
 
                                 </ng-template>
                                 <ng-template pTemplate="header">
@@ -223,7 +261,8 @@
                                         </th>
 
                                         <!-- status_name Column -->
-                                        <th pResizableColumn pSortableColumn="status_name">
+                                        <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
+                                        pResizableColumn pSortableColumn="status_name">
                                             <div class="flex justify-content-between align-items-center">
                                                 حالة الجودة
                                                 <p-sortIcon data-html2canvas-ignore="true" field="status_name">
@@ -241,7 +280,8 @@
                                         </th>                           
 
                                         <!-- update Column -->
-                                        <th data-html2canvas-ignore="true">
+                                        <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
+                                        data-html2canvas-ignore="true">
                                             <div class="flex justify-content-between align-items-center">
                                                 تعديل حالة الجودة
                                             </div>
@@ -296,7 +336,8 @@
                                         </td>
 
                                         <!-- status_name Column -->
-                                        <td>
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
+                                        [ngClass]="'manufacturing_status_'+element.status">
                                             {{ element.status_name }}
                                         </td>
 
@@ -306,7 +347,8 @@
                                         </td>
 
                                         <!-- update Column -->
-                                        <td data-html2canvas-ignore="true">
+                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
+                                        data-html2canvas-ignore="true">
                                             <a onClick="document.getElementById('update-form').scrollIntoView();"
                                                 (click)="getSelectedData(element)">
                                                 <i class="fas fa-edit update-symbol"></i>
@@ -331,7 +373,7 @@
                                 </ng-template>
                                 <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                     <tr>
-                                        <td colspan="10">لا يوجد بيانات</td>
+                                        <td colspan="11">لا يوجد بيانات</td>
                                     </tr>
                                 </ng-template>
                             </p-table>

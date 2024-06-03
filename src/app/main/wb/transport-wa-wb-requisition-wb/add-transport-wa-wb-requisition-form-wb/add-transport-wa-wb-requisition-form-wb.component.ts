@@ -195,9 +195,9 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
   getData() {
     this.route.queryParams.subscribe(params => {
       this.transportWaWbForm.controls.id.setValue(params['id'])
-      this.transportWaWbForm.controls.warehouseId.setValue(params['warehouseId'])
+      this.transportWaWbForm.controls.warehouseId.setValue(this.selectedData[0]['warehouse_id'])
 
-    this._yarnService.selectByWarehouseWa(params['warehouseId']).subscribe((response: any) => {
+    this._yarnService.selectByWarehouseWa(this.selectedData[0]['warehouse_id']).subscribe((response: any) => {
       this.yarns = response
     })
     })

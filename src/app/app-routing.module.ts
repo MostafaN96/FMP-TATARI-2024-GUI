@@ -32,6 +32,7 @@ const routes: Routes = [
 
         ////////////////// ----------- Preparation ----------- //////////////////
         { path: 'update-user-permissions', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/user-permissions-modules/update-user-permissions-module/update-user-permissions-module.module').then(m => m.UpdateUserPermissionsModuleModule) },
+        { path: 'update-exchange-rate', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/exchange-rate-modules/update-exchange-rate-module/update-exchange-rate-module.module').then(m => m.UpdateExchangeRateModuleModule) },
 
         // Yarn
         { path: 'add-yarn', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/yarn-modules/add-yarn-module/add-yarn-module.module').then(m => m.AddYarnModuleModule) },

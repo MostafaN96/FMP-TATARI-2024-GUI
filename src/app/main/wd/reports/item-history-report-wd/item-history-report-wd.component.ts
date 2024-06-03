@@ -28,6 +28,7 @@ export class ItemHistoryReportWdComponent implements OnInit {
   iShowTotalBalance = true
   iShowTotalBalanceWithForm = true
   iShowTotalBalanceForm = true
+  iShowTotalBalanceFormPreparedDyeing = true
   isShowTotalAmountInput = false
   iShowTotalAmountOutput = false
   iShowItemValue = false

@@ -295,6 +295,13 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
     }
   }
   // End Supplier Autocomplete Section
+
+  //  Warehouse
+  selectWarehouse(event: { itemData: any; }, row: FormGroup) {
+    if (!this.warehouses.includes(event.itemData)) {
+      row.controls['warehouseId'].setValue("")
+    }
+  }
   
   // price
   changePrice(type, row: FormGroup) {

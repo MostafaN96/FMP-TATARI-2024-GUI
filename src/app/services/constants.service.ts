@@ -334,6 +334,8 @@ export class ConstantsService {
     'show-price-execute-order-requisition-wc', // [12]
     'show-price-transition-between-wh-requisition-wc', // [13]
 
+    'update-exchange-rate', // [14]
+
     ]
   }
 

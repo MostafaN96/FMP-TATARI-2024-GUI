@@ -31,7 +31,7 @@ export class UpdateSellRequisitionWeComponent implements OnInit {
   @Input() selectedData: any
   sellRequisitionWeForm: FormGroup = new FormGroup({
     weSellRequisitionId: new FormControl("", [Validators.required]),
-    deliveryCarId: new FormControl('', [Validators.required]),
+    deliveryCarId: new FormControl(null),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl("", [Validators.required]),
     price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),

@@ -86,6 +86,7 @@ export class UpdateFormDyeingRequisitionWdComponent implements OnInit {
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     fabricWidth: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricQuantityM2: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    isPrepareDyeing: new FormControl(0,[Validators.pattern(this.patterns.validator_pattern.number)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   })
@@ -130,6 +131,7 @@ export class UpdateFormDyeingRequisitionWdComponent implements OnInit {
       this.inputDyeingWdForm.controls['colorCode'].setValue(this.selectedData?.color_code)
       this.inputDyeingWdForm.controls['colorCategoryId'].setValue(this.selectedData?.color_category_id)
       this.inputDyeingWdForm.controls['dyeingColorsPricesId'].setValue(this.selectedData?.dyeing_colors_prices_id)
+      this.inputDyeingWdForm.controls['isPrepareDyeing'].setValue(this.selectedData?.is_prepare_dyeing)
 
     })
 

@@ -5,6 +5,12 @@ import * as $ from 'jquery';
 import { NavigationEnd, Router } from '@angular/router';
 import {Title} from "@angular/platform-browser";
 
+import { GlobalService } from 'src/app/services/exchange-rate.service';
+
+// Call Service -
+import { ExchangeRateService } from "src/app/services/main/exchange-rate.service";
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -16,8 +22,17 @@ export class AppComponent {
 
   constructor(private spinner: NgxSpinnerService,     
     private titleService:Title,
-    public router: Router
+    public router: Router,
+    public globalService: GlobalService,
+    private _exchangeRateService: ExchangeRateService,
+
     ) {
+      
+      this._exchangeRateService.select().subscribe((response: any) => {
+        setTimeout(() => this.globalService.exchangeRate.next({
+          dollarPrice: response[0]['dollar_price']
+        }), 1000);
+      })
 
       // submit loading
     onsubmit = (event) => {

@@ -135,7 +135,7 @@ export class ManufacturingRequisitionDetailsWbComponent implements OnInit {
   }
 
   getTotalPriceXQuantityWithWast() {
-    this.totalPriceXQuantityWithWast = this.dataSourceSearchTabel?.filteredData.map(function (a) { return (parseFloat(a['quantity']) * parseFloat(a['price'])) + (((parseFloat(a['price']) * parseFloat(a['quantity'])) * parseFloat(a.wast_ratio)) / 100) }).reduce((acc, value) => acc + value, 0);
+    this.totalPriceXQuantityWithWast = this.dataSourceSearchTabel?.filteredData.map(function (a) { return (parseFloat(a['price']) != 0) ? ((parseFloat(a['quantity']) * parseFloat(a['price'])) + (((parseFloat(a['price']) * parseFloat(a['quantity'])) * parseFloat(a.wast_ratio)) / 100)) : 0 }).reduce((acc, value) => acc + value, 0);
     return this.totalPriceXQuantityWithWast
   }
 

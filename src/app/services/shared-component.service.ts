@@ -373,6 +373,19 @@ setTimeout(() => {
     return sum
   }
 
+  getTotalDetailsQuantityWithCondition(dataSourceSearchTabel, columnQuantity, columnCondition, condition) {
+    if (dataSourceSearchTabel == null) {
+      dataSourceSearchTabel = []
+    }
+
+    let sum = 0;
+    for (let index = 0; index < dataSourceSearchTabel?.length; index++) {
+      const element = dataSourceSearchTabel[index].details;
+        sum = sum + this.getTotalCollectSumWithCondition(element, columnQuantity, columnCondition, condition)
+    }
+    return sum
+  }
+
   getTotalQuantityForm(form, arrayControl, control) {
     return form.controls[arrayControl].controls.map(t => t.controls[control].value).reduce((acc, value) => parseFloat(acc) + parseFloat(value), 0);
   }
@@ -406,7 +419,7 @@ setTimeout(() => {
     for (let index = 0; index < dataSourceSearchTabel?.length; index++) {
       const element = dataSourceSearchTabel[index];
       sum = sum + this.getDyeingCost(element.quantity, element.dyeingServices,
-        element.dyeing_fee, element.fabric_piece)
+        parseFloat(element.dyeing_fee) + parseFloat(element.added_cost), element.fabric_piece)
     }
     return sum
   }
@@ -443,7 +456,7 @@ setTimeout(() => {
     for (let index = 0; index < dataSourceSearchTabel?.length; index++) {
       const element = dataSourceSearchTabel[index];
       sum = sum + this.getTotalCost(element.price, element.quantity, element.dyeingServices,
-        element.dyeing_fee, element.fabric_piece)
+        parseFloat(element.dyeing_fee) + parseFloat(element.added_cost), element.fabric_piece)
     }
     return sum
   }

@@ -121,10 +121,10 @@
                     </div>
 
                     <!-- Dyeing Fee -->
-                    <div class="col">
+                    <div class="col" lang="en">
                         <mat-form-field class="example-full-width w-100" appearance="outline">
                             <mat-label>اجرة الصباغة</mat-label>
-                            <input matInput
+                            <input autocomplete="off" type="number" matInput
                                 oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                 formControlName="dyeingFee" placeholder="مثال: 6" required>
                             <mat-error *ngIf="!inputDyeingWdForm.controls['dyeingFee'].hasError('required')">
@@ -136,6 +136,28 @@
                                 </label>
                             </mat-error>
                             <mat-error *ngIf="inputDyeingWdForm.controls['dyeingFee'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- added cost -->
+                    <div class="col" lang="en">
+                        <mat-form-field class="example-full-width w-100" appearance="outline">
+                            <mat-label>مصاريف إضافية</mat-label>
+                            <input autocomplete="off" type="number" matInput
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                formControlName="addedCost" placeholder="مثال: 6" required>
+                            <mat-error *ngIf="!inputDyeingWdForm.controls['addedCost'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="inputDyeingWdForm.controls['addedCost'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="inputDyeingWdForm.controls['addedCost'].hasError('pattern')">
                                 <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
                                 </label>
                             </mat-error>

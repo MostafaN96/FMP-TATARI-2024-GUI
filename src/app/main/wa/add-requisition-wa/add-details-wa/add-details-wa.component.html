@@ -73,6 +73,7 @@
                                         <td class="table-td" style="max-width: 180px;">
                                             <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' 
                                             (filtering)="onFilteringWarehouse($event)"
+                                            (change)="selectWarehouse($event, row)"
                                                 [placeholder]='textWarehouse' [autofill]='autofill'
                                                 formControlName="warehouseId"
                                                 [errorStateMatcher]="matcher" 

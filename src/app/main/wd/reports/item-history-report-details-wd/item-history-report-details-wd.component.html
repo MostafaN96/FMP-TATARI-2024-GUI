@@ -165,6 +165,24 @@
                                             </p-columnFilter>
                                         </div>
 
+                                        <div class="col">
+                                            <p-columnFilter field="is_prepare_dyeing_name" matchMode="prepare-dyeing-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedPrepareDyeingName"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWdDetails, 'is_prepare_dyeing_name')"
+                                                        (onChange)="onMultiselectedPrepareDyeingName($event.value)"
+                                                        placeholder="البحث بـ نوع المشكل" optionLabel="is_prepare_dyeing_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.is_prepare_dyeing_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
                                     </div>
                                     
                                     <div data-html2canvas-ignore="true" class="flex">
@@ -369,6 +387,13 @@
                                             </div>
                                         </th>
 
+                                        <!-- is_prepare_dyeing Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                المشكل نزل المصبغة
+                                            </div>
+                                        </th>
+
                                         <!-- requisition_details Column -->
                                         <th pResizableColumn data-html2canvas-ignore="true">
                                             <div class="flex justify-content-between align-items-center">
@@ -547,6 +572,12 @@
                                             {{ element.work_order_number }}
                                         </td>
 
+                                        <!-- is_prepare_dyeing Column -->
+                                        <td>
+                                            <p-checkbox [(ngModel)]="element.is_prepare_dyeing"
+                                            [binary]="true" [trueValue]="1" [falseValue]="0" [disabled]="true"></p-checkbox>
+                                        </td>
+
                                         <!-- requisition_details Column -->
                                         <td data-html2canvas-ignore="true">
                                             <a [routerLink]="[goToRequisitionPage(element.type_of_requisition)]"
@@ -683,6 +714,9 @@
                                         <!-- work_order_number Column -->
                                         <td></td>
 
+                                        <!-- is_prepare_dyeing Column -->
+                                        <td></td>
+                                        
                                         <!-- requisition_details Column -->
                                         <td data-html2canvas-ignore="true"></td>
                                     </tr>

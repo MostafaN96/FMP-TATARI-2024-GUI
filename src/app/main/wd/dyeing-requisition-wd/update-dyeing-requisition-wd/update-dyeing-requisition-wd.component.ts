@@ -86,7 +86,8 @@ export class UpdateDyeingRequisitionWdComponent implements OnInit {
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     dyeingQuantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
-    dyeingFee: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    dyeingFee: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    addedCost: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     workOrderNumber: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     releaseProcess: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     fabricWidth: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -135,6 +136,7 @@ export class UpdateDyeingRequisitionWdComponent implements OnInit {
     this.inputDyeingWdForm.controls['dyeingQuantity'].setValue(String(this.selectedData?.dyeing_quantity))
     this.inputDyeingWdForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
     this.inputDyeingWdForm.controls['dyeingFee'].setValue(this.selectedData?.dyeing_fee)
+    this.inputDyeingWdForm.controls['addedCost'].setValue(this.selectedData?.added_cost)
     this.inputDyeingWdForm.controls['workOrderNumber'].setValue(this.selectedData?.work_order_number)
     this.inputDyeingWdForm.controls['releaseProcess'].setValue(String(this.selectedData?.release_process))
     this.inputDyeingWdForm.controls['colorId'].setValue(this.selectedData?.color_id)

@@ -159,7 +159,7 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
       this.requisitionsOrder = response
     })
 
-    this._warehouseService.selectWhereInWa().subscribe((response: any) => {
+    this._warehouseService.selectAll().subscribe((response: any) => {
       this.warehouses = response
     })
   }

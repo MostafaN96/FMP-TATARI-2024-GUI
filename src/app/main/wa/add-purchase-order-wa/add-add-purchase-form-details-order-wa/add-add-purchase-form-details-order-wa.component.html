@@ -179,6 +179,20 @@
                                             </mat-form-field>
                                         </td>
 
+                                        <!-- total -->
+                                        <td style="max-width: 40px;" class="align-middle text-center">
+                                            <span>
+                                                {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantity'].value) | number}}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- total priceDollar -->
+                                        <td style="max-width: 40px;" class="align-middle text-center">
+                                            <span>
+                                                {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value, row.controls['quantity'].value) | number}}
+                                            </span>
+                                        </td>
+
                                     <!-- Note -->
                                     <td style="max-width: 100px;">
                                         <mat-form-field class="w-100">

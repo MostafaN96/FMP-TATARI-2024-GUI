@@ -43,7 +43,7 @@ export class ConfirmDirectSellWeComponent implements OnInit {
   confirmSellRequisitionFormWe = new FormGroup({
     id: new FormControl(null, [Validators.required]),
     sellerId: new FormControl('', [Validators.required]),
-    deliveryCarId: new FormControl('', [Validators.required]),
+    deliveryCarId: new FormControl(null),
     items: new FormArray([]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),

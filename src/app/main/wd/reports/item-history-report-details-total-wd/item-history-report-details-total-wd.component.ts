@@ -39,6 +39,7 @@ export class ItemHistoryReportDetailsTotalWdComponent implements OnInit {
   selectedWorkOrderNumber: any[] = []
   selectedColorName: any[] = []
   selectedColorCode: any[] = []
+  selectedPrepareDyeingName: any[] = []
   dateFilters: any
 
   constructor(
@@ -59,6 +60,7 @@ export class ItemHistoryReportDetailsTotalWdComponent implements OnInit {
     this.customFilterForWorkOrderNumber();
     this.customFilterForColorName();
     this.customFilterForColorCode();
+    this.customFilterForPrepareDyeingName();
   }
 
   getData() {
@@ -251,6 +253,40 @@ export class ItemHistoryReportDetailsTotalWdComponent implements OnInit {
     });
   }
 
+  customFilterForPrepareDyeingName() {
+    const customFilterName = "prepare-dyeing-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedPrepareDyeingName
+
+      if (this.selectedPrepareDyeingName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].is_prepare_dyeing_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
       filter = this.dateFilters
@@ -300,6 +336,7 @@ export class ItemHistoryReportDetailsTotalWdComponent implements OnInit {
     this.selectedWorkOrderNumber = []
     this.selectedColorName = []
     this.selectedColorCode = []
+    this.selectedPrepareDyeingName = []
   }
 
   onMultiselectedTypeOfRequisition(event) {
@@ -321,8 +358,14 @@ export class ItemHistoryReportDetailsTotalWdComponent implements OnInit {
     this.selectedColorName = event
     this.dt1?._filter()
   }
+
   onMultiselectedColorCode(event) {
     this.selectedColorCode = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedPrepareDyeingName(event) {
+    this.selectedPrepareDyeingName = event
     this.dt1?._filter()
   }
 

@@ -114,7 +114,8 @@
                             {{ wdFormFabric.fabric_name }} ({{ wdFormFabric.fabric_code }})
                         </td>
                         <td>
-                            {{wdFormFabric.form_current_quantity | number}}
+                            <!-- {{wdFormFabric.form_current_quantity | number}} -->
+                            {{wdFormFabric.existed_quantity | number}}
                         </td>
                     </tr>
                 </tbody>
@@ -127,8 +128,11 @@
                             
                         </td>
                         <td>
-                            {{ _sharedComponentService.getTotalQuantity(dataReport.wdFormFabrics,
+                            <!-- {{ _sharedComponentService.getTotalQuantity(dataReport.wdFormFabrics,
                             'form_current_quantity') |
+                            number}} -->
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wdFormFabrics,
+                            'existed_quantity') |
                             number}}
                         </td>
                     </tr>
@@ -168,7 +172,8 @@
                             {{ wdFabric.fabric_name }} ({{ wdFabric.fabric_code }})
                         </td>
                         <td>
-                            {{wdFabric.current_quantity | number}}
+                            <!-- {{wdFabric.current_quantity | number}} -->
+                            {{wdFabric.existed_quantity | number}}
                         </td>
                     </tr>
                 </tbody>
@@ -181,7 +186,9 @@
                             
                         </td>
                         <td>
-                            {{ _sharedComponentService.getTotalQuantity(dataReport.wdFabrics, 'current_quantity') |
+                            <!-- {{ _sharedComponentService.getTotalQuantity(dataReport.wdFabrics, 'current_quantity') |
+                            number}} -->
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wdFabrics, 'existed_quantity') |
                             number}}
                         </td>
                     </tr>

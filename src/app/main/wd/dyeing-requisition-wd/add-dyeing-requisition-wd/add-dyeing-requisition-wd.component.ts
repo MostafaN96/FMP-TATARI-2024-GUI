@@ -164,7 +164,8 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorId: new FormControl(data.color_id, [Validators.required]),
       colorCode: new FormControl(data.color_code),
-      dyeingFee: new FormControl(String(data.color_price), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      dyeingFee: new FormControl(data.color_price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      addedCost: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       dyeingQuantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       costPrice: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       price: new FormControl((data.price != 0) ? data.price : data.price_dollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -255,11 +256,12 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     let sum = 0
     for (let index = 0; index < dataSourceSearchTabel.length; index++) {
       const element = dataSourceSearchTabel[index];
+      
       sum = sum + this._sharedComponentService.getTotalCost(element.price, element.quantity, dyeingServices[index]?.dyeingServices,
-        element.dyeingFee, element.numberFabricPieces)
+        (parseFloat(element.dyeingFee) + parseFloat(control['controls'][index]['controls']['addedCost'].value)), element.numberFabricPieces)
 
       control['controls'][index]['controls']['costPrice'].setValue((this._sharedComponentService.getTotalCost(element.price, element.quantity, dyeingServices[index]?.dyeingServices,
-        element.dyeingFee, element.numberFabricPieces) / element.dyeingQuantity).toFixed(3))
+        (parseFloat(element.dyeingFee) + parseFloat(control['controls'][index]['controls']['addedCost'].value)), element.numberFabricPieces) / element.dyeingQuantity).toFixed(3))
     }
     return sum
   }

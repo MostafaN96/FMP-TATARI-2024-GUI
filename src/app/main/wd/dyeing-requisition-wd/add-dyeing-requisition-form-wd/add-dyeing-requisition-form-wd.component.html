@@ -71,6 +71,10 @@
                                     اجرة الصباغة
                                 </th>
 
+                                <th style="max-width: 50px;">
+                                    مصاريف إضافية
+                                </th>
+
                                 <th style="min-width: 180px;">
                                     المعالجات
                                 </th>
@@ -287,10 +291,10 @@
                                     </td>
 
                                     <!-- Dyeing Fee -->
-                                    <td style="max-width: 50px;">
+                                    <td style="max-width: 50px;" lang="en">
                                         <mat-form-field class="w-100">
                                             <mat-label>أجرة الصباغة</mat-label>
-                                            <input autocomplete="off" type="text" matInput formControlName="dyeingFee"
+                                            <input autocomplete="off" type="number" matInput formControlName="dyeingFee"
                                                 placeholder="مثال: 10" [errorStateMatcher]="matcher"
                                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
                                             <mat-error *ngIf="row.get('dyeingFee').hasError('required') && (row.get('dyeingFee').dirty 
@@ -305,6 +309,27 @@
                                             </mat-error>
                                         </mat-form-field>
                                     </td>
+
+                                        <!-- added cost -->
+                                        <td style="max-width: 50px;" lang="en">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>مصاريف إضافية</mat-label>
+                                                <input autocomplete="off" type="number" matInput
+                                                    formControlName="addedCost" placeholder="مثال: 10"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('addedCost').hasError('required') && (row.get('addedCost').dirty 
+                                                    || row.get('addedCost').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('addedCost').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
 
                                     <!-- Dyeing Services -->
                                     <td style="min-width: 160px;">
@@ -322,8 +347,11 @@
                                     <!-- Total Cost -->
                                     <td class="align-middle text-center">
                                         <span>
-                                            {{_sharedComponentService.getDyeingCost((isCalcDyeingNet == '1') ? row.controls['dyeingQuantity'].value : row.controls['quantity'].value.value, selectArrayValues[index].dyeingServices,
-                                                row.controls['dyeingFee'].value, row.controls['numberFabricPieces'].value) | number}}
+                                            {{_sharedComponentService.getDyeingCost(
+                                                (isCalcDyeingNet == '1') ? row.controls['dyeingQuantity'].value : row.controls['quantity'].value.value, 
+                                                selectArrayValues[index].dyeingServices,
+                                                row.controls['dyeingFee'].value + row.controls['addedCost'].value, 
+                                                row.controls['numberFabricPieces'].value) | number}}
                                         </span>
                                     </td>
 
@@ -331,8 +359,9 @@
                                     <td class="align-middle text-center">
                                         <span>
                                             {{_sharedComponentService.getTotalCost(row.controls['price'].value, 
-                                            (isCalcDyeingNet == '1') ? row.controls['dyeingQuantity'].value : row.controls['quantity'].value, selectArrayValues[index].dyeingServices,
-                                                row.controls['dyeingFee'].value, row.controls['numberFabricPieces'].value) | number}}
+                                            (isCalcDyeingNet == '1') ? row.controls['dyeingQuantity'].value : row.controls['quantity'].value, 
+                                            selectArrayValues[index].dyeingServices,
+                                            row.controls['dyeingFee'].value + row.controls['addedCost'].value, row.controls['numberFabricPieces'].value) | number}}
                                         </span>
                                     </td>
 
@@ -485,7 +514,7 @@
                               <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items', 'validQuantity') | number}}</td>
                               <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items', 'quantity') | number}}</td>
                               <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
-                              <td colspan="6"></td>
+                              <td colspan="8"></td>
                               <td class="text-center">{{getSumTotalCost(addRequisitionForm.controls.items.value, selectArrayValues) | number}}</td>
                               <td colspan="3"></td>
                               <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items', 'dyeingQuantity') | number}}</td>

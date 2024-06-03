@@ -44,7 +44,7 @@ export class AddSellRequisitionDirectWeComponent implements OnInit {
 sellRequisitionDirectFormWe = new FormGroup({
   date: new FormControl(new Date(), [Validators.required]),
   sellerId: new FormControl('', [Validators.required]),
-  deliveryCarId: new FormControl('', [Validators.required]),
+  deliveryCarId: new FormControl(null),
   note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
   items: new FormArray([]),
   personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),

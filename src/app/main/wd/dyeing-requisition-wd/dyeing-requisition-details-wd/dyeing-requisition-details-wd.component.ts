@@ -50,6 +50,7 @@ export class DyeingRequisitionDetailsWdComponent implements OnInit {
     'color_name',
     'color_code',
     'dyeing_fee',
+    'added_cost',
     'dyeing_services',
     'dyeing_cost',
     'total_cost',

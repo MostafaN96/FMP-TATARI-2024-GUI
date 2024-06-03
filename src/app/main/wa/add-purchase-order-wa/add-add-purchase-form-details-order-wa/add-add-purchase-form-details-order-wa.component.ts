@@ -155,9 +155,15 @@ export class AddAddPurchaseFormDetailsOrderWaComponent implements OnInit {
   }
   // End Yarn Autocomplete Section
 
+  //  Warehouse
+  selectWarehouse(event: { itemData: any; }, row: FormGroup) {
+    if (!this.warehouses.includes(event.itemData)) {
+      row.controls['warehouseId'].setValue("")
+    }
+  }
+
   // price
   changePrice(type, row: FormGroup) {
-    this.setConsigmentYarnNumberData()    
     if(type == "priceEG") {
       row.controls['priceDollar'].setValue("0")
     } else if (type == "priceDollar") {
@@ -165,20 +171,9 @@ export class AddAddPurchaseFormDetailsOrderWaComponent implements OnInit {
     }
   }
 
-  setConsigmentYarnNumberData() {
-    const control = <FormArray>this.addOrderForm.get('items');
-    
-    for (let index = 0; index < control.controls.length; index++) {
-      const element = control.controls[index];
-
-      element['controls']['consigmentYarnNumber'].setValue(this.addOrderForm.controls['name'].value)
-    }
-  }
-
   async onAddRequisition() {
     this.addOrderForm.markAllAsTouched();
     if (this.addOrderForm.valid) {
-      this.setConsigmentYarnNumberData()
       this._constantsService.spinner.show()
       this._addPurchaseOrderDetailsWaService.add(this.addOrderForm.value).subscribe(response => {
         this._constantsService.spinner.hide();

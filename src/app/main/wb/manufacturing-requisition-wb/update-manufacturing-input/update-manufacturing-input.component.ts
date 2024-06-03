@@ -64,7 +64,7 @@ export class UpdateManufacturingInputComponent implements OnInit {
 
     this.inputManufacturedWbForm.controls['date'].setValue(this.selectedData?.date)
     this.inputManufacturedWbForm.controls['note'].setValue(this.selectedData?.note)
-    this.inputManufacturedWbForm.controls['stauts'].setValue(this.selectedData?.stauts)
+    this.inputManufacturedWbForm.controls['status'].setValue(this.selectedData?.status)
     this.inputManufacturedWbForm.controls['yarnId'].setValue(this.selectedData?.yarn_id)
     this.inputManufacturedWbForm.controls['yarnLotId'].setValue(this.selectedData?.yarn_lot_id)
     this.inputManufacturedWbForm.controls['wastRatio'].setValue(String(this.selectedData?.wast_ratio))

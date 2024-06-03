@@ -57,7 +57,7 @@ export class UpdateSellRequisitionDirectWeComponent implements OnInit {
   
   sellRequisitionDirectWeForm:FormGroup = new FormGroup({
     weSellRequisitionId: new FormControl(null, [Validators.required]),
-    deliveryCarId: new FormControl('', [Validators.required]),
+    deliveryCarId: new FormControl(null),
     colorCategoryId: new FormControl("", [Validators.required]),
     colorId: new FormControl("", [Validators.required]),
     colorCode: new FormControl(""),

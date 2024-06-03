@@ -55,6 +55,7 @@ export class WdFormDyeingOrderRequisitionDetailsComponent implements OnInit {
     // 'total_cost',
     'document',
     'dyeing_order_requisition',
+    'is_prepare_dyeing',
     'update',
     'update_services'];
   displayedColumns2: string[] = [

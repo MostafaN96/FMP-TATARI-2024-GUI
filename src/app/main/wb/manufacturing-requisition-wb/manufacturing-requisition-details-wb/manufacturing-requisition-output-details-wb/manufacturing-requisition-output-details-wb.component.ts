@@ -151,11 +151,11 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
 
   /** Gets the total quantity of all transactions. */
   totalCost(quantity: string, manufacturingFee: string) {
-    return ((parseFloat(quantity) * parseFloat(manufacturingFee)) + this.data)
+    return (this.data != 0) ? ((parseFloat(quantity) * parseFloat(manufacturingFee)) + this.data) : 0
   }
   
   totalCostDollar(quantity: string, manufacturingFee: string) {
-    return ((parseFloat(quantity) * parseFloat(manufacturingFee)) + this.dataDollar)
+    return (this.dataDollar != 0) ? ((parseFloat(quantity) * parseFloat(manufacturingFee)) + this.dataDollar) : 0
   }
 
   avgCost(quantity: string, manufacturingFee: string) {

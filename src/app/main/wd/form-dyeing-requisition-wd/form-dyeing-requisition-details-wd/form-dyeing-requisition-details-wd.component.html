@@ -272,6 +272,18 @@
                                     <td mat-footer-cell *matFooterCellDef></td>
                                 </ng-container>
 
+                                <!-- is_prepare_dyeing Column -->
+                                <ng-container matColumnDef="is_prepare_dyeing">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>المشكل نزل المصبغة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <p-checkbox [(ngModel)]="element.is_prepare_dyeing"
+                                        [binary]="true" [trueValue]="1" [falseValue]="0" [disabled]="true"></p-checkbox>
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+                                
                                 <!-- Update Column -->
                                 <ng-container matColumnDef="update">
                                     <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>

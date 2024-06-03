@@ -57,6 +57,9 @@
                                 القابل للتشكيل</mat-checkbox>
                             <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalBalanceForm">المشكل
                             </mat-checkbox>
+                            <mat-checkbox class="example-margin me-3" [(ngModel)]="!iShowTotalBalanceFormPreparedDyeing">
+                                المشكل نزل المصبغة
+                            </mat-checkbox>
                             <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowTotalAmountInput">قيمة المدخلات
                             </mat-checkbox>
                             <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalAmountOutput">قيمة المخرجات
@@ -306,6 +309,14 @@
                                             </div>
                                         </th>
 
+                                        <!-- form_prepare_dyeing_current_quantity Column -->
+                                        <th pResizableColumn pSortableColumn="form_prepare_dyeing_current_quantity"
+                                            [hidden]="!iShowTotalBalanceFormPreparedDyeing">
+                                            <div class="flex justify-content-between align-items-center">
+                                                المشكل نزل المصبغة
+                                            </div>
+                                        </th>
+
                                         <!-- total_amount_input Column -->
                                         <th pResizableColumn pSortableColumn="total_amount_input"
                                             [hidden]="!isShowTotalAmountInput">
@@ -451,6 +462,11 @@
                                             {{ _sharedComponentService.getTotalQuantityWithCondition(element.details, "form_current_quantity", "type_of_requisition", "اذن تشكيل") | number}}
                                         </td>
 
+                                        <!-- form_prepare_dyeing_current_quantity Column -->
+                                        <td [hidden]="!iShowTotalBalanceFormPreparedDyeing">
+                                             {{ _sharedComponentService.getTotalQuantityWithCondition(element.details, "form_prepare_dyeing_current_quantity", "type_of_requisition", "اذن تشكيل") | number}}
+                                        </td>
+
                                         <!-- total_amount_input Column -->
                                         <td [hidden]="!isShowTotalAmountInput">
                                             {{ _sharedComponentService.getInputAmount(element.details) | number}}
@@ -555,8 +571,15 @@
 
                                         <!-- diff_current_quantity_with_form Column -->
                                         <td [hidden]="!iShowTotalBalanceForm">
-
                                             {{getTotalFormQuantity() | number}}
+                                        </td>
+
+                                        <!-- form_prepare_dyeing_current_quantity Column -->
+                                        <td [hidden]="!iShowTotalBalanceFormPreparedDyeing">
+                                            {{_sharedComponentService.getTotalDetailsQuantityWithCondition(dt1.filteredValue ==
+                                                null ? fabrics: dt1.filteredValue,
+                                                "form_prepare_dyeing_current_quantity", "type_of_requisition", 
+                                                "اذن تشكيل") | number}}
                                         </td>
 
                                         <!-- total_amount_input Column -->

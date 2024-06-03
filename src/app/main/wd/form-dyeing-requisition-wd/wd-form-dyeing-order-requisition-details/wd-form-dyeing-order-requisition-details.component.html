@@ -54,14 +54,15 @@
                             <i title="PDF" class="far fa-file-pdf"></i>
                         </a>
 
-                        <a (click)="_exportDataService.exportToExcel('table-header-data', 'table-data', 'اذن تشكيل', 'table-data-2')">
+                        <a
+                            (click)="_exportDataService.exportToExcel('table-header-data', 'table-data', 'اذن تشكيل', 'table-data-2')">
                             <i title="Excel" class="far fa-file-excel px-2"></i>
                         </a>
-                        
+
                         <a
-                        (click)="_exportDataService.print('table-header-data', 'table-data', 'اذن تشكيل', 'table-data-2')">
-                        <i title="Print" class="fas fa-print pe-2"></i>
-                    </a>
+                            (click)="_exportDataService.print('table-header-data', 'table-data', 'اذن تشكيل', 'table-data-2')">
+                            <i title="Print" class="fas fa-print pe-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -82,84 +83,84 @@
                             </div>
                             <div class="example-table-container">
 
-                            <table mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
-                                [class]="_sharedComponentService.tableStyleClass">
+                                <table mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
+                                    [class]="_sharedComponentService.tableStyleClass">
 
-                                <!-- Index Column -->
-                                <ng-container matColumnDef="index">
-                                    <th mat-header-cell *matHeaderCellDef><b> تسلسل </b></th>
-                                    <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
-                                    <td mat-footer-cell *matFooterCellDef> <b> الإجمالي </b> </td>
-                                </ng-container>
+                                    <!-- Index Column -->
+                                    <ng-container matColumnDef="index">
+                                        <th mat-header-cell *matHeaderCellDef><b> تسلسل </b></th>
+                                        <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
+                                        <td mat-footer-cell *matFooterCellDef> <b> الإجمالي </b> </td>
+                                    </ng-container>
 
-                                <!-- fabric_name Column -->
-                                <ng-container matColumnDef="fabric_name">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>المادة</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.fabric_name }}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- fabric_name Column -->
+                                    <ng-container matColumnDef="fabric_name">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>المادة</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.fabric_name }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- fabric_code Column -->
-                                <ng-container matColumnDef="fabric_code">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>كود المادة</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.fabric_code }}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- fabric_code Column -->
+                                    <ng-container matColumnDef="fabric_code">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>كود المادة</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.fabric_code }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- fabric_dyeing_code Column -->
-                                <ng-container matColumnDef="fabric_dyeing_code">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>كود المصبغة</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.fabric_dyeing_code }}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- fabric_dyeing_code Column -->
+                                    <ng-container matColumnDef="fabric_dyeing_code">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>كود المصبغة</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.fabric_dyeing_code }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- consigment_dyeing_number Column -->
-                                <ng-container matColumnDef="consigment_dyeing_number">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>رقم الرسالة</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.consigment_dyeing_number }}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- consigment_dyeing_number Column -->
+                                    <ng-container matColumnDef="consigment_dyeing_number">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>رقم الرسالة</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.consigment_dyeing_number }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- quantity Column -->
-                                <ng-container matColumnDef="quantity">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>الكمية</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.quantity | number}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> {{getTotalQuantity() | number}} </td>
-                                </ng-container>
+                                    <!-- quantity Column -->
+                                    <ng-container matColumnDef="quantity">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>الكمية</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.quantity | number}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> {{getTotalQuantity() | number}} </td>
+                                    </ng-container>
 
-                                <!-- wd_current_quantity Column -->
-                                <ng-container matColumnDef="wd_current_quantity">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>الكمية القابلة للتشكيل</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.wd_current_quantity | number}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> {{getTotalFormQuantity() | number}} </td>
-                                </ng-container>
+                                    <!-- wd_current_quantity Column -->
+                                    <ng-container matColumnDef="wd_current_quantity">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>الكمية القابلة للتشكيل</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.wd_current_quantity | number}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> {{getTotalFormQuantity() | number}} </td>
+                                    </ng-container>
 
-                                <!-- fabric_piece Column -->
-                                <!-- <ng-container matColumnDef="fabric_piece">
+                                    <!-- fabric_piece Column -->
+                                    <!-- <ng-container matColumnDef="fabric_piece">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
                                         <b>عددالاثواب</b>
                                     </th>
@@ -169,89 +170,95 @@
                                     <td mat-footer-cell *matFooterCellDef> {{getTotalFabricPiece() | number}} </td>
                                 </ng-container> -->
 
-                                <!-- price Column -->
-                                <ng-container matColumnDef="price">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>السعر</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.price }}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- price Column -->
+                                    <ng-container matColumnDef="price">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>السعر</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.price }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- price_dollar Column -->
-                                <ng-container matColumnDef="price_dollar">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>السعر دولار</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.price_dollar }}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- price_dollar Column -->
+                                    <ng-container matColumnDef="price_dollar">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>السعر دولار</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.price_dollar }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- Total Column -->
-                                <ng-container matColumnDef="total">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b><b> الإجمالي </b></b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                    {{ _sharedComponentService.getCollectTimes(element.price, element.quantity) | number}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> 
-                                    {{ _sharedComponentService.getTotalCollectTimes(dataSourceSearchTabel?.filteredData, 'quantity', 'price') | number}}
-                                    </td>
-                                </ng-container>
+                                    <!-- Total Column -->
+                                    <ng-container matColumnDef="total">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b><b> الإجمالي </b></b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ _sharedComponentService.getCollectTimes(element.price, element.quantity)
+                                            | number}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef>
+                                            {{
+                                            _sharedComponentService.getTotalCollectTimes(dataSourceSearchTabel?.filteredData,
+                                            'quantity', 'price') | number}}
+                                        </td>
+                                    </ng-container>
 
-                                <!-- total_dollar Column -->
-                                <ng-container matColumnDef="total_dollar">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b><b> الإجمالي دولار </b></b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                    {{ _sharedComponentService.getCollectTimes(element.price_dollar, element.quantity) | number}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> 
-                                    {{ _sharedComponentService.getTotalCollectTimes(dataSourceSearchTabel?.filteredData, 'quantity', 'price_dollar') | number}}
-                                    </td>
-                                </ng-container>
+                                    <!-- total_dollar Column -->
+                                    <ng-container matColumnDef="total_dollar">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b><b> الإجمالي دولار </b></b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ _sharedComponentService.getCollectTimes(element.price_dollar,
+                                            element.quantity) | number}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef>
+                                            {{
+                                            _sharedComponentService.getTotalCollectTimes(dataSourceSearchTabel?.filteredData,
+                                            'quantity', 'price_dollar') | number}}
+                                        </td>
+                                    </ng-container>
 
-                                <!-- Color Category Column -->
-                                <ng-container matColumnDef="color_category_name">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>فئة اللون</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.color_category_name}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef></td>
-                                </ng-container>
+                                    <!-- Color Category Column -->
+                                    <ng-container matColumnDef="color_category_name">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>فئة اللون</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.color_category_name}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef></td>
+                                    </ng-container>
 
-                                <!-- Color Column -->
-                                <ng-container matColumnDef="color_name">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>اللون</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.color_name}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef></td>
-                                </ng-container>
+                                    <!-- Color Column -->
+                                    <ng-container matColumnDef="color_name">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>اللون</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.color_name}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef></td>
+                                    </ng-container>
 
-                                <!-- Color Code Column -->
-                                <ng-container matColumnDef="color_code">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>كود اللون</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.color_code}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef></td>
-                                </ng-container>
+                                    <!-- Color Code Column -->
+                                    <ng-container matColumnDef="color_code">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>كود اللون</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.color_code}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef></td>
+                                    </ng-container>
 
-                                <!-- Dyeing Fee Column -->
-                                <!-- <ng-container matColumnDef="dyeing_fee">
+                                    <!-- Dyeing Fee Column -->
+                                    <!-- <ng-container matColumnDef="dyeing_fee">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
                                         <b>أجرة الصباغة</b>
                                     </th>
@@ -261,26 +268,26 @@
                                     <td mat-footer-cell *matFooterCellDef></td>
                                 </ng-container> -->
 
-                                <!-- Dyeing Services Column -->
-                                <ng-container matColumnDef="dyeing_services">
-                                    <th mat-header-cell  mat-sort-header *matHeaderCellDef style="min-width: 200px;">
-                                        <b>المعالجات</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        <table class="w-100">
-                                            <tbody>
-                                                <tr *ngFor="let dyeingService of element.dyeingServices">
-                                                    <td>{{dyeingService.name}}</td>
-                                                    <td>{{dyeingService.price}}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef></td>
-                                </ng-container>
+                                    <!-- Dyeing Services Column -->
+                                    <ng-container matColumnDef="dyeing_services">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef style="min-width: 200px;">
+                                            <b>المعالجات</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <table class="w-100">
+                                                <tbody>
+                                                    <tr *ngFor="let dyeingService of element.dyeingServices">
+                                                        <td>{{dyeingService.name}}</td>
+                                                        <td>{{dyeingService.price}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef></td>
+                                    </ng-container>
 
-                                <!-- Total Cost Column -->
-                                <!-- <ng-container matColumnDef="total_cost">
+                                    <!-- Total Cost Column -->
+                                    <!-- <ng-container matColumnDef="total_cost">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
                                         <b>إجمالي التكلفة</b>
                                     </th>
@@ -291,64 +298,77 @@
                                     <td mat-footer-cell *matFooterCellDef> {{getSumTotalCost() | number}} </td>
                                 </ng-container> -->
 
-                                <!-- Document Column -->
-                                <ng-container matColumnDef="document">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>الوثيقة</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.document}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef></td>
-                                </ng-container>
+                                    <!-- Document Column -->
+                                    <ng-container matColumnDef="document">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>الوثيقة</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.document}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef></td>
+                                    </ng-container>
 
-                                                            <!-- form_dyeing_requisition Column -->
-                                                            <ng-container matColumnDef="dyeing_order_requisition">
-                                                                <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef
-                                                                    style="width: 10px;">
-                                                                    <b>الطلبية</b>
-                                                                </th>
-                                                                <td data-html2canvas-ignore="true" mat-cell *matCellDef="let element">
-                                                                    <a [routerLink]="['/dashboard/show-all-dyeing-order-wd/details']" [queryParams]="{ id: element.wd_form_dyeing_order_requisition_id}">
-                                                                    <i class="fas fa-angle-double-right update-symbol"></i>
-                                                                </a>
-                                                                </td>
-                                                                <td data-html2canvas-ignore="true" style="background-color: #3f51b5;"
-                                                                    mat-footer-cell *matFooterCellDef> </td>
-                                                            </ng-container>
+                                    <!-- form_dyeing_requisition Column -->
+                                    <ng-container matColumnDef="dyeing_order_requisition">
+                                        <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef
+                                            style="width: 10px;">
+                                            <b>الطلبية</b>
+                                        </th>
+                                        <td data-html2canvas-ignore="true" mat-cell *matCellDef="let element">
+                                            <a [routerLink]="['/dashboard/show-all-dyeing-order-wd/details']"
+                                                [queryParams]="{ id: element.wd_form_dyeing_order_requisition_id}">
+                                                <i class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
+                                        </td>
+                                        <td data-html2canvas-ignore="true" style="background-color: #3f51b5;"
+                                            mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- Update Column -->
-                                <ng-container matColumnDef="update">
-                                    <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
-                                        <b>تعديل</b>
-                                    </th>
-                                    <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
-                                        <a onClick="document.getElementById('update-form').scrollIntoView();"
-                                            (click)="getSelectedData(row, 'showInputUpdate')">
-                                            <i class="fas fa-edit update-symbol"></i>
-                                        </a>
-                                    </td>
-                                    <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- is_prepare_dyeing Column -->
+                                    <ng-container matColumnDef="is_prepare_dyeing">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>المشكل نزل المصبغة</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <p-checkbox [(ngModel)]="element.is_prepare_dyeing" [binary]="true"
+                                                [trueValue]="1" [falseValue]="0" [disabled]="true"></p-checkbox>
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- Update Column -->
-                                <ng-container matColumnDef="update_services">
-                                    <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
-                                        <b>تعديل المعالجات</b>
-                                    </th>
-                                    <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
-                                        <a onClick="document.getElementById('update-form').scrollIntoView();"
-                                            (click)="getSelectedData(row, 'showDyeingServciesUpdate')">
-                                            <i class="fas fa-edit update-symbol"></i>
-                                        </a>
-                                    </td>
-                                    <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- Update Column -->
+                                    <ng-container matColumnDef="update">
+                                        <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
+                                            <b>تعديل</b>
+                                        </th>
+                                        <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
+                                            <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                                (click)="getSelectedData(row, 'showInputUpdate')">
+                                                <i class="fas fa-edit update-symbol"></i>
+                                            </a>
+                                        </td>
+                                        <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                                <tr mat-footer-row *matFooterRowDef="displayedColumns;"></tr>
-                            </table>
+                                    <!-- Update Column -->
+                                    <ng-container matColumnDef="update_services">
+                                        <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
+                                            <b>تعديل المعالجات</b>
+                                        </th>
+                                        <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
+                                            <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                                (click)="getSelectedData(row, 'showDyeingServciesUpdate')">
+                                                <i class="fas fa-edit update-symbol"></i>
+                                            </a>
+                                        </td>
+                                        <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                                    <tr mat-footer-row *matFooterRowDef="displayedColumns;"></tr>
+                                </table>
                             </div>
                         </div>
 
@@ -367,40 +387,40 @@
 
                             <div class="example-table-container">
 
-                            <table mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
-                                [class]="_sharedComponentService.tableStyleClass">
+                                <table mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
+                                    [class]="_sharedComponentService.tableStyleClass">
 
-                                <!-- Index Column -->
-                                <ng-container matColumnDef="index">
-                                    <th mat-header-cell *matHeaderCellDef><b> تسلسل </b></th>
-                                    <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
-                                    <td mat-footer-cell *matFooterCellDef> <b> الإجمالي </b> </td>
-                                </ng-container>
+                                    <!-- Index Column -->
+                                    <ng-container matColumnDef="index">
+                                        <th mat-header-cell *matHeaderCellDef><b> تسلسل </b></th>
+                                        <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
+                                        <td mat-footer-cell *matFooterCellDef> <b> الإجمالي </b> </td>
+                                    </ng-container>
 
-                                <!-- fabric_name Column -->
-                                <ng-container matColumnDef="fabric_name">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>القماش المصبوغ</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.dyed_fabric_name }}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef>  </td>
-                                </ng-container>
+                                    <!-- fabric_name Column -->
+                                    <ng-container matColumnDef="fabric_name">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>القماش المصبوغ</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.dyed_fabric_name }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- fabric_code Column -->
-                                <ng-container matColumnDef="fabric_code">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>كود القماش المصبوغ</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.dyed_fabric_code }}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef> </td>
-                                </ng-container>
+                                    <!-- fabric_code Column -->
+                                    <ng-container matColumnDef="fabric_code">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>كود القماش المصبوغ</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{ element.dyed_fabric_code }}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
 
-                                <!-- Dyeing Quantity Column -->
-                                <!-- <ng-container matColumnDef="dyeing_quantity">
+                                    <!-- Dyeing Quantity Column -->
+                                    <!-- <ng-container matColumnDef="dyeing_quantity">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
                                         <b>كمية المصبوغ</b>
                                     </th>
@@ -410,8 +430,8 @@
                                     <td mat-footer-cell *matFooterCellDef> {{getTotalDyeingQuantity() | number}} </td>
                                 </ng-container> -->
 
-                                <!-- Total Cost Column -->
-                                <!-- <ng-container matColumnDef="total_cost">
+                                    <!-- Total Cost Column -->
+                                    <!-- <ng-container matColumnDef="total_cost">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
                                         <b>إجمالي التكلفة</b>
                                     </th>
@@ -422,8 +442,8 @@
                                     <td mat-footer-cell *matFooterCellDef> {{getSumTotalCost() | number}} </td>
                                 </ng-container> -->
 
-                                <!-- Avg Price Column -->
-                                <!-- <ng-container matColumnDef="avg_price">
+                                    <!-- Avg Price Column -->
+                                    <!-- <ng-container matColumnDef="avg_price">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
                                         <b>وسطي سعر الكيلو</b>
                                     </th>
@@ -434,8 +454,8 @@
                                     <td mat-footer-cell *matFooterCellDef></td>
                                 </ng-container> -->
 
-                                <!-- Wast Column -->
-                                <!-- <ng-container matColumnDef="wast">
+                                    <!-- Wast Column -->
+                                    <!-- <ng-container matColumnDef="wast">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
                                         <b>الهالك</b>
                                     </th>
@@ -445,33 +465,33 @@
                                     <td mat-footer-cell *matFooterCellDef></td>
                                 </ng-container> -->
 
-                                <!-- Fabric Width Column -->
-                                <ng-container matColumnDef="fabric_width">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>عرض القماش</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{element.fabric_width}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef></td>
-                                </ng-container>
+                                    <!-- Fabric Width Column -->
+                                    <ng-container matColumnDef="fabric_width">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>عرض القماش</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{element.fabric_width}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef></td>
+                                    </ng-container>
 
-                                <!-- Fabric quantity m2 Column -->
-                                <ng-container matColumnDef="fabric_quantity_m2">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>وزن القماش م2</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{element.fabric_quantity_m2}}
-                                    </td>
-                                    <td mat-footer-cell *matFooterCellDef></td>
-                                </ng-container>
+                                    <!-- Fabric quantity m2 Column -->
+                                    <ng-container matColumnDef="fabric_quantity_m2">
+                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                            <b>وزن القماش م2</b>
+                                        </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{element.fabric_quantity_m2}}
+                                        </td>
+                                        <td mat-footer-cell *matFooterCellDef></td>
+                                    </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns2; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns2"></tr>
-                                <tr mat-footer-row *matFooterRowDef="displayedColumns2;"></tr>
-                            </table>
-                        </div>
+                                    <tr mat-header-row *matHeaderRowDef="displayedColumns2; sticky: true"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: displayedColumns2"></tr>
+                                    <tr mat-footer-row *matFooterRowDef="displayedColumns2;"></tr>
+                                </table>
+                            </div>
                         </div>
 
                     </div>
@@ -492,6 +512,9 @@
     </div>
 </section>
 
-<app-wd-form-dyeing-order-requisition-update *ngIf="showInputUpdate" [selectedData]="selectedDataToUpdate"></app-wd-form-dyeing-order-requisition-update>
-<app-update-dyeing-services-wd *ngIf="showDyeingServciesUpdate" [selectedData]="selectedDataToUpdate"></app-update-dyeing-services-wd>
-<app-add-form-dyeing-requisition-by-order-form-wd *ngIf="showAddDetails" [selectedData]="selectedDataToAddDetails"></app-add-form-dyeing-requisition-by-order-form-wd>
+<app-wd-form-dyeing-order-requisition-update *ngIf="showInputUpdate"
+    [selectedData]="selectedDataToUpdate"></app-wd-form-dyeing-order-requisition-update>
+<app-update-dyeing-services-wd *ngIf="showDyeingServciesUpdate"
+    [selectedData]="selectedDataToUpdate"></app-update-dyeing-services-wd>
+<app-add-form-dyeing-requisition-by-order-form-wd *ngIf="showAddDetails"
+    [selectedData]="selectedDataToAddDetails"></app-add-form-dyeing-requisition-by-order-form-wd>

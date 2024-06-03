@@ -50,6 +50,7 @@ export class FormDyeingRequisitionDetailsWdComponent implements OnInit {
     'color_code',
     'dyeing_services',
     'document',
+    'is_prepare_dyeing',
     'update',
     'update_services'];
   displayedColumns2: string[] = [

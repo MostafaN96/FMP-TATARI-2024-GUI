@@ -71,4 +71,16 @@ export class WbManufacturingOutputService {
         })
       });
   }
+
+  
+  confirmReceived(obj: any, id: string): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}confirm-received/${id}`;
+    return this._http.put(url, obj,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+  
 }

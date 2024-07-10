@@ -58,6 +58,24 @@
                                         </div>
 
                                         <div class="col">
+                                            <p-columnFilter field="circular_knitting_machine_name" matchMode="circular-knitting-machine-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedCircularKnittingMachineName"
+                                                        [options]="_sharedComponentService.uniqueArray(circularKnittingMachineNames, 'circular_knitting_machine_name')"
+                                                        (onChange)="onMultiselectedCircularKnittingMachineName($event.value)"
+                                                        placeholder="البحث بـ الماكينة" optionLabel="circular_knitting_machine_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.circular_knitting_machine_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
                                             <p-columnFilter field="fabric_code" matchMode="fabric-code-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -146,6 +164,26 @@
                                                 </ng-template>
                                             </p-columnFilter>
                                         </div>
+
+                                        <div class="col" 
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[15]) ||
+                                        _sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[16])">
+                                            <p-columnFilter field="is_approved_status_name" matchMode="is-approved-status-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedisApprovedStatusName"
+                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'is_approved_status_name')"
+                                                        (onChange)="onMultiselectedIsApprovedStatusName($event.value)"
+                                                        placeholder="البحث بـ حالة الاستلام" optionLabel="is_approved_status_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.is_approved_status_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
                                         
                                         <div class="col">
                                             <p-columnFilter field="note" matchMode="requisition-note-filter"
@@ -220,6 +258,15 @@
                                             <div class="flex justify-content-between align-items-center">
                                                 اسم المصنع
                                                 <p-sortIcon data-html2canvas-ignore="true" field="manufacture_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                         <!-- circular_knitting_machine_name Column -->
+                                         <th pResizableColumn pSortableColumn="circular_knitting_machine_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                الماكينة
+                                                <p-sortIcon data-html2canvas-ignore="true" field="circular_knitting_machine_name">
                                                 </p-sortIcon>
                                             </div>
                                         </th>
@@ -303,15 +350,22 @@
                                                 </p-sortIcon>
                                             </div>
                                         </th>
-                                        
                                       
                                         <!-- note Column -->
                                         <th>
                                             <div class="flex justify-content-between align-items-center">
                                                 الملاحظات
-                                               
                                             </div>
-                                        </th>                           
+                                        </th>  
+                                        
+                                        <!-- confirm_received Column -->
+                                        <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[15]) ||
+                                        _sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[16])"
+                                        data-html2canvas-ignore="true">
+                                            <div class="flex justify-content-between align-items-center">
+                                                تأكيد / الغاء الاستلام
+                                            </div>
+                                        </th>                         
 
                                         <!-- update Column -->
                                         <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
@@ -332,7 +386,10 @@
 
                                 </ng-template>
                                 <ng-template pTemplate="body" let-element let-index="rowIndex">
-                                    <tr class="p-selectable-row"  [ngClass]="{'warning_background': element.is_active == '0'}">
+                                    <tr class="p-selectable-row"  
+                                    [ngClass]="{'warning_background': element.is_active == '0'}"
+                                    [ngClass]="{'confirm_background': element.is_approved == '1'}"
+                                    >
 
                                         <!-- Index Column -->
                                         <td>
@@ -347,6 +404,11 @@
                                         <!-- manufacture_name Column -->
                                         <td>
                                             {{ element.manufacture_name }}
+                                        </td>
+                                        
+                                        <!-- circular_knitting_machine_name Column -->
+                                        <td>
+                                            {{ element.details.circular_knitting_machine_name }}
                                         </td>
                                         
                                         <!-- fabric_code Column -->
@@ -400,6 +462,25 @@
                                             {{ element.note }}
                                         </td>
 
+                                        
+                                        <!-- confirm_received Column -->
+                                        <td data-html2canvas-ignore="true"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[15]) ||
+                                        _sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[16])">
+                                            <ng-container>
+                                                <p-confirmPopup></p-confirmPopup>
+                                                <a (click)="confirmCancelReceived($event, element, element.is_approved)">
+                                                    <i class="fa-solid fa-check update-symbol"
+                                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[15]) && 
+                                                    element.is_approved == '0'"></i>
+
+                                                    <i class="fa-solid fa-xmark delete-symbol"
+                                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[16]) && 
+                                                    element.is_approved == '1'"></i>
+                                                </a>
+                                            </ng-container>
+                                        </td>
+
                                         <!-- update Column -->
                                         <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
                                         data-html2canvas-ignore="true">
@@ -427,7 +508,7 @@
                                 </ng-template>
                                 <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                     <tr>
-                                        <td colspan="11">لا يوجد بيانات</td>
+                                        <td colspan="12">لا يوجد بيانات</td>
                                     </tr>
                                 </ng-template>
                             </p-table>

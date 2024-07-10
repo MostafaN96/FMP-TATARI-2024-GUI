@@ -40,7 +40,7 @@
 
                     <!-- requisitionsOrder -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='requisitionsOrder' [fields]='fieldsRequisitionOrderName'
+                        <!-- <ejs-autocomplete [dataSource]='requisitionsOrder' [fields]='fieldsRequisitionOrderName'
                             (filtering)="onFilteringRequisitionOrderName($event)"
                             [placeholder]='textRequisitionsOrderName' [autofill]='autofill' formControlName="orderId"
                             class="ejs-autocomplete w-100" (change)="selectRequisitionsOrderName($event)">
@@ -51,7 +51,25 @@
                         <small class="text-danger" *ngIf="addOrderForm.controls['orderId'].hasError('required') && (addOrderForm.controls['orderId'].dirty 
                             || addOrderForm.controls['orderId'].touched)"
                             [innerHTML]="_sharedComponentService.required_field">
-                        </small>
+                        </small> -->
+
+                        
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>طلبيات الجاهز</mat-label>
+                            <mat-select placeholder="طلبيات الجاهز" formControlName="orderId"
+                            (selectionChange)="selectRequisitionsOrderName($event)"
+                                multiple>
+                                <mat-option *ngFor="let order of requisitionsOrder"
+                                    [value]="{orderId: order.id, orderName: order.name}">
+                                    {{order.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="addOrderForm.controls['orderId'].hasError('required') && (addOrderForm.controls['orderId'].dirty 
+                                || addOrderForm.controls['orderId'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
                     </div>
 
                     <!-- Name -->

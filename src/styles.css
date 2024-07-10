@@ -60,6 +60,10 @@ input[type=number] {
   .warning_background {
     background-color: red !important;
   }
+
+  .confirm_background {
+    background-color: rgb(216, 216, 216) !important;
+  }
   
   
   .cursor-none {
@@ -446,6 +450,11 @@ input[type=number] {
   
   .update-symbol {
     color: var(--primary-color-1);
+    font-size: var(--fs-16);
+  }
+  
+  .delete-symbol {
+    color: var(--primary-color-6);
     font-size: var(--fs-16);
   }
   

@@ -68,9 +68,9 @@ export class UpdateSellRequisitionWaComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.sellRequisitionWaForm.controls['priceDollar'].setValue("0")
+      this.sellRequisitionWaForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.sellRequisitionWaForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.sellRequisitionWaForm.controls['price'].setValue("0")
+      this.sellRequisitionWaForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.sellRequisitionWaForm.controls['priceDollar'].value))
     }
   }
 

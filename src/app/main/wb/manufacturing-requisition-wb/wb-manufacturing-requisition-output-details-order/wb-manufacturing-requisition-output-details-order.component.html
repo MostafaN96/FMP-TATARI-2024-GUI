@@ -99,6 +99,16 @@
                                     </td>
                                 </ng-container>
 
+                                <!-- manufacturing_fee_dollar Column -->
+                                <ng-container matColumnDef="manufacturing_fee_dollar">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b><b> اجرة التصنيع دولار</b></b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.manufacturing_fee_dollar | number}}
+                                    </td>
+                                </ng-container>
+
                                 <!-- total_with_wast Column -->
                                 <ng-container matColumnDef="total_with_wast">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -135,7 +145,7 @@
                                         <b>اجمالي التكلفة دولار</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
-                                        {{totalCostDollar(element.quantity, element.manufacturing_fee) | number}}
+                                        {{totalCostDollar(element.quantity, element.manufacturing_fee_dollar) | number}}
                                     </td>
                                 </ng-container>
 
@@ -155,7 +165,7 @@
                                         <b>وسطي سعر الكيلو دولار</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
-                                        {{avgCostDollar(element.quantity, element.manufacturing_fee) | number}}
+                                        {{avgCostDollar(element.quantity, element.manufacturing_fee_dollar) | number}}
                                     </td>
                                 </ng-container>
 

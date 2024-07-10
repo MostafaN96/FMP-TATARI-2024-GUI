@@ -1025,12 +1025,12 @@
                     <div class="col">
                         <mat-form-field class="example-full-width w-100" appearance="outline">
                             <mat-label>اجرة التصنيع</mat-label>
-                            <input autocomplete="off" matInput (change)="avgCost()"
+                            <input autocomplete="off" matInput (change)="avgCost(); calcManufacturingFee('manufacturingFeeEG')"
                                 oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                 formControlName="manufacturingFee" placeholder="مثال: 6" [matAutocomplete]="auto"
                                 required>
                             <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
-                                (optionSelected)="avgCost()">
+                                (optionSelected)="avgCost(); calcManufacturingFee('manufacturingFeeEG')">
                                 <mat-option *ngFor="let option of latestManufacturingFee"
                                     [value]="option.manufacturing_fee">
                                     {{option.manufacturing_fee}}
@@ -1053,6 +1053,41 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
+
+                    
+                    <!-- Manufactiring Fee Dollar -->
+                    <div class="col">
+                        <mat-form-field class="example-full-width w-100" appearance="outline">
+                            <mat-label>اجرة التصنيع دولار</mat-label>
+                            <input autocomplete="off" matInput (change)="avgCost(); calcManufacturingFee('manufacturingFeeDollar')"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                formControlName="manufacturingFeeDollar" placeholder="مثال: 6" [matAutocomplete]="auto"
+                                required>
+                            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
+                                (optionSelected)="avgCost(); calcManufacturingFee('manufacturingFeeDollar')">
+                                <mat-option *ngFor="let option of latestManufacturingFeeDollar"
+                                    [value]="option.manufacturing_fee_dollar">
+                                    {{option.manufacturing_fee_dollar}}
+                                </mat-option>
+                            </mat-autocomplete>
+                            <mat-error
+                                *ngIf="!addManufacturingRequisitionForm.controls['manufacturingFeeDollar'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error
+                                *ngIf="addManufacturingRequisitionForm.controls['manufacturingFeeDollar'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error
+                                *ngIf="addManufacturingRequisitionForm.controls['manufacturingFeeDollar'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
 
                     <!-- Warehouse -->
                     <div class="col">

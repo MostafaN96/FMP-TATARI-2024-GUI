@@ -254,6 +254,11 @@ export class AddTransportWcWdRequisitionFormWcComponent implements OnInit {
         this.fabricsDetails = response
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), this.fabricsDetails[0].latest_manufacturing_price, this.fabricsDetails[0].latest_price]
         this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this.fabricsDetails[0].latest_manufacturing_price_dollar, this.fabricsDetails[0].latest_price_dollar]
+        row.controls['price'].setValue(this.fabricsDetails[0].latest_manufacturing_price)
+        row.controls['priceDollar'].setValue(this.fabricsDetails[0].latest_manufacturing_price_dollar)
+
+        this.changePrice("priceEG", row)
+        this.changePrice("priceDollar", row)
       })
     }
   }
@@ -261,9 +266,9 @@ export class AddTransportWcWdRequisitionFormWcComponent implements OnInit {
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 

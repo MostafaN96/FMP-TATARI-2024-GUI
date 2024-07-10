@@ -69,9 +69,9 @@ export class UpdateTransportWcWdRequisitionWcComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transportWcWdRequisitionWcForm.controls['priceDollar'].setValue("0")
+      this.transportWcWdRequisitionWcForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transportWcWdRequisitionWcForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.transportWcWdRequisitionWcForm.controls['price'].setValue("0")
+      this.transportWcWdRequisitionWcForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transportWcWdRequisitionWcForm.controls['priceDollar'].value))
     }
   }
 

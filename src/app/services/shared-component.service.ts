@@ -10,6 +10,7 @@ import { Router, NavigationEnd } from '@angular/router';
 
 // Shared Service
 import { ConstantsService } from "./constants.service";
+import { GlobalService } from "src/app/services/exchange-rate.service";
 
 // Angular Material Configuration
 import { PageEvent } from '@angular/material/paginator';
@@ -25,6 +26,7 @@ export class SharedComponentService {
   // transfer data between components
   private eventCallback: Subject<any[]> = new Subject<any>();
   eventCallback$ = this.eventCallback.asObservable();
+  dollarPrice = 0
 
   // Classes
   sectionClass = ""
@@ -58,6 +60,7 @@ export class SharedComponentService {
   constructor(
     private router: Router,
     private _constantsService: ConstantsService,
+    private globalService: GlobalService,
 
   ) {
 
@@ -679,5 +682,25 @@ setTimeout(() => {
       formArray[formArray.length - 1].controls[attrCalc].setErrors({ 'incorrect': null });
       formArray[formArray.length - 1].controls[attrCalc].updateValueAndValidity()
     }
+  }
+
+  calcDollarToEgp(dollar) {
+    // dollarPrice
+    this.globalService.exchangeRate.subscribe({
+      next: newValue => {
+        this.dollarPrice = newValue.dollarPrice
+      }
+    });
+    return parseFloat((this.dollarPrice * dollar).toFixed(3))
+  }
+
+  calcEgpToDollar(egp) {
+    // dollarPrice
+    this.globalService.exchangeRate.subscribe({
+      next: newValue => {
+        this.dollarPrice = newValue.dollarPrice
+      }
+    });
+    return parseFloat((egp / this.dollarPrice).toFixed(3))
   }
 }

@@ -72,5 +72,16 @@ export class AddPurchaseOrderWaService {
       });
   }
 
+  inquireYarnsOfFabricForOrderWaByOrders(dyeingOrdersRequisitions: any): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}inquire-yarns-by-yarn-order-requisition-by-orders`;
+
+    return this._http.post(url, dyeingOrdersRequisitions,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 
 }

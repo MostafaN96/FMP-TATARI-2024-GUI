@@ -50,7 +50,7 @@ export class DyedFabricOrderRequisitionAddWeComponent implements OnInit {
   fabricCode = ""
   colorName = ""
   colorCode = ""
-  wastRatio = ""
+  wasteRatio = ""
   isShowAdd = true
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
@@ -171,7 +171,7 @@ initItem() {
     colorId: new FormControl("", [Validators.required]),
     colorCode: new FormControl("", [Validators.required]),
     quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    wastRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    wasteRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -210,19 +210,19 @@ removeItem(index: number){
     if (this.dyedFabrics[indexData] !== element.itemData) {
       row.controls['dyedFabricId'].setValue(null)
       row.controls['dyedFabricCode'].setValue(null)
-      row.controls['wastRatio'].setValue(null)
+      row.controls['wasteRatio'].setValue(null)
       this.fabricName = ""
       this.fabricCode = ""
-      this.wastRatio = ""
+      this.wasteRatio = ""
     }
     else {
       // console.log("element", element.itemData.code);
       // console.log("row", row.controls['dyedFabricCode']);
       row.controls['dyedFabricCode'].setValue(element.itemData.code)
-      row.controls['wastRatio'].setValue(element.itemData.waste_ratio)
+      row.controls['wasteRatio'].setValue(element.itemData.waste_ratio)
       this.fabricName = element.itemData.name
       this.fabricCode = element.itemData.code
-      this.wastRatio = element.itemData.wast_ratio
+      this.wasteRatio = element.itemData.wast_ratio
     }    
   }
 
@@ -263,7 +263,7 @@ removeItem(index: number){
         fabricCode: this.fabricCode,
         colorName: this.colorName,
         colorCode: this.colorCode,
-        wastRatio: this.wastRatio
+        wasteRatio: this.wasteRatio
       }
 
     localStorage.setItem('inquireFabricData', JSON.stringify(inquireFabricData))
@@ -275,7 +275,7 @@ removeItem(index: number){
   //       fabricCode: this.fabricCode,
   //       colorName: this.colorName,
   //       colorCode: this.colorCode,
-  //       wastRatio: this.wastRatio
+  //       wasteRatio: this.wasteRatio
   //     }
   // })
 
@@ -288,15 +288,15 @@ removeItem(index: number){
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
   
   // WasteRatio
   changeWasteRatio(event) {    
-    this.wastRatio = event.target.value
+    this.wasteRatio = event.target.value
   }
 
   async onAddRequisition() {

@@ -90,6 +90,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
 
     this._formDyeingRequisitionDetailsWdService.selectByDyeing(dyeingId).subscribe((response: any) => {
       this.currentStockReport.formDyeingFabricsByDyer = response
+      
       this.currentStockReport.listen();
     })
   }

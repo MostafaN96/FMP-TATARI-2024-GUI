@@ -7,7 +7,8 @@
                 <!-- Form Body -->
                 <div [class]="_sharedComponentService.gridFormClass">
                     <!-- Price -->
-                    <div class="col">
+                    <div class="col"
+                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                         <mat-form-field appearance="outline" class="example-full-width w-100">
                             <mat-label>السعر*</mat-label>
                             <input type="text" matInput formControlName="price" placeholder="مثال: 15"
@@ -81,10 +82,11 @@
                     </div>
                     
                     <!-- Manufactiring Fee -->
-                    <div class="col">
+                    <div class="col"
+                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                         <mat-form-field class="example-full-width w-100" appearance="outline">
                             <mat-label>اجرة التصنيع</mat-label>
-                            <input matInput
+                            <input matInput (change)="calcManufacturingFee('manufacturingFeeEG')"
                                 oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                 formControlName="manufacturingFee" placeholder="مثال: 6" required>
                             <mat-error *ngIf="!outputManufacturedWbForm.controls['manufacturingFee'].hasError('required')">
@@ -102,6 +104,50 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- Manufactiring Fee Dollar -->
+                    <div class="col"
+                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
+                        <mat-form-field class="example-full-width w-100" appearance="outline">
+                            <mat-label>اجرة التصنيع دولار</mat-label>
+                            <input matInput (change)="calcManufacturingFee('manufacturingFeeDollar')"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                formControlName="manufacturingFeeDollar" placeholder="مثال: 6" required>
+                            <mat-error *ngIf="!outputManufacturedWbForm.controls['manufacturingFeeDollar'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="outputManufacturedWbForm.controls['manufacturingFeeDollar'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="outputManufacturedWbForm.controls['manufacturingFeeDollar'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_1">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- circular_knitting_machine -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='circularKnittingMachines'
+                            [fields]='fieldsCircularKnittingMachine'
+                            (filtering)="onFilteringCircularKnittingMachine($event)"
+                            [placeholder]='textCircularKnittingMachine' [autofill]='autofill'
+                            formControlName="circularKnittingMachineName" 
+                            (change)='selectCircularKnittingMachine($event)'
+                            class="ejs-autocomplete w-100">
+                        </ejs-autocomplete>
+                        <small class="text-danger"
+                            *ngIf="outputManufacturedWbForm.controls['circularKnittingMachineId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger"
+                            *ngIf="outputManufacturedWbForm.controls['circularKnittingMachineId'].hasError('required') && (outputManufacturedWbForm.controls['circularKnittingMachineId'].dirty 
+                                                                        || outputManufacturedWbForm.controls['circularKnittingMachineId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+                    
                     <!-- Document -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

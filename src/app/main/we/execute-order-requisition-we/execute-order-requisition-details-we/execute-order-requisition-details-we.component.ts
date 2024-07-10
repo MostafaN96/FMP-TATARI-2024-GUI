@@ -37,6 +37,7 @@ export class ExecuteOrderRequisitionDetailsWeComponent implements OnInit {
     'color_name',
     'consigment_dyeing_number',
     'quantity',
+    'fabric_piece',
     'price',
     'price_dollar',
     'total',

@@ -173,20 +173,20 @@
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>نسبة الهالك</mat-label>
                                                 <input autocomplete="off" type="text" matInput
-                                                    formControlName="wastRatio" placeholder="مثال: 5"
+                                                    formControlName="wasteRatio" placeholder="مثال: 5"
                                                     [errorStateMatcher]="matcher" (change)="changeWasteRatio($event)"
                                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
                                                 <mat-error
-                                                    *ngIf="row.get('wastRatio').hasError('required') && (row.get('wastRatio').dirty 
-                                                                                            || row.get('wastRatio').touched)">
+                                                    *ngIf="row.get('wasteRatio').hasError('required') && (row.get('wasteRatio').dirty 
+                                                                                            || row.get('wasteRatio').touched)">
                                                     <label [innerHTML]="_sharedComponentService.required_field">
                                                     </label>
                                                 </mat-error>
-                                                <mat-error *ngIf="row.get('wastRatio').hasError('required')">
+                                                <mat-error *ngIf="row.get('wasteRatio').hasError('required')">
                                                     <label [innerHTML]="_sharedComponentService.required_field">
                                                     </label>
                                                 </mat-error>
-                                                <mat-error *ngIf="row.get('wastRatio').hasError('pattern')">
+                                                <mat-error *ngIf="row.get('wasteRatio').hasError('pattern')">
                                                     <label
                                                         [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
                                                     </label>

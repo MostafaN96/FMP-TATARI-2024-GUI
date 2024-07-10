@@ -118,6 +118,10 @@
                                                     <th>اسم الطلبية:</th>
                                                     <td>{{orderedDyedFabrics[0]?.order_name}}</td>
                                                 </tr>
+                                                <tr>
+                                                    <th>اسم العميل:</th>
+                                                    <td>{{orderedDyedFabrics[0]?.seller_name}}</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -215,10 +219,12 @@
                                                             <p-multiSelect [ngModel]="selectedColorName"
                                                                 [options]="_sharedComponentService.uniqueArray(orderedDyedFabrics, 'color_name_code')"
                                                                 (onChange)="onMultiselectedColorName($event.value)"
-                                                                placeholder="البحث بـ اللون" optionLabel="color_name_code">
+                                                                placeholder="البحث بـ اللون"
+                                                                optionLabel="color_name_code">
                                                                 <ng-template let-option pTemplate="item">
                                                                     <div class="p-multiselect-representative-option">
-                                                                        <span class="ml-1">{{option.color_name_code}}</span>
+                                                                        <span
+                                                                            class="ml-1">{{option.color_name_code}}</span>
                                                                     </div>
                                                                 </ng-template>
                                                             </p-multiSelect>
@@ -364,7 +370,7 @@
                                             </tbody>
                                             <tbody>
                                                 <tr>
-  
+
                                                     <th>فئة اللون:</th>
                                                     <td>{{storedWeFabrics[0]?.color_category_name }}</td>
 
@@ -617,6 +623,10 @@
                                         نوع الاذن
                                     </th>
 
+                                    <th style="max-width: 60px;">
+                                        عدد الاثواب
+                                    </th>
+
                                     <th style="max-width: 70px;">
                                         السعر
                                     </th>
@@ -690,7 +700,7 @@
                                         <td class="table-td" style="max-width: 60px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
-                                                     اللون
+                                                    اللون
                                                 </mat-label>
                                                 <input matInput placeholder="اللون" readonly
                                                     formControlName="colorName">
@@ -719,6 +729,27 @@
                                             </mat-form-field>
                                         </td>
 
+                                        <!-- numberFabricPieces -->
+                                        <td style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>عدد الاثواب</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="numberFabricPieces" placeholder="مثال: 10"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('required') && (row.get('numberFabricPieces').dirty 
+                                                    || row.get('numberFabricPieces').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
                                         <!-- Price -->
                                         <td class="table-td" style="max-width: 70px">
                                             <mat-form-field class="example-full-width w-100">
@@ -730,7 +761,8 @@
                                                 <mat-autocomplete #autoGroup="matAutocomplete">
                                                     <ng-container
                                                         *ngFor="let item of getListDyedFabricPrices[index]; let i = index">
-                                                        <mat-optgroup [label]="groupPrices[i]" (click)="changePrice('priceEG', row)"
+                                                        <mat-optgroup [label]="groupPrices[i]"
+                                                            (click)="changePrice('priceEG', row)"
                                                             [disabled]="groupPrices[i].disabled">
                                                             <mat-option value="{{item | number}}">
                                                                 {{item | number}}
@@ -763,7 +795,8 @@
                                                 <mat-autocomplete #autoGroup2="matAutocomplete">
                                                     <ng-container
                                                         *ngFor="let item of listFabricPricesDollar[index]; let i = index">
-                                                        <mat-optgroup [label]="groupPrices[i]" (click)="changePrice('priceDollar', row)"
+                                                        <mat-optgroup [label]="groupPrices[i]"
+                                                            (click)="changePrice('priceDollar', row)"
                                                             [disabled]="groupPrices[i].disabled">
                                                             <mat-option value="{{item | number}}">
                                                                 {{item | number}}
@@ -869,7 +902,12 @@
                                 <tr>
                                     <td>الاجمالي</td>
 
-                                    <td colspan="9"></td>
+                                    <td colspan="6"></td>
+                                    <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
+                                        'numberFabricPieces') | number}}
+                                    </td>
+
+                                    <td colspan="3"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
                                         'quantity') | number}}</td>
                                     <td class="text-center">

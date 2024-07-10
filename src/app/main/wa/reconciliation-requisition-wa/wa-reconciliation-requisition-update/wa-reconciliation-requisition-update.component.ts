@@ -69,9 +69,9 @@ export class WaReconciliationRequisitionUpdateComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.waCottonReconciliationRequisitionForm.controls['priceDollar'].setValue("0")
+      this.waCottonReconciliationRequisitionForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.waCottonReconciliationRequisitionForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.waCottonReconciliationRequisitionForm.controls['price'].setValue("0")
+      this.waCottonReconciliationRequisitionForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.waCottonReconciliationRequisitionForm.controls['priceDollar'].value))
     }
   }
 

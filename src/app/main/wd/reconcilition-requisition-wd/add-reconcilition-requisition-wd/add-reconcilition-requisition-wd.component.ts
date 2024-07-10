@@ -17,6 +17,7 @@ import { ReportWdService } from "src/app/services/main/wd/report-wd.service";
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ConstantsService } from "src/app/services/constants.service";
 import { SessionManagerService } from "src/app/services/main/session-manager.service";
+import { QuantityOccurrencesValidationService } from "src/app/services/main/quantity-occurrences-validation.service";
 
 // Auto Complete
 import { Query, Predicate } from '@syncfusion/ej2-data';
@@ -115,6 +116,7 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
     private _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
     private _sessionManagerService: SessionManagerService,
+    public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
     private _reportWdService: ReportWdService
 
   ) {
@@ -127,7 +129,7 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
   }
 
   getData() {
-    this._bussinessmanService.selectDyerDyeing().subscribe((response: any) => {
+    this._bussinessmanService.selectDyeingFromWd().subscribe((response: any) => {
       this.dyers = response
     })
   }
@@ -240,15 +242,20 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 
   async onReconcilitionRequisitionWD() {
     this.reconcilitionRequisitionWDForm.markAllAsTouched();
     if (this.reconcilitionRequisitionWDForm.valid) {
+      if (this._quantityOccurrencesValidationService.validateCurrentQuantityTwoItemsReconciliation(
+        this.reconcilitionRequisitionWDForm.controls['items'].value, this.reconcilitionRequisitionWDForm.controls['items'].value, 
+        'fabricId', 'fabricId',
+        'consigmentDyeingId', 'consigmentDyeingId',
+        'quantity', 'fabricCode', this.currentQuantity, "inputOutput")) {
       const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.reconcilitionRequisitionWDForm, 'items',
           ['fabricCode'])
       this._constantsService.spinner.show()
@@ -271,6 +278,7 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
           }
         }
       });
+    }
     }
   }
 }

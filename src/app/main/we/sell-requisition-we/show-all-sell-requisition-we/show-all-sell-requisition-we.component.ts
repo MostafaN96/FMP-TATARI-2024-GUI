@@ -6,8 +6,12 @@ import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, MatSortable } from '@angular/material/sort';
 
+import { ConfirmationService } from 'primeng/api';
+
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { SellRequisitionWeService } from "src/app/services/main/we/sell-requisition-we.service";
@@ -15,7 +19,8 @@ import { SellRequisitionWeService } from "src/app/services/main/we/sell-requisit
 @Component({
   selector: 'app-show-all-sell-requisition-we',
   templateUrl: './show-all-sell-requisition-we.component.html',
-  styleUrls: ['./show-all-sell-requisition-we.component.css']
+  styleUrls: ['./show-all-sell-requisition-we.component.css'],
+  providers: [ConfirmationService]
 })
 export class ShowAllSellRequisitionWeComponent implements OnInit {
 
@@ -25,7 +30,15 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
   titlePage = ""
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
-  displayedColumns: string[] = ['number', 'date', 'seller_name', 'delivery_car_name', 'note', 'details', 'confirm'];
+  displayedColumns: string[] = [
+    'number', 
+    'date', 
+    'seller_name', 
+    'delivery_car_name', 
+    'note', 
+    'confirm_approved', 
+    'details', 
+    'confirm'];
   filter = "";
   dataSourceSearchTabel: any;
   filterSelectObj = [
@@ -50,6 +63,9 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _sellRequisitionWeService: SellRequisitionWeService,
+    private _constantsService: ConstantsService,
+    private _sessionManagerService: SessionManagerService,
+    private confirmationService: ConfirmationService,
     private router: Router
 
   ) {
@@ -101,5 +117,47 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
     this.getData();
   }
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
+
+  confirmCancelReceived(event: Event, element, isApproved) {
+    if(isApproved == "0") {
+      this.popupReceived(event, element, 'تأكيد الأستلام', "1")
+    } else if (isApproved == "1") {
+      this.popupReceived(event, element, 'إلغاء الأستلام', "0")
+    }
+  }
+  
+popupReceived(event: Event, element, message, isApproved) {
+  this.confirmationService.confirm({
+      target: event.target!,
+      message: message,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this.executeConfirmReceived(element, isApproved);
+      },
+      reject: () => {
+      }
+  });
+}
+
+executeConfirmReceived(data, isApproved) {
+  this._constantsService.spinner.show()
+  const formData = {
+    isApproved: isApproved,
+    personid: this._sessionManagerService.Person_ID,
+    ipaddress: this._sessionManagerService.IP_ADDRESS
+  }
+  this._sellRequisitionWeService.confirmReceived(formData, data.id).subscribe((response: any) => {
+    this._constantsService.spinner.hide();
+    if (response.msg == "data updated") {
+      this._constantsService.successUpdateMessage()
+      this.getData()
+    }
+    else {
+        this._constantsService.userErrorMessage()
+    }
+  })
+}
 
 }

@@ -76,9 +76,9 @@ export class DyedFabricOrderRequisitionUpdateWeComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.manufacturingOrderWdForm.controls['priceDollar'].setValue("0")
+      this.manufacturingOrderWdForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.manufacturingOrderWdForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.manufacturingOrderWdForm.controls['price'].setValue("0")
+      this.manufacturingOrderWdForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.manufacturingOrderWdForm.controls['priceDollar'].value))
     }
   }
   

@@ -141,7 +141,7 @@ initItem() {
     colorId: new FormControl("", [Validators.required]),
     colorCode: new FormControl("", [Validators.required]),
     quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    wastRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    wasteRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricWidth: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     fabricQuantityM2: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -204,15 +204,15 @@ removeItem(index: number){
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 
   // WasteRatio
   changeWasteRatio(event) {    
-    // this.wastRatio = event.target.value
+    // this.wasteRatio = event.target.value
   }
 
   async onAddRequisition() {

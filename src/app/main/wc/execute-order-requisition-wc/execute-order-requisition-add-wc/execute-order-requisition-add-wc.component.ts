@@ -52,7 +52,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   addRequisitionForm = new FormGroup({
     date: new FormControl(new Date(), [Validators.required]),
-    warehouseId: new FormControl(this._constantsService.DEFAULT_WC_WAREHOUSE_ID, [Validators.required]),
+    warehouseId: new FormControl(this._constantsService.DEFAULT_WC_WAREHOUSE_READY_ORDER_ID, [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     wcFabricOrderRequisitionId: new FormControl("", [Validators.required]),
     items: new FormArray([]),
@@ -158,6 +158,11 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
 
     this._warehouseService.selectWhereInWc().subscribe((response: any) => {
       this.warehouses = response
+
+      if (Array.isArray(this.warehouses) && this.warehouses.length < 1) {
+        this.addRequisitionForm.controls['warehouseId'].setValue("")
+      }
+      
     })
   }
 
@@ -239,7 +244,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
       priceDollar: new FormControl(this.fabricOrderPriceDollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.fabricOrderCurrentQuantity <= selectedStoredFabrics.current_quantity) ? this.fabricOrderCurrentQuantity : selectedStoredFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredFabrics.current_quantity),
-      numberFabricPieces: new FormControl('0', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
@@ -314,9 +319,9 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 

@@ -36,7 +36,8 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
     name: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     supplierId: new FormControl('', [Validators.required]),
-    orderId: new FormControl(""),
+    orderId: new FormControl(),
+    // orderId: new FormControl(null),
     orderName: new FormControl(""),
     items: new FormArray([
 
@@ -182,13 +183,23 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
 
   getYarnsOrderData(dyeingOrderRequisition) {
 
-    this._addPurchaseOrderWaService.inquireYarnsOfFabricForOrderWa(dyeingOrderRequisition).subscribe((response: any) => {
+    // this._addPurchaseOrderWaService.inquireYarnsOfFabricForOrderWa(dyeingOrderRequisition).subscribe((response: any) => {
+    //   this.yarnsOrderData = response
+      
+    //   this.addOrderForm.controls['orderId'].setValue(dyeingOrderRequisition)
+    //   this.addOrderForm.controls['orderName'].setValue(this.yarnsOrderData[0].dyeingOrderRequisition.order_name)
+
+    //   for (let i = 0; i < this.yarnsOrderData.length; i++) {
+    //     const element = this.yarnsOrderData[i];
+
+    //     this.addItemByData(element)
+    //   }
+
+    // })
+    
+    this._addPurchaseOrderWaService.inquireYarnsOfFabricForOrderWaByOrders(this.addOrderForm.controls['orderId'].value).subscribe((response: any) => {
       this.yarnsOrderData = response
       
-      // this.addOrderForm.controls['name'].setValue(this.yarnsOrderData[0].dyeingOrderRequisition.order_name)
-      this.addOrderForm.controls['orderId'].setValue(dyeingOrderRequisition)
-      this.addOrderForm.controls['orderName'].setValue(this.yarnsOrderData[0].dyeingOrderRequisition.order_name)
-
       for (let i = 0; i < this.yarnsOrderData.length; i++) {
         const element = this.yarnsOrderData[i];
 
@@ -271,20 +282,23 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
 
   //  Dyeing
   selectRequisitionsOrderName(event: { itemData: any; }) {
-    const formGroup = <FormGroup>this.addOrderForm;
-      formGroup.removeControl('items');
-      formGroup.addControl('items', new FormArray([]));
+    // const formGroup = <FormGroup>this.addOrderForm;
+    //   formGroup.removeControl('items');
+    //   formGroup.addControl('items', new FormArray([]));
       
-    if (this.requisitionsOrder.includes(event.itemData)) {
-      this.addOrderForm.controls['orderId'].setValue(event.itemData.id)
-      this.addOrderForm.controls['orderName'].setValue(event.itemData.name)
-      // this.addOrderForm.controls['name'].setValue(event.itemData.name)
-      this.getYarnsOrderData(event.itemData.id)
-    } else {
-      this.addOrderForm.controls['orderId'].setValue("")
-      this.addOrderForm.controls['orderName'].setValue("")
-      // this.addOrderForm.controls['name'].setValue("")
-    }
+    // if (this.requisitionsOrder.includes(event.itemData)) {
+    //   this.addOrderForm.controls['orderId'].setValue(event.itemData.id)
+    //   this.addOrderForm.controls['orderName'].setValue(event.itemData.name)
+    //   this.getYarnsOrderData(event.itemData.id)
+    // } else {
+    //   this.addOrderForm.controls['orderId'].setValue("")
+    //   this.addOrderForm.controls['orderName'].setValue("")
+    // }
+
+    const formGroup = <FormGroup>this.addOrderForm;
+    formGroup.removeControl('items');
+    formGroup.addControl('items', new FormArray([]));
+    this.getYarnsOrderData("")
   }
 
   // Start Supplier Autocomplete Section
@@ -307,9 +321,9 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
   changePrice(type, row: FormGroup) {
     this.setConsigmentYarnNumberData()    
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 

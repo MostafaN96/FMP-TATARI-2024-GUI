@@ -14,6 +14,7 @@ import { DyeingServicesService } from "src/app/services/main/dyeing-services.ser
 import { BussinessmanService } from "src/app/services/main/bussinessman.service";
 import { DyeingRequisitionWdService } from "src/app/services/main/wd/dyeing-requisition-wd.service";
 import { FormDyeingRequisitionDetailsWdService } from 'src/app/services/main/wd/form-dyeing-requisition-details-wd.service';
+import { DyeingRequisitionDetailsWdService } from 'src/app/services/main/wd/dyeing-requisition-details-wd.service';
 import { WarehouseService } from "src/app/services/main/warehouse.service";
 
 // Shared Service
@@ -63,6 +64,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
   isCalcDyeingNet = '0'
   fabricMap = new Map()
   isShowAdd = true
+  maxWorkOrderNumberResult:any = ""
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -114,6 +116,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     private _sessionManagerService: SessionManagerService,
     public _exportDataService: ExportDataService,
     private _formDyeingRequisitionDetailsWdService: FormDyeingRequisitionDetailsWdService,
+    private _dyeingRequisitionDetailsWdService: DyeingRequisitionDetailsWdService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
 
   ) {
@@ -132,6 +135,18 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
 
     this._warehouseService.selectAll().subscribe((response: any) => {
       this.warehouses = response
+    })
+
+    this._dyeingRequisitionDetailsWdService.selectMaxWorkOrderNumber().subscribe((response: any) => {      
+      if (Array.isArray(response) && response.length > 0) {
+        if(response[0].work_order_number != null) {
+          this.maxWorkOrderNumberResult = String(parseFloat(response[0].work_order_number) + 1)
+        } else {
+          this.maxWorkOrderNumberResult = "1"
+        }
+      } else {        
+        this.maxWorkOrderNumberResult = "1"
+      }        
     })
   }
 
@@ -169,12 +184,12 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       dyeingQuantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       costPrice: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       price: new FormControl((data.price != 0) ? data.price : data.price_dollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      quantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      quantity: new FormControl(data.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
-      fabricWidth: new FormControl(data.fabric_width, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      fabricQuantityM2: new FormControl(data.fabric_quantity_m2, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      workOrderNumber: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
+      fabricWidth: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      fabricQuantityM2: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      workOrderNumber: new FormControl(this.maxWorkOrderNumberResult, [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       note1: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
       note2: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),

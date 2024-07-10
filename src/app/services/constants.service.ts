@@ -295,12 +295,24 @@ export class ConstantsService {
     return '202421311224215241';
   }
 
+  get DEFAULT_WA_WAREHOUSE_READY_ORDER_ID(): string {
+    return '20246723163504758';
+  }
+
   get DEFAULT_WC_WAREHOUSE_ID(): string {
     return '20229917115148717';
   }
 
+  get DEFAULT_WC_WAREHOUSE_READY_ORDER_ID(): string {
+    return '2024672311164052';
+  }
+
   get DEFAULT_WE_WAREHOUSE_ID(): string {
     return '20229917115148718';
+  }
+
+  get DEFAULT_WE_WAREHOUSE_READY_ORDER_ID(): string {
+    return '20246723115672691';
   }
 
   get DEFAULT_COLOR_CATEGORY_ID(): string {
@@ -335,6 +347,15 @@ export class ConstantsService {
     'show-price-transition-between-wh-requisition-wc', // [13]
 
     'update-exchange-rate', // [14]
+
+    // WB
+    'confirm-received', // [15]
+    'cancel-received', // [16]
+
+    // WE
+    'confirm-received-sell-we', // [17]
+    'cancel-received-sell-we', // [18]
+    'show-price-we', // [19]
 
     ]
   }

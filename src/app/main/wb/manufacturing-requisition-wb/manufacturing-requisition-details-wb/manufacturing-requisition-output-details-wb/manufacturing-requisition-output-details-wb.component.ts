@@ -40,6 +40,7 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
     'fabric_piece',
     'quantity',
     'manufacturing_fee',
+    'manufacturing_fee_dollar',
     'total_with_wast',
     'total_with_wast_dollar',
     'total_cost',
@@ -109,6 +110,8 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
 
         if(!this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[9])) {
           let index = this.displayedColumns.indexOf('manufacturing_fee');
+          this.displayedColumns.splice(index, 1);
+          index = this.displayedColumns.indexOf('manufacturing_fee_dollar');
           this.displayedColumns.splice(index, 1);
           index = this.displayedColumns.indexOf('total_with_wast');
           this.displayedColumns.splice(index, 1);

@@ -226,6 +226,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
       priceDollar: new FormControl(this.dyedFabricOrderPriceDollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.dyedFabricOrderCurrentQuantity <= selectedStoredDyedFabrics.current_quantity) ? this.dyedFabricOrderCurrentQuantity : selectedStoredDyedFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(selectedStoredDyedFabrics.current_quantity),
+      numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       note: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
@@ -297,9 +298,9 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 

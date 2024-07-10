@@ -69,9 +69,9 @@ export class UpdateTransportWaWbRequisitionWbComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transportWaWbRequisitionWbForm.controls['priceDollar'].setValue("0")
+      this.transportWaWbRequisitionWbForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transportWaWbRequisitionWbForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.transportWaWbRequisitionWbForm.controls['price'].setValue("0")
+      this.transportWaWbRequisitionWbForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transportWaWbRequisitionWbForm.controls['priceDollar'].value))
     }
   }
 

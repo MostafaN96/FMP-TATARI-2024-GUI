@@ -21,19 +21,21 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
 
   /////////////////// Variables ///////////////////
   yarns: any[] = []
+  circularKnittingMachineNames: any[] = new Array()
 
-   //////////////////////////////////// PrimeNG /////////////////////////////////
-   @ViewChild('dt1') dt1: Table | undefined;
-   loading: boolean = true;
-   selectedSellerName: any[] = []
-   selectedManufactureName: any[] = []
-   selectedFabricCode: any[] = []
-   selectedFabricName: any[] = []
-   selectedOrderNumber: any[] = []
-   selectedRequisitionNote: any[] = []
-   startDate: any
-   endDate: any
-   dateFilters: any
+  //////////////////////////////////// PrimeNG /////////////////////////////////
+  @ViewChild('dt1') dt1: Table | undefined;
+  loading: boolean = true;
+  selectedSellerName: any[] = []
+  selectedManufactureName: any[] = []
+  selectedCircularKnittingMachineName: any[] = []
+  selectedFabricCode: any[] = []
+  selectedFabricName: any[] = []
+  selectedOrderNumber: any[] = []
+  selectedRequisitionNote: any[] = []
+  startDate: any
+  endDate: any
+  dateFilters: any
 
   constructor(
     public _sharedComponentService: SharedComponentService,
@@ -48,6 +50,7 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
     this.getData();
     this.customFilterForSellerName();
     this.customFilterForManufactureName();
+    this.customFilterForCircularKnittingMachineName();
     this.customFilterForFabricCode();
     this.customFilterForFabricName();
     this.customFilterForOrderNumber();
@@ -59,6 +62,7 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
     this.loading = true;
     this._manufacturingRequisitionWbService.selectOrders().subscribe((response: any) => {
       this.yarns = response
+      this.getCircularKnittingMachineName(this.yarns)
 
       // PrimeNG Table
       this.primengConfig.ripple = true;
@@ -67,7 +71,13 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
     })
   }
 
-  
+  getCircularKnittingMachineName(data) {
+    for (let i = 0; i < data.length; i++) {
+      const element = data[i].details;
+      this.circularKnittingMachineNames.push(element)
+    }    
+  }
+
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   customFilterForSellerName() {
     const customFilterName = "seller-name-filter";
@@ -103,42 +113,80 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
     });
   }
 
-    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-    customFilterForManufactureName() {
-      const customFilterName = "manufacture-name-filter";
-      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-        filter = this.selectedManufactureName
-  
-        if (this.selectedManufactureName[0] != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
-          }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
-          }
-          if (filter.length > 0) {
-            // let count = 0
-  
-            // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].manufacture_name) {
-                // count++
-                // if (count == filter.length) {
-                return true;
-                // }
-              }
-            }
-            // }
-          }
-          return false;
-        }
-        else {
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForManufactureName() {
+    const customFilterName = "manufacture-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedManufactureName
+
+      if (this.selectedManufactureName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-      });
-    }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
 
-      ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].manufacture_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForCircularKnittingMachineName() {
+    const customFilterName = "circular-knitting-machine-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedCircularKnittingMachineName
+
+      if (this.selectedCircularKnittingMachineName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            console.log("value :::: ", value);
+            console.log("filter[j] :::: ", filter[j]);
+
+            if (value == filter[j].circular_knitting_machine_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   customFilterForFabricCode() {
     const customFilterName = "fabric-code-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -173,42 +221,42 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
     });
   }
 
-    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-    customFilterForFabricName() {
-      const customFilterName = "fabric-name-filter";
-      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-        filter = this.selectedFabricName
-  
-        if (this.selectedFabricName[0] != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
-          }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
-          }
-          if (filter.length > 0) {
-            // let count = 0
-  
-            // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].fabric_name) {
-                // count++
-                // if (count == filter.length) {
-                return true;
-                // }
-              }
-            }
-            // }
-          }
-          return false;
-        }
-        else {
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForFabricName() {
+    const customFilterName = "fabric-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedFabricName
+
+      if (this.selectedFabricName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-      });
-    }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
 
-      ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].fabric_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   customFilterForOrderNumber() {
     const customFilterName = "order-number-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -242,46 +290,46 @@ export class ShowAllManufacturingOrderRequisitionWbComponent implements OnInit {
       }
     });
   }
-  
-customFilterForRequisitionNote() {
-  const customFilterName = "requisition-note-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedRequisitionNote
 
-    if (this.selectedRequisitionNote[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
+  customFilterForRequisitionNote() {
+    const customFilterName = "requisition-note-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedRequisitionNote
+
+      if (this.selectedRequisitionNote[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].note) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
         return false;
       }
-      if (filter.length > 0) {
-        // let count = 0
-
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].note) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
-          }
-        }
-        // }
+      else {
+        return true;
       }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
+    });
+  }
 
-   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-   selectedDate(event) {
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
       filter = this.dateFilters
-      
+
       if (event != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
@@ -291,22 +339,22 @@ customFilterForRequisitionNote() {
         }
         if (filter.length > 0) {
           // let count = 0
-          if(filter[0] != null && filter[1] != null) {
-            
-            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&  
-            moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
+          if (filter[0] != null && filter[1] != null) {
+
+            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&
+              moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
               return true;
-              }
-            
+            }
+
           } else if (filter[0] != null && filter[1] == null) {
-            
+
             if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
               return false;
-              } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
-                return false;
-              } else {
-                return true;
-              }
+            } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else {
+              return true;
+            }
           }
 
         }
@@ -325,6 +373,7 @@ customFilterForRequisitionNote() {
     table.reset();
     this.selectedSellerName = []
     this.selectedManufactureName = []
+    this.selectedCircularKnittingMachineName = []
     this.selectedFabricCode = []
     this.selectedFabricName = []
     this.selectedOrderNumber = []
@@ -339,6 +388,11 @@ customFilterForRequisitionNote() {
 
   onMultiselectedManufactureName(event) {
     this.selectedManufactureName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedCircularKnittingMachineName(event) {
+    this.selectedCircularKnittingMachineName = event
     this.dt1?._filter()
   }
 

@@ -55,6 +55,7 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   selectArrayValues: any[] = [];
   latestManufacturingFee: any[] = [];
+  latestManufacturingFeeDollar: any[] = [];
   selection = new SelectionModel(true);
 
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
@@ -65,7 +66,7 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
     sellerId: new FormControl("", [Validators.required]),
     consigmentManufacturingId: new FormControl(""),
     circularKnittingMachineId: new FormControl(""),
-    isNewConsigment: new FormControl(false, [Validators.required]),
+    isNewConsigment: new FormControl(true, [Validators.required]),
     warehouseId: new FormControl(this._constantsService.DEFAULT_WC_WAREHOUSE_ID, [Validators.required]),
     items: new FormArray([]),
     itemsOrder: new FormArray([]),
@@ -74,7 +75,8 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
     fabricPrice: new FormControl(""),
     fabricPriceDollar: new FormControl(""),
     fabricQuantity: new FormControl(this.inputesQuantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    manufacturingFee: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    manufacturingFee: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    manufacturingFeeDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     consigmentNumber: new FormControl(null),
     numberFabricPieces: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -311,6 +313,8 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
     let index = this.yarns.indexOf(data)
     const control = <FormArray>this.addManufacturingRequisitionForm.get('items');
     control.push(this.initItem(data, index));
+
+    this.addManufacturingRequisitionForm.controls['consigmentNumber'].setValue(this.yarns[0].consigment_yarn_number)
   }
 
   getItem(form: any) {
@@ -477,6 +481,7 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
       this.yarns = []
       this.dataSourceSearchTabel = []
       this.latestManufacturingFee = []
+      this.latestManufacturingFeeDollar = []
       this.manufacturerName = ""
       this.fabricName = ""
 
@@ -484,6 +489,8 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
       formGroup.removeControl('items');
       formGroup.addControl('items', new FormArray([]));
       // this.addManufacturingRequisitionForm.controls.items = new FormArray([])
+
+      this.addManufacturingRequisitionForm.controls['consigmentNumber'].setValue(null)
     }
     else {
       this.fabricName = index.itemData.name
@@ -498,6 +505,10 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
 
       this._wbManufacturingOutputService.selectLatestManufacturingFeeByIndustryByFabric(this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? '', index.itemData.id).subscribe((response: any) => {
         this.latestManufacturingFee = response
+      })
+
+      this._wbManufacturingOutputService.selectLatestManufacturingFeeByIndustryByFabric(this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? '', index.itemData.id).subscribe((response: any) => {
+        this.latestManufacturingFeeDollar = [{manufacturing_fee_dollar: 0}]
       })
 
       this.loading = true;
@@ -521,9 +532,9 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 
@@ -555,7 +566,15 @@ export class AddManufacturingRequisitionByOrderWbComponent implements OnInit {
 
   avgCost() {
     this.addManufacturingRequisitionForm.controls['fabricPrice'].setValue(String(((parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!) * parseFloat(this.addManufacturingRequisitionForm.controls['manufacturingFee'].value!)) + this.getTotalPriceXQuantityWithWast()) / parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!)))
-    this.addManufacturingRequisitionForm.controls['fabricPriceDollar'].setValue(String(((parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!) * parseFloat(this.addManufacturingRequisitionForm.controls['manufacturingFee'].value!)) + this.getTotalPriceXQuantityWithWastDollar()) / parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!)))
+    this.addManufacturingRequisitionForm.controls['fabricPriceDollar'].setValue(String(((parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!) * parseFloat(this.addManufacturingRequisitionForm.controls['manufacturingFeeDollar'].value!)) + this.getTotalPriceXQuantityWithWastDollar()) / parseFloat(this.addManufacturingRequisitionForm.controls['fabricQuantity'].value!)))
+  }
+
+  calcManufacturingFee(type) {
+    if(type == "manufacturingFeeEG") {
+      this.addManufacturingRequisitionForm.controls['manufacturingFeeDollar'].setValue((this._sharedComponentService.calcEgpToDollar(this.addManufacturingRequisitionForm.controls['manufacturingFee'].value)).toFixed(3))
+    } else if (type == "manufacturingFeeDollar") {
+      this.addManufacturingRequisitionForm.controls['manufacturingFee'].setValue((this._sharedComponentService.calcDollarToEgp(this.addManufacturingRequisitionForm.controls['manufacturingFeeDollar'].value)).toFixed(3))
+    }
   }
 
 

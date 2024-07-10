@@ -132,6 +132,9 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
       dyedFabricName: new FormControl(data.dyed_fabric_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       dyedFabricId: new FormControl(data.dyed_fabric_id, [Validators.required]),
       dyedFabricCode: new FormControl(data.dyed_fabric_code),
+      colorCategoryId: new FormControl(data.color_category_id, [Validators.required]),
+      colorId: new FormControl(data.color_id, [Validators.required]),
+      consigmentDyeingId: new FormControl(data.consigment_dyeing_id, [Validators.required]),
       colorCategoryName: new FormControl(data.color_category_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
@@ -190,7 +193,7 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
    
   //  Seller
   selectSeller(event: { itemData: any; }) {
-    console.log("0000000000");
+    // console.log("0000000000");
 
     if (!this.sellers.includes(event.itemData)) {
       this.returnSellRequisitionForm.controls.sellerId.setValue(null)
@@ -205,7 +208,7 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
       this.currentStockReport.listen();
     }
     else {
-      console.log("111111");
+      // console.log("111111");
       
       this._weService.selectSoldedBySellerForReturnSellWe(event.itemData.id).subscribe((response: any) => {
         this.fabrics = response

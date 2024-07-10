@@ -283,9 +283,14 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
     }
   }
 
-  selectByWarehouseWa(warehouseId = this._constantsService.DEFAULT_WA_WAREHOUSE_ID) {
+  selectByWarehouseWa(warehouseId = this._constantsService.DEFAULT_WA_WAREHOUSE_READY_ORDER_ID) {
     this._yarnService.selectByWarehouseWa(warehouseId).subscribe((response: any) => {
       this.yarns = response
+
+      if (Array.isArray(this.yarns) && this.yarns.length < 1) {
+        this.transportWaWbForm.controls['warehouseId'].setValue(null)
+      }
+      
     })
   }
 
@@ -419,9 +424,9 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
   

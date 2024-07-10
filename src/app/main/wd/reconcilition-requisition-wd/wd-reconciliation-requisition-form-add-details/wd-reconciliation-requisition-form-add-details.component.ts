@@ -15,6 +15,7 @@ import { WdService } from "src/app/services/main/wd/wd.service";
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ConstantsService } from "src/app/services/constants.service";
 import { SessionManagerService } from "src/app/services/main/session-manager.service";
+import { QuantityOccurrencesValidationService } from "src/app/services/main/quantity-occurrences-validation.service";
 
 // Auto Complete
 import { Query, Predicate } from '@syncfusion/ej2-data';
@@ -94,6 +95,7 @@ export class WdReconciliationRequisitionFormAddDetailsComponent implements OnIni
     private _constantsService: ConstantsService,
     private patterns: ValidatorPatternService,
     private _sessionManagerService: SessionManagerService,
+    public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
     private _reportWdService: ReportWdService
 
   ) {
@@ -212,15 +214,20 @@ export class WdReconciliationRequisitionFormAddDetailsComponent implements OnIni
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 
   async onReconcilitionRequisition() {
     this.reconcilitionRequisitionForm.markAllAsTouched();
     if (this.reconcilitionRequisitionForm.valid) {
+      if (this._quantityOccurrencesValidationService.validateCurrentQuantityTwoItemsReconciliation(
+        this.reconcilitionRequisitionForm.controls['items'].value, this.reconcilitionRequisitionForm.controls['items'].value, 
+        'fabricId', 'fabricId',
+        'consigmentDyeingId', 'consigmentDyeingId',
+        'quantity', 'fabricCode', this.currentQuantity, "inputOutput")) {
       const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.reconcilitionRequisitionForm, 'items',
         ['fabricName', 'fabricCode', 'validQuantity'])
       this._constantsService.spinner.show()
@@ -243,6 +250,7 @@ export class WdReconciliationRequisitionFormAddDetailsComponent implements OnIni
           }
         }
       });
+    }
     }
   }
 }

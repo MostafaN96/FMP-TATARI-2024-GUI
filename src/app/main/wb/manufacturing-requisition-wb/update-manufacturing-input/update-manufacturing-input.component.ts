@@ -84,9 +84,9 @@ export class UpdateManufacturingInputComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.inputManufacturedWbForm.controls['priceDollar'].setValue("0")
+      this.inputManufacturedWbForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.inputManufacturedWbForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.inputManufacturedWbForm.controls['price'].setValue("0")
+      this.inputManufacturedWbForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.inputManufacturedWbForm.controls['priceDollar'].value))
     }
   }
 

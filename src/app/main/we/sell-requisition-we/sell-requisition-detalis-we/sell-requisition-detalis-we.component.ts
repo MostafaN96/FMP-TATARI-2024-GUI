@@ -7,6 +7,8 @@ import { MatSort, MatSortable } from '@angular/material/sort';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
+import { ConstantsService } from 'src/app/services/constants.service';
 
 // Call Service
 import { SellRequisitionDetalisWeService } from "src/app/services/main/we/sell-requisition-detalis-we.service";
@@ -56,6 +58,8 @@ export class SellRequisitionDetalisWeComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     private _sellRequisitionDetalisWeService: SellRequisitionDetalisWeService,
     public _exportDataService: ExportDataService,
+    private _sessionManagerService: SessionManagerService,
+    private _constantsService: ConstantsService,
   ) {
   }
 
@@ -74,6 +78,16 @@ export class SellRequisitionDetalisWeComponent implements OnInit {
         })
       });
 
+      if(!this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[19])) {
+        let index = this.displayedColumns.indexOf('price');
+        this.displayedColumns.splice(index, 1);
+        index = this.displayedColumns.indexOf('price_dollar');
+        this.displayedColumns.splice(index, 1);
+        index = this.displayedColumns.indexOf('total');
+        this.displayedColumns.splice(index, 1);
+        index = this.displayedColumns.indexOf('total_dollar');
+        this.displayedColumns.splice(index, 1);
+      }
   }
 
   getSelectedData(selectedData: any) {

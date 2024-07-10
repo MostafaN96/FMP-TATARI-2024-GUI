@@ -34,6 +34,7 @@ export class ExecuteOrderRequisitionUpdateWeComponent implements OnInit {
     weDyedFabricOrderRequisitionId: new FormControl("", [Validators.required]),
     weDyedFabricOrderRequisitionDetailsId: new FormControl("", [Validators.required]),
     weId: new FormControl("", [Validators.required]),
+    numberFabricPieces: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   })
@@ -65,14 +66,15 @@ export class ExecuteOrderRequisitionUpdateWeComponent implements OnInit {
     this.executeOrderRequisitionForm.controls['weDyedFabricOrderRequisitionId'].setValue(this.selectedData?.we_dyed_fabric_order_requisition_id)
     this.executeOrderRequisitionForm.controls['weDyedFabricOrderRequisitionDetailsId'].setValue(this.selectedData?.we_dyed_fabric_order_requisition_details_id)
     this.executeOrderRequisitionForm.controls['weId'].setValue(this.selectedData?.we_id)
+    this.executeOrderRequisitionForm.controls['numberFabricPieces'].setValue(String(this.selectedData?.fabric_piece))
   }
 
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.executeOrderRequisitionForm.controls['priceDollar'].setValue("0")
+      this.executeOrderRequisitionForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.executeOrderRequisitionForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.executeOrderRequisitionForm.controls['price'].setValue("0")
+      this.executeOrderRequisitionForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.executeOrderRequisitionForm.controls['priceDollar'].value))
     }
   }
 

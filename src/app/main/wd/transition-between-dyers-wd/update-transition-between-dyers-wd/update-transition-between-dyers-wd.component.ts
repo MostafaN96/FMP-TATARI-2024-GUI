@@ -67,9 +67,9 @@ export class UpdateTransitionBetweenDyersWdComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transitionBetweenDyersRequisitionWdForm.controls['priceDollar'].setValue("0")
+      this.transitionBetweenDyersRequisitionWdForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenDyersRequisitionWdForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.transitionBetweenDyersRequisitionWdForm.controls['price'].setValue("0")
+      this.transitionBetweenDyersRequisitionWdForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenDyersRequisitionWdForm.controls['priceDollar'].value))
     }
   }
 

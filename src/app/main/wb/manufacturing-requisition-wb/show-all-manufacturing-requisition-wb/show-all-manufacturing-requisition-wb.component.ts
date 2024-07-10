@@ -13,17 +13,23 @@ import { ConstantsService } from "src/app/services/constants.service";
 
 // Call Service
 import { ManufacturingRequisitionWbService } from "src/app/services/main/wb/manufacturing-requisition-wb.service";
+import { WbManufacturingOutputService } from "src/app/services/main/wb/wb-manufacturing-output.service";
 import { SessionManagerService } from 'src/app/services/main/session-manager.service';
+
+//
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-show-all-manufacturing-requisition-wb',
   templateUrl: './show-all-manufacturing-requisition-wb.component.html',
-  styleUrls: ['./show-all-manufacturing-requisition-wb.component.css']
+  styleUrls: ['./show-all-manufacturing-requisition-wb.component.css'],
+  providers: [ConfirmationService]
 })
 export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
 
   /////////////////// Variables ///////////////////
   yarns: any[] = []
+  circularKnittingMachineNames: any[] = new Array()
   selectedDataToUpdate: any
 
    //////////////////////////////////// PrimeNG /////////////////////////////////
@@ -31,7 +37,9 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
    loading: boolean = true;
    selectedSellerName: any[] = []
    selectedStatusName: any[] = []
+   selectedIsApprivedStatusName: any[] = []
    selectedManufactureName: any[] = []
+   selectedCircularKnittingMachineName: any[] = []
    selectedFabricCode: any[] = []
    selectedFabricName: any[] = []
    selectedOrderNumber: any[] = []
@@ -47,6 +55,8 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     private _manufacturingRequisitionWbService: ManufacturingRequisitionWbService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    private confirmationService: ConfirmationService,
+    private _wbManufacturingOutputService: WbManufacturingOutputService,
   ) {
 
   }
@@ -55,7 +65,9 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.getData();
     this.customFilterForSellerName();
     this.customFilterForStatusName();
+    this.customFilterForIsApprovedStatusName();
     this.customFilterForManufactureName();
+    this.customFilterForCircularKnittingMachineName();
     this.customFilterForFabricCode();
     this.customFilterForFabricName();
     this.customFilterForOrderNumber();
@@ -67,6 +79,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.loading = true;
     this._manufacturingRequisitionWbService.selectAll().subscribe((response: any) => {
       this.yarns = response
+      this.getCircularKnittingMachineName(this.yarns)
 
       // PrimeNG Table
       this.primengConfig.ripple = true;
@@ -77,6 +90,13 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
 
   getSelectedData(selectedData: any) {
     this.selectedDataToUpdate = selectedData
+  }
+
+  getCircularKnittingMachineName(data) {
+    for (let i = 0; i < data.length; i++) {
+      const element = data[i].details;
+      this.circularKnittingMachineNames.push(element)
+    }    
   }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
@@ -147,6 +167,40 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
       }
     });
   }
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForIsApprovedStatusName() {
+    const customFilterName = "is-approved-status-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedIsApprivedStatusName
+
+      if (this.selectedIsApprivedStatusName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].is_approved_status_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
 
     ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
     customFilterForManufactureName() {
@@ -167,6 +221,44 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
             // for (let i = 0; i < value.length; i++) {
             for (let j = 0; j < filter.length; j++) {
               if (value == filter[j].manufacture_name) {
+                // count++
+                // if (count == filter.length) {
+                return true;
+                // }
+              }
+            }
+            // }
+          }
+          return false;
+        }
+        else {
+          return true;
+        }
+      });
+    }
+
+    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+    customFilterForCircularKnittingMachineName() {
+      const customFilterName = "circular-knitting-machine-name-filter";
+      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+        filter = this.selectedCircularKnittingMachineName
+  
+        if (this.selectedCircularKnittingMachineName[0] != null) {
+          if (filter === undefined || filter === null || !filter.length) {
+            return true;
+          }
+          if (value === undefined || value === null || value.length == 0) {
+            return false;
+          }
+          if (filter.length > 0) {
+            // let count = 0
+  
+            // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              console.log("value :::: ", value);
+              console.log("filter[j] :::: ", filter[j]);
+              
+              if (value == filter[j].circular_knitting_machine_name) {
                 // count++
                 // if (count == filter.length) {
                 return true;
@@ -370,7 +462,9 @@ customFilterForRequisitionNote() {
     table.reset();
     this.selectedSellerName = []
     this.selectedStatusName = []
+    this.selectedIsApprivedStatusName = []
     this.selectedManufactureName = []
+    this.selectedCircularKnittingMachineName = []
     this.selectedFabricCode = []
     this.selectedFabricName = []
     this.selectedOrderNumber = []
@@ -388,8 +482,18 @@ customFilterForRequisitionNote() {
     this.dt1?._filter()
   }
 
+  onMultiselectedIsApprovedStatusName(event) {
+    this.selectedIsApprivedStatusName = event
+    this.dt1?._filter()
+  }
+
   onMultiselectedManufactureName(event) {
     this.selectedManufactureName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedCircularKnittingMachineName(event) {
+    this.selectedCircularKnittingMachineName = event
     this.dt1?._filter()
   }
 
@@ -412,5 +516,48 @@ customFilterForRequisitionNote() {
     this.selectedRequisitionNote = event
     this.dt1?._filter()
   }
+
+  confirmCancelReceived(event: Event, element, isApproved) {
+    if(isApproved == "0") {
+      this.popupReceived(event, element, 'تأكيد الأستلام', "1")
+    } else if (isApproved == "1") {
+      this.popupReceived(event, element, 'إلغاء الأستلام', "0")
+    }
+  }
+  
+popupReceived(event: Event, element, message, isApproved) {
+  this.confirmationService.confirm({
+      target: event.target!,
+      message: message,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this.executeConfirmReceived(element, isApproved);
+      },
+      reject: () => {
+      }
+  });
+}
+
+executeConfirmReceived(data, isApproved) {
+  this._constantsService.spinner.show()
+  const formData = {
+    isApproved: isApproved,
+    personid: this._sessionManagerService.Person_ID,
+    ipaddress: this._sessionManagerService.IP_ADDRESS
+  }
+  this._wbManufacturingOutputService.confirmReceived(formData, data.wb_manufacturing_output_id).subscribe((response: any) => {
+    this._constantsService.spinner.hide();
+    if (response.msg == "data updated") {
+      this._constantsService.successUpdateMessage()
+      this.getData()
+    }
+    else {
+        this._constantsService.userErrorMessage()
+    }
+  })
+}
+
 
 }

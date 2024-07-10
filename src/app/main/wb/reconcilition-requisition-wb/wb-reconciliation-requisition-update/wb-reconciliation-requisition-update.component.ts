@@ -74,9 +74,9 @@ export class WbReconciliationRequisitionUpdateComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.reconciliationRequisitionForm.controls['priceDollar'].setValue("0")
+      this.reconciliationRequisitionForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.reconciliationRequisitionForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.reconciliationRequisitionForm.controls['price'].setValue("0")
+      this.reconciliationRequisitionForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.reconciliationRequisitionForm.controls['priceDollar'].value))
     }
   }
 

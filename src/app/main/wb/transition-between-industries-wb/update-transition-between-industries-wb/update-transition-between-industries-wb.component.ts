@@ -66,9 +66,9 @@ export class UpdateTransitionBetweenIndustriesWbComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].setValue("0")
+      this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].setValue("0")
+      this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].value))
     }
   }
 

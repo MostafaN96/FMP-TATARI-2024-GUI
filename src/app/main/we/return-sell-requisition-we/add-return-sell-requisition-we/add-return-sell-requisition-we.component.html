@@ -87,7 +87,7 @@
                                         التسلسل
                                     </th>
 
-                                    <th style="width: 150px;">
+                                    <th style="width: 180px;">
                                         المخزن
                                     </th>
 
@@ -119,11 +119,11 @@
                                         السعر دولار
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية المتوفرة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 90px;">
                                         الكمية
                                     </th>
 
@@ -159,7 +159,7 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 180px;">
+                                        <td class="table-td" style="width: 180px;">
                                             <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' 
                                             (filtering)="onFilteringWarehouse($event)"
                                             (change)="selectWarehouse($event, row)"
@@ -271,7 +271,7 @@
                                             </mat-form-field>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 100px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
                                                     الكمية المتوفرة
@@ -282,7 +282,7 @@
                                         </td>
 
                                         <!-- Quantity -->
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 90px;">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>الكمية</mat-label>
                                                 <input autocomplete="off" type="text" matInput
@@ -396,7 +396,7 @@
                                 <tr>
                                     <td>الاجمالي</td>
 
-                                    <td colspan="8"></td>
+                                    <td colspan="9"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(returnSellRequisitionForm,
                                         'items', 'quantity') | number}}</td>
                                     <td class="text-center">

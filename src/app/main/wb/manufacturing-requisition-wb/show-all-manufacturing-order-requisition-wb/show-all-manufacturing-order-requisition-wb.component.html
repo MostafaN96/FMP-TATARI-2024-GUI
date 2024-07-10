@@ -58,6 +58,24 @@
                                         </div>
 
                                         <div class="col">
+                                            <p-columnFilter field="circular_knitting_machine_name" matchMode="circular-knitting-machine-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedCircularKnittingMachineName"
+                                                        [options]="_sharedComponentService.uniqueArray(circularKnittingMachineNames, 'circular_knitting_machine_name')"
+                                                        (onChange)="onMultiselectedCircularKnittingMachineName($event.value)"
+                                                        placeholder="البحث بـ الماكينة" optionLabel="circular_knitting_machine_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.circular_knitting_machine_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
                                             <p-columnFilter field="fabric_code" matchMode="fabric-code-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -168,6 +186,15 @@
                                             </div>
                                         </th>
 
+                                         <!-- circular_knitting_machine_name Column -->
+                                         <th pResizableColumn pSortableColumn="circular_knitting_machine_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                الماكينة
+                                                <p-sortIcon data-html2canvas-ignore="true" field="circular_knitting_machine_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
                                          <!-- fabric_code Column -->
                                          <th pResizableColumn pSortableColumn="fabric_code">
                                             <div class="flex justify-content-between align-items-center">
@@ -272,6 +299,11 @@
                                         <!-- manufacture_name Column -->
                                         <td>
                                             {{ element.manufacture_name }}
+                                        </td>
+                                        
+                                        <!-- circular_knitting_machine_name Column -->
+                                        <td>
+                                            {{ element.details.circular_knitting_machine_name }}
                                         </td>
                                         
                                         <!-- fabric_code Column -->

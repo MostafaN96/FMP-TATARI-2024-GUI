@@ -87,6 +87,7 @@ export class FabricService {
   }
 
   selectByWarehouseWc(warehouseId: string): Observable<any> {
+    this.urlService = "fabric/"
     const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wc/${warehouseId}`;
     return this._http.get(url,
       {

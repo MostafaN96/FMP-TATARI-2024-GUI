@@ -57,5 +57,16 @@ export class DyeingRequisitionDetailsWdService {
         })
       });
   }
+
+  
+  selectMaxWorkOrderNumber(): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}max-work-order-number`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
   
 }

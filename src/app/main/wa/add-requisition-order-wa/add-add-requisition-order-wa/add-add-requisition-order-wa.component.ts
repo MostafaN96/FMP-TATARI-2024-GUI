@@ -53,7 +53,7 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   addRequisitionForm = new FormGroup({
     date: new FormControl(new Date(), [Validators.required]),
-    warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_ID, [Validators.required]),
+    warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_READY_ORDER_ID, [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     waYarnOrderRequisitionId: new FormControl("", [Validators.required]),
     items: new FormArray([]),
@@ -168,7 +168,7 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   selectRequisitionsOrderName(event: { itemData: any; }) {
     if (this.requisitionsOrder.includes(event.itemData)) {
       this._yarnOrderRequisitionWaService.selectYarnsOfYarnOrderRequisition(event.itemData.id).subscribe((response: any) => {
-        this.orderedYarns = response
+        this.orderedYarns = response        
 
         // PrimeNG Table
         this.primengConfig.ripple = true;
@@ -322,9 +322,9 @@ export class AddAddRequisitionOrderWaComponent implements OnInit {
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
-      row.controls['priceDollar'].setValue("0")
+      row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue("0")
+      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
     }
   }
 

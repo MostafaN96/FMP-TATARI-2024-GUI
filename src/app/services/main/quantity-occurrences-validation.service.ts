@@ -194,4 +194,73 @@ export class QuantityOccurrencesValidationService {
 
     return  flag
   }
+  
+  validateCurrentQuantityTwoItemsReconciliation(
+    fabricMap: any[], selectArrayValues: any[], 
+    mapId: string, selectedId: string, 
+    mapId2: string, selectedId2: string, 
+    initialQantityAttr:string, itemName:string, validQantityAttr: any[], inputOutput: string) {
+    let flag = true
+    // fabricMap.forEach((qantityAttr ,obj )=>{
+      for (let j = 0; j < fabricMap.length; j++) {
+        const element = fabricMap[j];
+      let totalQuantity = 0
+      for (let i = 0; i < selectArrayValues.length; i++) {
+        const fabric = selectArrayValues[i];
+        if (
+          element[mapId] === fabric[selectedId] &&
+          element[mapId2] === fabric[selectedId2] &&
+          element[inputOutput] == "0" &&
+          fabric[inputOutput] == "0"
+          ) {
+          totalQuantity += +fabric[initialQantityAttr] || 0          
+        }
+      }
+      if (totalQuantity > validQantityAttr[j]) {
+        // error 
+        this._constantsService.quantityOccurrenceErrorMessage(validQantityAttr[j], (totalQuantity).toFixed(3) , element[itemName])
+        flag = false
+        return
+
+      }
+    }
+
+    return  flag
+  }
+  
+  validateCurrentQuantityThreeItemsReconciliation(
+    fabricMap: any[], selectArrayValues: any[], 
+    mapId: string, selectedId: string, 
+    mapId2: string, selectedId2: string, 
+    mapId3: string, selectedId3: string, 
+    initialQantityAttr:string, itemName:string, validQantityAttr: any[], inputOutput: string) {
+    let flag = true
+    // fabricMap.forEach((qantityAttr ,obj )=>{
+      for (let j = 0; j < fabricMap.length; j++) {
+        const element = fabricMap[j];
+      let totalQuantity = 0
+      for (let i = 0; i < selectArrayValues.length; i++) {
+        const fabric = selectArrayValues[i];
+        if (
+          element[mapId] === fabric[selectedId] &&
+          element[mapId2] === fabric[selectedId2] &&
+          element[mapId3] === fabric[selectedId3] &&
+          element[inputOutput] == "0" &&
+          fabric[inputOutput] == "0"
+          ) {
+          totalQuantity += +fabric[initialQantityAttr] || 0          
+        }
+      }
+      if (totalQuantity > validQantityAttr[j]) {
+        // error 
+        this._constantsService.quantityOccurrenceErrorMessage(validQantityAttr[j], (totalQuantity).toFixed(3) , element[itemName])
+        flag = false
+        return
+
+      }
+    }
+
+    return  flag
+  }
+
 }

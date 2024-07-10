@@ -72,9 +72,9 @@ export class UpdateTransitionBetweenWhRequisitionWeComponent {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].setValue("0")
+      this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenWhRequisitionWeForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue("0")
+      this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].value))
     }
   }
 

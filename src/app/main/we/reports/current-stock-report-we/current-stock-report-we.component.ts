@@ -8,6 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from "src/app/services/constants.service";
+import { SessionManagerService } from "src/app/services/main/session-manager.service";
 
 // Call Service
 import { SellRequisitionWeService } from "src/app/services/main/we/sell-requisition-we.service";
@@ -54,6 +56,7 @@ export class CurrentStockReportWeComponent implements OnInit {
   selectedColorCategories: any[] = []
   selectedColors: any[] = []
   selectedWorkOrdersNumbers: any[] = []
+  selectedGradeItemName: any[] = []
   selectedDyeingCodes2: any[] = []
   selectedOrderNumber: any[] = []
   selectedOrderCustomerName: any[] = []
@@ -86,6 +89,8 @@ export class CurrentStockReportWeComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private _sellRequisitionWeService: SellRequisitionWeService,
     private _dyeingServicesService: DyeingServicesService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
     private http: HttpClient,
     public dialog: MatDialog,
     private primengConfig: PrimeNGConfig,
@@ -106,6 +111,7 @@ export class CurrentStockReportWeComponent implements OnInit {
     this.customFilterForColorCategory();
     this.customFilterForColor();
     this.customFilterForWorkOrderNumber();
+    this.customFilterForGradeItemName();
     this.customFilterForDyeingCode2();
     this.customFilterForOrderNumber();
     this.customFilterForOrderCustomerName();
@@ -516,6 +522,40 @@ export class CurrentStockReportWeComponent implements OnInit {
     });
   }
 
+  customFilterForGradeItemName() {
+    const customFilterName = "grade-item-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedGradeItemName
+      
+      if (this.selectedGradeItemName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].grade_item_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   customFilterForDyeingCode2() {
     const customFilterName = "dyeing-code2-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -805,6 +845,11 @@ export class CurrentStockReportWeComponent implements OnInit {
     this.dt1?._filter()
   }
 
+  onMultiselectedGradeItemName(event) {
+    this.selectedGradeItemName = event
+    this.dt1?._filter()
+  }
+
   onMultiselectedDyeingCodes2(event) {
     this.selectedDyeingCodes2 = event
     this.dt1?._filter()
@@ -864,6 +909,7 @@ export class CurrentStockReportWeComponent implements OnInit {
     this.selectedColorCategories = []
     this.selectedColors = []
     this.selectedWorkOrdersNumbers = []
+    this.selectedGradeItemName = []
     this.selectedDyeingCodes2 = []
     this.selectedOrderNumber = []
     this.selectedOrderCustomerName = []

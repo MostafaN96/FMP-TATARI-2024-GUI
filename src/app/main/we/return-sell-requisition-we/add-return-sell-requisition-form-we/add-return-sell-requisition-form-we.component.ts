@@ -10,6 +10,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 import { FabricService } from "src/app/services/main/fabric.service";
 import { ReturnSellRequisitionDetailsWeService } from "src/app/services/main/we/return-sell-requisition-details-we.service";
 import { WeService } from "src/app/services/main/we/we.service";
+import { GradeItemService } from "src/app/services/main/grade-item.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -19,6 +20,9 @@ import { ActivatedRoute } from '@angular/router';
 
 // Child Components
 import { CurrentStockReportWeComponent } from "../../reports/current-stock-report-we/current-stock-report-we.component";
+
+// Auto Complete
+import { Query,Predicate } from '@syncfusion/ej2-data';
 
 @Component({
   selector: 'app-add-return-sell-requisition-form-we',
@@ -48,7 +52,28 @@ export class AddReturnSellRequisitionFormWeComponent implements OnInit {
   colorCategories:any
   disabledColorCategory:any = []
   currentQuantity:any = []
+  gradeItems:any = []
   @Input() selectedData: any
+
+  ///////////////////////////////// Auto Complete Data  ////////////////////////////////
+  // Auto Complete Data 
+  //enable the highlight property to highlight the matched character in suggestion list
+  public autofill: Boolean = true;
+  // --------------- Grade Item --------------
+  // maps the appropriate column to fields property
+  public fieldsGradeItem: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textGradeItem: string = "نوع الدرجة"
+
+  public onFilteringGradeItem(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.gradeItems, query);
+  }
 
   constructor(
     private _returnSellRequisitionDetailsWeService: ReturnSellRequisitionDetailsWeService,
@@ -59,6 +84,7 @@ export class AddReturnSellRequisitionFormWeComponent implements OnInit {
     private _sessionManagerService: SessionManagerService,
     private route: ActivatedRoute,
     private _weService: WeService,
+    private _gradeItemService: GradeItemService,
 
   ) {
     this._sharedComponentService.configRouterReloadPage()
@@ -79,6 +105,11 @@ export class AddReturnSellRequisitionFormWeComponent implements OnInit {
       this.currentStockReport.dyersAndRequisitionsFabrics = response
       this.currentStockReport.listen();
     })
+    
+    this._gradeItemService.selectAll().subscribe((response: any) => {
+      this.gradeItems = response
+    })
+
   }
 
   // Initialize Form Builder
@@ -91,9 +122,13 @@ export class AddReturnSellRequisitionFormWeComponent implements OnInit {
       dyedFabricName: new FormControl(data.dyed_fabric_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       dyedFabricId: new FormControl(data.dyed_fabric_id, [Validators.required]),
       dyedFabricCode: new FormControl(data.dyed_fabric_code),
+      colorCategoryId: new FormControl(data.color_category_id, [Validators.required]),
       colorCategoryName: new FormControl(data.color_category_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
+      colorId: new FormControl(data.color_id, [Validators.required]),
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
+      consigmentDyeingId: new FormControl(data.consigment_dyeing_id, [Validators.required]),
+      gradeItemId: new FormControl(data.grade_item_id, [Validators.required]),
       price: new FormControl(String(data.price), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl(String(data.price_dollar), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -159,12 +194,19 @@ export class AddReturnSellRequisitionFormWeComponent implements OnInit {
     }
   }
 
+  //  Grade item
+  selectGradeItem(event: { itemData: any; }, row: FormGroup) {
+    if (!this.gradeItems.includes(event.itemData)) {
+      row.controls['gradeItemId'].setValue("")
+    }
+  }
+
   async onReturnSellRequisition(){
     this.returnSellRequisitionForm.markAllAsTouched();
     if (this.returnSellRequisitionForm.valid) {
       const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.returnSellRequisitionForm, 'items', 
       ['index', 'warehouseName', 'dyedFabricName', 'dyedFabricCode',
-    'colorCategoryName', 'colorName', 'colorCode', 'validQuantity'])
+    'colorCategoryName', 'colorName', 'validQuantity'])
     
     this._constantsService.spinner.show()
       this._returnSellRequisitionDetailsWeService.add(formGroup.value).subscribe(response => {

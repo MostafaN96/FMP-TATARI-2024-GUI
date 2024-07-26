@@ -222,6 +222,8 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
       colorId: new FormControl(selectedStoredDyedFabrics.color_id, [Validators.required]),
       colorName: new FormControl(selectedStoredDyedFabrics.color_name_code),
       colorCode: new FormControl(selectedStoredDyedFabrics.color_code),
+      gradeItemId: new FormControl(selectedStoredDyedFabrics.grade_item_id, [Validators.required]),
+      gradeItemName: new FormControl(selectedStoredDyedFabrics.grade_item_name, [Validators.required]),
       price: new FormControl(this.dyedFabricOrderPrice, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl(this.dyedFabricOrderPriceDollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl((this.dyedFabricOrderCurrentQuantity <= selectedStoredDyedFabrics.current_quantity) ? this.dyedFabricOrderCurrentQuantity : selectedStoredDyedFabrics.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -300,7 +302,7 @@ export class ExecuteOrderRequisitionAddDetailsFormWeComponent implements OnInit 
     if(type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
+      row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
 

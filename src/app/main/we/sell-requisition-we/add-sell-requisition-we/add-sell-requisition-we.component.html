@@ -164,6 +164,10 @@
                                         أمر الشغل
                                     </th>
 
+                                    <th style="max-width: 50px;">
+                                        نوع الدرجة
+                                    </th>
+
                                     <th style="max-width: 120px;">
                                         الوثيقة
                                     </th>
@@ -389,6 +393,17 @@
                                             </mat-form-field>
                                         </td>
 
+                                        <!-- gradeItem -->
+                                        <td class="table-td" style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                     نوع الدرجة
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="نوع الدرجة" readonly
+                                                    formControlName="gradeItemName">
+                                            </mat-form-field>
+                                        </td>
+
                                         <!-- Document -->
                                         <td style="max-width: 120px;">
                                             <mat-form-field class="w-100">
@@ -450,7 +465,7 @@
                                   <td>{{_sharedComponentService.getTotalQuantityForm(sellRequisitionFormWe, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(sellRequisitionFormWe, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(sellRequisitionFormWe, 'items', 'quantity', 'priceDollar') | number}}</td>
-                                  <td colspan="4"></td>
+                                  <td colspan="6"></td>
                                 </tr>
                               </tfoot>
 

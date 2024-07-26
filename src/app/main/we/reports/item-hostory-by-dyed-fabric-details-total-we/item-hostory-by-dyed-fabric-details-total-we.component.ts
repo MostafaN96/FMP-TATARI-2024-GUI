@@ -9,6 +9,8 @@ import * as moment from 'moment';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from "src/app/services/constants.service";
+import { SessionManagerService } from "src/app/services/main/session-manager.service";
 
 // Call Service
 import { ReportWeService } from "src/app/services/main/we/report-we.service";
@@ -36,6 +38,7 @@ export class ItemHostoryByDyedFabricDetailsTotalWeComponent implements OnInit {
   @ViewChild('dt1') dt1: Table | undefined;
   loading: boolean = true;
   selectedWorkOrdersNumbers: any[] = []
+  selectedGradeItemName: any[] = []
   selectedDyeingCodes: any[] = []
   selectedColorCodes: any[] = []
   selectedColorCategories: any[] = []
@@ -54,6 +57,8 @@ export class ItemHostoryByDyedFabricDetailsTotalWeComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
   ) {
   }
 
@@ -64,6 +69,7 @@ this.customFilterForColorCode();
     this.customFilterForColorCategory();
     this.customFilterForColorName();
 this.customFilterForWorkOrderNumber();
+this.customFilterForGradeItemName();
 this.customFilterForSideOf();
 this.customFilterForDocument();
 this.customFilterForTypeOfRequisition();
@@ -251,6 +257,40 @@ customFilterForColorCategory() {
               // }
             }
           }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForGradeItemName() {
+    const customFilterName = "grade-item-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedGradeItemName
+      
+      if (this.selectedGradeItemName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].grade_item_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
           // }
         }
         return false;
@@ -477,6 +517,7 @@ customFilterForColorCategory() {
     table.reset();
     this.selectedTypeOfRequisition = []
     this.selectedWorkOrdersNumbers = []
+    this.selectedGradeItemName = []
     this.selectedDyeingCodes = []
     this.selectedColorCategories = []
     this.selectedColors = []
@@ -494,6 +535,11 @@ customFilterForColorCategory() {
 
   onMultiselectedWorkOrderNumber(event) {
     this.selectedWorkOrdersNumbers = event
+    this.dt1?._filter()
+  }
+  
+  onMultiselectedGradeItemName(event) {
+    this.selectedGradeItemName = event
     this.dt1?._filter()
   }
   

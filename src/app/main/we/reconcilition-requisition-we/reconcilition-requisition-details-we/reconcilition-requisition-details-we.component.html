@@ -189,6 +189,15 @@
                                     </p-sortIcon>
                                 </div>
                             </th>
+                            
+                            <!-- grade_item_name Column -->
+                            <th pResizableColumn pSortableColumn="grade_item_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    نوع الدرجة
+                                    <p-sortIcon data-html2canvas-ignore="true" field="grade_item_name">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
 
                             <!-- statement Column -->
                             <th>
@@ -284,6 +293,11 @@
                                 {{ element.work_order_number }}
                             </td>
 
+                            <!-- grade_item_name Column -->
+                            <td>
+                                {{ element.grade_item_name }}
+                            </td>
+
                             <!-- statement Column -->
                             <td>
                                 {{ element.statement }}
@@ -352,6 +366,9 @@
                             <td></td>
 
                             <!-- work_order_number Column -->
+                            <td></td>
+
+                            <!-- grade_item_name Column -->
                             <td></td>
 
                             <!-- statement Column -->

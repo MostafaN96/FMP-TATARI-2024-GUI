@@ -16,6 +16,7 @@ import { FabricService } from "src/app/services/main/fabric.service";
 import { WaService } from "src/app/services/main/wa/wa.service";
 import { WarehouseService } from "src/app/services/main/warehouse.service";
 import { ConsigmentYarnService } from "src/app/services/main/consigment-yarn.service";
+import { DyedFabricOrderRequisitionWeService } from "src/app/services/main/we/dyed-fabric-order-requisition-we.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -35,7 +36,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
 
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   transportWaWbForm = new FormGroup({
-    warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_ID, [Validators.required]),
+    warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_READY_ORDER_ID, [Validators.required]),
     date: new FormControl(new Date(), [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     items: new FormArray([
@@ -55,6 +56,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
   fabrics: any = []
   currentQuantity: any = []
   yarnsDetails: any = []
+  requisitionsOrder: any = []
   listYarnPrices: any = []
   listYarnPricesDollar: any = []
   groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر", "آخر سعر الرسالة"]
@@ -179,6 +181,23 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
     e.updateData(this.consigmentsYarns, query);
   }
 
+  // --------------- Requisitio nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsRequisitionOrderName: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textRequisitionsOrderName: string = "اسم الطلبية"
+
+
+  public onFilteringRequisitionOrderName(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.requisitionsOrder, query);
+  }
+
   constructor(
     private _warehouseService: WarehouseService,
     private _yarnService: YarnService,
@@ -186,6 +205,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
     private _waService: WaService,
     private _bussinessmanService: BussinessmanService,
     private _transportWaWbService: TransportWaWbService,
+    private _dyedFabricOrderRequisitionWeService: DyedFabricOrderRequisitionWeService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
@@ -203,6 +223,9 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData()
+
+    this.transportWaWbForm.controls['warehouseId'].disable()
+
   }
 
   getData() {
@@ -227,6 +250,9 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
       this.consigmentsYarns = response
     })
 
+    this._dyedFabricOrderRequisitionWeService.selectAll('opened').subscribe((response: any) => {
+      this.requisitionsOrder = response
+    })
   }
 
   // Initialize Form Builder
@@ -426,7 +452,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
     if(type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
+      row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
   

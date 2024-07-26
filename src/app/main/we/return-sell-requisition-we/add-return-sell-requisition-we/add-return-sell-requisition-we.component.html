@@ -87,7 +87,7 @@
                                         التسلسل
                                     </th>
 
-                                    <th style="width: 180px;">
+                                    <th style="min-width: 150px;">
                                         المخزن
                                     </th>
 
@@ -143,6 +143,10 @@
                                         أمر الشغل
                                     </th>
 
+                                    <th style="max-width: 50px;">
+                                        نوع الدرجة
+                                    </th>
+
                                     <th>
                                         سبب المرتجع
                                     </th>
@@ -159,7 +163,7 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
-                                        <td class="table-td" style="width: 180px;">
+                                        <td class="table-td" style="min-width: 150px;">
                                             <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' 
                                             (filtering)="onFilteringWarehouse($event)"
                                             (change)="selectWarehouse($event, row)"
@@ -359,6 +363,26 @@
                                             </mat-form-field>
                                         </td>
 
+                                        <!-- gradeItem -->
+                                        <td class="table-td" style="min-width: 100px;">
+                                            <ejs-autocomplete [dataSource]='gradeItems' [fields]='fieldsGradeItem' 
+                                            (filtering)="onFilteringGradeItem($event)"
+                                                [placeholder]='textGradeItem' [autofill]='autofill'
+                                                formControlName="gradeItemId" (change)='selectGradeItem($event, row)'
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('gradeItemId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('gradeItemId').hasError('required') && (row.get('gradeItemId').dirty 
+                                                || row.get('gradeItemId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                         <!-- Statement -->
                                         <td>
                                             <mat-form-field class="w-100">
@@ -405,7 +429,7 @@
                                     <td class="text-center">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(returnSellRequisitionForm,
                                         'items', 'quantity', 'priceDollar') | number}}</td>
-                                    <td colspan="4"></td>
+                                    <td colspan="5"></td>
                                 </tr>
                             </tfoot>
 

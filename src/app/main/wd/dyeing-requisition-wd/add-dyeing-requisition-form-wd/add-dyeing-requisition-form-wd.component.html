@@ -457,6 +457,26 @@
                                         </mat-form-field>
                                     </td>
 
+                                        <!-- gradeItem -->
+                                        <td class="table-td" style="min-width: 100px;">
+                                            <ejs-autocomplete [dataSource]='gradeItems' [fields]='fieldsGradeItem' 
+                                            (filtering)="onFilteringGradeItem($event)"
+                                                [placeholder]='textGradeItem' [autofill]='autofill'
+                                                formControlName="gradeItemId" (change)='selectGradeItem($event, row)'
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('gradeItemId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('gradeItemId').hasError('required') && (row.get('gradeItemId').dirty 
+                                                || row.get('gradeItemId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+                                        
                                     <!-- workOrderNumber -->
                                     <!-- <td style="max-width: 80px;">
                                         <mat-form-field class="w-100">

@@ -9,6 +9,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 // Call Service
 import { ReconcilitionRequisitionWeService } from "src/app/services/main/we/reconcilition-requisition-we.service";
 import { ReportWeService } from "src/app/services/main/we/report-we.service";
+import { GradeItemService } from "src/app/services/main/grade-item.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -18,6 +19,9 @@ import { WeService } from "src/app/services/main/we/we.service";
 
 // Child Components
 import { CurrentStockReportWeComponent } from "../../reports/current-stock-report-we/current-stock-report-we.component";
+
+// Auto Complete
+import { Query, Predicate } from '@syncfusion/ej2-data';
 
 @Component({
   selector: 'app-add-reconcilition-requisition-we',
@@ -50,9 +54,31 @@ export class AddReconcilitionRequisitionWeComponent implements OnInit {
   disabledColorCategory: any = []
   currentQuantity: any = []
   fabricsDetails: any
+  gradeItems:any = []
   listFabricPrices: any = []
   listFabricPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر صباغة", "آخر سعر"]
+
+  ///////////////////////////////// Auto Complete Data  ////////////////////////////////
+  // Auto Complete Data 
+  //enable the highlight property to highlight the matched character in suggestion list
+  public autofill: Boolean = true;
+  
+  // --------------- Grade Item --------------
+  // maps the appropriate column to fields property
+  public fieldsGradeItem: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textGradeItem: string = "نوع الدرجة"
+
+  public onFilteringGradeItem(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.gradeItems, query);
+  }
 
   constructor(
     private _reconcilitionRequisitionWeService: ReconcilitionRequisitionWeService,
@@ -63,6 +89,7 @@ export class AddReconcilitionRequisitionWeComponent implements OnInit {
     private _sessionManagerService: SessionManagerService,
     private _reportWeService: ReportWeService,
     private _weService: WeService,
+    private _gradeItemService: GradeItemService,
 
   ) {
     this._sharedComponentService.configRouterReloadPage()
@@ -78,6 +105,11 @@ export class AddReconcilitionRequisitionWeComponent implements OnInit {
       this.currentStockReport.dyersAndRequisitionsFabrics = response
       this.currentStockReport.listen();
     })
+
+    this._gradeItemService.selectAll().subscribe((response: any) => {
+      this.gradeItems = response
+    })
+
   }
 
   getSelectedIndex(objectData: any) {
@@ -128,8 +160,9 @@ export class AddReconcilitionRequisitionWeComponent implements OnInit {
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
       consigmentDyeingNumber: new FormControl(data.consigment_dyeing_number),
-      price: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      gradeItemId: new FormControl(data.grade_item_id, [Validators.required]),
+      price: new FormControl(String(data.price), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(String(data.price_dollar), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -177,10 +210,17 @@ export class AddReconcilitionRequisitionWeComponent implements OnInit {
     if(type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
+      row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
 
+  //  Grade item
+  selectGradeItem(event: { itemData: any; }, row: FormGroup) {
+    if (!this.gradeItems.includes(event.itemData)) {
+      row.controls['gradeItemId'].setValue("")
+    }
+  }
+  
   async onReconcilitionRequisitionWe() {
     this.reconcilitionRequisitionWEForm.markAllAsTouched();
     if (this.reconcilitionRequisitionWEForm.valid) {

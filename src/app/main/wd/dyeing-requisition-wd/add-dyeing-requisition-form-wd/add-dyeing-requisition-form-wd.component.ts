@@ -9,6 +9,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 import { DyeingServicesService } from "src/app/services/main/dyeing-services.service";
 import { DyeingRequisitionDetailsWdService } from "src/app/services/main/wd/dyeing-requisition-details-wd.service";
 import { FormDyeingRequisitionDetailsWdService } from 'src/app/services/main/wd/form-dyeing-requisition-details-wd.service';
+import { GradeItemService } from "src/app/services/main/grade-item.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -18,9 +19,11 @@ import { ExportDataService } from "src/app/services/export-data.service";
 import { ActivatedRoute } from '@angular/router';
 import { QuantityOccurrencesValidationService } from "src/app/services/main/quantity-occurrences-validation.service";
 
-
 // Child Components
 import { CurrentStockFormDyeingWdComponent } from "../../reports/current-stock-form-dyeing-wd/current-stock-form-dyeing-wd.component";
+
+// Auto Complete
+import { Query, Predicate } from '@syncfusion/ej2-data';
 
 @Component({
   selector: 'app-add-dyeing-requisition-form-wd',
@@ -38,6 +41,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
   isCalcDyeingNet = '0'
   fabricMap = new Map()
   isShowAdd = true
+  gradeItems: any = []
 
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   addRequisitionForm = new FormGroup({
@@ -50,6 +54,26 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
   ///////////////////////////////// General ////////////////////////////////////////////////
   dyeingServices: any
 
+///////////////////////////////// Auto Complete Data  ////////////////////////////////
+  // Auto Complete Data 
+  //enable the highlight property to highlight the matched character in suggestion list
+  public autofill: Boolean = true;
+
+  // --------------- Grade Item --------------
+  // maps the appropriate column to fields property
+  public fieldsGradeItem: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textGradeItem: string = "نوع الدرجة"
+
+  public onFilteringGradeItem(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.gradeItems, query);
+  }
 
   constructor(
     private _dyeingServicesService: DyeingServicesService,
@@ -60,6 +84,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
     private patterns: ValidatorPatternService,
     public _exportDataService: ExportDataService,
     private _formDyeingRequisitionDetailsWdService: FormDyeingRequisitionDetailsWdService,
+    private _gradeItemService: GradeItemService,
     private route: ActivatedRoute,
     private _sessionManagerService: SessionManagerService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
@@ -93,6 +118,10 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
       
       this.currentStockReport.listen();
     })
+
+    this._gradeItemService.selectAll().subscribe((response: any) => {
+      this.gradeItems = response
+    })
   }
 
   getSelectedIndex(objectData: any) {
@@ -124,6 +153,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorId: new FormControl(data.color_id, [Validators.required]),
       colorCode: new FormControl(data.color_code),
+      gradeItemId: new FormControl("", [Validators.required]),
       dyeingFee: new FormControl(data.color_price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       addedCost: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       dyeingQuantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -194,6 +224,13 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
   getWast(quantity: number, dyeingQuantity: number) {
     let result = quantity - dyeingQuantity
     return (result / quantity) * 100
+  }
+
+  //  Grade item
+  selectGradeItem(event: { itemData: any; }, row: FormGroup) {
+    if (!this.gradeItems.includes(event.itemData)) {
+      row.controls['gradeItemId'].setValue("")
+    }
   }
 
   async onAddRequisition() {

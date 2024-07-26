@@ -286,6 +286,24 @@
                             </div>
 
                             <div class="col">
+                                <p-columnFilter field="grade_item_name" matchMode="grade-item-name-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="selectedGradeItemName"
+                                            [options]="_sharedComponentService.uniqueArray(dyersAndRequisitionsFabrics, 'grade_item_name')"
+                                            (onChange)="onMultiselectedGradeItemName($event.value)"
+                                            placeholder="البحث بـ نوع الدرجة" optionLabel="grade_item_name">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.grade_item_name}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
                                 <p-columnFilter field="dyeing_code" matchMode="dyeing-code2-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -485,14 +503,14 @@
                                 </div>
                             </th>
 
-                            <th [hidden]="!isShowPrice" pResizableColumn pSortableColumn="price"
+                            <th [hidden]="!isShowPrice && !_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])" pResizableColumn pSortableColumn="price"
                                 style="max-width: 80px">
                                 <div class="flex justify-content-between align-items-center">
                                     السعر<p-sortIcon field="price"></p-sortIcon>
                                 </div>
                             </th>
 
-                            <th [hidden]="!isShowValue" pResizableColumn pSortableColumn="amount"
+                            <th [hidden]="!isShowValue && !_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])" pResizableColumn pSortableColumn="amount"
                                 style="max-width: 120px">
                                 <div class="flex justify-content-between align-items-center">
                                     القيمة<p-sortIcon field="amount"></p-sortIcon>
@@ -539,6 +557,13 @@
                             <th pResizableColumn pSortableColumn="work_order_number" style="max-width: 80px">
                                 <div class="flex justify-content-between align-items-center">
                                     امر الشغل<p-sortIcon field="work_order_number"></p-sortIcon>
+                                </div>
+                            </th>
+
+                            <th pResizableColumn pSortableColumn="grade_item_name" style="max-width: 80px">
+                                <div class="flex justify-content-between align-items-center">
+                                    نوع الدرجة
+                                    <p-sortIcon field="grade_item_name"></p-sortIcon>
                                 </div>
                             </th>
 
@@ -653,11 +678,11 @@
                                 {{(element?.sold_direct_quantity > 0) ? element?.sold_direct_quantity : 0 | number}}
                             </td>
 
-                            <td [hidden]="!isShowPrice" style="max-width: 80px">
+                            <td [hidden]="!isShowPrice && !_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])" style="max-width: 80px">
                                 {{element.price}}
                             </td>
 
-                            <td [hidden]="!isShowValue" style="max-width: 120px">
+                            <td [hidden]="!isShowValue && !_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])" style="max-width: 120px">
                                 {{_sharedComponentService.getCollectTimes(element.current_quantity, element.price) |
                                 number}}
                             </td>
@@ -695,6 +720,10 @@
 
                             <td style="max-width: 80px">
                                 {{ element.work_order_number }}
+                            </td>
+
+                            <td style="max-width: 80px">
+                                {{ element.grade_item_name }}
                             </td>
 
                             <td style="max-width: 80px">
@@ -763,7 +792,7 @@
                     </ng-template>
                     <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                         <tr>
-                            <td colspan="18">لا يوجد بيانات</td>
+                            <td colspan="19">لا يوجد بيانات</td>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="footer">
@@ -781,8 +810,8 @@
                             </td>
                             <td [hidden]="!isShowSoldedQuantity" style="max-width: 100px"></td>
                             <td [hidden]="!isShowSoldedDirectQuantity" style="max-width: 100px"></td>
-                            <td [hidden]="!isShowPrice" style="max-width: 80px"></td>
-                            <td [hidden]="!isShowValue" style="max-width: 120px">
+                            <td [hidden]="!isShowPrice && !_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])" style="max-width: 80px"></td>
+                            <td [hidden]="!isShowValue && !_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])" style="max-width: 120px">
                                 {{_sharedComponentService.getTotalCollectTimes(dt1.filteredValue == null ?
                                 dyersAndRequisitionsFabrics: dt1.filteredValue,
                                 "current_quantity", "price") | number}}
@@ -792,6 +821,7 @@
                             <td style="max-width: 80px"></td>
                             <td style="max-width: 80px"></td>
                             <td style="max-width: 100px"></td>
+                            <td style="max-width: 80px"></td>
                             <td style="max-width: 80px"></td>
                             <td style="max-width: 80px"></td>
                             <td style="max-width: 80px"></td>

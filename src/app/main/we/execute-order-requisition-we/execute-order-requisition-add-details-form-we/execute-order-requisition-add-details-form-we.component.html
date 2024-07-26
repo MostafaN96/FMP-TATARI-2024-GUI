@@ -446,6 +446,13 @@
                                                         </div>
                                                     </th>
 
+                                                    <!-- grade_item_name Column -->
+                                                    <th>
+                                                        <div class="flex justify-content-between align-items-center">
+                                                            نوع الدرجة
+                                                        </div>
+                                                    </th>
+
                                                     <!-- current_quantity Column -->
                                                     <th pResizableColumn pSortableColumn="current_quantity">
                                                         <div class="flex justify-content-between align-items-center">
@@ -481,6 +488,11 @@
                                                         {{ element.type_of_requisition_trans }}
                                                     </td>
 
+                                                    <!-- grade_item_name Column -->
+                                                    <td>
+                                                        {{ element.grade_item_name }}
+                                                    </td>
+
                                                     <!-- current_quantity Column -->
                                                     <td>
                                                         {{ element.current_quantity | number}}
@@ -490,7 +502,7 @@
                                             </ng-template>
                                             <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                                 <tr>
-                                                    <td colspan="5">لا يوجد بيانات</td>
+                                                    <td colspan="6">لا يوجد بيانات</td>
                                                 </tr>
                                             </ng-template>
                                         </p-table>
@@ -566,6 +578,10 @@
 
                                     <th style="max-width: 100px;">
                                         الاجمالي دولار
+                                    </th>
+
+                                    <th style="max-width: 50px;">
+                                        نوع الدرجة
                                     </th>
 
                                     <th style="max-width: 100px;">
@@ -700,49 +716,6 @@
                                             </mat-form-field>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 60px;">
-                                            <mat-form-field class="w-100">
-                                                <mat-label>
-                                                    الكمية المتوفرة
-                                                </mat-label>
-                                                <input [disabled]="true" matInput placeholder="الكمية المتوفرة"
-                                                    formControlName="validQuantity" readonly>
-                                            </mat-form-field>
-                                        </td>
-
-                                        <!-- Price -->
-                                        <td class="table-td" style="max-width: 70px">
-                                            <mat-form-field class="example-full-width w-100">
-                                                <mat-label>السعر</mat-label>
-                                                <input type="text" matInput formControlName="price" required
-                                                    placeholder="مثال: 15" [matAutocomplete]="autoGroup"
-                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                                    (change)="changePrice('priceEG', row)">
-                                                <mat-autocomplete #autoGroup="matAutocomplete">
-                                                    <ng-container
-                                                        *ngFor="let item of getListDyedFabricPrices[index]; let i = index">
-                                                        <mat-optgroup [label]="groupPrices[i]"
-                                                            (click)="changePrice('priceEG', row)"
-                                                            [disabled]="groupPrices[i].disabled">
-                                                            <mat-option value="{{item | number}}">
-                                                                {{item | number}}
-                                                            </mat-option>
-                                                        </mat-optgroup>
-                                                    </ng-container>
-                                                </mat-autocomplete>
-                                                <mat-error *ngIf="row.get('price').hasError('required') && (row.get('price').dirty 
-                                                                            || row.get('price').touched)">
-                                                    <label [innerHTML]="_sharedComponentService.required_field">
-                                                    </label>
-                                                </mat-error>
-                                                <mat-error *ngIf="row.get('price').hasError('pattern')">
-                                                    <label
-                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
-                                                    </label>
-                                                </mat-error>
-                                            </mat-form-field>
-                                        </td>
-
                                         <!-- priceDollar -->
                                         <td class="table-td" style="max-width: 70px">
                                             <mat-form-field class="example-full-width w-100">
@@ -763,8 +736,9 @@
                                                         </mat-optgroup>
                                                     </ng-container>
                                                 </mat-autocomplete>
-                                                <mat-error *ngIf="row.get('priceDollar').hasError('required') && (row.get('priceDollar').dirty 
-                                                                            || row.get('priceDollar').touched)">
+                                                <mat-error
+                                                    *ngIf="row.get('priceDollar').hasError('required') && (row.get('priceDollar').dirty 
+                                                                                            || row.get('priceDollar').touched)">
                                                     <label [innerHTML]="_sharedComponentService.required_field">
                                                     </label>
                                                 </mat-error>
@@ -828,6 +802,17 @@
                                             </span>
                                         </td>
 
+                                        <!-- gradeItem -->
+                                        <td class="table-td" style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                     نوع الدرجة
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="نوع الدرجة" readonly
+                                                    formControlName="gradeItemName">
+                                            </mat-form-field>
+                                        </td>
+
                                         <!-- note -->
                                         <td style="max-width: 100px;">
                                             <mat-form-field class="w-100">
@@ -874,7 +859,7 @@
                                     <td class="text-center">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm,
                                         'items', 'quantity', 'priceDollar') | number}}</td>
-                                    <td colspan="2"></td>
+                                    <td colspan="3"></td>
                                 </tr>
                             </tfoot>
 

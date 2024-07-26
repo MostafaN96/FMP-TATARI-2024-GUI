@@ -42,6 +42,7 @@ export class ExecuteOrderRequisitionDetailsWeComponent implements OnInit {
     'price_dollar',
     'total',
     'total_dollar',
+    'grade_item_name',
     'note',
     'update'];
   filter = "";

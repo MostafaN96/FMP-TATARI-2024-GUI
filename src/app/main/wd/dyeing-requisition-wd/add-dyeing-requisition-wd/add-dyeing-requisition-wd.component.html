@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker">
@@ -42,7 +42,7 @@
                     <div class="col">
                         <ejs-autocomplete [dataSource]='dyers' [fields]='fieldsDyeing'
                             (filtering)="onFilteringDyeing($event)" [placeholder]='textDyeing' [autofill]='autofill'
-                            formControlName="dyeingId" class="ejs-autocomplete" (change)="selectDyeing($event)">
+                            formControlName="dyeingId" class="ejs-autocomplete w-100" (change)="selectDyeing($event)">
                         </ejs-autocomplete>
                         <small class="text-danger" *ngIf="addRequisitionForm.controls['dyeingId'].hasError('pattern')"
                             [innerHTML]="_sharedComponentService.invalid_message">
@@ -55,7 +55,7 @@
 
                     <!-- Warehouse -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse'
                             [autofill]='autofill' formControlName="warehouseId" style="width: 260px;">
                         </ejs-autocomplete>
@@ -210,6 +210,10 @@
 
                                     <th style="max-width: 50px;">
                                         وزن القماش م2
+                                    </th>
+
+                                    <th style="max-width: 50px;">
+                                        نوع الدرجة
                                     </th>
 
                                     <!-- <th style="max-width: 80px;">
@@ -584,6 +588,26 @@
                                             </mat-form-field>
                                         </td>
 
+                                        <!-- gradeItem -->
+                                        <td class="table-td" style="min-width: 100px;">
+                                            <ejs-autocomplete [dataSource]='gradeItems' [fields]='fieldsGradeItem' 
+                                            (filtering)="onFilteringGradeItem($event)"
+                                                [placeholder]='textGradeItem' [autofill]='autofill'
+                                                formControlName="gradeItemId" (change)='selectGradeItem($event, row)'
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('gradeItemId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('gradeItemId').hasError('required') && (row.get('gradeItemId').dirty 
+                                                || row.get('gradeItemId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                         <!-- workOrderNumber -->
                                         <!-- <td style="max-width: 80px;">
                                             <mat-form-field class="w-100">
@@ -717,7 +741,7 @@
                                     <td colspan="2"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
                                         'dyeingQuantity') | number}}</td>
-                                    <td colspan="8"></td>
+                                    <td colspan="9"></td>
                                 </tr>
                             </tfoot>
 

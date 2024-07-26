@@ -138,6 +138,10 @@
                                         عدد الاثواب
                                     </th>
 
+                                    <th style="max-width: 50px;">
+                                        نوع الدرجة
+                                    </th>
+
                                     <th>
                                         البيان
                                     </th>
@@ -330,6 +334,26 @@
                                             </mat-form-field>
                                         </td>
                                         
+                                        <!-- gradeItem -->
+                                        <td class="table-td" style="min-width: 100px;">
+                                            <ejs-autocomplete [dataSource]='gradeItems' [fields]='fieldsGradeItem' 
+                                            (filtering)="onFilteringGradeItem($event)"
+                                                [placeholder]='textGradeItem' [autofill]='autofill'
+                                                formControlName="gradeItemId" (change)='selectGradeItem($event, row)'
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('gradeItemId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('gradeItemId').hasError('required') && (row.get('gradeItemId').dirty 
+                                                || row.get('gradeItemId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                         <!-- Statement -->
                                         <td>
                                             <mat-form-field class="w-100">
@@ -367,7 +391,7 @@
                                   <td>{{_sharedComponentService.getTotalQuantityForm(returnRequisitionForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(returnRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(returnRequisitionForm, 'items', 'quantity', 'priceDollar') | number}}</td>
-                                  <td colspan="4"></td>
+                                  <td colspan="5"></td>
                                 </tr>
                               </tfoot>
 

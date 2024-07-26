@@ -676,6 +676,11 @@ export class ConstantsService {
       'add-transition-between-wh-requisition-wc', // [197]
       'show-all-transition-between-wh-requisition-wc', // [198]
       'show-all-transition-between-wh-requisition-wc/details', // [199]
+
+      //
+      'add-grade-item', // [200]
+      'show-all-grade-item', // [201]
+      'restore-grade-item', // [202]
     ]
   }
 

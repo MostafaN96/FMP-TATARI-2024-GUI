@@ -132,6 +132,24 @@
                                         </div>
 
                                         <div class="col">
+                                            <p-columnFilter field="grade_item_name" matchMode="grade-item-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedGradeItemName"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWeDetails, 'grade_item_name')"
+                                                        (onChange)="onMultiselectedGradeItemName($event.value)"
+                                                        placeholder="البحث بـ نوع الدرجة" optionLabel="grade_item_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.grade_item_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
                                             <p-columnFilter field="dyeing_code" matchMode="dyeing-code-filter"
                                                 [showMenu]="false" [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -355,28 +373,32 @@
                                         </th>
 
                                         <!-- input_price Column -->
-                                        <th pResizableColumn>
+                                        <th pResizableColumn 
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             <div class="flex justify-content-between align-items-center">
                                                 سعر الإدخال
                                             </div>
                                         </th>
 
                                         <!-- output_price Column -->
-                                        <th pResizableColumn>
+                                        <th pResizableColumn
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             <div class="flex justify-content-between align-items-center">
                                                 سعر الإخراج
                                             </div>
                                         </th>
 
                                         <!-- input_amount Column -->
-                                        <th pResizableColumn>
+                                        <th pResizableColumn
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             <div class="flex justify-content-between align-items-center">
                                                 قيمة المدخلات
                                             </div>
                                         </th>
 
                                         <!-- output_amount Column -->
-                                        <th pResizableColumn>
+                                        <th pResizableColumn
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             <div class="flex justify-content-between align-items-center">
                                                 قيمة المخرجات
                                             </div>
@@ -414,6 +436,13 @@
                                         <th pResizableColumn>
                                             <div class="flex justify-content-between align-items-center">
                                                 أمر الشغل
+                                            </div>
+                                        </th>
+
+                                        <!-- grade_item_name Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                نوع الدرجة
                                             </div>
                                         </th>
 
@@ -536,21 +565,24 @@
                                         </td>
 
                                         <!-- input_price Column -->
-                                        <td>
+                                        <td
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             <ng-container *ngIf="element.input_output == '1'">
                                                 {{ element.price | number}}
                                             </ng-container>
                                         </td>
 
                                         <!-- output_price Column -->
-                                        <td>
+                                        <td
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             <ng-container *ngIf="element.input_output == '0'">
                                                 {{ element.price | number}}
                                             </ng-container>
                                         </td>
 
                                         <!-- input_amount Column -->
-                                        <td>
+                                        <td
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             <ng-container *ngIf="element.input_output == '1'">
                                                 {{_sharedComponentService.getCollectTimes(element.quantity,
                                                 element.price) | number}}
@@ -558,7 +590,8 @@
                                         </td>
 
                                         <!-- output_amount Column -->
-                                        <td>
+                                        <td
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             <ng-container *ngIf="element.input_output == '0'">
                                                 {{_sharedComponentService.getCollectTimes(element.quantity,
                                                 element.price) | number}}
@@ -591,6 +624,11 @@
                                         <!-- work_order_number Column -->
                                         <td>
                                             {{ element.work_order_number }}
+                                        </td>
+
+                                        <!-- grade_item_name Column -->
+                                        <td>
+                                            {{ element.grade_item_name }}
                                         </td>
 
                                         <!-- statement Column -->
@@ -696,19 +734,25 @@
                                         </td>
 
                                         <!-- input_price Column -->
-                                        <td></td>
+                                        <td
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
+                                        </td>
 
                                         <!-- output_price Column -->
-                                        <td> </td>
+                                        <td
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])"> 
+                                        </td>
 
                                         <!-- input_amount Column -->
-                                        <td>
+                                        <td
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             {{_sharedComponentService.getInputAmount(dt1.filteredValue ==
                                             null ? reportByFabricWeDetails: dt1.filteredValue) | number}}
                                         </td>
 
                                         <!-- output_amount Column -->
-                                        <td>
+                                        <td
+                                        [hidden]="!_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                             {{_sharedComponentService.getOutputAmount(dt1.filteredValue ==
                                             null ? reportByFabricWeDetails: dt1.filteredValue) | number}}
                                         </td>
@@ -726,6 +770,9 @@
                                         <td></td>
 
                                         <!-- work_order_number Column -->
+                                        <td></td>
+
+                                        <!-- grade_item_name Column -->
                                         <td></td>
 
                                         <!-- statement Column -->
@@ -765,7 +812,8 @@
                         </div>
 
                         <table id="table-data-2" class="table table-style mt-4">
-                            <tbody>
+                            <tbody
+                            *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[19])">
                                 <tr>
                                     <th>
                                         قيمة الصنف:

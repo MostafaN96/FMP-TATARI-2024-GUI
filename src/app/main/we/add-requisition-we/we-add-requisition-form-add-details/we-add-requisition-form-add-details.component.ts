@@ -12,6 +12,7 @@ import { BussinessmanService } from "src/app/services/main/bussinessman.service"
 import { WeAddRequisitionDetailsService } from "src/app/services/main/we/we-add-requisition-details.service";
 import { ColorService } from "src/app/services/main/color.service";
 import { ColorCategoryService } from "src/app/services/main/color-category.service";
+import { GradeItemService } from "src/app/services/main/grade-item.service";
 import { ActivatedRoute } from '@angular/router';
 
 // Shared Service
@@ -44,6 +45,8 @@ export class WeAddRequisitionFormAddDetailsComponent implements OnInit {
   colors: any = []
   colorCategories: any = []
   warehouses:any = []
+  gradeItems:any = []
+
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
   //enable the highlight property to highlight the matched character in suggestion list
@@ -118,6 +121,22 @@ export class WeAddRequisitionFormAddDetailsComponent implements OnInit {
         e.updateData(this.warehouses, query);
   }
 
+  // --------------- Grade Item --------------
+  // maps the appropriate column to fields property
+  public fieldsGradeItem: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textGradeItem: string = "نوع الدرجة"
+
+  public onFilteringGradeItem(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.gradeItems, query);
+  }
+
   constructor(
     private _warehouseService: WarehouseService,
     protected _fabricService: FabricService,
@@ -130,9 +149,8 @@ export class WeAddRequisitionFormAddDetailsComponent implements OnInit {
     protected _sessionManagerService: SessionManagerService,
     private _colorService: ColorService,
     protected _colorCategoryService: ColorCategoryService,
-        private route: ActivatedRoute,
-
-
+    private _gradeItemService: GradeItemService,
+    private route: ActivatedRoute,
   ) {
     this._sharedComponentService.configRouterReloadPage()
   }
@@ -160,6 +178,10 @@ this.route.queryParams.subscribe(params => {
     this._warehouseService.selectAll().subscribe((response: any) => {
       this.warehouses = response
     })
+
+    this._gradeItemService.selectAll().subscribe((response: any) => {
+      this.gradeItems = response
+    })
   }
 
   // Initialize Form Builder
@@ -171,6 +193,7 @@ this.route.queryParams.subscribe(params => {
       colorCategoryId: new FormControl(null, [Validators.required]),
       colorId: new FormControl(null, [Validators.required]),
       colorCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
+      gradeItemId: new FormControl("", [Validators.required]),
       consigmentDyeingNumber: new FormControl("", [Validators.required]),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       dyeingCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -236,12 +259,19 @@ this.route.queryParams.subscribe(params => {
     }
   }
 
+  //  Grade item
+  selectGradeItem(event: { itemData: any; }, row: FormGroup) {
+    if (!this.gradeItems.includes(event.itemData)) {
+      row.controls['gradeItemId'].setValue("")
+    }
+  }
+  
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
+      row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
 

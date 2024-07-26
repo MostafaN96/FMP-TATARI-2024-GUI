@@ -37,6 +37,7 @@ export class ItemHistoryReportDetailsWdComponent implements OnInit {
   form_balance = 0
   selectedTypeOfRequisition: any[] = []
   selectedWorkOrderNumber: any[] = []
+  selectedGradeItemName: any[] = []
   selectedColorName: any[] = []
   selectedColorCode: any[] = []
   selectedPrepareDyeingName: any[] = []
@@ -57,6 +58,7 @@ export class ItemHistoryReportDetailsWdComponent implements OnInit {
 
     this.customFilterForTypeOfRequisition();
     this.customFilterForWorkOrderNumber();
+    this.customFilterForGradeItemName();
     this.customFilterForColorName();
     this.customFilterForColorCode();
     this.customFilterForPrepareDyeingName();
@@ -152,6 +154,40 @@ export class ItemHistoryReportDetailsWdComponent implements OnInit {
     });
   }
   
+  customFilterForGradeItemName() {
+    const customFilterName = "grade-item-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedGradeItemName
+      
+      if (this.selectedGradeItemName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].grade_item_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   customFilterForColorName() {
     const customFilterName = "color-name-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -300,6 +336,7 @@ export class ItemHistoryReportDetailsWdComponent implements OnInit {
     table.reset();
     this.selectedTypeOfRequisition = []
     this.selectedWorkOrderNumber = []
+    this.selectedGradeItemName = []
     this.selectedColorName = []
     this.selectedColorCode = []
     this.selectedPrepareDyeingName = []
@@ -312,6 +349,11 @@ export class ItemHistoryReportDetailsWdComponent implements OnInit {
 
   onMultiselectedWorkOrderNumber(event) {
     this.selectedWorkOrderNumber = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedGradeItemName(event) {
+    this.selectedGradeItemName = event
     this.dt1?._filter()
   }
 

@@ -215,6 +215,17 @@
                                     </td>
                                 </ng-container>
 
+                                <!-- grade_item_name Column -->
+                                <ng-container matColumnDef="grade_item_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>نوع الدرجة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.grade_item_name}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef></td>
+                                </ng-container>
+                                
                                 <!-- note Column -->
                                 <ng-container matColumnDef="note">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>

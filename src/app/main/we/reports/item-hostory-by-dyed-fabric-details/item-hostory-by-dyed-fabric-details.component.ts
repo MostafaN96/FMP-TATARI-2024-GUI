@@ -9,6 +9,8 @@ import * as moment from 'moment';
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { ConstantsService } from "src/app/services/constants.service";
+import { SessionManagerService } from "src/app/services/main/session-manager.service";
 
 // Call Service
 import { ReportWeService } from "src/app/services/main/we/report-we.service";
@@ -37,6 +39,7 @@ export class ItemHostoryByDyedFabricDetailsComponent implements OnInit {
   @ViewChild('dt1') dt1: Table | undefined;
   loading: boolean = true;
   selectedWorkOrdersNumbers: any[] = []
+  selectedGradeItemName: any[] = []
   selectedDyeingCodes: any[] = []
   selectedColorCodes: any[] = []
   selectedColorCategories: any[] = []
@@ -55,21 +58,24 @@ export class ItemHostoryByDyedFabricDetailsComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
   ) {
   }
 
   ngOnInit(): void {
     this.getData()
     this.customFilterForDyeingCode()
-this.customFilterForColorCode();
+    this.customFilterForColorCode();
     this.customFilterForColorCategory();
     this.customFilterForColorName();
-this.customFilterForWorkOrderNumber();
-this.customFilterForSideOf();
-this.customFilterForDocument();
-this.customFilterForTypeOfRequisition();
-this.customFilterForConsigmentDyeingNumber();
-this.customFilterForReturnType();
+    this.customFilterForWorkOrderNumber();
+    this.customFilterForGradeItemName();
+    this.customFilterForSideOf();
+    this.customFilterForDocument();
+    this.customFilterForTypeOfRequisition();
+    this.customFilterForConsigmentDyeingNumber();
+    this.customFilterForReturnType();
 
   }
 
@@ -84,8 +90,8 @@ this.customFilterForReturnType();
           this.reportByFabricWeDetails = response
 
           // PrimeNG Table
-                this.primengConfig.ripple = true;
-                this.loading = false;
+          this.primengConfig.ripple = true;
+          this.loading = false;
         })
       });
 
@@ -127,7 +133,7 @@ this.customFilterForReturnType();
     });
   }
 
-customFilterForColorCode() {
+  customFilterForColorCode() {
     const customFilterName = "color-code-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
       filter = this.selectedColorCodes
@@ -161,7 +167,7 @@ customFilterForColorCode() {
     });
   }
 
-customFilterForColorCategory() {
+  customFilterForColorCategory() {
     const customFilterName = "color-category-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
       filter = this.selectedColorCategories
@@ -263,12 +269,12 @@ customFilterForColorCategory() {
     });
   }
 
-  customFilterForConsigmentDyeingNumber() {
-    const customFilterName = "consigment-dyeing-number-filter";
+  customFilterForGradeItemName() {
+    const customFilterName = "grade-item-name-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedConsigmentDyeingNumber
+      filter = this.selectedGradeItemName
       
-      if (this.selectedConsigmentDyeingNumber[0] != null) {
+      if (this.selectedGradeItemName[0] != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
@@ -280,7 +286,7 @@ customFilterForColorCategory() {
 
           // for (let i = 0; i < value.length; i++) {
             for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].consigment_dyeing_number ) {
+              if (value == filter[j].grade_item_name ) {
                 // count++
                 // if (count == filter.length) {
                   return true;
@@ -297,11 +303,45 @@ customFilterForColorCategory() {
     });
   }
 
+  customFilterForConsigmentDyeingNumber() {
+    const customFilterName = "consigment-dyeing-number-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedConsigmentDyeingNumber
+
+      if (this.selectedConsigmentDyeingNumber[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].consigment_dyeing_number) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   customFilterForReturnType() {
     const customFilterName = "return-type-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
       filter = this.selectedReturnType
-      
+
       if (this.selectedReturnType[0] != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
@@ -313,14 +353,14 @@ customFilterForColorCategory() {
           // let count = 0
 
           // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].return_type_name ) {
-                // count++
-                // if (count == filter.length) {
-                  return true;
-                // }
-              }
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].return_type_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
             }
+          }
           // }
         }
         return false;
@@ -403,7 +443,7 @@ customFilterForColorCategory() {
     const customFilterName = "type-of-requisition-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
       filter = this.selectedTypeOfRequisition
-      
+
       if (this.selectedTypeOfRequisition[0] != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
@@ -415,14 +455,14 @@ customFilterForColorCategory() {
           // let count = 0
 
           // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].type_of_requisition ) {
-                // count++
-                // if (count == filter.length) {
-                  return true;
-                // }
-              }
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].type_of_requisition) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
             }
+          }
           // }
         }
         return false;
@@ -436,7 +476,7 @@ customFilterForColorCategory() {
   selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
       filter = this.dateFilters
-      
+
       if (event != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
@@ -446,24 +486,24 @@ customFilterForColorCategory() {
         }
         if (filter.length > 0) {
           // let count = 0
-          if(filter[0] != null && filter[1] != null) {
-            
-            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&  
-            moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
+          if (filter[0] != null && filter[1] != null) {
+
+            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&
+              moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
               return true;
-              }
-            
+            }
+
           } else if (filter[0] != null && filter[1] == null) {
-            
+
             if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
               return false;
-              } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
-                return false;
-              } else {
-                return true;
-              }
+            } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else {
+              return true;
+            }
           }
-  
+
         }
         return false;
       }
@@ -479,6 +519,7 @@ customFilterForColorCategory() {
     table.reset();
     this.selectedTypeOfRequisition = []
     this.selectedWorkOrdersNumbers = []
+    this.selectedGradeItemName = []
     this.selectedDyeingCodes = []
     this.selectedColorCategories = []
     this.selectedColors = []
@@ -488,7 +529,7 @@ customFilterForColorCategory() {
     this.selectedSideOf = []
     this.selectedReturnType = []
   }
-  
+
   onMultiselectedTypeOfRequisition(event) {
     this.selectedTypeOfRequisition = event
     this.dt1?._filter()
@@ -496,6 +537,11 @@ customFilterForColorCategory() {
 
   onMultiselectedWorkOrderNumber(event) {
     this.selectedWorkOrdersNumbers = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedGradeItemName(event) {
+    this.selectedGradeItemName = event
     this.dt1?._filter()
   }
   
@@ -569,7 +615,7 @@ customFilterForColorCategory() {
   }
 
   getTotalBalanceFabricPiece() {
-    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails: this.dt1?.filteredValue
+    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails : this.dt1?.filteredValue
     return this._sharedComponentService.getTotalQuantityWithCondition(data,
       "fabric_piece", "input_output", "1") - this._sharedComponentService.getTotalQuantityWithCondition(data,
         "fabric_piece", "input_output", "0")
@@ -584,11 +630,11 @@ customFilterForColorCategory() {
   }
 
   getTotalInputQuantity() {
-    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails: this.dt1?.filteredValue
+    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails : this.dt1?.filteredValue
     return data?.map(function (a) { return (a.input_output == '1') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
   getTotalOutputQuantity() {
-    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails: this.dt1?.filteredValue
+    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails : this.dt1?.filteredValue
     return data?.map(function (a) { return (a.input_output == '0') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
 
@@ -605,11 +651,11 @@ customFilterForColorCategory() {
   }
 
   getTotalInputAmount() {
-    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails: this.dt1?.filteredValue
+    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails : this.dt1?.filteredValue
     return data?.map(function (a) { return (a.input_output == '1') ? ((parseFloat(a['quantity']) * parseFloat(a['price']))) : 0 }).reduce((acc, value) => acc + value, 0);
   }
   getTotalOutputAmount() {
-    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails: this.dt1?.filteredValue
+    let data = this.dt1?.filteredValue == null ? this.reportByFabricWeDetails : this.dt1?.filteredValue
     return data?.map(function (a) { return (a.input_output == '0') ? ((parseFloat(a['quantity']) * parseFloat(a['price']))) : 0 }).reduce((acc, value) => acc + value, 0);
   }
 

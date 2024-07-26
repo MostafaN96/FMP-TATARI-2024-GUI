@@ -31,6 +31,21 @@
                           </mat-form-field>
                     </div>
 
+                    <!-- dyedFabrics -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='dyedFabrics' [fields]='fieldsDyedFabric' class="ejs-autocomplete w-100"
+                            (filtering)="onFilteringDyedFabricName($event)" [placeholder]='textDyedFabric' [autofill]='autofill'
+                            formControlName="dyedFabricId" (change)="selectDyedFabric($event)" style="width: 260px;">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['dyedFabricId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['dyedFabricId'].hasError('required') && (manufacturingOrderWdForm.controls['dyedFabricId'].dirty 
+                                || manufacturingOrderWdForm.controls['dyedFabricId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
                     <!-- Name -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

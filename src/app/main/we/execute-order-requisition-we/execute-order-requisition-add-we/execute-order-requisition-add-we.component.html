@@ -529,6 +529,13 @@
                                                         </div>
                                                     </th>
 
+                                                    <!-- grade_item_name Column -->
+                                                    <th>
+                                                        <div class="flex justify-content-between align-items-center">
+                                                            نوع الدرجة
+                                                        </div>
+                                                    </th>
+
                                                     <!-- current_quantity Column -->
                                                     <th pResizableColumn pSortableColumn="current_quantity">
                                                         <div class="flex justify-content-between align-items-center">
@@ -564,6 +571,11 @@
                                                         {{ element.type_of_requisition_trans }}
                                                     </td>
 
+                                                    <!-- grade_item_name Column -->
+                                                    <td>
+                                                        {{ element.grade_item_name }}
+                                                    </td>
+
                                                     <!-- current_quantity Column -->
                                                     <td>
                                                         {{ element.current_quantity | number}}
@@ -573,7 +585,7 @@
                                             </ng-template>
                                             <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                                 <tr>
-                                                    <td colspan="5">لا يوجد بيانات</td>
+                                                    <td colspan="6">لا يوجد بيانات</td>
                                                 </tr>
                                             </ng-template>
                                         </p-table>
@@ -649,6 +661,10 @@
 
                                     <th style="max-width: 100px;">
                                         الاجمالي دولار
+                                    </th>
+
+                                    <th style="max-width: 50px;">
+                                        نوع الدرجة
                                     </th>
 
                                     <th style="max-width: 100px;">
@@ -870,6 +886,17 @@
                                             </span>
                                         </td>
 
+                                        <!-- gradeItem -->
+                                        <td class="table-td" style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                     نوع الدرجة
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="نوع الدرجة" readonly
+                                                    formControlName="gradeItemName">
+                                            </mat-form-field>
+                                        </td>
+
                                         <!-- note -->
                                         <td style="max-width: 100px;">
                                             <mat-form-field class="w-100">
@@ -916,7 +943,7 @@
                                     <td class="text-center">
                                         {{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm,
                                         'items', 'quantity', 'priceDollar') | number}}</td>
-                                    <td colspan="2"></td>
+                                    <td colspan="3"></td>
                                 </tr>
                             </tfoot>
 

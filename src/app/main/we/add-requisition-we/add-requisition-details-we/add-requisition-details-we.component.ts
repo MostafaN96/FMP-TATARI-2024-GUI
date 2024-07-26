@@ -40,6 +40,7 @@ export class AddRequisitionDetailsWeComponent implements OnInit {
   'dyeing_code',
   'consigment_dyeing_number',
   'work_order_number_details',
+  'grade_item_name',
   'quantity',
   'price',
   'price_dollar',

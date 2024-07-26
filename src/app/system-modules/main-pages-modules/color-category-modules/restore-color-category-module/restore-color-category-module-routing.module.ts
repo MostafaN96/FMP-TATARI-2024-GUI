@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // My Component
-import { RestoreColorCategoryComponent } from '../../../../main/color-category/restore-color-category/restore-color-category.component';
+import { RestoreColorCategoryComponent } from 'src/app/main/color-category/restore-color-category/restore-color-category.component';
 
 export const routes: Routes = [
 

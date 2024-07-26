@@ -85,7 +85,7 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     this.route.queryParams
       .subscribe(params => {
         this._dyedFabricOrderRequisitionDetailsWeService.select(params['id'], isClosed).subscribe((response: any) => {
-          this.dyedFabricOrderDetails = response
+          this.dyedFabricOrderDetails = response          
           
           this.dataSourceSearchTabel = new MatTableDataSource(this.dyedFabricOrderDetails);
           // this.sortColumns.sort(({ id: 'number', start: 'asc' }) as MatSortable);
@@ -97,6 +97,8 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
 
   getSelectedData(selectedData: any) {
     this.showInputUpdate = true
+    selectedData.yarnOrders = this.dyedFabricOrderDetails[0]['yarnOrders']
+    selectedData.fabricOrders = this.dyedFabricOrderDetails[0]['fabricOrders']
     this.selectedDataToUpdate = selectedData
   }
 

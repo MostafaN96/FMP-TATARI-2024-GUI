@@ -156,12 +156,12 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
       this.requisitionsOrder = response
     })
 
-    this._warehouseService.selectWhereInWc().subscribe((response: any) => {
+    this._warehouseService.selectAll().subscribe((response: any) => {
       this.warehouses = response
 
-      if (Array.isArray(this.warehouses) && this.warehouses.length < 1) {
-        this.addRequisitionForm.controls['warehouseId'].setValue("")
-      }
+      // if (Array.isArray(this.warehouses) && this.warehouses.length < 1) {
+      //   this.addRequisitionForm.controls['warehouseId'].setValue("")
+      // }
       
     })
   }
@@ -321,7 +321,7 @@ export class ExecuteOrderRequisitionAddWcComponent implements OnInit {
     if(type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
+      row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
 

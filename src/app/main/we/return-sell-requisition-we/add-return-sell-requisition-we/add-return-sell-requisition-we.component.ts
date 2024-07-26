@@ -11,6 +11,7 @@ import { BussinessmanService } from "src/app/services/main/bussinessman.service"
 import { ReturnSellRequisitionWeService } from "src/app/services/main/we/return-sell-requisition-we.service";
 import { WeService } from "src/app/services/main/we/we.service";
 import { WarehouseService } from "src/app/services/main/warehouse.service";
+import { GradeItemService } from "src/app/services/main/grade-item.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -54,6 +55,7 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
   disabledColorCategory:any = []
   currentQuantity:any = []
   warehouses:any = []
+  gradeItems:any = []
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -94,6 +96,21 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
         e.updateData(this.warehouses, query);
   }
 
+  // --------------- Grade Item --------------
+  // maps the appropriate column to fields property
+  public fieldsGradeItem: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textGradeItem: string = "نوع الدرجة"
+
+  public onFilteringGradeItem(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.gradeItems, query);
+  }
 
   constructor(
     private _sellerService: BussinessmanService,
@@ -105,6 +122,7 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
     private _sessionManagerService: SessionManagerService,
     private _weService: WeService,
     private _warehouseService: WarehouseService,
+    private _gradeItemService: GradeItemService,
   ) {
     this._sharedComponentService.configRouterReloadPage()
   }
@@ -120,6 +138,10 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
     
     this._warehouseService.selectAll().subscribe((response: any) => {
       this.warehouses = response
+    })
+
+    this._gradeItemService.selectAll().subscribe((response: any) => {
+      this.gradeItems = response
     })
   }
 
@@ -138,6 +160,7 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
       colorCategoryName: new FormControl(data.color_category_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
+      gradeItemId: new FormControl(data.grade_item_id, [Validators.required]),
       price: new FormControl(String(data.price), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl(String(data.price_dollar), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -242,12 +265,19 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
     }
   }
 
+  //  Grade item
+  selectGradeItem(event: { itemData: any; }, row: FormGroup) {
+    if (!this.gradeItems.includes(event.itemData)) {
+      row.controls['gradeItemId'].setValue("")
+    }
+  }
+
   async onReturnSellRequisition(){
     this.returnSellRequisitionForm.markAllAsTouched();
     if (this.returnSellRequisitionForm.valid) {
       const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.returnSellRequisitionForm, 'items', 
       ['index', 'dyedFabricName', 'dyedFabricCode',
-    'colorCategoryName', 'colorName', 'colorCode', 'validQuantity'])
+    'colorCategoryName', 'colorName', 'validQuantity'])
     
     this._constantsService.spinner.show()
       this._returnSellRequisitionWeService.add(formGroup.value).subscribe(response => {

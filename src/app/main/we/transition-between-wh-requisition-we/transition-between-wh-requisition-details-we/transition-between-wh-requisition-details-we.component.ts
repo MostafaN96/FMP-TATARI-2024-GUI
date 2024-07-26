@@ -45,6 +45,7 @@ displayedColumns: string[] = [
   'total_dollar',
   'fabric_piece',
   'work_order_number',
+  'grade_item_name',
   'document',
   'statement',
   'update'];

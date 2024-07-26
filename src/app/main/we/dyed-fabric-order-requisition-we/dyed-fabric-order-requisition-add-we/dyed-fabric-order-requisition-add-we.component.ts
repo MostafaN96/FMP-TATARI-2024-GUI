@@ -23,6 +23,8 @@ import { ExportDataService } from "src/app/services/export-data.service";
 // Auto Complete
 import { Query, Predicate } from '@syncfusion/ej2-data';
 
+import * as XLSX from 'xlsx';
+
 @Component({
   selector: 'app-dyed-fabric-order-requisition-add-we',
   templateUrl: './dyed-fabric-order-requisition-add-we.component.html',
@@ -41,6 +43,7 @@ export class DyedFabricOrderRequisitionAddWeComponent implements OnInit {
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
   });
 
+  data: any = []
   ///////////////////////////////// General ////////////////////////////////////////////////
   dyers: any = []
   dyedFabrics: any = []
@@ -185,6 +188,28 @@ addItem() {
   control.push(this.initItem());
 }
 
+initItemFromFile(data) {
+  return new FormGroup({
+    dyedFabricId: new FormControl(data[0], [Validators.required]),
+    dyedFabricCode: new FormControl(""),
+    colorCategoryId: new FormControl("", [Validators.required]),
+    colorId: new FormControl("", [Validators.required]),
+    colorCode: new FormControl("", [Validators.required]),
+    quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    wasteRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
+  });
+}
+
+addItemFromFile(data) {
+  const control = <FormArray>this.addOrderForm.get('items');
+  control.push(this.initItemFromFile(data));
+}
+
 getItem(form: any) {    
   return form.controls.items.controls;
 }
@@ -290,7 +315,7 @@ removeItem(index: number){
     if(type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
-      row.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['priceDollar'].value))
+      row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
   
@@ -329,6 +354,47 @@ removeItem(index: number){
       this.isShowAdd = true
     }
   }
+
+  onFileChange(evt: any) {
+    /* wire up file reader */
+    const target: DataTransfer = <DataTransfer>(evt.target);
+    if (target.files.length !== 1) throw new Error('Cannot use multiple files');
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      /* read workbook */
+      const bstr: string = e.target.result;
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+
+      /* grab first sheet */
+      const wsname: string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+      /* save data */
+      this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
+      // console.log(this.data);
+      this.addItemFromFile(this.data[1])
+
+         const control = <FormArray>this.addOrderForm.get('items');
+      
+      for (let i = 0; i < control.length; i++) {
+        const element = control[i];
+        this.checkValidity(element)
+      }
+    };
+    reader.readAsBinaryString(target.files[0]);
+  }
+
+  checkValidity(g: FormGroup) {
+    Object.keys(g.controls).forEach(key => {
+      g.get(key)!.markAsDirty();
+    });
+    Object.keys(g.controls).forEach(key => {
+      g.get(key)!.markAsTouched();
+    });
+    Object.keys(g.controls).forEach(key => {
+      g.get(key)!.updateValueAndValidity();
+    });
+    }
 
 }
 

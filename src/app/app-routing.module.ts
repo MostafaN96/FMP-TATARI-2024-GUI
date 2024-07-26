@@ -110,6 +110,11 @@ const routes: Routes = [
         { path: 'show-all-consigment-yarn', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/consigment-yarn-modules/show-all-consigment-yarn-module/show-all-consigment-yarn-module.module').then(m => m.ShowAllConsigmentYarnModuleModule) },
         { path: 'restore-consigment-yarn', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/consigment-yarn-modules/restore-consigment-yarn-module/restore-consigment-yarn-module.module').then(m => m.RestoreConsigmentYarnModuleModule) },
 
+        // Consigment Yarn
+        { path: 'add-grade-item', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/grade-item-modules/add-grade-item-module/add-grade-item-module.module').then(m => m.AddGradeItemModuleModule) },
+        { path: 'show-all-grade-item', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/grade-item-modules/show-all-grade-item-module/show-all-grade-item-module.module').then(m => m.ShowAllGradeItemModuleModule) },
+        { path: 'restore-grade-item', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/grade-item-modules/restore-grade-item-module/restore-grade-item-module.module').then(m => m.RestoreGradeItemModuleModule) },
+
         // WA
         // Add Requisition
         { path: 'add-add-requisition', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/wa-modules/add-requisition-wa-modules/add-add-requisition-wa-module/add-add-requisition-wa-module.module').then(m => m.AddAddRequisitionWaModuleModule) },

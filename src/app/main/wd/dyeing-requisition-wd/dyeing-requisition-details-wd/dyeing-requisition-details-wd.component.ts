@@ -67,7 +67,8 @@ export class DyeingRequisitionDetailsWdComponent implements OnInit {
     'avg_price',
     'wast',
     'fabric_width',
-    'fabric_quantity_m2'
+    'fabric_quantity_m2',
+    'grade_item_name',
 
   ];
   filter = "";

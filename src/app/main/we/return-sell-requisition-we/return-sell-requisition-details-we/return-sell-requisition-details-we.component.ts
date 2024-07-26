@@ -46,6 +46,7 @@ export class ReturnSellRequisitionDetailsWeComponent implements OnInit {
     'total',
     'total_dollar',
     'work_order_number',
+    'grade_item_name',
     'statement',
     'update'];
   filter = "";

@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // My Component
-import { ShowAllColorCategoryComponent } from '../../../../main/color-category/show-all-color-category/show-all-color-category.component';
+import { ShowAllColorCategoryComponent } from 'src/app/main/color-category/show-all-color-category/show-all-color-category.component';
 
 export const routes: Routes = [
 

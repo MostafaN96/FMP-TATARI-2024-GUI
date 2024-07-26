@@ -9,6 +9,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 // Call Service
 import { WeService } from "src/app/services/main/we/we.service";
 import { ReturnRequisitionDetailsWeService } from "src/app/services/main/we/return-requisition-details-we.service";
+import { GradeItemService } from "src/app/services/main/grade-item.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -18,6 +19,9 @@ import { ActivatedRoute } from '@angular/router';
 
 // Child Components
 import { CurrentStockReportWeComponent } from "../../reports/current-stock-report-we/current-stock-report-we.component";
+
+// Auto Complete
+import { Query,Predicate } from '@syncfusion/ej2-data';
 
 @Component({
   selector: 'app-add-return-requisition-form-we',
@@ -43,6 +47,28 @@ export class AddReturnRequisitionFormWeComponent implements OnInit {
   ///////////////////////////////// General ////////////////////////////////////////////////
   fabrics:any
   @Input() selectedData: any
+  gradeItems:any = []
+
+  ///////////////////////////////// Auto Complete Data  ////////////////////////////////
+  // Auto Complete Data 
+  //enable the highlight property to highlight the matched character in suggestion list
+  public autofill: Boolean = true;
+  
+  // --------------- Grade Item --------------
+  // maps the appropriate column to fields property
+  public fieldsGradeItem: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textGradeItem: string = "نوع الدرجة"
+
+  public onFilteringGradeItem(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.gradeItems, query);
+  }
 
   constructor(
     private _returnRequisitionDetailsWeService: ReturnRequisitionDetailsWeService,
@@ -53,6 +79,7 @@ export class AddReturnRequisitionFormWeComponent implements OnInit {
     private _sessionManagerService: SessionManagerService,
    private route: ActivatedRoute,
    private _weService: WeService,
+    private _gradeItemService: GradeItemService,
 
 
   ) {
@@ -74,6 +101,11 @@ export class AddReturnRequisitionFormWeComponent implements OnInit {
       this.currentStockReport.dyersAndRequisitionsFabrics = response
       this.currentStockReport.listen();
     })
+
+    this._gradeItemService.selectAll().subscribe((response: any) => {
+      this.gradeItems = response
+    })
+    
   }
 
   // Initialize Form Builder
@@ -89,6 +121,7 @@ export class AddReturnRequisitionFormWeComponent implements OnInit {
       colorCategoryName: new FormControl(data.color_category_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
+      gradeItemId: new FormControl(data.grade_item_id, [Validators.required]),
       price: new FormControl(String(data.price), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl(String(data.price_dollar), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -153,6 +186,13 @@ export class AddReturnRequisitionFormWeComponent implements OnInit {
     }
   }
 
+  //  Grade item
+  selectGradeItem(event: { itemData: any; }, row: FormGroup) {
+    if (!this.gradeItems.includes(event.itemData)) {
+      row.controls['gradeItemId'].setValue("")
+    }
+  }
+  
   async onReturnRequisition(){
     this.returnRequisitionForm.markAllAsTouched();
     if (this.returnRequisitionForm.valid) {

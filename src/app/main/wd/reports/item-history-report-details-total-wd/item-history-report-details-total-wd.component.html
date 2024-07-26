@@ -141,6 +141,24 @@
                                                 </ng-template>
                                             </p-columnFilter>
                                         </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="grade_item_name" matchMode="grade-item-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedGradeItemName"
+                                                        [options]="_sharedComponentService.uniqueArray(reportByFabricWdDetails, 'grade_item_name')"
+                                                        (onChange)="onMultiselectedGradeItemName($event.value)"
+                                                        placeholder="البحث بـ نوع الدرجة" optionLabel="grade_item_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.grade_item_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
                                         
                                         <div class="col">
                                             <p-columnFilter field="color_name" matchMode="color-name-filter" [showMenu]="false"
@@ -414,6 +432,13 @@
                                             </div>
                                         </th>
 
+                                        <!-- grade_item_name Column -->
+                                        <th pResizableColumn>
+                                            <div class="flex justify-content-between align-items-center">
+                                                نوع الدرجة
+                                            </div>
+                                        </th>
+
                                         <!-- is_prepare_dyeing Column -->
                                         <th pResizableColumn>
                                             <div class="flex justify-content-between align-items-center">
@@ -611,6 +636,11 @@
                                             {{ element.work_order_number }}
                                         </td>
 
+                                        <!-- grade_item_name Column -->
+                                        <td>
+                                            {{ element.grade_item_name }}
+                                        </td>
+
                                         <!-- is_prepare_dyeing Column -->
                                         <td>
                                             <p-checkbox [(ngModel)]="element.is_prepare_dyeing"
@@ -757,6 +787,9 @@
                                         <td></td>
 
                                         <!-- work_order_number Column -->
+                                        <td></td>
+
+                                        <!-- grade_item_name Column -->
                                         <td></td>
 
                                         <!-- is_prepare_dyeing Column -->

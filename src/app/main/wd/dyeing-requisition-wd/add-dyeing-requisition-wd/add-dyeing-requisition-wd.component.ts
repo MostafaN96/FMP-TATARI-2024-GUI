@@ -16,6 +16,7 @@ import { DyeingRequisitionWdService } from "src/app/services/main/wd/dyeing-requ
 import { FormDyeingRequisitionDetailsWdService } from 'src/app/services/main/wd/form-dyeing-requisition-details-wd.service';
 import { DyeingRequisitionDetailsWdService } from 'src/app/services/main/wd/dyeing-requisition-details-wd.service';
 import { WarehouseService } from "src/app/services/main/warehouse.service";
+import { GradeItemService } from "src/app/services/main/grade-item.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -59,6 +60,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
   ///////////////////////////////// General ////////////////////////////////////////////////
   dyerName = ""
   warehouses: any = []
+  gradeItems: any = []
   dyers: any = []
   dyeingServices: any = []
   isCalcDyeingNet = '0'
@@ -104,6 +106,22 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     e.updateData(this.warehouses, query);
   }
 
+  // --------------- Grade Item --------------
+  // maps the appropriate column to fields property
+  public fieldsGradeItem: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textGradeItem: string = "نوع الدرجة"
+
+  public onFilteringGradeItem(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.gradeItems, query);
+  }
+
   constructor(
     private _warehouseService: WarehouseService,
     private _dyeingServicesService: DyeingServicesService,
@@ -117,6 +135,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private _formDyeingRequisitionDetailsWdService: FormDyeingRequisitionDetailsWdService,
     private _dyeingRequisitionDetailsWdService: DyeingRequisitionDetailsWdService,
+    private _gradeItemService: GradeItemService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
 
   ) {
@@ -147,6 +166,10 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       } else {        
         this.maxWorkOrderNumberResult = "1"
       }        
+    })
+
+    this._gradeItemService.selectAll().subscribe((response: any) => {
+      this.gradeItems = response
     })
   }
 
@@ -179,6 +202,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorId: new FormControl(data.color_id, [Validators.required]),
       colorCode: new FormControl(data.color_code),
+      gradeItemId: new FormControl("", [Validators.required]),
       dyeingFee: new FormControl(data.color_price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       addedCost: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       dyeingQuantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -284,6 +308,13 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
   getWast(quantity: number, dyeingQuantity: number) {
     let result = quantity - dyeingQuantity
     return (result / quantity) * 100
+  }
+
+  //  Grade item
+  selectGradeItem(event: { itemData: any; }, row: FormGroup) {
+    if (!this.gradeItems.includes(event.itemData)) {
+      row.controls['gradeItemId'].setValue("")
+    }
   }
 
   async onAddRequisition() {

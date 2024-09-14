@@ -14,7 +14,7 @@ import { MatMenuModule } from '@angular/material/menu';
 // UIKIT Animation
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { NgxSpinnerModule } from "ngx-spinner";
+// import { NgxSpinnerModule } from "ngx-spinner";
 import { UniquePipePipe } from './services/custom-pipe/unique-pipe.pipe';
 
 @NgModule({
@@ -42,7 +42,7 @@ import { UniquePipePipe } from './services/custom-pipe/unique-pipe.pipe';
     // MAT Menu For navbar
     MatMenuModule,
 
-    NgxSpinnerModule,
+    // NgxSpinnerModule,
 
   ],
   providers: [

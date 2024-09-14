@@ -83,6 +83,16 @@ export class ReportWeService {
       });
   }
     
+  dyedFabricReportByOrderBySeller(orderId: string, sellerId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}dyed-fabric-order-by-order-by-seller/${orderId}/${sellerId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   // Select
   selectByFabricOfRequisition(id: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-fabric-of-requisition/${id}`;

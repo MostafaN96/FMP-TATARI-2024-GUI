@@ -41,7 +41,8 @@
 
                     <!-- Warehouse -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete w-100"
+                        <ejs-autocomplete 
+                        [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse' [autofill]='autofill'
                             formControlName="warehouseId"
                             (change)="selectWarehouse($event)"

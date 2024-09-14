@@ -681,6 +681,8 @@ export class ConstantsService {
       'add-grade-item', // [200]
       'show-all-grade-item', // [201]
       'restore-grade-item', // [202]
+
+      'dyed-fabric-order-report', // [203]
     ]
   }
 

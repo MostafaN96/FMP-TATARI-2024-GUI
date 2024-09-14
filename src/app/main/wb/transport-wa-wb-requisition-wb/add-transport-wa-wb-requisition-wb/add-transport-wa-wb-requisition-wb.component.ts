@@ -224,7 +224,7 @@ export class AddTransportWaWbRequisitionWbComponent implements OnInit {
   ngOnInit(): void {
     this.getData()
 
-    this.transportWaWbForm.controls['warehouseId'].disable()
+    // this.transportWaWbForm.controls['warehouseId'].disable()
 
   }
 

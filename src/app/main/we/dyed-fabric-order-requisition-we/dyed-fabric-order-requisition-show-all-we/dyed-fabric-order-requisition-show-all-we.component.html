@@ -124,11 +124,11 @@
                                         </th>
 
                                         <!-- requisition_details Column -->
-                                        <th>
+                                        <!-- <th>
                                             <div class="flex justify-content-between align-items-center">
                                                 نوع القماش
                                             </div>
-                                        </th>
+                                        </th> -->
 
                                         <!-- note Column -->
                                         <th>
@@ -166,6 +166,14 @@
                                                 تفاصيل الإذن
                                             </div>
                                         </th>
+
+                                        <!-- report Column -->
+                                        <th data-html2canvas-ignore="true">
+                                            <div class="flex justify-content-between align-items-center">
+                                                التقرير
+                                            </div>
+                                        </th>
+
                                     </tr>
 
                                 </ng-template>
@@ -199,7 +207,7 @@
                                         </td>
 
                                         <!-- requisition_details Column -->
-                                        <td>
+                                        <!-- <td>
                                             <table class="table" *ngIf="element.requestionDetails.length > 0">
                                                 <thead>
                                                     <tr>
@@ -351,7 +359,7 @@
                                                     </tr>
                                                 </tfoot>
                                             </table>
-                                        </td>
+                                        </td> -->
 
                                         <!-- note Column -->
                                         <td>
@@ -446,6 +454,14 @@
                                                     <i class="fas fa-angle-double-right update-symbol"></i>
                                                 </a>
                                             </ng-template>
+                                        </td>
+
+                                        <!-- report Column -->
+                                        <td data-html2canvas-ignore="true">
+                                            <a [routerLink]="['/dashboard', 'dyed-fabric-order-report']" 
+                                            [queryParams]="{ id: element.id, sellerId: element.seller_id}">
+                                                <i class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
                                         </td>
 
                                     </tr>

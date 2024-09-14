@@ -406,6 +406,7 @@ const routes: Routes = [
         { path: 'daily-report', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/reports-modules/daily-report-by-date-module/daily-report-by-date-module.module').then(m => m.DailyReportByDateModuleModule) },
         { path: 'bar-chart-report-by-item-we', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/reports-modules/bar-chart-report-by-item-we-module/bar-chart-report-by-item-we-module.module').then(m => m.BarChartReportByItemWeModuleModule) },
         { path: 'daily-report-total', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/reports-modules/daily-report-by-date-total-module/daily-report-by-date-total-module.module').then(m => m.DailyReportByDateTotalModuleModule) },
+        { path: 'dyed-fabric-order-report', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/reports-modules/dyed-fabric-order-report-module/dyed-fabric-order-report-module.module').then(m => m.DyedFabricOrderReportModuleModule) },
 
       ]
   }

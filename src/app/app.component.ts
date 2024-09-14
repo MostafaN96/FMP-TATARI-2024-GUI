@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { NgxSpinnerService } from "ngx-spinner";
+// import { NgxSpinnerService } from "ngx-spinner";
 import * as $ from 'jquery';
 import { NavigationEnd, Router } from '@angular/router';
 import {Title} from "@angular/platform-browser";
@@ -20,7 +20,8 @@ export class AppComponent {
   title = 'application';
   isShowNav = false;
 
-  constructor(private spinner: NgxSpinnerService,     
+  constructor(
+    // private spinner: NgxSpinnerService,     
     private titleService:Title,
     public router: Router,
     public globalService: GlobalService,
@@ -45,12 +46,12 @@ export class AppComponent {
     };
 
         /** spinner starts on init */
-        this.spinner.show();
+        // this.spinner.show();
 
     //after document load
     $(document).ready(() => {   //same as: $(function() { 
 
-      this.spinner.hide();
+      // this.spinner.hide();
       this.titleService.setTitle(String(document.getElementsByClassName("title-page")[0]?.innerHTML ?? 'Tatari')  )
 
       // Change Tab Name

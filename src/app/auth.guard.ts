@@ -28,7 +28,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanDeactivate<u
         return true;
       }
       else {
-        location.href = "/"
+        location.href = "/dashboard/home"
         return false
       }
   }

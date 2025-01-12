@@ -56,8 +56,8 @@ export class YarnService {
       });
   }
 
-  selectByWarehouseWa(id: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wa/${id}`;
+  selectByWarehouseWa(warehouseId: string, yarnOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wa/${warehouseId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({
@@ -106,8 +106,8 @@ export class YarnService {
     return this._http.get(url);
   }
 
-  selectByIndustryWb(id: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}by-industry-wb/${id}`;
+  selectByIndustryWb(industryId: string, yarnOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-industry-wb/${industryId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

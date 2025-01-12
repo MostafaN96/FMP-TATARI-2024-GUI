@@ -47,6 +47,7 @@ export class ItemHistoryReportWdComponent implements OnInit {
   selectedCodes: any[] = []
   selectedDyeingCodes: any[] = []
   selectedConsigmentNumber: any[] = []
+  selectedFabricOrder: any[] = []
   startDate:any
   endDate:any
 
@@ -69,6 +70,7 @@ export class ItemHistoryReportWdComponent implements OnInit {
     this.customFilterForCode();
     this.customFilterForDyeingCode();
     this.customFilterForConsigmentNumber();
+    this.customFilterForFabricOrder();  
   }
 
   getData() {
@@ -275,6 +277,40 @@ export class ItemHistoryReportWdComponent implements OnInit {
     });
   }
 
+  customFilterForFabricOrder() {
+    const customFilterName = "fabric-order-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedFabricOrder
+
+      if (this.selectedFabricOrder[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].wc_fabric_order_requisition_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   clear(table: Table) {
     table.clear();
     table.reset();
@@ -286,6 +322,7 @@ export class ItemHistoryReportWdComponent implements OnInit {
     this.selectedCodes = []
     this.selectedDyeingCodes = []
     this.selectedConsigmentNumber = []
+    this.selectedFabricOrder = []
   }
 
   onMultiselectedDyers(event) {
@@ -307,11 +344,17 @@ export class ItemHistoryReportWdComponent implements OnInit {
     this.selectedDyeingCodes = event
     this.dt1?._filter()
   }
+
   onMultiselectedConsigmentNumber(event) {
     this.selectedConsigmentNumber = event
     this.dt1?._filter()
   }
 
+  onMultiselectedFabricOrder(event) {
+    this.selectedFabricOrder = event
+    this.dt1?._filter()
+  }
+  
   notZero(n) {
     n = +n;  // Coerce to number.
     if (!n) {  // Matches +0, -0, NaN

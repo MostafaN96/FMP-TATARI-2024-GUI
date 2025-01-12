@@ -65,8 +65,13 @@ export class ReportWcService {
       });
   }
 
-  selectInventoryDetailsByWarehouseByFabricByConsigmentManufacturing(fabricId: string, warehouseId: string,  consigmentManufacturingId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-details-by-warehouse-by-fabric-by-consigment-manufacturing/${fabricId}/${warehouseId}/${consigmentManufacturingId}`;
+  selectInventoryDetailsByWarehouseByFabricByConsigmentManufacturing(
+    fabricId: string, 
+    warehouseId: string,  
+    consigmentManufacturingId: string, 
+    fabricOrderId: string
+  ): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-details-by-warehouse-by-fabric-by-consigment-manufacturing/${fabricId}/${warehouseId}/${consigmentManufacturingId}/${fabricOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

@@ -67,7 +67,12 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
         this.fabricName = params['name']
         this.consigmentNumber = params['consigmentNumber']
         this.warehouseName = params['warehouseName']
-        this._reportWcService.selectInventoryDetailsByWarehouseByFabricByConsigmentManufacturing(params['id'], params['warehouseId'], params['consigmentManufacturingId']).subscribe((response: any) => {
+        this._reportWcService.selectInventoryDetailsByWarehouseByFabricByConsigmentManufacturing(
+          params['id'], 
+          params['warehouseId'], 
+          params['consigmentManufacturingId'],
+          params['fabricOrderId']
+        ).subscribe((response: any) => {
           this.reportByFabricWcDetails = response
 
           // PrimeNG Table

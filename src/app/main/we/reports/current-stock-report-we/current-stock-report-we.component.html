@@ -483,6 +483,13 @@
                                 </div>
                             </th>
 
+                            <th pResizableColumn pSortableColumn="we_dyed_fabric_order_requisition_name" style="max-width: 100px">
+                                <div class="flex justify-content-between align-items-center">
+                                    الطلبية
+                                    <p-sortIcon field="we_dyed_fabric_order_requisition_name"></p-sortIcon>
+                                </div>
+                            </th>
+
                             <th pResizableColumn pSortableColumn="current_quantity" style="max-width: 100px">
                                 <div class="flex justify-content-between align-items-center">
                                     الكمية المتوفرة<p-sortIcon field="current_quantity"></p-sortIcon>
@@ -665,6 +672,10 @@
                             </td>
 
                             <td style="max-width: 100px">
+                                {{element.we_dyed_fabric_order_requisition_name}}
+                            </td>
+
+                            <td style="max-width: 100px">
                                 {{element.current_quantity | number}}
                             </td>
 
@@ -802,6 +813,7 @@
                             <td style="max-width: 100%"></td>
                             <td style="max-width: 80px"></td>
                             <td style="max-width: 80px"></td>
+                            <td style="max-width: 100px"></td>
                             <td style="max-width: 100px"></td>
                             <td style="max-width: 100px">
                                 {{_sharedComponentService.getTotalCollectSum(dt1.filteredValue == null ?

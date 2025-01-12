@@ -36,10 +36,28 @@
                         <div class="row row-cols-5">
                          
                             <div class="col">
+                                <p-columnFilter field="work_order_number_details" matchMode="work-order-number-details-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="selectedWorkOrderNumberDetails"
+                                            [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'work_order_number_details')"
+                                            (onChange)="onMultiselectedWorkOrderNumberDetails($event.value)"
+                                            placeholder="البحث بـ امر الشغل" optionLabel="work_order_number_details">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.work_order_number_details}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+                         
+                            <div class="col">
                                 <p-columnFilter field="consigment_dyeing_number" matchMode="consigment-number-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedConsigmentNumber"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'consigment_dyeing_number')"
                                             (onChange)="onMultiselectedConsigmentNumber($event.value)"
                                             placeholder="البحث بـ رقم الرسالة" optionLabel="consigment_dyeing_number">
@@ -57,7 +75,7 @@
                                 <p-columnFilter field="fabric_name" matchMode="fabric-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedFabrics"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'fabric_name')"
                                             (onChange)="onMultiselectedFabric($event.value)"
                                             placeholder="البحث بـ القماش الخام" optionLabel="fabric_name">
@@ -75,7 +93,7 @@
                                 <p-columnFilter field="fabric_code" matchMode="fabric-code-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedFabricCodes"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'fabric_code')"
                                             (onChange)="onMultiselectedFabricCode($event.value)"
                                             placeholder="البحث بـ كود قماش الخام" optionLabel="fabric_code">
@@ -93,7 +111,7 @@
                                 <p-columnFilter field="color_code" matchMode="color-code-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedColorCodes"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'color_code')"
                                             (onChange)="onMultiselectedColorCode($event.value)"
                                             placeholder="البحث بـ كود اللون" optionLabel="color_code">
@@ -111,7 +129,7 @@
                                 <p-columnFilter field="color_category_name" matchMode="color-category-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedColorCategories"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'color_category_name')"
                                             (onChange)="onMultiselectedColorCategory($event.value)"
                                             placeholder="البحث بـ فئة اللون" optionLabel="color_category_name">
@@ -129,7 +147,7 @@
                                 <p-columnFilter field="color_name" matchMode="color-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedColors"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'color_name')"
                                             (onChange)="onMultiselectedColor($event.value)"
                                             placeholder="البحث بـ اللون" optionLabel="color_name">
@@ -147,7 +165,7 @@
                                 <p-columnFilter field="dyed_fabric_name" matchMode="dyed-fabric-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedDyedFabrics"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'dyed_fabric_name')"
                                             (onChange)="onMultiselectedDyedFabric($event.value)"
                                             placeholder="البحث بـ القماش المصبوغ" optionLabel="dyed_fabric_name">
@@ -165,7 +183,7 @@
                                 <p-columnFilter field="dyed_fabric_code" matchMode="dyed-fabric-code-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedDyedFabricCodes"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'dyed_fabric_code')"
                                             (onChange)="onMultiselectedDyedFabricCode($event.value)"
                                             placeholder="البحث بـ كود قماش المصبوغ" optionLabel="dyed_fabric_code">
@@ -183,7 +201,7 @@
                                 <p-columnFilter field="order_number" matchMode="order-number-filter" [showMenu]="false"
                                     [showClearButton]="false">
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value"
+                                        <p-multiSelect [ngModel]="selectedSellerOrdersNumbers"
                                             [options]="_sharedComponentService.uniqueArray(formDyeingFabricsByDyer, 'order_number')"
                                             (onChange)="onMultiselectedSellerOrderNumber($event.value)"
                                             placeholder="البحث بـ رقم طلبية العميل" optionLabel="order_number">
@@ -207,6 +225,24 @@
                             <!-- Select Column -->
                             <th data-html2canvas-ignore="true">
                                 اختيار
+                            </th>
+
+                            <!-- work_order_number_details Column -->
+                            <th pResizableColumn pSortableColumn="work_order_number_details">
+                                <div class="flex justify-content-between align-items-center">
+                                    امر التشغيل
+                                    <p-sortIcon data-html2canvas-ignore="true" field="work_order_number_details">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
+
+                            <!-- wc_fabric_order_requisition_name Column -->
+                            <th pResizableColumn pSortableColumn="wc_fabric_order_requisition_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    الطلبية
+                                    <p-sortIcon data-html2canvas-ignore="true" field="wc_fabric_order_requisition_name">
+                                    </p-sortIcon>
+                                </div>
                             </th>
 
                             <!-- fabric_name Column -->
@@ -416,6 +452,16 @@
                                 </a>
                             </td>
 
+                            <!-- work_order_number_details Column -->
+                            <td>
+                                {{ element.work_order_number_details }}
+                            </td>
+
+                            <!-- wc_fabric_order_requisition_name Column -->
+                            <td>
+                                {{ element.wc_fabric_order_requisition_name }}
+                            </td>
+
                             <!-- fabric_name Column -->
                             <td>
                                 {{ element.fabric_name }}
@@ -570,8 +616,14 @@
                             <!-- Select Column -->
                             <td data-html2canvas-ignore="true"></td>
 
-                            <!-- fabric_name Column -->
+                            <!-- wc_fabric_order_requisition_name Column -->
                             <td>الإجمالي</td>
+
+                            <!-- work_order_number_details Column -->
+                            <td></td>
+
+                            <!-- fabric_name Column -->
+                            <td></td>
 
                             <!-- fabric_code Column -->
                             <td></td>

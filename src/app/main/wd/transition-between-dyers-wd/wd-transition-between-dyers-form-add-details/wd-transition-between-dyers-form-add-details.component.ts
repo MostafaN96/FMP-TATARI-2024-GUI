@@ -10,6 +10,7 @@ import { WdService } from "src/app/services/main/wd/wd.service";
 import { BussinessmanService } from "src/app/services/main/bussinessman.service";
 import { WdTransitionBetweenDyersRequisitionDetailsService } from "src/app/services/main/wd/wd-transition-between-dyers-requisition-details.service";
 import { ReportWdService } from "src/app/services/main/wd/report-wd.service";
+import { FabricOrderRequisitionWcService } from "src/app/services/main/wc/fabric-order-requisition-wc.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -44,6 +45,7 @@ export class WdTransitionBetweenDyersFormAddDetailsComponent implements OnInit {
   consigments: any = []
   fabrics: any = []
   dyers: any = []
+  fabricOrder: any = []
   currentQuantity: any = []
   notSelectedDyers: any
   fabricsDetails: any = []
@@ -62,7 +64,7 @@ export class WdTransitionBetweenDyersFormAddDetailsComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textFabric: string = "نوع القماش"
 
-  public onFilteringFabricName(e: any) {
+  public onFilteringFabricName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('fabric_name', 'contains', e.text);
     predicate = predicate.or('fabric_code', 'contains', e.text);
@@ -70,7 +72,7 @@ export class WdTransitionBetweenDyersFormAddDetailsComponent implements OnInit {
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.fabrics, query);
+    e.updateData(this.fabrics[index], query);
   }
 
   // --------------- Consigments --------------
@@ -89,10 +91,28 @@ export class WdTransitionBetweenDyersFormAddDetailsComponent implements OnInit {
     e.updateData(this.consigments[index], query);
   }
 
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsFabricOrder: Object = { value: "wc_fabric_order_requisition_id", text: "wc_fabric_order_requisition_name" };
+  // set the placeholder to the AutoComplete input
+  public textFabricOrder: string = "اسم الطلبية"
+
+
+  public onFilteringFabricOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('wc_fabric_order_requisition_name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.fabricOrder, query);
+  }
+
   constructor(
     private _reportWdService: ReportWdService,
     private _wdService: WdService,
     private _wdTransitionBetweenDyersRequisitionDetailsService: WdTransitionBetweenDyersRequisitionDetailsService,
+    private _fabricOrderRequisitionWcService: FabricOrderRequisitionWcService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
@@ -117,14 +137,17 @@ export class WdTransitionBetweenDyersFormAddDetailsComponent implements OnInit {
     this.addtransitionDyersRequisitionForm.controls['fromDyeingId'].setValue(this.selectedData[0]['from_dyeing_id'])
     this.addtransitionDyersRequisitionForm.controls['toDyeingId'].setValue(this.selectedData[0]['to_dyeing_id'])
 
-    this._wdService.selectQuantityByDyeingWd(this.selectedData[0]['from_dyeing_id']).subscribe((response: any) => {
-      this.fabrics = response
+    this._fabricOrderRequisitionWcService.selectByDyeingWd(this.selectedData[0]['from_dyeing_id']).subscribe((response: any) => {
+      this.fabricOrder = response
     })
+
   }
 
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      fabricOrderId: new FormControl("", [Validators.required]),
       fabricId: new FormControl("", [Validators.required]),
       fabricCode: new FormControl(null),
       fabricName: new FormControl(null),
@@ -156,6 +179,34 @@ export class WdTransitionBetweenDyersFormAddDetailsComponent implements OnInit {
     this.listFabricPrices.splice(index, 1);
     this.listFabricPricesDollar[index] = delete this.listFabricPricesDollar[index];
     this.listFabricPricesDollar.splice(index, 1);
+  }
+
+  //  Fabric Order
+  selectFabricOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fabricOrder.indexOf(event.itemData)
+
+    if (this.fabricOrder[indexData] !== event.itemData) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['fabricOrderId'].setValue("")
+      row.controls['fabricId'].setValue("")
+      row.controls['fabricCode'].setValue("")
+      row.controls['fabricName'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['consigmentDyeingId'].setValue("")
+      this.currentQuantity[index] = 0
+      this.fabrics[index] = []
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._wdService.selectQuantityByDyeingByFabricOrderWd(
+        this.addtransitionDyersRequisitionForm.controls['fromDyeingId'].value!, 
+        event.itemData.wc_fabric_order_requisition_id
+      ).subscribe((response: any) => {
+        this.fabrics[index] = response
+      })
+
+    }
   }
 
   //  Fabric
@@ -222,6 +273,35 @@ export class WdTransitionBetweenDyersFormAddDetailsComponent implements OnInit {
     } else {
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
+
+      
+      // Get Prices
+      this._reportWdService.selectPriceByFabricByDyeingByConsigmentDyeingInWd(
+        row.controls['fabricId'].value, 
+        this.addtransitionDyersRequisitionForm.controls['fromDyeingId'].value!,
+        event.itemData.id
+      ).subscribe((response: any) => {
+        this.fabricsDetails = response
+
+        this.listFabricPrices[index] = [
+          this._sharedComponentService.getAvgPrice(this.fabricsDetails), 
+          this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), 
+          parseFloat(this.fabricsDetails[0].latest_price)
+        ]
+
+        this.listFabricPricesDollar[index] = [
+          this._sharedComponentService.getAvgPriceDynamic(
+            this.fabricsDetails, 
+            'quantity', 
+            'price_dollar'
+          ), 
+          this._sharedComponentService.getAvgInputesPriceDynamic(
+            this.fabricsDetails, 
+            'quantity', 
+            'price_dollar'
+          ), parseFloat(this.fabricsDetails[0].latest_price_dollar)
+        ]
+      })
     }
   }
 

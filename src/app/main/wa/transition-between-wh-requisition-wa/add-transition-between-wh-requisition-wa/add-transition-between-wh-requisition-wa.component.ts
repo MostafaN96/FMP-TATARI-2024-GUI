@@ -13,6 +13,7 @@ import { TransitionBetweenWhRequisitionWaService } from "src/app/services/main/w
 import { WaService } from "src/app/services/main/wa/wa.service";
 import { ReportWaService } from "src/app/services/main/wa/report-wa.service";
 import { ConsigmentYarnService } from "src/app/services/main/consigment-yarn.service";
+import { YarnOrderRequisitionWaService } from 'src/app/services/main/wa/yarn-order-requisition-wa.service';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -44,10 +45,12 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
 
   ///////////////////////////////// General ////////////////////////////////////////////////
   lots: any = []
+  fromLots: any = []
   fromConsigmentsYarns: any = []
   toConsigmentsYarns: any = []
   yarns:any = []
   fromWarehouses:any = []
+  yarnOrder: any = []
   currentQuantity:any = []
   yarnsDetails:any = []
   getListYarnPrices:any = []
@@ -114,9 +117,26 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
   
   // --------------- Lot --------------
   // maps the appropriate column to fields property
-  public fieldsLot: Object = { value: "id", text:"code"};
+  public fieldsFromYarnLot: Object = { value: "id", text:"code"};
   // set the placeholder to the AutoComplete input
-  public textLot: string = "اللوط"
+  public textFromYarnLot: string = "من لوط"
+
+  public onFilteringFromYarnLot (e: any, index)
+  {
+    e.preventDefaultAction=true;
+         var predicate = new Predicate('code', 'contains', e.text);
+          var query = new Query();
+      //frame the query based on search string with filter type.
+        query = (e.text != "") ? query.where(predicate) : query;
+      //pass the filter data source, filter query to updateData method.
+        e.updateData(this.fromLots[index], query);
+  }
+
+  // --------------- Lot --------------
+  // maps the appropriate column to fields property
+  public fieldsLot: Object = { value: "code", text:"code"};
+  // set the placeholder to the AutoComplete input
+  public textLot: string = "الى اللوط"
 
   public onFilteringLot (e: any, index)
   {
@@ -163,6 +183,23 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
         e.updateData(this.toConsigmentsYarns, query);
   }
 
+  // --------------- Requisitio nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textYarnOrder: string = "اسم الطلبية"
+
+
+  public onFilteringYarnOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.yarnOrder, query);
+  }
+
   constructor(
     private _waService: WaService,
     private _consigmentYarnService: ConsigmentYarnService,
@@ -170,6 +207,7 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
     private _yarnLotService: YarnLotService,
     private _warehouseService: WarehouseService,
     private _transitionBetweenWhRequisitionWaService: TransitionBetweenWhRequisitionWaService,
+    private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
@@ -205,10 +243,13 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
   initItem() {
     return new FormGroup({
       fromWarehouseId: new FormControl("", [Validators.required]),
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      yarnOrderId: new FormControl("", [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       yarnName: new FormControl(""),
       yarnCode: new FormControl(""),
-      yarnLotId: new FormControl("", [Validators.required]),
+      fromYarnLotId: new FormControl("", [Validators.required]),
+      yarnLotCode: new FormControl("", [Validators.required]),
       consigmentYarnId: new FormControl(''),
       newConsigmentYarnNumber: new FormControl(''),
       fromConsigmentYarnId: new FormControl("", [Validators.required]),
@@ -246,13 +287,14 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
     let indexData = this.yarns[index].indexOf(event.itemData)
 
     if (this.yarns[index][indexData] !== event.itemData) {
-      row.controls['yarnLotId'].setValue("")
+      row.controls['fromYarnLotId'].setValue("")
       row.controls['fromConsigmentYarnId'].setValue("")
       row.controls['yarnId'].setValue("")
       row.controls['yarnCode'].setValue("")
       row.controls['quantity'].setValue("")
       row.controls['yarnName'].setValue("")
       this.currentQuantity[index] = 0
+      this.fromLots[index] = []
       this.lots[index] = []
     }
     else {
@@ -260,19 +302,24 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
       row.controls['yarnCode'].setValue(event.itemData.code)
       row.controls['yarnName'].setValue(event.itemData.name)
 
+      this._yarnLotService.selectByYarn(event.itemData.id).subscribe((response: any) => {
+        this.lots[index] = response
+      })
+
       this._yarnLotService.selectByWarehouseByYarnWa(
         row.controls['fromWarehouseId'].value!,
-        event.itemData.id
+        event.itemData.id,
+        row.controls['yarnOrderId'].value!
         ).subscribe((response: any) => {
-        this.lots[index] = response
-        console.log(this.lots);
+        this.fromLots[index] = response
         
-        if(this.lots[0] != null) {
-          row.controls['yarnLotId'].setValue(this.lots[0].id)
+        if(this.fromLots[0] != null) {
+          row.controls['fromYarnLotId'].setValue(this.fromLots[0].id)
           this.getSelectConsigmentYarnQuantityByYarnByWarehouseByLotWb(
             row.controls['fromWarehouseId'].value!,
             event.itemData.id,
-            this.lots[0].id,
+            this.fromLots[0].id,
+            row.controls['yarnOrderId'].value!,
             index
           )
         }
@@ -280,7 +327,7 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
 
       for (let i = 0; i < this.addtransitionIndustriesRequisitionForm.controls.items['controls'].length; i++) {
         if(this.addtransitionIndustriesRequisitionForm.controls.items['controls'][i].value.yarnId?.includes(event.itemData.id)) {
-          row.controls['yarnLotId'].setValue("")
+          row.controls['fromYarnLotId'].setValue("")
           row.controls['yarnId'].setValue("")
           row.controls['yarnCode'].setValue("")
           row.controls['yarnName'].setValue("")
@@ -311,10 +358,10 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
 
   // Start Yarn Lot Autocomplete Section
   //  Yarn Lot
-  selectYarnLot(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.lots[index].indexOf(event.itemData)
-    if (this.lots[index][indexData] !== event.itemData) {
-      row.controls['yarnLotId'].setValue(null)
+  selectFromYarnLot(event: { itemData: any; }, row: FormGroup, index: number) {
+    let indexData = this.fromLots[index].indexOf(event.itemData)
+    if (this.fromLots[index][indexData] !== event.itemData) {
+      row.controls['fromYarnLotId'].setValue(null)
       row.controls['fromConsigmentYarnId'].setValue("")
       this.currentQuantity[index] = 0
     } else {
@@ -322,16 +369,23 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
         row.controls['fromWarehouseId'].value!,
         row.controls['yarnId'].value!,
         event.itemData.id,
+        row.controls['yarnOrderId'].value!,
         index
       )
     }
   }
 
-  getSelectConsigmentYarnQuantityByYarnByWarehouseByLotWb(warehouseId: string, yarnId: string, lotId:string, index) {
+  getSelectConsigmentYarnQuantityByYarnByWarehouseByLotWb(
+    warehouseId: string, 
+    yarnId: string, 
+    lotId:string,  
+    yarnOrderId:string, 
+    index) {
     this._waService.selectRemainingByWarehouseByYarnByLotWa(
       warehouseId, 
       yarnId,
-      lotId
+      lotId,
+      yarnOrderId
       ).subscribe((response: any) => {
         this.fromConsigmentsYarns[index] = response
       })
@@ -375,10 +429,34 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
       this.yarns[index] = []
     }
     else {
-      this._yarnService.selectByWarehouseWa(event.itemData?.id).subscribe((response: any) => {
+      this._yarnOrderRequisitionWaService.selectByWarehouseWa(event.itemData?.id).subscribe((response: any) => {
+        this.yarnOrder = response
+      })
+    }
+  }
+
+  //  Yarn Order
+  selectYarnOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.yarnOrder.indexOf(event.itemData)
+
+    if (this.yarnOrder[indexData] !== event.itemData) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['yarnOrderId'].setValue("")
+      row.controls['yarnId'].setValue("")
+      row.controls['yarnCode'].setValue("")
+      row.controls['yarnName'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['fromYarnLotId'].setValue("")
+      row.controls['fromConsigmentYarnId'].setValue("")
+      this.currentQuantity[index] = 0
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._yarnService.selectByWarehouseWa(row.controls['fromWarehouseId'].value!, event.itemData.id).subscribe((response: any) => {
         this.yarns[index] = response
       })
-  
+
     }
   }
 
@@ -416,7 +494,7 @@ export class AddTransitionBetweenWhRequisitionWaComponent implements OnInit {
       if (this._quantityOccurrencesValidationService.validateCurrentQuantity(
         this.addtransitionIndustriesRequisitionForm.controls.items.value, this.addtransitionIndustriesRequisitionForm.controls.items.value, 
         'fromConsigmentYarnId', 'fromConsigmentYarnId', 
-        'yarnLotId', 'yarnLotId', 
+        'fromYarnLotId', 'fromYarnLotId', 
         'yarnId', 'yarnId', 
         'quantity', 'yarnName', 'validQuantity')) {
       this._constantsService.spinner.show()

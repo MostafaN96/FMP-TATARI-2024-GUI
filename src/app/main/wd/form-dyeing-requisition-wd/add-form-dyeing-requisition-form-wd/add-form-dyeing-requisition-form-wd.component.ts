@@ -39,7 +39,15 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
 
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
-  displayedColumns: string[] = ['select', 'code', 'fabric_dyeing_code', 'name', 'consigment_dyeing_number', 'quantity'];
+  displayedColumns: string[] = [
+    'select', 
+    'wc_fabric_order_requisition_name', 
+    'code', 
+    'fabric_dyeing_code', 
+    'name', 
+    'consigment_dyeing_number', 
+    'quantity'
+  ];
   dataSourceSearchTabel: any;
   selection = new SelectionModel(true);
   selectArrayValues: any[] = [];
@@ -200,6 +208,9 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
   initItem(data: any, index: number) {
     return new FormGroup({
       index: new FormControl(index),
+      ordersRequisitionsId: new FormControl(data.orders_requisitions_id, [Validators.required]),
+      fabricOrderId: new FormControl(data.wc_fabric_order_requisition_id, [Validators.required]),
+      fabricOrderName: new FormControl(data.wc_fabric_order_requisition_name, [Validators.required]),
       fabricId: new FormControl(data.fabric_id, [Validators.required]),
       fabricCode: new FormControl(data.fabric_code),
       dyeingCode: new FormControl(data.fabric_dyeing_code),
@@ -219,6 +230,7 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
       dyedFabricCode: new FormControl(null),
       fabricWidth: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       fabricQuantityM2: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      workOrderNumberDetails: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       document: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });

@@ -54,8 +54,8 @@
                         </small>
                     </div>
 
+                    <!-- fabricId -->
                     <div class="col">
-                        <!-- Name -->
                         <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric'
                             (filtering)="onFilteringFabricName($event)" [placeholder]='textFabric' [autofill]='autofill'
                             formControlName="fabricId" (change)='selectFabric($event)' class="ejs-autocomplete w-100">
@@ -66,6 +66,23 @@
                         </small>
                         <small class="text-danger" *ngIf="addManufacturingRequisitionForm.controls['fabricId'].hasError('required') && (addManufacturingRequisitionForm.controls['fabricId'].dirty 
                         || addManufacturingRequisitionForm.controls['fabricId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    
+                    <!-- yarnOrderId -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder'
+                            (filtering)="onFilteringYarnOrder($event)" [placeholder]='textYarnOrder' [autofill]='autofill'
+                            formControlName="yarnOrderId" (change)='selectYarnOrder($event)' class="ejs-autocomplete w-100">
+                        </ejs-autocomplete>
+                        <small class="text-danger"
+                            *ngIf="addManufacturingRequisitionForm.controls['yarnOrderId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="addManufacturingRequisitionForm.controls['yarnOrderId'].hasError('required') && (addManufacturingRequisitionForm.controls['yarnOrderId'].dirty 
+                        || addManufacturingRequisitionForm.controls['yarnOrderId'].touched)"
                             [innerHTML]="_sharedComponentService.required_field">
                         </small>
                     </div>
@@ -130,7 +147,7 @@
                                     <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row"
                                         style="width: 5%;">
                                         <mat-checkbox
-                                            *ngIf="addManufacturingRequisitionForm.controls['fabricId'].value != null"
+                                            *ngIf="addManufacturingRequisitionForm.controls['yarnOrderId'].value != null"
                                             (click)="getSelectedIndex(row)" (click)="$event.stopPropagation()"
                                             (change)="$event ? selection.toggle(row) : null"
                                             [checked]="selection.isSelected(row)">

@@ -182,6 +182,25 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- work Order Number -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>رقم الشغل</mat-label>
+                            <input type="text" matInput formControlName="workOrderNumberDetails" placeholder="مثال: 10214"
+                                [errorStateMatcher]="matcher"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="inputDyeingWdForm.controls['workOrderNumberDetails'].hasError('required') && (inputDyeingWdForm.controls['workOrderNumberDetails'].dirty 
+                                    || inputDyeingWdForm.controls['workOrderNumberDetails'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="inputDyeingWdForm.controls['workOrderNumberDetails'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
 
                     <!-- fabric width -->
                     <div class="col">

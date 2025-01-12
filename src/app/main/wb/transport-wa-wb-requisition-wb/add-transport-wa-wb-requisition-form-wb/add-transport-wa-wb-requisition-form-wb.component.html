@@ -17,6 +17,10 @@
                                     التسلسل
                                 </th>
 
+                                <th style="max-width: 100px;">
+                                    الطلبية
+                                </th>
+
                                 <th style="max-width: 120px;">
                                     اسم الصنف
                                 </th>
@@ -93,9 +97,30 @@
                                         <label style="width: 5px;">{{index+1}}</label>
                                     </td>
 
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' 
+                                            (filtering)="onFilteringYarnOrder($event)"
+                                            (change)='selectYarnOrder($event, row, index)'
+                                                [placeholder]='textYarnOrder' [autofill]='autofill'
+                                                formControlName="yarnOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('yarnOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('yarnOrderId').hasError('required') && (row.get('yarnOrderId').dirty 
+                                                || row.get('yarnOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                     <td class="table-td" style="max-width: 120px;">
-                                        <ejs-autocomplete [dataSource]='yarns' [fields]='fieldsYarn'
-                                            (filtering)="onFilteringYarnName($event)" [placeholder]='textYarn'
+                                        <ejs-autocomplete [dataSource]='yarns[index]' [fields]='fieldsYarn'
+                                            (filtering)="onFilteringYarnName($event, index)" [placeholder]='textYarn'
                                             [autofill]='autofill' formControlName="yarnId"
                                             (change)='selectYarn($event, row, index)'>
                                         </ejs-autocomplete>
@@ -308,8 +333,8 @@
 
                                     <!-- fabric to be manufactured -->
                                     <td class="table-td" style="max-width: 120px;">
-                                        <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric'
-                                            (filtering)="onFilteringFabricName($event)" [placeholder]='textFabric'
+                                        <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric'
+                                            (filtering)="onFilteringFabricName($event, index)" [placeholder]='textFabric'
                                             [autofill]='autofill' formControlName="fabricToBeManufacturedId"
                                             (change)='selectFabric($event, row, index)' [errorStateMatcher]="matcher">
                                         </ejs-autocomplete>
@@ -389,7 +414,7 @@
                             <tr>
                                 <td>الاجمالي</td>
 
-                                <td colspan="6"></td>
+                                <td colspan="7"></td>
                                 <td colspan="2"
                                 *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])"></td>
                                 <td>{{_sharedComponentService.getTotalQuantityForm(transportWaWbForm, 'items',

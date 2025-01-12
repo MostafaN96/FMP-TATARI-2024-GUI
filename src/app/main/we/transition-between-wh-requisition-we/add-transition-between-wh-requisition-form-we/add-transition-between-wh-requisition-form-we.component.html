@@ -35,6 +35,10 @@
                                     كود المادة
                                 </th>
 
+                                <th style="width: 120px;">
+                                    الطلبية
+                                </th>
+
                                 <th style="max-width: 100px;">
                                     اللون
                                 </th>
@@ -55,19 +59,19 @@
                                     السعر دولار
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     الكمية المتوفرة
                                 </th>
 
-                                <th style="max-width: 120px;">
+                                <th style="max-width: 80px;">
                                     الكمية
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     الاجمالي
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     الاجمالي دولار
                                 </th>
 
@@ -140,6 +144,16 @@
                                             </mat-label>
                                             <input [disabled]="true" matInput placeholder="كود المادة" readonly
                                                 formControlName="dyedFabricCode">
+                                        </mat-form-field>
+                                    </td>
+
+                                    <td class="table-td" style="max-width: 120px;">
+                                        <mat-form-field class="w-100">
+                                            <mat-label>
+                                                الطلبية
+                                            </mat-label>
+                                            <input [disabled]="true" matInput placeholder="الطلبية" readonly
+                                                formControlName="dyedFabricOrderName">
                                         </mat-form-field>
                                     </td>
 
@@ -255,7 +269,7 @@
                                     </td>
 
                                     <!-- total -->
-                                    <td class="align-middle text-center">
+                                    <td class="align-middle text-center" style="max-width: 80px;">
                                         <span>
                                             {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value,
                                             row.controls['quantity'].value) | number}}
@@ -263,7 +277,7 @@
                                     </td>
 
                                     <!-- total priceDollar -->
-                                    <td class="align-middle text-center">
+                                    <td class="align-middle text-center" style="max-width: 80px;">
                                         <span>
                                             {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value,
                                             row.controls['quantity'].value) | number}}
@@ -408,7 +422,7 @@
                             <tr>
                                 <td>الاجمالي</td>
 
-                                <td colspan="9"></td>
+                                <td colspan="10"></td>
                                 <td>{{_sharedComponentService.getTotalQuantityForm(transitionBetweenWhRequisitionForm,
                                     'items',
                                     'quantity') | number}}</td>

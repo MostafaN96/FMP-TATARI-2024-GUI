@@ -12,6 +12,7 @@ import { TransitionBetweenWhRequisitionDetailsWcService } from "src/app/services
 import { WcService } from "src/app/services/main/wc/wc.service";
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
 import { ConsigmentManufacturingService } from "src/app/services/main/consigment-manufacturing.service";
+import { FabricOrderRequisitionWcService } from "src/app/services/main/wc/fabric-order-requisition-wc.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -45,6 +46,7 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
   toConsigmentsManufacturing: any = []
   fabrics:any = []
   fromWarehouses:any = []
+  fabricOrder: any = []
   currentQuantity:any = []
   fabricsDetails:any = []
   getListFabricPrices:any = []
@@ -127,12 +129,30 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
         e.updateData(this.toConsigmentsManufacturing, query);
   }
 
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsFabricOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textFabricOrder: string = "اسم الطلبية"
+
+
+  public onFilteringFabricOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.fabricOrder, query);
+  }
+
   constructor(
     private _wcService: WcService,
     private _consigmentManufacturingService: ConsigmentManufacturingService,
     private _fabricService: FabricService,
     private _warehouseService: WarehouseService,
     private _transitionBetweenWhRequisitionDetailsWcService: TransitionBetweenWhRequisitionDetailsWcService,
+    private _fabricOrderRequisitionWcService: FabricOrderRequisitionWcService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
@@ -169,6 +189,8 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      fabricOrderId: new FormControl("", [Validators.required]),
       fromWarehouseId: new FormControl("", [Validators.required]),
       fabricId: new FormControl("", [Validators.required]),
       fabricName: new FormControl(""),
@@ -227,6 +249,7 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
           this.getSelectConsigmentManufacturingQuantityByFabricByWarehouseWc(
             row.controls['fromWarehouseId'].value!,
             event.itemData.id,
+            row.controls['fabricOrderId'].value!,
             index
           )
           }
@@ -260,10 +283,11 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
     }
   }
 
-  getSelectConsigmentManufacturingQuantityByFabricByWarehouseWc(warehouseId: string, fabricId: string, index) {
+  getSelectConsigmentManufacturingQuantityByFabricByWarehouseWc(warehouseId: string, fabricId: string, fabricOrderId: string, index) {
     this._wcService.selectConsigmentManufacturingQuantityByWarehouseByFabricWc(
       warehouseId, 
-      fabricId
+      fabricId,
+      fabricOrderId
       ).subscribe((response: any) => {
         this.fromConsigmentsManufacturing[index] = response
       })
@@ -296,15 +320,47 @@ export class AddTransitionBetweenWhRequisitionFormWcComponent implements OnInit 
   }
   // End Consigment Manufacturing Autocomplete Section
 
+  //  Fabric Order
+  selectFabricOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fabricOrder.indexOf(event.itemData)
+
+    if (this.fabricOrder[indexData] !== event.itemData) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['fabricOrderId'].setValue("")
+      row.controls['fabricId'].setValue("")
+      row.controls['fabricName'].setValue("")
+      row.controls['fabricCode'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['consigmentManufacturingId'].setValue("")
+      this.currentQuantity[index] = 0
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._fabricService.selectByWarehouseWc(row.controls['fromWarehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+        this.fabrics[index] = response
+      })
+
+    }
+  }
+
   //  From Warehouses
   selectFromWarehouse(event: { itemData: any; }, row: FormGroup, index: number) {
     if(!this.fromWarehouses.includes(event.itemData)) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['fabricOrderId'].setValue("")
       row.controls['fromWarehouseId'].setValue("")
+      row.controls['fabricId'].setValue("")
+      row.controls['fabricCode'].setValue("")
+      row.controls['fabricName'].setValue("")
+      row.controls['quantity'].setValue("")
+      this.currentQuantity[index] = 0
       this.fabrics[index] = []
     }
     else {
-      this._fabricService.selectByWarehouseWc(event.itemData?.id).subscribe((response: any) => {
-        this.fabrics[index] = response
+
+      this._fabricOrderRequisitionWcService.selectByWarehouseWc(event.itemData?.id).subscribe((response: any) => {
+        this.fabricOrder = response
       })
   
     }

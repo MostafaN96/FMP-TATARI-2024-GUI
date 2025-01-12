@@ -146,6 +146,16 @@ export class ReportWeService {
       });
   }
 
+  dyedFabricOrdersReport(): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}dyed-fabric-orders-report`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   inquireFabricAvilabilityReportWe(object:any): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}inquire-fabric-avilability-report-we`;
     return this._http.post(url,object,

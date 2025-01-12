@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -41,7 +41,7 @@
                     <div class="col">
                         <ejs-autocomplete [dataSource]='industries' [fields]='fieldsIndustry' 
                             (filtering)="onFilteringIndustry($event)" [placeholder]='textIndustry' [autofill]='autofill'
-                            formControlName="fromIndustryId" class="ejs-autocomplete" (change)="selectIndustry($event)">
+                            formControlName="fromIndustryId" class="ejs-autocomplete w-100" (change)="selectIndustry($event)">
                         </ejs-autocomplete>
                         <small class="text-danger" *ngIf="addtransitionIndustriesRequisitionForm.controls.fromIndustryId.hasError('pattern')"
                             [innerHTML]="_sharedComponentService.invalid_message">
@@ -57,7 +57,7 @@
                     <div class="col">
                         <ejs-autocomplete [dataSource]='notSelectedindustries' [fields]='fieldsNotSelectedIndustry' 
                             (filtering)="onFilteringNotSelectedIndustry($event)" [placeholder]='textNotSelectedIndustry' [autofill]='autofill'
-                            formControlName="toIndustryId" class="ejs-autocomplete" 
+                            formControlName="toIndustryId" class="ejs-autocomplete w-100" 
                             (change)="selectToIndustry($event)">
                         </ejs-autocomplete>
                         <small class="text-danger" *ngIf="addtransitionIndustriesRequisitionForm.controls['toIndustryId'].hasError('pattern')"
@@ -98,41 +98,45 @@
                                         التسلسل
                                     </th>
 
-                                    <th>
+                                    <th style="max-width: 100px;">
+                                        الطلبية
+                                    </th>
+
+                                    <th style="width: 180px;">
                                         اسم الخيط
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         كود المادة
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         اللوط
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         رقم الرسالة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية المتوفرة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية
                                     </th>
 
-                                    <th style="max-width: 120px;"
+                                    <th style="max-width: 80px;"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])">
                                         السعر 
                                     </th>
 
-                                    <th style="max-width: 120px;"
+                                    <th style="max-width: 80px;"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])">
                                         السعر دولار 
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 160px;">
                                         القماش المراد تصنيعه
                                     </th>
 
@@ -140,11 +144,11 @@
                                         كود القماش
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 100px;">
                                         الوثيقة
                                     </th>
 
-                                    <th>
+                                    <th style="max-width: 120px;">
                                         البيان
                                     </th>
 
@@ -160,9 +164,30 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
-                                        <td class="table-td" style="width: 200px;">
-                                            <ejs-autocomplete [dataSource]='yarns' [fields]='fieldsYarn'
-                                                 (filtering)="onFilteringYarnName($event)"
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 100px;">
+                                            <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' 
+                                            (filtering)="onFilteringYarnOrder($event)"
+                                            (change)='selectYarnOrder($event, row, index)'
+                                                [placeholder]='textYarnOrder' [autofill]='autofill'
+                                                formControlName="yarnOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('yarnOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('yarnOrderId').hasError('required') && (row.get('yarnOrderId').dirty 
+                                                || row.get('yarnOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='yarns[index]' [fields]='fieldsYarn'
+                                                 (filtering)="onFilteringYarnName($event, index)"
                                                 [placeholder]='textYarn' [autofill]='autofill' formControlName="yarnId"
                                                 (change)='selectYarn($event, row, index)' [errorStateMatcher]="matcher">
                                             </ejs-autocomplete>
@@ -175,7 +200,7 @@
                                             </small>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
                                                     كود المادة
@@ -186,9 +211,9 @@
                                         </td>
 
                                         <!-- Lot -->
-                                    <td class="table-td" style="max-width: 180px;">
-                                        <ejs-autocomplete [dataSource]='lots' [fields]='fieldsLot' 
-                                        (filtering)="onFilteringLot($event)"
+                                    <td class="table-td" style="max-width: 80px;">
+                                        <ejs-autocomplete [dataSource]='lots[index]' [fields]='fieldsLot' 
+                                        (filtering)="onFilteringLot($event, index)"
                                         (change)='selectYarnLot($event, row, index)'
                                             [placeholder]='textLot' [autofill]='autofill'
                                             formControlName="yarnLotId"
@@ -207,7 +232,7 @@
                                     </td>
 
                                     <!-- Consigment Yarn -->
-                                    <td class="table-td" style="max-width: 180px;">
+                                    <td class="table-td" style="max-width: 80px;">
                                         <ejs-autocomplete [dataSource]='consigmentsYarns[index]' [fields]='fieldsConsigmentYarn' 
                                         (filtering)="onFilteringConsigmentYarn($event, index)"
                                         (change)='selectConsigmentYarn($event, row, index)'
@@ -227,7 +252,7 @@
                                         </small>
                                     </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> 
                                                     الكمية المتوفرة
@@ -238,7 +263,7 @@
                                      
 
                                         <!-- Quantity -->
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>الكمية</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="quantity"
@@ -267,7 +292,7 @@
                                         </td>
    
                                         <!-- Price -->
-                                        <td class="table-td" style="max-width: 120px"
+                                        <td class="table-td" style="max-width: 80px"
                                         *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر</mat-label>
@@ -301,7 +326,7 @@
                                         </td>
    
                                         <!-- priceDollar -->
-                                        <td class="table-td" style="max-width: 120px"
+                                        <td class="table-td" style="max-width: 80px"
                                         *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر دولار</mat-label>
@@ -335,9 +360,9 @@
                                         </td>
 
                                         <!-- fabric to be manufactured -->
-                                        <td class="table-td" style="max-width: 120px;">
-                                            <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric' 
-                                            (filtering)="onFilteringFabricName($event)"
+                                        <td class="table-td" style="max-width: 160px;">
+                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric' 
+                                            (filtering)="onFilteringFabricName($event, index)"
                                                 [placeholder]='textFabric' [autofill]='autofill'
                                                 formControlName="fabricToBeManufacturedId" (change)='selectFabric($event, row, index)'
                                                 [errorStateMatcher]="matcher" 
@@ -364,7 +389,7 @@
                                         </td>
 
                                         <!-- Document -->
-                                        <td style="max-width: 120px;">
+                                        <td style="max-width: 100px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>الوثيقة</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="document"
@@ -388,7 +413,7 @@
                                         </td>
 
                                         <!-- Statement -->
-                                        <td>
+                                        <td style="max-width: 120px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> البيان </mat-label>
                                                 <textarea matInput rows="1" matTextareaAutosize 
@@ -420,11 +445,11 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="6"></td>
+                                  <td colspan="4"></td>
                                   <td colspan="2"
                                   *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[7])"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(addtransitionIndustriesRequisitionForm, 'items', 'quantity') | number}}</td>
-                                  <td colspan="6"></td>
+                                  <td colspan="7"></td>
                                 </tr>
                               </tfoot>
 

@@ -167,6 +167,24 @@
                                                 </ng-template>
                                             </p-columnFilter>
                                         </div>
+
+                                        <!-- wa_yarn_order_requisition_name -->
+                                        <div class="col">
+                                            <p-columnFilter field="wa_yarn_order_requisition_name" matchMode="yarn-order-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedYarnOrder" [options]="_sharedComponentService.uniqueArray(yarns, 'wa_yarn_order_requisition_name')"
+                                                        (onChange)="onMultiselectedYarnOrder($event.value)"
+                                                        placeholder="البحث بـ الطلبية" optionLabel="wa_yarn_order_requisition_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.wa_yarn_order_requisition_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
                                         
                                     </div>
 
@@ -221,6 +239,15 @@
                                         <th pResizableColumn pSortableColumn="consigment_yarn_number">
                                             <div class="flex justify-content-between align-items-center">
                                                 رقم الرسالة<p-sortIcon data-html2canvas-ignore="true" field="consigment_yarn_number">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- wa_yarn_order_requisition_name Column -->
+                                        <th pResizableColumn pSortableColumn="wa_yarn_order_requisition_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                الطلبية
+                                                <p-sortIcon data-html2canvas-ignore="true" field="wa_yarn_order_requisition_name">
                                                 </p-sortIcon>
                                             </div>
                                         </th>
@@ -352,6 +379,11 @@
                                             {{ element.consigment_yarn_number }}
                                         </td>
 
+                                        <!-- wa_yarn_order_requisition_name Column -->
+                                        <td>
+                                            {{ element.wa_yarn_order_requisition_name }}
+                                        </td>
+
                                         <!-- total_amount_quantity_input Column -->
                                         <td [hidden]="!isShowTotalInput">
                                             {{ _sharedComponentService.getTotalAmountQuantityInput(element.details) |
@@ -416,7 +448,9 @@
                                                 [queryParams]="{ id: element.yarn_id, code: element.yarn_code, name: element.yarn_name, 
                                                     warehouseId: element.warehouse_id,  warehouseName: element.warehouse_name,
                                                     yarnLotId: element.yarn_lot_id,  yarnLotCode: element.yarn_lot_code,
-                                                    consigmentYarnId: element.consigment_yarn_id,  consigmentYarnNumber: element.consigment_yarn_number}">
+                                                    consigmentYarnId: element.consigment_yarn_id,  consigmentYarnNumber: element.consigment_yarn_number,
+                                                    yarnOrderId: element.wa_yarn_order_requisition_id
+                                                    }">
                                                 <i class="fas fa-angle-double-right update-symbol"></i>
                                             </a>
                                         </td>
@@ -445,6 +479,9 @@
                                         <td></td>
 
                                         <!-- consigment_yarn_number Column -->
+                                        <td></td>
+
+                                        <!-- wa_yarn_order_requisition_name Column -->
                                         <td></td>
 
                                         <!-- total_amount_quantity_input Column -->

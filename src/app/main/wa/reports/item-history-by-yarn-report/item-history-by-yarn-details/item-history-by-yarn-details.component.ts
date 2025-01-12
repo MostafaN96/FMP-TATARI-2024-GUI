@@ -76,7 +76,9 @@ export class ItemHistoryByYarnDetailsComponent implements OnInit {
           params['warehouseId'], 
           params['id'], 
           params['yarnLotId'],
-          params['consigmentYarnId']).subscribe((response: any) => {
+          params['consigmentYarnId'],
+          params['yarnOrderId']
+        ).subscribe((response: any) => {
           this.reportByYranWaDetails = response
           // PrimeNG Table
           this.primengConfig.ripple = true;

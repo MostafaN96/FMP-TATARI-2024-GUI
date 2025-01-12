@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -43,7 +43,7 @@
                     <div class="col">
                         <ejs-autocomplete [dataSource]='dyers' [fields]='fieldsDyeing' 
                             (filtering)="onFilteringDyeing($event)" [placeholder]='textDyeing' [autofill]='autofill'
-                            formControlName="dyeingId" class="ejs-autocomplete" (change)="selectDyeing($event)">
+                            formControlName="dyeingId" class="ejs-autocomplete w-100" (change)="selectDyeing($event)">
                         </ejs-autocomplete>
                         <small class="text-danger" *ngIf="transportWdWcRequisitionForm.controls['dyeingId'].hasError('pattern')"
                             [innerHTML]="_sharedComponentService.invalid_message">
@@ -56,7 +56,7 @@
 
                     <!-- Warehouse -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse' [autofill]='autofill'
                             formControlName="warehouseId"
                             (change)="selectWarehouse($event)"
@@ -103,11 +103,15 @@
                                         التسلسل
                                     </th>
 
+                                    <th style="min-width: 180px;">
+                                        الطلبية
+                                    </th>
+
                                     <th style="width: 150px;">
                                         اسم القماش
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         كود المادة
                                     </th>
 
@@ -123,23 +127,23 @@
                                         السعر دولار 
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية المتوفرة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية
                                     </th>
 
-                                    <th style="width: 150px;">
+                                    <th style="width: 120px;">
                                         رقم رسالة مخزن الخام
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 100px;">
                                         الوثيقة
                                     </th>
 
-                                    <th>
+                                    <th style="max-width: 120px;">
                                         البيان
                                     </th>
 
@@ -155,9 +159,30 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
-                                        <td class="table-td">
-                                            <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric'
-                                                 (filtering)="onFilteringFabricName($event)"
+                                        <!-- order -->
+                                        <td class="table-td" style="min-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='fabricOrder' [fields]='fieldsFabricOrder' 
+                                            (filtering)="onFilteringFabricOrder($event)"
+                                            (change)='selectFabricOrder($event, row, index)'
+                                                [placeholder]='textFabricOrder' [autofill]='autofill'
+                                                formControlName="fabricOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('fabricOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('fabricOrderId').hasError('required') && (row.get('fabricOrderId').dirty 
+                                                || row.get('fabricOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="width: 150px;">
+                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric'
+                                                 (filtering)="onFilteringFabricName($event, index)"
                                                 [placeholder]='textFabric' [autofill]='autofill'
                                                 formControlName="fabricId" (change)='selectFabric($event, row, index)'
                                                 [errorStateMatcher]="matcher">
@@ -171,7 +196,7 @@
                                             </small>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
                                                     كود المادة
@@ -182,7 +207,7 @@
                                         </td>
 
                                         <!-- consigmentDyeing -->
-                                        <td class="table-td">
+                                        <td class="table-td" style="width: 120px;">
                                             <ejs-autocomplete [dataSource]='consigments[index]' [fields]='fieldsConsigment' 
                                             (filtering)="onFilteringConsigments($event, index)"
                                                 [placeholder]='textConsigment' [autofill]='autofill'
@@ -267,7 +292,7 @@
                                             </mat-form-field>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> 
                                                     الكمية المتوفرة
@@ -277,7 +302,7 @@
                                         </td>
 
                                         <!-- Quantity -->
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>الكمية</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
@@ -329,7 +354,7 @@
                                         </td>
 
                                         <!-- Document -->
-                                        <td style="max-width: 120px;">
+                                        <td style="max-width: 100px;">
                                         <mat-form-field class="w-100">
                                             <mat-label>الوثيقة</mat-label>
                                             <input autocomplete="off" type="text" matInput formControlName="document" placeholder="مثال: 10214"
@@ -353,7 +378,7 @@
                                     </td>
 
                                     <!-- Statement -->
-                                        <td>
+                                        <td style="max-width: 120px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> البيان </mat-label>
                                                 <textarea matInput rows="1"
@@ -388,7 +413,7 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="5"></td>
+                                  <td colspan="7"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(transportWdWcRequisitionForm, 'items', 'quantity') | number}}</td>
                                   <td colspan="4"></td>
                                 </tr>

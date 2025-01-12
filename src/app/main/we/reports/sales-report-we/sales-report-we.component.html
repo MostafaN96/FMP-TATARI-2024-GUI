@@ -57,6 +57,23 @@
                                     <div class="row row-cols-5">
 
                                         <div class="col">
+                                            <p-columnFilter field="we_dyed_fabric_order_requisition_name" matchMode="dyed-fabric-order-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedDyedFabricOrderNames" [options]="_sharedComponentService.uniqueArray(results, 'we_dyed_fabric_order_requisition_name')"
+                                                        (onChange)="onMultiselectedDyedFabricOrderNames($event.value)"
+                                                        placeholder="البحث بـ رقم العقد" optionLabel="we_dyed_fabric_order_requisition_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.we_dyed_fabric_order_requisition_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
                                             <p-columnFilter field="bussiness_man_name" matchMode="sellers-name-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -206,11 +223,19 @@
                                         <th data-html2canvas-ignore="true">
                                             التسلسل
                                         </th>
-
+                                        
                                         <!-- date Column -->
                                         <th pResizableColumn pSortableColumn="date">
                                             <div class="flex justify-content-between align-items-center">
                                                 التاريخ<p-sortIcon data-html2canvas-ignore="true" field="date">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- we_dyed_fabric_order_requisition_name Column -->
+                                        <th pResizableColumn pSortableColumn="we_dyed_fabric_order_requisition_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                رقم العقد<p-sortIcon data-html2canvas-ignore="true" field="we_dyed_fabric_order_requisition_name">
                                                 </p-sortIcon>
                                             </div>
                                         </th>
@@ -325,6 +350,11 @@
                                             {{ element.date | date:'EEEE, d/M/y'}}
                                         </td>
 
+                                        <!-- we_dyed_fabric_order_requisition_name Column -->
+                                        <td>
+                                            {{ element.we_dyed_fabric_order_requisition_name }}
+                                        </td>
+
                                         <!-- bussiness_man_name Column -->
                                         <td>
                                             {{ element.bussiness_man_name }}
@@ -403,6 +433,9 @@
 
                                         <!-- date Column -->
                                         <td>الإجمالي</td>
+
+                                        <!-- we_dyed_fabric_order_requisition_name Column -->
+                                        <td></td>
 
                                         <!-- bussiness_man_name Column -->
                                         <td></td>

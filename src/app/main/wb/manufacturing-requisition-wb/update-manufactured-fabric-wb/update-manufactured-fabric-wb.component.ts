@@ -39,11 +39,20 @@ export class UpdateManufacturedFabricWbComponent implements OnInit {
   yarns: any
   internalSelectedDataToUpdate: any = {}
   showInputUpdate = false
-  
+
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
-  displayedColumns: string[] = ['code', 'name', 'yarn_lot_code', 'consigment_yarn_number', 'quantity', 'fabric_manufactured', 
-  'fabric_manufactured_code', 'update'];
+  displayedColumns: string[] = [
+    'code',
+    'name',
+    'yarn_lot_code',
+    'consigment_yarn_number',
+    'wa_yarn_order_requisition_name',
+    'quantity',
+    'fabric_manufactured',
+    'fabric_manufactured_code',
+    'update'
+  ];
   dataSourceSearchTabel: any;
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
@@ -107,6 +116,6 @@ export class UpdateManufacturedFabricWbComponent implements OnInit {
 
   getSelectedData(selectedData: any) {
     this.showInputUpdate = true
-    this.internalSelectedDataToUpdate = {...selectedData, ...this.internalSelectedDataToUpdate}
+    this.internalSelectedDataToUpdate = { ...selectedData, ...this.internalSelectedDataToUpdate }
   }
 }

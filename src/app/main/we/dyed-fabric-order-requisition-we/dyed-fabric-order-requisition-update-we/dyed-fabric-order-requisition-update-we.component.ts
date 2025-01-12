@@ -32,7 +32,7 @@ export class DyedFabricOrderRequisitionUpdateWeComponent implements OnInit {
   @Input() selectedData: any
   manufacturingOrderWdForm: FormGroup = new FormGroup({
     date: new FormControl("", [Validators.required]),
-    name: new FormControl('', [Validators.required, Validators.maxLength(90), Validators.minLength(3), Validators.pattern(this.patterns.validator_pattern.shortText)]),
+    name: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     wasteRatio: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),

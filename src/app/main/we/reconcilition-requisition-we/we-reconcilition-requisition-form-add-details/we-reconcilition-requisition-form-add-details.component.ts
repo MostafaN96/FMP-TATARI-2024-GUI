@@ -151,6 +151,9 @@ export class WeReconcilitionRequisitionFormAddDetailsComponent implements OnInit
     this.getPrices(data, formIndex)
     return new FormGroup({
       index: new FormControl(index),
+      ordersRequisitionsId: new FormControl(data.orders_requisitions_id, [Validators.required]),
+      dyedFabricOrderId: new FormControl(data.we_dyed_fabric_order_requisition_id, [Validators.required]),
+      dyedFabricOrderName: new FormControl(data.we_dyed_fabric_order_requisition_name, [Validators.required]),
       supplierName: new FormControl(data.supplier_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       weId: new FormControl(data.we_id, [Validators.required]),
       warehouseId: new FormControl(data.warehouse_id, [Validators.required]),

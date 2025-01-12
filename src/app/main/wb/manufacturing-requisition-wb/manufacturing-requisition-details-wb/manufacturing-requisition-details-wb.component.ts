@@ -159,13 +159,16 @@ export class ManufacturingRequisitionDetailsWbComponent implements OnInit {
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
   showAddDetailsFunc() {
     this.showAddDetails = true;
-    this.parentData = [this.manufacturingRequisitionDetails[0].manufacturer_id,
+    this.parentData = [
+      this.manufacturingRequisitionDetails[0].manufacturer_id,
     this.ManufacturingRequisitionOutputDetailsWb.manufacturingRequisitionDetails[0].fabric_id,
     this.ManufacturingRequisitionOutputDetailsWb.manufacturingRequisitionDetails[0].id,
     this.AddedYarns,
     this.AddedYarnLots,
     this.manufacturingRequisitionDetails[0].is_order,
-    this.AddedConsigmentsYarn
+    this.AddedConsigmentsYarn,
+    this.manufacturingRequisitionDetails[0].orders_requisitions_id,
+    this.manufacturingRequisitionDetails[0].wa_yarn_order_requisition_id
     ]
   }
 }

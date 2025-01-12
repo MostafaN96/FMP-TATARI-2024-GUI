@@ -82,39 +82,45 @@
                                         التسلسل
                                     </th>
 
-                                    <th>
+                                    <th style="min-width: 100px;">
                                         من مخزن
                                     </th>
+                                    
+                                    <th style="min-width: 120px;">
+                                        الطلبية
+                                    </th>
 
-                                    <th>
+                                    <th style="max-width: 120px;">
                                         اسم الخيط
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         كود المادة
                                     </th>
 
                                     <th style="max-width: 100px;">
-                                        اللوط
+                                        من لوط
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 120px;">
                                         رقم الرسالة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية المتوفرة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية
                                     </th>
 
-                                    <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" style="max-width: 120px;">
+                                    <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" 
+                                    style="max-width: 60px;">
                                         السعر 
                                     </th>
 
-                                    <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" style="max-width: 120px;" style="max-width: 120px;">
+                                    <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" 
+                                    style="max-width: 60px;">
                                         السعر دولار 
                                     </th>
 
@@ -122,11 +128,15 @@
                                         الى رقم الرسالة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 100px;">
+                                        الى اللوط
+                                    </th>
+
+                                    <th style="max-width: 80px;">
                                         الوثيقة
                                     </th>
 
-                                    <th>
+                                    <th style="max-width: 120px;">
                                         البيان
                                     </th>
 
@@ -142,7 +152,7 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
-                                        <td class="table-td" style="width: 200px;">
+                                        <td class="table-td" style="width: 100px;">
                                             <ejs-autocomplete [dataSource]='fromWarehouses' [fields]='fieldsFromWarehouse'
                                                  (filtering)="onFilteringFromWarehouse($event)"
                                                 [placeholder]='textFromWarehouse' [autofill]='autofill' formControlName="fromWarehouseId"
@@ -157,7 +167,28 @@
                                             </small>
                                         </td>
 
-                                        <td class="table-td" style="width: 200px;">
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 120px;">
+                                            <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' 
+                                            (filtering)="onFilteringYarnOrder($event)"
+                                            (change)='selectYarnOrder($event, row, index)'
+                                                [placeholder]='textYarnOrder' [autofill]='autofill'
+                                                formControlName="yarnOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('yarnOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('yarnOrderId').hasError('required') && (row.get('yarnOrderId').dirty 
+                                                || row.get('yarnOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="width: 120px;">
                                             <ejs-autocomplete [dataSource]='yarns[index]' [fields]='fieldsYarn'
                                                  (filtering)="onFilteringYarnName($event, index)"
                                                 [placeholder]='textYarn' [autofill]='autofill' formControlName="yarnId"
@@ -172,7 +203,7 @@
                                             </small>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
                                                     كود المادة
@@ -183,28 +214,28 @@
                                         </td>
 
                                         <!-- Lot -->
-                                    <td class="table-td" style="max-width: 180px;">
-                                        <ejs-autocomplete [dataSource]='lots[index]' [fields]='fieldsLot' 
-                                        (filtering)="onFilteringLot($event, index)"
-                                        (change)='selectYarnLot($event, row, index)'
-                                            [placeholder]='textLot' [autofill]='autofill'
-                                            formControlName="yarnLotId"
+                                    <td class="table-td" style="max-width: 100px;">
+                                        <ejs-autocomplete [dataSource]='fromLots[index]' [fields]='fieldsFromYarnLot' 
+                                        (filtering)="onFilteringFromYarnLot($event, index)"
+                                        (change)='selectFromYarnLot($event, row, index)'
+                                            [placeholder]='textFromYarnLot' [autofill]='autofill'
+                                            formControlName="fromYarnLotId"
                                             [errorStateMatcher]="matcher" 
                                             >
                                         </ejs-autocomplete>
                                         <small class="text-danger"
-                                        *ngIf="row.get('yarnLotId').hasError('pattern')"
+                                        *ngIf="row.get('fromYarnLotId').hasError('pattern')"
                                         [innerHTML]="_sharedComponentService.invalid_message">
                                         </small>
                                         <small class="text-danger"
-                                            *ngIf="row.get('yarnLotId').hasError('required') && (row.get('yarnLotId').dirty 
-                                            || row.get('yarnLotId').touched)"
+                                            *ngIf="row.get('fromYarnLotId').hasError('required') && (row.get('fromYarnLotId').dirty 
+                                            || row.get('fromYarnLotId').touched)"
                                             [innerHTML]="_sharedComponentService.required_field">
                                         </small>
                                     </td>
 
                                     <!-- Consigment Yarn -->
-                                    <td class="table-td" style="max-width: 180px;">
+                                    <td class="table-td" style="max-width: 120px;">
                                         <ejs-autocomplete [dataSource]='fromConsigmentsYarns[index]' [fields]='fieldsConsigmentYarn' 
                                         (filtering)="onFilteringConsigmentYarn($event, index)"
                                         (change)='selectConsigmentYarn($event, row, index)'
@@ -224,7 +255,7 @@
                                         </small>
                                     </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> 
                                                     الكمية المتوفرة
@@ -235,7 +266,7 @@
                                      
 
                                         <!-- Quantity -->
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>الكمية</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="quantity"
@@ -264,12 +295,13 @@
                                         </td>
    
                                         <!-- Price -->
-                                        <td class="table-td" style="max-width: 120px"
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر</mat-label>
                                                 <input type="text" matInput formControlName="price" required placeholder="مثال: 15" [matAutocomplete]="autoGroup"
-                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                                                (change)="changePrice('priceEG', row)"
+                                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
                                                 <mat-autocomplete #autoGroup="matAutocomplete">
                                                     <ng-container *ngFor="let item of listYarnPrices[index]; let i = index">
                                                         <mat-optgroup [label]="groupPrices[i]" (click)="changePrice('priceEG', row)"
@@ -297,12 +329,13 @@
                                         </td>
    
                                         <!-- priceDollar -->
-                                        <td class="table-td" style="max-width: 120px"
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px"
+                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر دولار</mat-label>
                                                 <input type="text" matInput formControlName="priceDollar" required placeholder="مثال: 15" [matAutocomplete]="autoGroup2"
-                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                                                (change)="changePrice('priceDollar', row)"    
+                                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
                                                 <mat-autocomplete #autoGroup2="matAutocomplete">
                                                     <ng-container *ngFor="let item of listYarnPricesDollar[index]; let i = index">
                                                         <mat-optgroup [label]="groupPrices[i]" (click)="changePrice('priceDollar', row)"
@@ -350,8 +383,28 @@
                                         </small>
                                         </td>
 
+                                        <!-- Lot -->
+                                        <td class="table-td" style="max-width: 100px;">
+                                            <ejs-autocomplete [dataSource]='lots[index]' [fields]='fieldsLot' 
+                                            (filtering)="onFilteringLot($event, index)"
+                                                [placeholder]='textLot' [autofill]='autofill'
+                                                formControlName="yarnLotCode"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('yarnLotCode').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('yarnLotCode').hasError('required') && (row.get('yarnLotCode').dirty 
+                                                || row.get('yarnLotCode').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                         <!-- Document -->
-                                        <td style="max-width: 120px;">
+                                        <td style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>الوثيقة</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="document"
@@ -407,12 +460,12 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="6"></td>
+                                  <td colspan="7"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(addtransitionIndustriesRequisitionForm, 'items', 'quantity') | number}}</td>
                                   <td colspan="2"style="max-width: 120px;"
                                   *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" >
                                     </td>
-                                  <td colspan="4"></td>
+                                  <td colspan="5"></td>
                                 </tr>
                               </tfoot>
 

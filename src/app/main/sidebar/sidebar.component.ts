@@ -37,6 +37,9 @@ export class SidebarComponent implements OnInit {
     this.settingModule = this._sessionManagerService.USER_PRIVILEGE_ARRAY['settingModule']
     this.modules = this._sessionManagerService.USER_PRIVILEGE_ARRAY['modules']
     
+    $(".navbar-toggler").click(function () {
+      $(".navbar-collapse").toggle("show");
+    });
   }
 
 }

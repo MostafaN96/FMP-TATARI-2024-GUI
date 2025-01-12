@@ -182,6 +182,24 @@
                                         </p-columnFilter>
                                     </div>
 
+                                        <!-- wc_fabric_order_requisition_name -->
+                                        <div class="col">
+                                            <p-columnFilter field="wc_fabric_order_requisition_name" matchMode="fabric-order-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedFabricOrder" [options]="_sharedComponentService.uniqueArray(fabrics, 'wc_fabric_order_requisition_name')"
+                                                        (onChange)="onMultiselectedFabricOrder($event.value)"
+                                                        placeholder="البحث بـ الطلبية" optionLabel="wc_fabric_order_requisition_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.wc_fabric_order_requisition_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
                                 </div>
                                 <!-- End Filter Section -->
 
@@ -233,6 +251,15 @@
                                             </p-sortIcon>
                                         </div>
                                     </th>
+
+                                                <!-- wc_fabric_order_requisition_name Column -->
+                                                <th pResizableColumn pSortableColumn="wc_fabric_order_requisition_name">
+                                                    <div class="flex justify-content-between align-items-center">
+                                                        الطلبية
+                                                        <p-sortIcon data-html2canvas-ignore="true" field="wc_fabric_order_requisition_name">
+                                                        </p-sortIcon>
+                                                    </div>
+                                                </th>
 
                                     <!-- total_amount_quantity_input Column -->
                                     <th pResizableColumn pSortableColumn="total_amount_quantity_input"
@@ -375,6 +402,11 @@
                                         {{ element.consigment_manufacturing_number}}
                                     </td>
 
+                                    <!-- wc_fabric_order_requisition_name Column -->
+                                    <td>
+                                        {{ element.wc_fabric_order_requisition_name}}
+                                    </td>
+
                                     <!-- total_amount_quantity_input Column -->
                                     <td [hidden]="!isShowTotalInput">
                                         {{ _sharedComponentService.getTotalAmountQuantityInput(element.details) |
@@ -444,7 +476,9 @@
                                         <a [routerLink]="['details']"
                                             [queryParams]="{ id: element.fabric_id, code: element.fabric_code, name: element.fabric_name,
                                                 warehouseId: element.warehouse_id,  warehouseName: element.warehouse_name,
-                                                consigmentManufacturingId: element.consigment_manufacturing_id,  consigmentNumber: element.consigment_manufacturing_number}">
+                                                consigmentManufacturingId: element.consigment_manufacturing_id,  consigmentNumber: element.consigment_manufacturing_number,
+                                                fabricOrderId: element.wc_fabric_order_requisition_id
+                                                }">
                                             <i class="fas fa-angle-double-right update-symbol"></i>
                                         </a>
                                     </td>
@@ -473,6 +507,9 @@
                                     <td></td>
 
                                     <!-- consigment_manufacturing_number Column -->
+                                    <td></td>
+
+                                    <!-- wc_fabric_order_requisition_name Column -->
                                     <td></td>
                                     
                                     <!-- total_amount_quantity_input Column -->

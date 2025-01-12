@@ -13,6 +13,7 @@ import { ReconcilitionRequisitionDetailsWbService } from "src/app/services/main/
 import { ReportWbService } from "src/app/services/main/wb/report-wb.service";
 import { WbService } from "src/app/services/main/wb/wb.service";
 import { FabricService } from "src/app/services/main/fabric.service";
+import { YarnOrderRequisitionWaService } from 'src/app/services/main/wa/yarn-order-requisition-wa.service';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -49,6 +50,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   consigmentsYarns: any = []
   currentQuantity: any = []
   yarnsDetails: any
+  yarnOrder: any = []
   listYarnPrices: any = []
   listYarnPricesDollar: any = []
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
@@ -64,7 +66,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   // set the placeholder to the AutoComplete input
   public textYarn: string = "اسم الخيط"
 
-  public onFilteringYarnName(e: any) {
+  public onFilteringYarnName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -72,7 +74,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.yarns, query);
+    e.updateData(this.yarns[index], query);
   }
 
   // --------------- Lot --------------
@@ -81,14 +83,14 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   // set the placeholder to the AutoComplete input
   public textLot: string = "اللوط"
 
-  public onFilteringLot(e: any) {
+  public onFilteringLot(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('code', 'contains', e.text);
     var query = new Query();
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.yarns, query);
+    e.updateData(this.lots[index], query);
   }
 
   // --------------- Fabric --------------
@@ -97,7 +99,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   // set the placeholder to the AutoComplete input
   public textFabric: string = "القماش المراد تصنيعه"
 
-  public onFilteringFabricName (e: any)
+  public onFilteringFabricName (e: any, index)
   {
     e.preventDefaultAction=true;
          var predicate = new Predicate('name', 'contains', e.text);
@@ -106,7 +108,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
       //frame the query based on search string with filter type.
         query = (e.text != "") ? query.where(predicate) : query;
       //pass the filter data source, filter query to updateData method.
-        e.updateData(this.fabrics, query);
+        e.updateData(this.fabrics[index], query);
   }
 
   // --------------- consigment Yarn --------------
@@ -115,7 +117,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   // set the placeholder to the AutoComplete input
   public textConsigmentYarn: string = "رقم الرسالة"
 
-  public onFilteringConsigmentYarn (e: any)
+  public onFilteringConsigmentYarn (e: any, index)
   {
     e.preventDefaultAction=true;
          var predicate = new Predicate('number', 'contains', e.text);
@@ -123,7 +125,24 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
       //frame the query based on search string with filter type.
         query = (e.text != "") ? query.where(predicate) : query;
       //pass the filter data source, filter query to updateData method.
-        e.updateData(this.consigmentsYarns, query);
+        e.updateData(this.consigmentsYarns[index], query);
+  }
+
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textYarnOrder: string = "اسم الطلبية"
+
+
+  public onFilteringYarnOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.yarnOrder, query);
   }
 
   constructor(
@@ -131,6 +150,7 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
     private _yarnLotService: YarnLotService,
     private _wbService: WbService,
     private _reconcilitionRequisitionDetailsWbService: ReconcilitionRequisitionDetailsWbService,
+    private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
@@ -155,18 +175,17 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
     this.reconcilitionRequisitionForm.controls.id.setValue(this.selectedData[0]['requisition_id'])
     this.reconcilitionRequisitionForm.controls.industryId.setValue(this.selectedData[0]['industry_id'])
 
-    this._yarnService.selectByIndustryWb(this.selectedData[0]['industry_id']).subscribe((response: any) => {
-      this.yarns = response
+    this._yarnOrderRequisitionWaService.selectByIndustryWb(this.selectedData[0]['industry_id']).subscribe((response: any) => {
+      this.yarnOrder = response
     })
 
-    this._fabricService.selectAll().subscribe((response: any) => {
-      this.fabrics = response
-    })
   }
 
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      yarnOrderId: new FormControl("", [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       yarnName: new FormControl(""),
       yarnCode: new FormControl(""),
@@ -203,6 +222,38 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
     this.listYarnPricesDollar.splice(index, 1);
   }
 
+  //  Yarn Order
+  selectYarnOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.yarnOrder.indexOf(event.itemData)
+
+    if (this.yarnOrder[indexData] !== event.itemData) {
+      row.controls['yarnOrderId'].setValue("")
+      row.controls['yarnId'].setValue(null)
+      row.controls['yarnCode'].setValue(null)
+      row.controls['yarnLotId'].setValue(null)
+      row.controls['consigmentYarnId'].setValue("")
+      row.controls['quantity'].setValue(null)
+      this.currentQuantity[index] = 0
+      this.fabrics[index] = []
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._yarnService.selectByIndustryWb(
+        this.reconcilitionRequisitionForm.controls['industryId'].value!, 
+        event.itemData.id
+      ).subscribe((response: any) => {
+        this.yarns[index] = response
+      })
+
+      this._fabricService.selectFabricsByOrder(event.itemData.orders_requisitions_id).subscribe((response: any) => {
+        this.fabrics[index] = response
+      })
+
+    }
+    this.validate(row, index)
+  }
+
   //  Yarn
   selectYarn(event: { itemData: any; }, row: FormGroup, index) {
     let indexData = this.yarns.indexOf(event.itemData)
@@ -221,10 +272,11 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
 
       this._yarnLotService.selectByIndustryByYarnWb(
         this.reconcilitionRequisitionForm.controls['industryId'].value!,
-        event.itemData.id
+        event.itemData.id,
+        row.controls['yarnOrderId'].value!
         ).subscribe((response: any) => {
-        this.lots = response
-      })
+          this.lots[index] = response
+        })
 
       // Get Prices
       this._reportWbService.selectPriceInWb(event.itemData.id, event.itemData.industry_id).subscribe((response: any) => {
@@ -258,17 +310,18 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   // Start Yarn Lot Autocomplete Section
   //  Yarn Lot
   selectYarnLot(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.lots.indexOf(event.itemData)
-    if (this.lots[indexData] !== event.itemData) {
+    let indexData = this.lots[index].indexOf(event.itemData)
+    if (this.lots[index][indexData] !== event.itemData) {
       row.controls['yarnLotId'].setValue(null)
       this.currentQuantity[index] = 0
     } else {
       this._wbService.selectConsigmentYarnQuantityByYarnByIndustryByLotWb(
         row.controls['yarnId'].value!,
         this.reconcilitionRequisitionForm.controls['industryId'].value!, 
-        event.itemData.id
+        event.itemData.id,
+        row.controls['yarnOrderId'].value!
         ).subscribe((response: any) => {
-          this.consigmentsYarns = response
+          this.consigmentsYarns[index] = response
         })
     }
   }
@@ -277,8 +330,8 @@ export class WbReconciliationRequisitionFormAddDetailsComponent implements OnIni
   // Start Consigment Yarn Autocomplete Section
   //  Consigment Yarn
   selectConsigmentYarn(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.consigmentsYarns.indexOf(event.itemData)
-    if (this.consigmentsYarns[indexData] !== event.itemData) {
+    let indexData = this.consigmentsYarns[index].indexOf(event.itemData)
+    if (this.consigmentsYarns[index][indexData] !== event.itemData) {
       row.controls['consigmentYarnId'].setValue(null)
       row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0

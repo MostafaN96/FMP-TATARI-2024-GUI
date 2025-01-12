@@ -84,5 +84,25 @@ export class FabricOrderRequisitionWcService {
       });
   }
 
+  selectByWarehouseWc(id: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wc/${id}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
+  selectByDyeingWd(id: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-dyeing-wd/${id}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 }
 

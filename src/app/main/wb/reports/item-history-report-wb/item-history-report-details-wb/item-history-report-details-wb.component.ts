@@ -79,7 +79,8 @@ export class ItemHistoryReportDetailsWbComponent implements OnInit {
           params['manufacturerId'], 
           params['id'], 
           params['yarnLotId'],
-          params['consigmentYarnId']
+          params['consigmentYarnId'],
+          params['yarnOrderId']
           ).subscribe((response: any) => {
           this.reportByYranWbDetails = response
 

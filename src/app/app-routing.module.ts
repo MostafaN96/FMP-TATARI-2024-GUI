@@ -254,6 +254,11 @@ const routes: Routes = [
         { path: 'show-all-transition-between-wh-requisition-wc', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/wc-modules/transition-between-wh-requisition-wc-modules/transition-between-wh-requisition-show-all-wc-module/transition-between-wh-requisition-show-all-wc-module.module').then(m => m.TransitionBetweenWhRequisitionShowAllWcModuleModule) },
         { path: 'show-all-transition-between-wh-requisition-wc/details', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/wc-modules/transition-between-wh-requisition-wc-modules/transition-between-wh-requisition-details-wc-module/transition-between-wh-requisition-details-wc-module.module').then(m => m.TransitionBetweenWhRequisitionDetailsWcModuleModule) },
 
+        // Transition Betwen Requisition wc 
+        { path: 'add-transition-between-orders-requisition-wc', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/wc-modules/transition-between-orders-requisition-wc-modules/transition-between-orders-requisition-add-wc/transition-between-orders-requisition-add-wc.module').then(m => m.TransitionBetweenOrdersRequisitionAddWcModule) },
+        { path: 'show-all-transition-between-orders-requisition-wc', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/wc-modules/transition-between-orders-requisition-wc-modules/transition-between-orders-requisition-show-all-wc/transition-between-orders-requisition-show-all-wc.module').then(m => m.TransitionBetweenOrdersRequisitionShowAllWcModule) },
+        { path: 'show-all-transition-between-orders-requisition-wc/details', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/wc-modules/transition-between-orders-requisition-wc-modules/transition-between-orders-requisition-details-wc/transition-between-orders-requisition-details-wc.module').then(m => m.TransitionBetweenOrdersRequisitionDetailsWcModule) },
+
         // Reports WC
         { path: 'report-wc', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/wc-modules/reports-modules/item-history-by-fabric-report-module/item-history-by-fabric-module/item-history-by-fabric-module.module').then(m => m.ItemHistoryByFabricModuleModule) },
         { path: 'report-wc/details', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/wc-modules/reports-modules/item-history-by-fabric-report-module/item-history-by-fabric-details-module/item-history-by-fabric-details-module.module').then(m => m.ItemHistoryByFabricDetailsModuleModule) },
@@ -407,6 +412,7 @@ const routes: Routes = [
         { path: 'bar-chart-report-by-item-we', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/reports-modules/bar-chart-report-by-item-we-module/bar-chart-report-by-item-we-module.module').then(m => m.BarChartReportByItemWeModuleModule) },
         { path: 'daily-report-total', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/reports-modules/daily-report-by-date-total-module/daily-report-by-date-total-module.module').then(m => m.DailyReportByDateTotalModuleModule) },
         { path: 'dyed-fabric-order-report', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/reports-modules/dyed-fabric-order-report-module/dyed-fabric-order-report-module.module').then(m => m.DyedFabricOrderReportModuleModule) },
+        { path: 'dyed-fabric-orders-report', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/we-modules/reports-modules/dyed-fabric-orders-report-we-module/dyed-fabric-orders-report-we-module.module').then(m => m.DyedFabricOrdersReportWeModuleModule) },
 
       ]
   }

@@ -20,6 +20,7 @@ import { ReportWbService } from "src/app/services/main/wb/report-wb.service";
 import { CircularKnittingMachineBussinessmanService } from "src/app/services/main/circular-knitting-machine-bussinessman.service";
 import { ConsigmentManufacturingService } from "src/app/services/main/consigment-manufacturing.service";
 import { WarehouseService } from "src/app/services/main/warehouse.service";
+import { YarnOrderRequisitionWaService } from "src/app/services/main/wa/yarn-order-requisition-wa.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -50,6 +51,8 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     date: new FormControl(new Date(), [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     industryId: new FormControl("", [Validators.required]),
+    ordersRequisitionsId: new FormControl("", [Validators.required]),
+    yarnOrderId: new FormControl(null, [Validators.required]),
     consigmentManufacturingId: new FormControl(""),
     circularKnittingMachineId: new FormControl(""),
     isNewConsigment: new FormControl(true, [Validators.required]),
@@ -75,6 +78,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
   circularKnittingMachines: any = []
   consigments: any = []
   warehouses: any = []
+  yarnOrder: any = []
   manufacturerName = ""
   fabrics: any = []
   fabricName = ""
@@ -179,10 +183,28 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     e.updateData(this.warehouses, query);
   }
 
+  // --------------- Requisitio nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textYarnOrder: string = "اسم الطلبية"
+
+
+  public onFilteringYarnOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.yarnOrder, query);
+  }
+
   constructor(
     private _warehouseService: WarehouseService,
     private _wbService: WbService,
     private _fabricService: FabricService,
+    private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
     private _bussinessmanService: BussinessmanService,
     private _manufacturingRequisitionWbService: ManufacturingRequisitionWbService,
     private _wbManufacturingOutputService: WbManufacturingOutputService,
@@ -249,6 +271,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
   initItem(data: any, index: number) {
     return new FormGroup({
       index: new FormControl(index),
+      waYarnOrderRequisitionDetailsId: new FormControl(data.wa_yarn_order_requisition_details_id, [Validators.required]),
       yarnId: new FormControl(data.yarn_id, [Validators.required]),
       yarnName: new FormControl(data.yarn_name),
       yarnCode: new FormControl(data.yarn_code),
@@ -322,6 +345,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
       formGroup.addControl('items', new FormArray([]));
 
       this.addManufacturingRequisitionForm.controls['industryId'].setValue("")
+      this.addManufacturingRequisitionForm.controls['yarnOrderId'].setValue(null)
       this.addManufacturingRequisitionForm.controls['fabricId'].setValue(null)
       this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(null)
       this.fabricName = ""
@@ -338,7 +362,6 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     }
   }
 
-
   //  Yarn
   selectYarn(event: { itemData: any; }, row: FormGroup, index) {
     let indexData = this.yarns.indexOf(event.itemData)
@@ -348,10 +371,12 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
       row.controls['yarnName'].setValue(null)
       row.controls['yarnCode'].setValue(null)
       row.controls['quantity'].setValue(null)
+      row.controls['waYarnOrderRequisitionDetailsId'].setValue(null)
       const inputs = document.querySelectorAll('[name="ratio"]')
       inputs[index]['value'] = ""
     }
     else {
+      row.controls['waYarnOrderRequisitionDetailsId'].setValue(event.itemData.wa_yarn_order_requisition_details_id)
       row.controls['yarnCode'].setValue(event.itemData.code)
     }
     this.validate(row, index)
@@ -397,6 +422,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
   selectFabric(index: { itemData: any; }) {
     let indexData = this.fabrics.indexOf(index.itemData)
     if (this.fabrics[indexData] !== index.itemData) {
+      this.addManufacturingRequisitionForm.controls['yarnOrderId'].setValue(null)
       this.addManufacturingRequisitionForm.controls['fabricId'].setValue(null)
       this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(null)
       this.yarns = []
@@ -416,12 +442,17 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
       this.fabricName = index.itemData.name
       this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(index.itemData.code)
 
-      this._wbService.selectQuantityByIndustryByFabricWb(this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? '', index.itemData.id).subscribe((response: any) => {
-        this.yarns = response
+      
+    this._yarnOrderRequisitionWaService.selectByIndustryByFabricWb(this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? '', index.itemData.id).subscribe((response: any) => {
+      this.yarnOrder = response
+    })
 
-        this.dataSourceSearchTabel = new MatTableDataSource(this.yarns);
-        this.dataSourceSearchTabel.sort = this.sortColumns;
-      })
+      // this._wbService.selectQuantityByIndustryByFabricWb(this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? '', index.itemData.id).subscribe((response: any) => {
+      //   this.yarns = response
+
+      //   this.dataSourceSearchTabel = new MatTableDataSource(this.yarns);
+      //   this.dataSourceSearchTabel.sort = this.sortColumns;
+      // })
 
       this._wbManufacturingOutputService.selectLatestManufacturingFeeByIndustryByFabric(this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? '', index.itemData.id).subscribe((response: any) => {
         this.latestManufacturingFee = response
@@ -429,6 +460,32 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
 
       this._wbManufacturingOutputService.selectLatestManufacturingFeeByIndustryByFabric(this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? '', index.itemData.id).subscribe((response: any) => {
         this.latestManufacturingFeeDollar = [{manufacturing_fee_dollar: 0}]
+      })
+
+    }
+  }
+
+  
+  //  Yarn Order
+  selectYarnOrder(event: { itemData: any; }) {
+    let indexData = this.yarnOrder.indexOf(event.itemData)
+    if (this.yarnOrder[indexData] !== event.itemData) {
+      this.yarns = []
+      this.dataSourceSearchTabel = []
+      this.addManufacturingRequisitionForm.controls['ordersRequisitionsId'].setValue("")
+
+      const formGroup = <FormGroup>this.addManufacturingRequisitionForm;
+      formGroup.removeControl('items');
+      formGroup.addControl('items', new FormArray([]));
+    }
+    else {
+      this.addManufacturingRequisitionForm.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._wbService.selectQuantityByIndustryByFabricWb(this.addManufacturingRequisitionForm.controls['industryId']['value'] ?? '', this.addManufacturingRequisitionForm.controls['fabricId']['value'] ?? '', event.itemData.id).subscribe((response: any) => {
+        this.yarns = response
+
+        this.dataSourceSearchTabel = new MatTableDataSource(this.yarns);
+        this.dataSourceSearchTabel.sort = this.sortColumns;
       })
 
     }
@@ -459,11 +516,11 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
   // }
 
   getTotalPriceXQuantityWithWast() {
-    return this.addManufacturingRequisitionForm.controls.items.value.map(function (a) { return (parseFloat(a['quantity']) * parseFloat(a['price'])) + (((parseFloat(a['price']) * parseFloat(a['quantity'])) * parseFloat(a['wastRatio'])) / 100) }).reduce((acc, value) => acc + value, 0);
+    return this.addManufacturingRequisitionForm.controls.items.value.map((a) => { return (parseFloat(a['quantity']) * parseFloat(a['price'])) + (((parseFloat(a['price']) * parseFloat(a['quantity'])) * parseFloat(this.notZero(a['wastRatio']))) / 100) }).reduce((acc, value) => acc + value, 0);
   }
 
   getTotalPriceXQuantityWithWastDollar() {
-    return this.addManufacturingRequisitionForm.controls.items.value.map(function (a) { return (parseFloat(a['quantity']) * parseFloat(a['priceDollar'])) + (((parseFloat(a['priceDollar']) * parseFloat(a['quantity'])) * parseFloat(a['wastRatio'])) / 100) }).reduce((acc, value) => acc + value, 0);
+    return this.addManufacturingRequisitionForm.controls.items.value.map((a) => { return (parseFloat(a['quantity']) * parseFloat(a['priceDollar'])) + (((parseFloat(a['priceDollar']) * parseFloat(a['quantity'])) * parseFloat(this.notZero(a['wastRatio']))) / 100) }).reduce((acc, value) => acc + value, 0);
   }
 
   avgCost() {

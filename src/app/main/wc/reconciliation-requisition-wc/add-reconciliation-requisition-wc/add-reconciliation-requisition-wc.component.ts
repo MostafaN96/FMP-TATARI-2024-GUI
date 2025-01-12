@@ -12,6 +12,7 @@ import { ReconcilitionRequisitionWcService } from "src/app/services/main/wc/reco
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
 import { WarehouseService } from "src/app/services/main/warehouse.service";
 import { WcService } from "src/app/services/main/wc/wc.service";
+import { FabricOrderRequisitionWcService } from "src/app/services/main/wc/fabric-order-requisition-wc.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -45,6 +46,7 @@ export class AddReconciliationRequisitionWcComponent implements OnInit {
   warehouses: any = []
   consigments: any = []
   currentQuantity: any = []
+  fabricOrder: any = []
   fabricsDetails: any
   listFabricPrices: any = []
   listFabricPricesDollar: any = []
@@ -61,7 +63,7 @@ export class AddReconciliationRequisitionWcComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textFabric: string = "اسم القماش"
 
-  public onFilteringFabricName(e: any) {
+  public onFilteringFabricName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -70,7 +72,7 @@ export class AddReconciliationRequisitionWcComponent implements OnInit {
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.fabrics, query);
+    e.updateData(this.fabrics[index], query);
   }
 
   // --------------- Warehouse --------------
@@ -105,11 +107,29 @@ export class AddReconciliationRequisitionWcComponent implements OnInit {
     e.updateData(this.consigments[index], query);
   }
 
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsFabricOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textFabricOrder: string = "اسم الطلبية"
+
+
+  public onFilteringFabricOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.fabricOrder, query);
+  }
+
   constructor(
     private _fabricService: FabricService,
     private _warehouseService: WarehouseService,
     private _wcService: WcService,
     private _reconcilitionRequisitionWcService: ReconcilitionRequisitionWcService,
+    private _fabricOrderRequisitionWcService: FabricOrderRequisitionWcService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
@@ -138,6 +158,8 @@ export class AddReconciliationRequisitionWcComponent implements OnInit {
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      fabricOrderId: new FormControl("", [Validators.required]),
       fabricId: new FormControl("", [Validators.required]),
       fabricCode: new FormControl(""),
       consigmentManufacturingId: new FormControl("", [Validators.required]),
@@ -170,11 +192,36 @@ export class AddReconciliationRequisitionWcComponent implements OnInit {
     this.listFabricPricesDollar.splice(index, 1);
   }
 
+  //  Fabric Order
+  selectFabricOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fabricOrder.indexOf(event.itemData)
+
+    if (this.fabricOrder[indexData] !== event.itemData) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['fabricOrderId'].setValue("")
+      row.controls['fabricId'].setValue("")
+      row.controls['fabricCode'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['consigmentManufacturingId'].setValue("")
+      this.currentQuantity[index] = 0
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._fabricService.selectByWarehouseWc(
+        this.reconcilitionRequisitionWCForm.controls['warehouseId'].value!, 
+        event.itemData.id).subscribe((response: any) => {
+        this.fabrics[index] = response
+      })
+
+    }
+  }
+
   //  Fabric
   selectFabric(event: { itemData: any; }, row: FormGroup, index) {
-    let indexData = this.fabrics.indexOf(event.itemData)
+    let indexData = this.fabrics[index].indexOf(event.itemData)
 
-    if (this.fabrics[indexData] !== event.itemData) {
+    if (this.fabrics[index][indexData] !== event.itemData) {
       row.controls['fabricId'].setValue(null)
       row.controls['fabricCode'].setValue(null)
       row.controls['consigmentManufacturingId'].setValue("")
@@ -185,7 +232,11 @@ export class AddReconciliationRequisitionWcComponent implements OnInit {
       row.controls['fabricCode'].setValue(event.itemData.code)
 
 
-      this._wcService.selectConsigmentManufacturingQuantityByWarehouseByFabricWc(this.reconcilitionRequisitionWCForm.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+      this._wcService.selectConsigmentManufacturingQuantityByWarehouseByFabricWc(
+        this.reconcilitionRequisitionWCForm.controls['warehouseId'].value!, 
+        event.itemData.id, 
+        row.controls['fabricOrderId'].value
+      ).subscribe((response: any) => {
         this.consigments[index] = response
       })
     }
@@ -216,13 +267,23 @@ export class AddReconciliationRequisitionWcComponent implements OnInit {
 
   selectByWarehouseWc(id = this._constantsService.DEFAULT_WC_WAREHOUSE_ID) {
     this.reconcilitionRequisitionWCForm.controls['warehouseId'].setValue(id)
-    this._fabricService.selectByWarehouseWc(id).subscribe((response: any) => {
-      this.fabrics = response
 
-      if (this.fabrics[0] == null) {
-        this.reconcilitionRequisitionWCForm.controls['warehouseId'].setValue("")
+    
+    this._fabricOrderRequisitionWcService.selectByWarehouseWc(id).subscribe((response: any) => {
+      this.fabricOrder = response
+
+      if (Array.isArray(this.fabricOrder) && this.fabricOrder.length < 1) {
+        this.reconcilitionRequisitionWCForm.controls['warehouseId'].setValue(null)
       }
     })
+
+    // this._fabricService.selectByWarehouseWc(id).subscribe((response: any) => {
+    //   this.fabrics = response
+
+    //   if (this.fabrics[0] == null) {
+    //     this.reconcilitionRequisitionWCForm.controls['warehouseId'].setValue("")
+    //   }
+    // })
   }
 
   //  consigmentManufacturing

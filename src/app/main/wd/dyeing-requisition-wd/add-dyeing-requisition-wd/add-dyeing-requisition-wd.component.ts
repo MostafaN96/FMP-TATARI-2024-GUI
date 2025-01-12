@@ -186,6 +186,9 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
 
     return new FormGroup({
       index: new FormControl(index),
+      ordersRequisitionsId: new FormControl(data.orders_requisitions_id, [Validators.required]),
+      fabricOrderId: new FormControl(data.wc_fabric_order_requisition_id, [Validators.required]),
+      fabricOrderName: new FormControl(data.wc_fabric_order_requisition_name ?? ""),
       wdFormDyeingOrderRequisitionDetailsId: new FormControl(data.wd_form_dyeing_order_requisition_details_id ?? ""),
       wdFormRequisitionDetailsId: new FormControl(data.id, [Validators.required]),
       fabricName: new FormControl(data.fabric_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
@@ -213,7 +216,10 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       fabricWidth: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       fabricQuantityM2: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      workOrderNumber: new FormControl(this.maxWorkOrderNumberResult, [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
+      workOrderNumber: new FormControl(
+        // this.maxWorkOrderNumberResult
+        data.work_order_number_details
+        , [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       note1: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
       note2: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -275,6 +281,12 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       this.currentStockReport.formDyeingFabricsByDyer = []
       this.currentStockReport.listen();
       this.selectArrayValues = []
+    }
+  }
+
+  selectWarehouse(event: { itemData: any; }) {
+    if (!this.warehouses.includes(event.itemData)) {
+      this.addRequisitionForm.controls['warehouseId'].setValue("")
     }
   }
 

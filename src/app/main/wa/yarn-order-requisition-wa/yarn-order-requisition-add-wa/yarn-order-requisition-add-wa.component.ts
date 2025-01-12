@@ -34,6 +34,7 @@ export class YarnOrderRequisitionAddWaComponent implements OnInit {
     name: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     orderId: new FormControl(""),
+    ordersRequisitionsId: new FormControl(""),
     orderName: new FormControl(""),
     sellerId: new FormControl(null, [Validators.required]),
     items: new FormArray([
@@ -144,7 +145,7 @@ export class YarnOrderRequisitionAddWaComponent implements OnInit {
     if (String(this.router.url).split("?")[0] == `/dashboard/${this._constantsService.ROUTING_LINKS[163]}`) {
       this.route.queryParams
         .subscribe(params => {
-          this.getYarnsOrderData(params['id'])
+          this.getYarnsOrderData(params['id'], params['ordersRequisitionsId'])
         })
     } else {
       this.initItem()
@@ -152,16 +153,27 @@ export class YarnOrderRequisitionAddWaComponent implements OnInit {
 
   }
 
-  getYarnsOrderData(weDyedFabricOrderRequisition) {
+  getYarnsOrderData(weDyedFabricOrderRequisition, ordersRequisitionsId) {
 
     this._yarnOrderRequisitionWaService.inquireYarnsOfFabricForOrderWa(weDyedFabricOrderRequisition).subscribe((response: any) => {
       this.yarnsOrderData = response
-      
-      this.addOrderForm.controls['name'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.order_name)
-      this.addOrderForm.controls['orderId'].setValue(weDyedFabricOrderRequisition)
-      this.addOrderForm.controls['orderName'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.order_name)
-      this.addOrderForm.controls['sellerId'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.seller_id)
 
+      if(this.yarnsOrderData.length > 0) {
+
+        this.addOrderForm.controls['name'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.order_name)
+        this.addOrderForm.controls['orderId'].setValue(weDyedFabricOrderRequisition)
+        this.addOrderForm.controls['ordersRequisitionsId'].setValue(ordersRequisitionsId)
+        this.addOrderForm.controls['orderName'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.order_name)
+        this.addOrderForm.controls['sellerId'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.seller_id)
+  
+      } else {
+        this.addOrderForm.controls['name'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.order_name)
+        this.addOrderForm.controls['orderId'].setValue("")
+        this.addOrderForm.controls['ordersRequisitionsId'].setValue("")
+        this.addOrderForm.controls['orderName'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.order_name)
+        this.addOrderForm.controls['sellerId'].setValue(this.yarnsOrderData[0].weDyedFabricOrderRequisition.seller_id)
+      }
+      
       const formGroup = <FormGroup>this.addOrderForm;
       formGroup.removeControl('items');
       formGroup.addControl('items', new FormArray([]));
@@ -248,7 +260,7 @@ export class YarnOrderRequisitionAddWaComponent implements OnInit {
       this.addOrderForm.controls['orderId'].setValue(event.itemData.id)
       this.addOrderForm.controls['orderName'].setValue(event.itemData.name)
       this.addOrderForm.controls['name'].setValue(event.itemData.name)
-      this.getYarnsOrderData(event.itemData.id)
+      this.getYarnsOrderData(event.itemData.id, event.itemData.orders_requisitions_id)
     } else {
       this.addOrderForm.controls['orderId'].setValue("")
       this.addOrderForm.controls['orderName'].setValue("")

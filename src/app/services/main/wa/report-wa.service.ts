@@ -93,8 +93,8 @@ export class ReportWaService {
       });
   }
 
-  selectInverntoryDetailsByWarehouseByYarnByLot(warehouseId: string, yarnId: string, yarnLotId: string, consigmentYarnId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-details-by-warehouse-by-yarn-by-lot/${warehouseId}/${yarnId}/${yarnLotId}/${consigmentYarnId}`;
+  selectInverntoryDetailsByWarehouseByYarnByLot(warehouseId: string, yarnId: string, yarnLotId: string, consigmentYarnId: string, yarnOrderId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-details-by-warehouse-by-yarn-by-lot/${warehouseId}/${yarnId}/${yarnLotId}/${consigmentYarnId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

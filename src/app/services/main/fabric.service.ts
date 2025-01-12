@@ -43,6 +43,20 @@ export class FabricService {
         })
       });
   }
+
+  selectFabricsByOrder(orderRequisitionId: string, urlService?:string): Observable<any> {
+    if(urlService == "dyed") {
+      this.urlService = this.urlServiceDyed
+    }
+    const url = `${this._constantsService.BASE_URL}${this.urlService}fabric-by-order/${orderRequisitionId}`;
+    this.urlService = "fabric/"
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
   
   selectMaxCode(urlService?:string): Observable<any> {
     if(urlService == "dyed") {
@@ -86,9 +100,9 @@ export class FabricService {
     return this._http.get(url);
   }
 
-  selectByWarehouseWc(warehouseId: string): Observable<any> {
+  selectByWarehouseWc(warehouseId: string, fabricOrderId?: string): Observable<any> {
     this.urlService = "fabric/"
-    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wc/${warehouseId}`;
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wc/${warehouseId}/${fabricOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

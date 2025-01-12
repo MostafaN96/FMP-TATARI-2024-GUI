@@ -44,6 +44,7 @@ export class ItemHistoryByYarnComponent implements OnInit {
   selectedYarnLotCode: any[] = []
   selectedYarnNames: any[] = []
   selectedConsigmentYarn: any[] = []
+  selectedYarnOrder: any[] = []
 
   constructor(
     public _sharedComponentService: SharedComponentService,
@@ -66,6 +67,7 @@ export class ItemHistoryByYarnComponent implements OnInit {
     this.customFilterForYarnLotCode();  
     this.customFilterForYarnName();  
     this.customFilterForConsigmentYarn();  
+    this.customFilterForYarnOrder();  
   }
 
   getData() {
@@ -261,6 +263,40 @@ export class ItemHistoryByYarnComponent implements OnInit {
     });
   }
 
+  customFilterForYarnOrder() {
+    const customFilterName = "yarn-order-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedYarnOrder
+
+      if (this.selectedYarnOrder[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].wa_yarn_order_requisition_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   // Reset table filters
   clear(table: Table) {
     table.clear();
@@ -270,6 +306,7 @@ export class ItemHistoryByYarnComponent implements OnInit {
     this.selectedWarehouses = []
     this.selectedYarnLotCode = []
     this.selectedConsigmentYarn = []
+    this.selectedYarnOrder = []
   }
 
   onMultiselectedYarnNames(event) {
@@ -294,6 +331,11 @@ export class ItemHistoryByYarnComponent implements OnInit {
 
   onMultiselectedConsigmentYarn(event) {
     this.selectedConsigmentYarn = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedYarnOrder(event) {
+    this.selectedYarnOrder = event
     this.dt1?._filter()
   }
 

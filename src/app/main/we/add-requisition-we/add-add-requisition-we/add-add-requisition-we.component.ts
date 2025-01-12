@@ -14,6 +14,7 @@ import { ColorService } from "src/app/services/main/color.service";
 import { ColorCategoryService } from "src/app/services/main/color-category.service";
 import { ConsigmentDyeingService } from "src/app/services/main/consigment-dyeing.service";
 import { GradeItemService } from "src/app/services/main/grade-item.service";
+import { DyedFabricOrderRequisitionWeService } from "src/app/services/main/we/dyed-fabric-order-requisition-we.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -52,6 +53,7 @@ export class AddAddRequisitionWeComponent implements OnInit {
   warehouses:any = []
   consigmentsDyeing:any = []
   gradeItems:any = []
+  dyedFabricOrder: any = []
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -175,11 +177,31 @@ export class AddAddRequisitionWeComponent implements OnInit {
     e.updateData(this.gradeItems, query);
   }
 
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsDyedFabricOrder: Object = { 
+    value: "id", 
+    text: "name" 
+  };
+  // set the placeholder to the AutoComplete input
+  public textDyedFabricOrder: string = "اسم الطلبية"
+
+  public onFilteringDyedFabricOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.dyedFabricOrder, query);
+  }
+
   constructor(
     private _warehouseService: WarehouseService,
     protected _fabricService: FabricService,
     protected _supplierService: BussinessmanService,
     protected _addRequisitionWeService: AddRequisitionWeService,
+    private _dyedFabricOrderRequisitionWeService: DyedFabricOrderRequisitionWeService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     protected _constantsService: ConstantsService,
@@ -199,6 +221,10 @@ export class AddAddRequisitionWeComponent implements OnInit {
   }
 
   getData() {
+    this._dyedFabricOrderRequisitionWeService.selectAll('opened').subscribe((response: any) => {
+      this.dyedFabricOrder = response
+    })
+
     this._fabricService.selectAll("dyed").subscribe((response: any) => {
       this.fabrics = response
     })
@@ -232,6 +258,8 @@ export class AddAddRequisitionWeComponent implements OnInit {
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      dyedFabricOrderId: new FormControl("", [Validators.required]),
       warehouseId: new FormControl(this._constantsService.DEFAULT_WE_WAREHOUSE_ID, [Validators.required]),
       dyedFabricId: new FormControl(null, [Validators.required]),
       dyedFabricCode: new FormControl(null),

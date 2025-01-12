@@ -18,8 +18,8 @@ export class WcService {
     return this._http.get(url);
   }
 
-  selectConsigmentManufacturingQuantityByWarehouseByFabricWc(warehouseId: string, fabricId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-warehouse-by-fabric-wc/${warehouseId}/${fabricId}`;
+  selectConsigmentManufacturingQuantityByWarehouseByFabricWc(warehouseId: string, fabricId: string, fabricOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-warehouse-by-fabric-wc/${warehouseId}/${fabricId}/${fabricOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

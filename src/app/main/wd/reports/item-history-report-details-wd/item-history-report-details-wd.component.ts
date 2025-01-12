@@ -73,7 +73,12 @@ export class ItemHistoryReportDetailsWdComponent implements OnInit {
         this.fabricName = params['name']
         this.dyerName = params['dyerName']
         this.consigmentNumber = params['consigmentNumber']
-        this._reportWdService.selectInventoryDetailsByDyeingByFabricByConsigmentDyeing({ fabricId: params['id'], dyeingId: params['dyerId'], consigmentDyeingId: params['consigmentDyeingId'] }).subscribe((response: any) => {
+        this._reportWdService.selectInventoryDetailsByDyeingByFabricByConsigmentDyeing({ 
+          fabricId: params['id'], 
+          dyeingId: params['dyerId'], 
+          consigmentDyeingId: params['consigmentDyeingId'],
+          fabricOrderId: params['fabricOrderId']
+        }).subscribe((response: any) => {
           this.reportByFabricWdDetails = response
 
           // PrimeNG Table

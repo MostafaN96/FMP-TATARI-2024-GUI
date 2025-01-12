@@ -14,6 +14,7 @@ import { ReportWaService } from "src/app/services/main/wa/report-wa.service";
 import { FabricService } from "src/app/services/main/fabric.service";
 import { WaService } from "src/app/services/main/wa/wa.service";
 import { ConsigmentYarnService } from 'src/app/services/main/consigment-yarn.service';
+import { YarnOrderRequisitionWaService } from "src/app/services/main/wa/yarn-order-requisition-wa.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -47,6 +48,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
   lots: any = []
   fromConsigmentsYarns: any = []
   consigmentsYarns: any = []
+  yarnOrder: any = []
   yarns: any = []
   industries: any = []
   fabrics: any = []
@@ -55,7 +57,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
   getListYarnPrices: any = []
   listYarnPrices: any = []
   listYarnPricesDollar: any = []
-  groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر", "آخر سعر الرسالة"]
+  groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر", "آخر سعر الرسالة"]
   @Input() selectedData: any
   isShowAdd = true
 
@@ -70,7 +72,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textYarn: string = "اسم الصنف"
 
-  public onFilteringYarnName(e: any) {
+  public onFilteringYarnName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -78,7 +80,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.yarns, query);
+    e.updateData(this.yarns[index], query);
   }
 
   // --------------- Industry --------------
@@ -104,7 +106,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textFabric: string = "القماش المراد تصنيعه"
 
-  public onFilteringFabricName(e: any) {
+  public onFilteringFabricName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -112,7 +114,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.fabrics, query);
+    e.updateData(this.fabrics[index], query);
   }
 
   // --------------- Lot --------------
@@ -133,19 +135,18 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
 
   // --------------- consigment Yarn --------------
   // maps the appropriate column to fields property
-  public fieldsFromConsigmentYarn: Object = { value: "id", text:"number"};
+  public fieldsFromConsigmentYarn: Object = { value: "id", text: "number" };
   // set the placeholder to the AutoComplete input
   public textFromConsigmentYarn: string = "رقم الرسالة"
 
-  public onFilteringFromConsigmentYarn (e: any, index)
-  {
-    e.preventDefaultAction=true;
-         var predicate = new Predicate('number', 'contains', e.text);
-          var query = new Query();
-      //frame the query based on search string with filter type.
-        query = (e.text != "") ? query.where(predicate) : query;
-      //pass the filter data source, filter query to updateData method.
-        e.updateData(this.fromConsigmentsYarns[index], query);
+  public onFilteringFromConsigmentYarn(e: any, index) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('number', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.fromConsigmentsYarns[index], query);
   }
 
   // --------------- consigment Yarn --------------
@@ -164,12 +165,30 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
     e.updateData(this.consigmentsYarns, query);
   }
 
+  // --------------- Requisitio nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textYarnOrder: string = "اسم الطلبية"
+
+
+  public onFilteringYarnOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.yarnOrder, query);
+  }
+
   constructor(
     private _waService: WaService,
     private _yarnService: YarnService,
     private _yarnLotService: YarnLotService,
     private _bussinessmanService: BussinessmanService,
     private _wbTransportWaWbRequisitionDetailsService: WbTransportWaWbRequisitionDetailsService,
+    private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
@@ -197,18 +216,14 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
       this.transportWaWbForm.controls.id.setValue(params['id'])
       this.transportWaWbForm.controls.warehouseId.setValue(this.selectedData[0]['warehouse_id'])
 
-    this._yarnService.selectByWarehouseWa(this.selectedData[0]['warehouse_id']).subscribe((response: any) => {
-      this.yarns = response
-    })
+      this._yarnOrderRequisitionWaService.selectByWarehouseWa(this.selectedData[0]['warehouse_id']).subscribe((response: any) => {
+        this.yarnOrder = response
+      })
     })
 
 
     this._bussinessmanService.selectManufacturer().subscribe((response: any) => {
       this.industries = response
-    })
-
-    this._fabricService.selectAll().subscribe((response: any) => {
-      this.fabrics = response
     })
 
     this._consigmentYarnService.selectAll().subscribe((response: any) => {
@@ -220,6 +235,8 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      yarnOrderId: new FormControl("", [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       industryId: new FormControl("", [Validators.required]),
       fabricToBeManufacturedId: new FormControl("", [Validators.required]),
@@ -259,11 +276,43 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
     this.listYarnPricesDollar.splice(index, 1);
   }
 
+  //  Yarn Order
+  selectYarnOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.yarnOrder.indexOf(event.itemData)
+
+    if (this.yarnOrder[indexData] !== event.itemData) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['yarnOrderId'].setValue("")
+      row.controls['yarnId'].setValue("")
+      row.controls['yarnCode'].setValue("")
+      row.controls['yarnName'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['yarnLotId'].setValue("")
+      row.controls['fromConsigmentYarnId'].setValue("")
+      this.currentQuantity[index] = 0
+      this.fabrics[index] = []
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._yarnService.selectByWarehouseWa(this.transportWaWbForm.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+        this.yarns[index] = response
+      })
+
+      
+    this._fabricService.selectFabricsByOrder(event.itemData.orders_requisitions_id).subscribe((response: any) => {
+      this.fabrics[index] = response
+    })
+
+    }
+    this.validate(row, index)
+  }
+
   //  Yarn
   selectYarn(event: { itemData: any; }, row: FormGroup, index) {
-    let indexData = this.yarns.indexOf(event.itemData)
+    let indexData = this.yarns[index].indexOf(event.itemData)
 
-    if (this.yarns[indexData] !== event.itemData) {
+    if (this.yarns[index][indexData] !== event.itemData) {
       row.controls['yarnId'].setValue("")
       row.controls['yarnCode'].setValue("")
       row.controls['yarnName'].setValue("")
@@ -276,15 +325,20 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
       row.controls['yarnCode'].setValue(event.itemData.code)
       row.controls['yarnName'].setValue(event.itemData.name)
 
-      this._yarnLotService.selectByWarehouseByYarnWa(this.transportWaWbForm.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+      this._yarnLotService.selectByWarehouseByYarnWa(
+        this.transportWaWbForm.controls['warehouseId'].value!, 
+        event.itemData.id,
+        row.controls['yarnOrderId'].value!
+      ).subscribe((response: any) => {
         this.lots = response
 
-        if(this.lots[0] != null) {
+        if (this.lots[0] != null) {
           row.controls['yarnLotId'].setValue(this.lots[0].id)
           this.getRemainingByWarehouseByYarnByLotWa(
             this.transportWaWbForm.controls['warehouseId'].value!,
             event.itemData.id,
             this.lots[0].id,
+            row.controls['yarnOrderId'].value!,
             index
           )
         }
@@ -314,14 +368,14 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
   }
 
   //  Fabric
-  selectFabric(index: { itemData: any; }, row: FormGroup) {
-    let indexData = this.fabrics.indexOf(index.itemData)
-    if (this.fabrics[indexData] !== index.itemData) {
+  selectFabric(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fabrics[index].indexOf(event.itemData)
+    if (this.fabrics[index][indexData] !== event.itemData) {
       row.controls['fabricToBeManufacturedId'].setValue(null)
       row.controls['fabricCode'].setValue(null)
     }
     else {
-      row.controls['fabricCode'].setValue(index.itemData.code)
+      row.controls['fabricCode'].setValue(event.itemData.code)
     }
   }
 
@@ -334,17 +388,26 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
       row.controls['fromConsigmentYarnId'].setValue("")
       this.currentQuantity[index] = 0
     } else {
-      this.getRemainingByWarehouseByYarnByLotWa(this.transportWaWbForm.controls['warehouseId'].value!,
-      row.controls['yarnId'].value!,
-      event.itemData.id,
-      index)
+      this.getRemainingByWarehouseByYarnByLotWa(
+        this.transportWaWbForm.controls['warehouseId'].value!,
+        row.controls['yarnId'].value!,
+        event.itemData.id, 
+        row.controls['yarnOrderId'].value!,
+        index)
     }
   }
-  getRemainingByWarehouseByYarnByLotWa(warehouseId: string, yarnId: string, lotId:string, index) {
+  getRemainingByWarehouseByYarnByLotWa(
+    warehouseId: string, 
+    yarnId: string, 
+    lotId: string, 
+    yarnOrderId: string, 
+    index) {
     this._waService.selectRemainingByWarehouseByYarnByLotWa(
       warehouseId,
       yarnId,
-      lotId).subscribe((response: any) => {
+      lotId,
+      yarnOrderId
+    ).subscribe((response: any) => {
         this.fromConsigmentsYarns[index] = response
       })
   }
@@ -376,7 +439,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
         row.controls['price'].setValue(this.yarnsDetails[0].latest_price)
         row.controls['priceDollar'].setValue(this.yarnsDetails[0].latest_price_dollar)
       })
-    }    
+    }
   }
   // End From Consigment Yarn Autocomplete Section
 
@@ -389,7 +452,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
 
   // price
   changePrice(type, row: FormGroup) {
-    if(type == "priceEG") {
+    if (type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
       row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
@@ -402,10 +465,10 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
     this.transportWaWbForm.markAllAsTouched();
     if (this.transportWaWbForm.valid) {
       if (this._quantityOccurrencesValidationService.validateCurrentQuantity(
-        this.transportWaWbForm.controls.items.value, this.transportWaWbForm.controls.items.value, 
-        'fromConsigmentYarnId', 'fromConsigmentYarnId', 
-        'yarnLotId', 'yarnLotId', 
-        'yarnId', 'yarnId', 
+        this.transportWaWbForm.controls.items.value, this.transportWaWbForm.controls.items.value,
+        'fromConsigmentYarnId', 'fromConsigmentYarnId',
+        'yarnLotId', 'yarnLotId',
+        'yarnId', 'yarnId',
         'quantity', 'yarnName', 'validQuantity')) {
         const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.transportWaWbForm, 'items',
           ['fabricCode', 'yarnName', 'yarnCode', 'validQuantity'])
@@ -429,7 +492,7 @@ export class AddTransportWaWbRequisitionFormWbComponent implements OnInit {
             this.isShowAdd = true
           }
         });
-      }  else {
+      } else {
         this.isShowAdd = true
       }
 

@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild,} from '@angular/core';
+import { Component, OnInit, ViewChild, } from '@angular/core';
 
-// Angular Material Table
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
+// PrimeNG Table
+import { ConfirmationService, PrimeNGConfig } from 'primeng/api';
+import { Table } from 'primeng/table';
+import { FilterService } from 'primeng/api';
+import * as moment from 'moment';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -21,7 +23,8 @@ import { DyedFabricOrderRequisitionUpdateWeComponent } from "../dyed-fabric-orde
 @Component({
   selector: 'app-dyed-fabric-order-requisition-details-we',
   templateUrl: './dyed-fabric-order-requisition-details-we.component.html',
-  styleUrls: ['./dyed-fabric-order-requisition-details-we.component.css']
+  styleUrls: ['./dyed-fabric-order-requisition-details-we.component.css'],
+  providers: [ConfirmationService]
 })
 export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
 
@@ -37,28 +40,13 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
   showAddDetails = false
 
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
-  @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
-  displayedColumns: string[] = [
-    'index',
-    'dyed_fabric_name',
-    'dyed_fabric_code',
-    'quantity',
-    'completed_quantity',
-    'current_quantity',
-    'over_current_quantity',
-    'color_category_name',
-    'color_name',
-    'waste_ratio',
-    'fabric_width',
-    'fabric_quantity_m2',
-    'price',
-    'price_dollar',
-    'note2',
-    'close_order',
-    // 'open_order',
-    'update'];
-  filter = "";
-  dataSourceSearchTabel: any;
+  @ViewChild('dt1') dt1: Table | undefined;
+  loading: boolean = true;
+  selectedFabricNames: any[] = []
+  selectedFabricCodes: any[] = []
+  selectedColorCategories: any[] = []
+  selectedColors: any[] = []
+  dateFilters: any
 
   constructor(
     private route: ActivatedRoute,
@@ -66,14 +54,22 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     private _dyedFabricOrderRequisitionDetailsWeService: DyedFabricOrderRequisitionDetailsWeService,
     public _exportDataService: ExportDataService,
     private _constantsService: ConstantsService,
-    private router: Router
+    private primengConfig: PrimeNGConfig,
+    private filterService: FilterService,
+    private router: Router,
+    private confirmationService: ConfirmationService
 
   ) {
   }
 
   ngOnInit(): void {
-    if(this.router.url.split('/')[2] + '/' + this.router.url.split('/')[3].split('?')[0] 
-    === this._constantsService.ROUTING_LINKS[190]) {
+    this.customFilterForFabricNames()
+    this.customFilterForFabricCodes()
+    this.customFilterForColorCategory()
+    this.customFilterForColor()
+
+    if (this.router.url.split('/')[2] + '/' + this.router.url.split('/')[3].split('?')[0]
+      === this._constantsService.ROUTING_LINKS[190]) {
       this.getData("closed")
     }
     else {
@@ -81,15 +77,15 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     }
   }
 
-  getData(isClosed?:string) {
+  getData(isClosed?: string) {
     this.route.queryParams
       .subscribe(params => {
         this._dyedFabricOrderRequisitionDetailsWeService.select(params['id'], isClosed).subscribe((response: any) => {
-          this.dyedFabricOrderDetails = response          
-          
-          this.dataSourceSearchTabel = new MatTableDataSource(this.dyedFabricOrderDetails);
-          // this.sortColumns.sort(({ id: 'number', start: 'asc' }) as MatSortable);
-          this.dataSourceSearchTabel.sort = this.sortColumns;
+          this.dyedFabricOrderDetails = response
+
+          // PrimeNG Table
+          this.primengConfig.ripple = true;
+          this.loading = false;
         })
       });
 
@@ -103,11 +99,192 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
   }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  applyFilter(filterValue: string) {
-    this.dataSourceSearchTabel.filter = filterValue.trim().toLowerCase();
+
+  customFilterForFabricNames() {
+    const customFilterName = "fabric-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedFabricNames
+
+      if (this.selectedFabricNames[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].dyed_fabric_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForFabricCodes() {
+    const customFilterName = "fabric-code-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedFabricCodes
+
+      if (this.selectedFabricCodes[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].dyed_fabric_code) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForColorCategory() {
+    const customFilterName = "color-category-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedColorCategories
+
+      if (this.selectedColorCategories[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].color_category_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForColor() {
+    const customFilterName = "color-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedColors
+
+      if (this.selectedColors[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].color_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+
+    // Reset table filters
+    clear(table: Table) {
+      table.clear();
+      table.reset();
+      this.selectedFabricNames = []
+      this.selectedFabricCodes = []
+      this.selectedColorCategories = []
+      this.selectedColors = []
+      this.dateFilters = []
+    }
+
+  onMultiselectedFabricNames(event) {
+    this.selectedFabricNames = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedFabricCodes(event) {
+    this.selectedFabricCodes = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedColorCategory(event) {
+    this.selectedColorCategories = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedColor(event) {
+    this.selectedColors = event
+    this.dt1?._filter()
   }
 
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
+
+  confirm(event: Event, element) {
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: 'تأكيد إغلاق الطلبية؟',
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.closeOrder(element);
+      },
+      reject: () => {
+      }
+    });
+  }
 
   closeOrder(data) {
     this.showInputUpdate = true

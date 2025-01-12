@@ -149,6 +149,9 @@ export class AddReturnSellRequisitionWeComponent implements OnInit {
   initItem(data:any, index:number) {
     return new FormGroup({
       index:new FormControl(index),
+      ordersRequisitionsId: new FormControl(data.orders_requisitions_id, [Validators.required]),
+      dyedFabricOrderId: new FormControl(data.we_dyed_fabric_order_requisition_id, [Validators.required]),
+      dyedFabricOrderName: new FormControl(data.we_dyed_fabric_order_requisition_name, [Validators.required]),
       weSellRequisitionDetailsId: new FormControl(data.requisition_details_id, [Validators.required]),
       warehouseId: new FormControl("", [Validators.required]),
       dyedFabricName: new FormControl(data.dyed_fabric_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),

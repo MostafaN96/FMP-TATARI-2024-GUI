@@ -34,6 +34,7 @@ export class FormDyeingRequisitionDetailsWdComponent implements OnInit {
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
   displayedColumns: string[] = [
     'index',
+    'work_order_number_details',
     'fabric_name',
     'fabric_code',
     'fabric_dyeing_code',

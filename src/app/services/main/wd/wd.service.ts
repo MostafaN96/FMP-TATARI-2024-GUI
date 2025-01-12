@@ -12,8 +12,8 @@ export class WdService {
   constructor(private _http: HttpClient,
     private _constantsService: ConstantsService) { }
 
-  selectConsigmentDyeingQuantityByFabricByDyeingWd(fabricId: string, dyeingId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}select-consigment-dyeing-by-fabric-by-dyeing/${fabricId}/${dyeingId}`;
+  selectConsigmentDyeingQuantityByFabricByDyeingWd(fabricId: string, dyeingId: string, fabricOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-consigment-dyeing-by-fabric-by-dyeing/${fabricId}/${dyeingId}/${fabricOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({
@@ -21,6 +21,7 @@ export class WdService {
         })
       });
   }
+  
   selectQuantityByDyeingWd(dyeingId: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-dyeing/${dyeingId}`;
     return this._http.get(url,
@@ -30,6 +31,17 @@ export class WdService {
         })
       });
   }
+
+  selectQuantityByDyeingByFabricOrderWd(dyeingId: string, fabricOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-dyeing-by-fabric-order/${dyeingId}/${fabricOrderId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 
   // Select
   selectOne(id: string): Observable<any> {

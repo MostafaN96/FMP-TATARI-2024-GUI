@@ -19,12 +19,16 @@
                                         التسلسل
                                     </th>
     
-                                    <th>
-                                        اسم الصنف
+                                    <th style="min-width: 180px;">
+                                        الطلبية
                                     </th>
-    
-                                    <th style="width: 100px;">
-                                        كود الصنف
+
+                                    <th style="width: 150px;">
+                                        اسم المادة
+                                    </th>
+
+                                    <th style="width: 80px;">
+                                        كود المادة
                                     </th>
     
                                     <th style="width: 120px;">
@@ -35,35 +39,35 @@
                                         عدد الاثواب
                                     </th>
 
-                                    <th style="max-width: 120px"
+                                    <th style="max-width: 80px"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                         السعر
                                     </th>
     
-                                    <th style="max-width: 120px"
+                                    <th style="max-width: 80px"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                         السعر دولار
                                     </th>
     
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية المتوفرة
                                     </th>
     
-                                    <th  style="max-width: 120px;">
+                                    <th  style="max-width: 80px;">
                                         الكمية
                                     </th>
     
-                                    <th style="max-width: 100px;"
+                                    <th style="max-width: 80px;"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                         الاجمالي
                                     </th>
     
-                                    <th style="max-width: 100px;"
+                                    <th style="max-width: 80px;"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                         الاجمالي دولار
                                     </th>
     
-                                    <th>
+                                    <th style="max-width: 120px;">
                                         الملاحظات
                                     </th>
     
@@ -83,7 +87,28 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
     
-                                        <td class="table-td">
+                                        <!-- order -->
+                                        <td class="table-td" style="min-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='fabricOrder' [fields]='fieldsFabricOrder' 
+                                            (filtering)="onFilteringFabricOrder($event)"
+                                            (change)='selectFabricOrder($event, row, index)'
+                                                [placeholder]='textFabricOrder' [autofill]='autofill'
+                                                formControlName="fabricOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('fabricOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('fabricOrderId').hasError('required') && (row.get('fabricOrderId').dirty 
+                                                || row.get('fabricOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="min-width: 150px;">
                                             <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric' 
                                             (filtering)="onFilteringFabricName($event)"
                                                 [placeholder]='textFabric' [autofill]='autofill'
@@ -103,17 +128,17 @@
                                             </small>
                                         </td>
 
-                                        <td class="table-td">
+                                        <td class="table-td" style="min-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> 
-                                                    كود الصنف
+                                                    كود المادة
                                                 </mat-label>
-                                                <input matInput placeholder="كود الصنف" readonly formControlName="fabricCode">
+                                                <input matInput placeholder="كود المادة" readonly formControlName="fabricCode">
                                             </mat-form-field>
                                         </td>
     
                                         <!-- consigmentManufacturing -->
-                                        <td class="table-td">
+                                        <td class="table-td" style="min-width: 120px;">
                                             <ejs-autocomplete [dataSource]='consigments[index]' [fields]='fieldsConsigment' 
                                             (filtering)="onFilteringConsigments($event, index)"
                                                 [placeholder]='textConsigment' [autofill]='autofill'
@@ -154,7 +179,7 @@
                                         </td>
 
                                         <!-- Price -->
-                                        <td class="table-td" style="max-width: 120px"
+                                        <td class="table-td" style="max-width: 80px"
                                         *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر</mat-label>
@@ -188,7 +213,7 @@
                                         </td>
     
                                         <!-- priceDollar -->
-                                        <td class="table-td" style="max-width: 120px"
+                                        <td class="table-td" style="max-width: 80px"
                                         *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر دولار</mat-label>
@@ -221,7 +246,7 @@
                                             </mat-form-field>
                                         </td>
     
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> 
                                                     الكمية المتوفرة
@@ -231,7 +256,7 @@
                                         </td>
     
                                         <!-- Quantity -->
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>الكمية</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="quantity"
@@ -257,7 +282,7 @@
                                         </td>
     
                                           <!-- total -->
-                                          <td class="align-middle text-center"
+                                          <td class="align-middle text-center" style="max-width: 80px;"
                                           *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantity'].value) | number}}
@@ -265,7 +290,7 @@
                                         </td>
     
                                           <!-- total priceDollar -->
-                                          <td class="align-middle text-center"
+                                          <td class="align-middle text-center" style="max-width: 80px;"
                                           *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value, row.controls['quantity'].value) | number}}
@@ -273,7 +298,7 @@
                                         </td>
     
                                         <!-- Statement -->
-                                        <td>
+                                        <td style="max-width: 120px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> البيان </mat-label>
                                                 <textarea matInput rows="1" matTextareaAutosize 
@@ -311,7 +336,7 @@
                             <tfoot>
                                 <tr>
                                     <td>الاجمالي</td>
-                                    <td colspan="3"></td>
+                                    <td colspan="4"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(reconcilitionRequisitionForm, 'items', 'numberFabricPieces') | number}}</td>
                                     <td colspan="2"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[10])">

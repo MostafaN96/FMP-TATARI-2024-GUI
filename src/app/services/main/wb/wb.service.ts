@@ -23,8 +23,12 @@ export class WbService {
     return this._http.get(url);
   }
 
-  selectConsigmentYarnQuantityByYarnByIndustryByLotWb(yarnId: string, industryId: string, yarnLotId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}select-consigment-yarn-by-yarn-by-industry-by-lot/${yarnId}/${industryId}/${yarnLotId}`;
+  selectConsigmentYarnQuantityByYarnByIndustryByLotWb(
+    yarnId: string, 
+    industryId: string, 
+    yarnLotId: string, 
+    yarnOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-consigment-yarn-by-yarn-by-industry-by-lot/${yarnId}/${industryId}/${yarnLotId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({
@@ -63,8 +67,8 @@ export class WbService {
       });
   }
 
-  selectQuantityByIndustryByFabricWb(industryId: string, fabricId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-industry-by-fabric/${industryId}/${fabricId}`;
+  selectQuantityByIndustryByFabricWb(industryId: string, fabricId: string, yarnOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-industry-by-fabric/${industryId}/${fabricId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

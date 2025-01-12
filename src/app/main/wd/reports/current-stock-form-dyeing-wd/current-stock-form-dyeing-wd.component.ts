@@ -36,6 +36,7 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
   selectedDyedFabricCodes: any[] = []
   selectedSellerOrdersNumbers: any[] = []
   selectedConsigmentNumber: any[] = []
+  selectedWorkOrderNumberDetails: any[] = []
   selection = new SelectionModel(true);
   selectArrayValues: any[] = [];
 
@@ -61,6 +62,7 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
     this.customFilterForDyedFabricCode();
     this.customFilterForSellerOrderNumber();
     this.customFilterForConsigmentNumber();
+    this.customFilterForWorkOrderNumberDetails();
   }
 
   listen() {
@@ -380,6 +382,40 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
     });
   }
 
+  customFilterForWorkOrderNumberDetails() {
+    const customFilterName = "work-order-number-details-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedWorkOrderNumberDetails
+
+      if (this.selectedWorkOrderNumberDetails[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].work_order_number_details) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   clear(table: Table) {
     table.clear();
     table.reset();
@@ -392,6 +428,7 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
     this.selectedDyedFabricCodes = []
     this.selectedSellerOrdersNumbers = []
     this.selectedConsigmentNumber = []
+    this.selectedWorkOrderNumberDetails = []
   }
 
   onMultiselectedFabric(event) {
@@ -436,6 +473,11 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
 
   onMultiselectedConsigmentNumber(event) {
     this.selectedConsigmentNumber = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedWorkOrderNumberDetails(event) {
+    this.selectedWorkOrderNumberDetails = event
     this.dt1?._filter()
   }
 

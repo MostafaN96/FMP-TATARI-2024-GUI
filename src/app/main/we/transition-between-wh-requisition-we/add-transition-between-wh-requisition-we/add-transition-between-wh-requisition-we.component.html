@@ -108,6 +108,10 @@
                                         كود المادة
                                     </th>
 
+                                    <th style="width: 120px;">
+                                        الطلبية
+                                    </th>
+
                                     <th style="max-width: 100px;">
                                         اللون
                                     </th>
@@ -217,6 +221,16 @@
                                             </mat-form-field>
                                         </td>
         
+                                        <td class="table-td" style="max-width: 120px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>
+                                                    الطلبية
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="الطلبية" readonly
+                                                    formControlName="dyedFabricOrderName">
+                                            </mat-form-field>
+                                        </td>
+
                                         <td class="table-td" style="max-width: 100px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
@@ -482,7 +496,7 @@
                                 <tr>
                                     <td>الاجمالي</td>
 
-                                    <td colspan="9"></td>
+                                    <td colspan="10"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(transitionBetweenWhRequisitionForm, 'items',
                                         'quantity') | number}}</td>
                                     <td class="text-center">

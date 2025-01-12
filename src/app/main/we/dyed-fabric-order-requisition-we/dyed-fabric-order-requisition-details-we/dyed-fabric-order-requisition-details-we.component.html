@@ -35,7 +35,7 @@
                                 <th>اسم الطلبية:</th>
                                 <td>{{dyedFabricOrderDetails[0]?.order_name}}</td>
                             </tr>
-                
+
                             <tr>
                                 <th>الملاحظات:</th>
                                 <td>{{dyedFabricOrderDetails[0]?.note}}</td>
@@ -46,7 +46,8 @@
 
                 <div class="col">
                     <div class="btn-export-section">
-                        <a (click)="_exportDataService.exportToPDF('table-header-data', 'table-data', 'طلبية العميل قماش جاهز')">
+                        <a
+                            (click)="_exportDataService.exportToPDF('table-header-data', 'table-data', 'طلبية العميل قماش جاهز')">
                             <i title="PDF" class="far fa-file-pdf"></i>
                         </a>
 
@@ -55,7 +56,8 @@
                             <i title="Excel" class="far fa-file-excel px-2"></i>
                         </a>
 
-                        <a (click)="_exportDataService.print('table-header-data', 'table-data', 'طلبية العميل قماش جاهز')">
+                        <a
+                            (click)="_exportDataService.print('table-header-data', 'table-data', 'طلبية العميل قماش جاهز')">
                             <i title="Print" class="fas fa-print pe-2"></i>
                         </a>
                     </div>
@@ -68,242 +70,452 @@
                 <div class="col">
                     <div [class]="_sharedComponentService.tableSectionClass">
 
-                        <mat-form-field class="w-100" appearance="outline">
-                            <input matInput [(ngModel)]="filter" (keyup)="applyFilter($any($event.target).value)"
-                                placeholder="بحث" />
-                        </mat-form-field>
                         <div id="table-data">
-                            <div class="example-table-container">
-                                <table mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
-                                    [class]="_sharedComponentService.tableStyleClass">
 
-                                    <!-- Index Column -->
-                                    <ng-container matColumnDef="index">
-                                        <th mat-header-cell *matHeaderCellDef><b> تسلسل </b></th>
-                                        <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
-                                        <td mat-footer-cell *matFooterCellDef> <b> الإجمالي </b> </td>
-                                    </ng-container>
+                                <p-table #dt1 [value]="dyedFabricOrderDetails" dataKey="id" columnResizeMode="expand"
+                                    styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+                                    [rowHover]="true" [rows]="10" [showCurrentPageReport]="true" [loading]="loading"
+                                    responsiveLayout="scroll" scrollHeight="600px" [filterDelay]="0" sortField="number"
+                                    [responsive]="true" [sortOrder]="0" appendTo="body" [autoLayout]="true">
+                                    <ng-template data-html2canvas-ignore="true" pTemplate="caption">
 
-                                    <!-- dyed_fabric_name Column -->
-                                    <ng-container matColumnDef="dyed_fabric_name">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>نوع القماش الجاهز</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.dyed_fabric_name }}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
+                                        <!-- Start Filter Section -->
+                                        <div class="row row-cols-md-5 align-items-center">
 
-                                    <!-- dyed_fabric_code Column -->
-                                    <ng-container matColumnDef="dyed_fabric_code">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>كود القماش الجاهز</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.dyed_fabric_code }}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
+                                            <div class="col">
+                                                <p-columnFilter field="dyed_fabric_name" matchMode="fabric-name-filter"
+                                                    [showMenu]="false" [showClearButton]="false">
+                                                    <ng-template pTemplate="filter" let-value
+                                                        let-filter="filterCallback">
+                                                        <p-multiSelect [ngModel]="selectedFabricNames"
+                                                            [options]="_sharedComponentService.uniqueArray(dyedFabricOrderDetails, 'dyed_fabric_name')"
+                                                            (onChange)="onMultiselectedFabricNames($event.value)"
+                                                            placeholder="البحث بـ نوع القماش الجاهز"
+                                                            optionLabel="dyed_fabric_name">
+                                                            <ng-template let-option pTemplate="item">
+                                                                <div class="p-multiselect-representative-option">
+                                                                    <span
+                                                                        class="ml-1">{{option.dyed_fabric_name}}</span>
+                                                                </div>
+                                                            </ng-template>
+                                                        </p-multiSelect>
+                                                    </ng-template>
+                                                </p-columnFilter>
+                                            </div>
 
-                                    <!-- quantity Column -->
-                                    <ng-container matColumnDef="quantity">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>الكمية المطلوبة</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.quantity | number}}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef>
-                                            {{_sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'quantity') | number}}
-                                             </td>
-                                    </ng-container>
+                                            <div class="col">
+                                                <p-columnFilter field="dyed_fabric_code" matchMode="fabric-code-filter"
+                                                    [showMenu]="false" [showClearButton]="false">
+                                                    <ng-template pTemplate="filter" let-value
+                                                        let-filter="filterCallback">
+                                                        <p-multiSelect [ngModel]="selectedFabricCodes"
+                                                            [options]="_sharedComponentService.uniqueArray(dyedFabricOrderDetails, 'dyed_fabric_code')"
+                                                            (onChange)="onMultiselectedFabricCodes($event.value)"
+                                                            placeholder="البحث بـ كود القماش الجاهز"
+                                                            optionLabel="dyed_fabric_code">
+                                                            <ng-template let-option pTemplate="item">
+                                                                <div class="p-multiselect-representative-option">
+                                                                    <span
+                                                                        class="ml-1">{{option.dyed_fabric_code}}</span>
+                                                                </div>
+                                                            </ng-template>
+                                                        </p-multiSelect>
+                                                    </ng-template>
+                                                </p-columnFilter>
+                                            </div>
+                                            <div class="col">
+                                                <p-columnFilter field="color_category_name"
+                                                    matchMode="color-category-filter" [showMenu]="false"
+                                                    [showClearButton]="false">
+                                                    <ng-template pTemplate="filter" let-value
+                                                        let-filter="filterCallback">
+                                                        <p-multiSelect [ngModel]="selectedColorCategories" 
+                                                        [options]="_sharedComponentService.uniqueArray(dyedFabricOrderDetails, 'color_category_name')"
+                                                            (onChange)="onMultiselectedColorCategory($event.value)"
+                                                            placeholder="البحث بـ فئة اللون"
+                                                            optionLabel="color_category_name">
+                                                            <ng-template let-option pTemplate="item">
+                                                                <div class="p-multiselect-representative-option">
+                                                                    <span
+                                                                        class="ml-1">{{option.color_category_name}}</span>
+                                                                </div>
+                                                            </ng-template>
+                                                        </p-multiSelect>
+                                                    </ng-template>
+                                                </p-columnFilter>
+                                            </div>
 
-                                    <!-- completed_quantity Column -->
-                                    <ng-container matColumnDef="completed_quantity">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>الكمية الجاهزة</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            <table class="table" *ngIf="element.warehouseDetails.length > 0">
-                                                <thead>
-                                                    <tr>
-                                                        <th>
-                                                            المخزن
-                                                        </th>
-                                                        <th>
-                                                            الكمية
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr *ngFor="let warehouseData of element.warehouseDetails"
-                                                    [ngClass]="{'warning_quantity': warehouseData.is_grade == '1'}">
-                                                        <td>
-                                                            {{ warehouseData.warehouse_name}}
-                                                        </td>
-                                                        <td>
-                                                            {{ warehouseData.quantity | number}}
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef>
-                                            {{ _sharedComponentService.getTotalQuantity(this.dataSourceSearchTabel?.filteredData ==
-                                                null ? this.dyedFabricOrderDetails: this.dataSourceSearchTabel?.filteredData, 'quantity') - 
-                                                _sharedComponentService.getTotalQuantity(this.dataSourceSearchTabel?.filteredData ==
-                                                null ? this.dyedFabricOrderDetails: this.dataSourceSearchTabel?.filteredData, 'current_quantity') | number}}
-                                        </td>
-                                    </ng-container>
+                                            <div class="col">
+                                                <p-columnFilter field="color_name" matchMode="color-filter"
+                                                    [showMenu]="false" [showClearButton]="false">
+                                                    <ng-template pTemplate="filter" let-value
+                                                        let-filter="filterCallback">
+                                                        <p-multiSelect [ngModel]="selectedColors" 
+                                                        [options]="_sharedComponentService.uniqueArray(dyedFabricOrderDetails, 'color_name')"
+                                                            (onChange)="onMultiselectedColor($event.value)"
+                                                            placeholder="البحث بـ اللون" optionLabel="color_name">
+                                                            <ng-template let-option pTemplate="item">
+                                                                <div class="p-multiselect-representative-option">
+                                                                    <span class="ml-1">{{option.color_name}}</span>
+                                                                </div>
+                                                            </ng-template>
+                                                        </p-multiSelect>
+                                                    </ng-template>
+                                                </p-columnFilter>
+                                            </div>
 
-                                    <!-- current_quantity Column -->
-                                    <ng-container matColumnDef="current_quantity">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>الكمية المتبقية</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.current_quantity | number}}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef>
-                                            {{_sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'current_quantity') | number}}
-                                             </td>
-                                    </ng-container>
+                                            <div class="col">
+                                                <div data-html2canvas-ignore="true" class="flex">
+                                                    <button data-html2canvas-ignore="true" pButton label="اعادة"
+                                                        class="p-button-outlined" icon="pi pi-filter-slash"
+                                                        (click)="clear(dt1)"></button>
+                                                </div>
+                                            </div>
 
-                                    <!-- over_current_quantity Column -->
-                                    <ng-container matColumnDef="over_current_quantity">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>الكمية الزائدة</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.over_current_quantity | number}}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef>
-                                            {{_sharedComponentService.getTotalQuantity(dataSourceSearchTabel?.filteredData, 'over_current_quantity') | number}}
-                                             </td>
-                                    </ng-container>
-                                    
-                                    <!-- Color Category Column -->
-                                    <ng-container matColumnDef="color_category_name">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>فئة اللون</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.color_category_name}}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef></td>
-                                    </ng-container>
+                                        </div>
+                                        <!-- End Filter Section -->
 
-                                    <!-- Color Column -->
-                                    <ng-container matColumnDef="color_name">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>اللون</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.color_name}} ({{ element.color_code}})
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef></td>
-                                    </ng-container>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
 
-                                    <!-- waste_ratio Column -->
-                                    <ng-container matColumnDef="waste_ratio">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>نسبة الهالك</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.waste_ratio }}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
+                                            <!-- Number Column -->
+                                            <th>
+                                                التسلسل
+                                            </th>
 
-                                    <!-- fabric_width Column -->
-                                    <ng-container matColumnDef="fabric_width">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>عرض القماش</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.fabric_width }}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
-                                    
-                                    <!-- fabric_quantity_m2 Column -->
-                                    <ng-container matColumnDef="fabric_quantity_m2">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>وزن القماش م2</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.fabric_quantity_m2 }}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
-                                    
-                                    
-                            <!-- price Column -->
-                            <ng-container matColumnDef="price">
-                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                    <b>السعر</b>
-                                </th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{ element.price}}
-                                </td>
-                                <td mat-footer-cell *matFooterCellDef> </td>
-                            </ng-container>
+                                            <!-- dyed_fabric_name Column -->
+                                            <th pResizableColumn pSortableColumn="dyed_fabric_name">
+                                                نوع القماش الجاهز
+                                                <p-sortIcon data-html2canvas-ignore="true"
+                                                    field="dyed_fabric_name"></p-sortIcon>
+                                            </th>
 
-                            <!-- price_dollar Column -->
-                            <ng-container matColumnDef="price_dollar">
-                                <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                    <b>السعر دولار</b>
-                                </th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{ element.price_dollar }}
-                                </td>
-                                <td mat-footer-cell *matFooterCellDef> </td>
-                            </ng-container>
-                            
-                                    <!-- note2 Column -->
-                                    <ng-container matColumnDef="note2">
-                                        <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                            <b>الملاحظات</b>
-                                        </th>
-                                        <td mat-cell *matCellDef="let element">
-                                            {{ element.note2 }}
-                                        </td>
-                                        <td mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
+                                            <!-- dyed_fabric_code Column -->
+                                            <th pResizableColumn pSortableColumn="dyed_fabric_code">
+                                                <div class="flex justify-content-between align-items-center">
+                                                    كود القماش الجاهز
+                                                    <p-sortIcon data-html2canvas-ignore="true" field="dyed_fabric_code">
+                                                    </p-sortIcon>
+                                                </div>
+                                            </th>
 
-                                    <!-- close_order Column -->
-                                    <ng-container matColumnDef="close_order">
-                                        <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
-                                            <b>اغلاق الطلبية</b>
-                                        </th>
-                                        <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
-                                            <a *ngIf="router.url.split('/')[3].split('?')[0] != 'closed-details'" (click)="closeOrder(row)">
-                                                <i class="fas fa-edit update-symbol"></i>
-                                            </a>
-                                        </td>
-                                        <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
+                                            <!-- quantity Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    الكمية المطلوبة
+                                                </div>
+                                            </th>
 
-                                    <!-- Update Column -->
-                                    <ng-container matColumnDef="update">
-                                        <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
-                                            <b>تعديل</b>
-                                        </th>
-                                        <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
-                                            <a onClick="document.getElementById('update-form').scrollIntoView();"
-                                                (click)="getSelectedData(row)">
-                                                <i class="fas fa-edit update-symbol"></i>
-                                            </a>
-                                        </td>
-                                        <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
+                                            <!-- completed_quantity Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    الكمية الجاهزة
+                                                </div>
+                                            </th>
 
-                                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                                    <tr mat-footer-row *matFooterRowDef="displayedColumns;"></tr>
-                                </table>
-                            </div>
+                                            <!-- current_quantity Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    الكمية المتبقية
+                                                </div>
+                                            </th>
+
+                                            <!-- over_current_quantity Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    الكمية الزائدة
+                                                </div>
+                                            </th>
+
+                                            <!-- color_category_name Column -->
+                                            <th pResizableColumn pSortableColumn="color_category_name">
+                                                <div class="flex justify-content-between align-items-center">
+                                                    فئة اللون
+                                                    <p-sortIcon data-html2canvas-ignore="true"
+                                                        field="color_category_name">
+                                                    </p-sortIcon>
+                                                </div>
+                                            </th>
+
+                                            <!-- color_name Column -->
+                                            <th pResizableColumn pSortableColumn="color_name">
+                                                <div class="flex justify-content-between align-items-center">
+                                                    اللون
+                                                    <p-sortIcon data-html2canvas-ignore="true" field="color_name">
+                                                    </p-sortIcon>
+                                                </div>
+                                            </th>
+
+                                            <!-- waste_ratio Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    نسبة الهالك
+                                                </div>
+                                            </th>
+
+                                            <!-- fabric_width Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    عرض القماش
+                                                </div>
+                                            </th>
+
+                                            <!-- fabric_quantity_m2 Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    وزن القماش م2
+                                                </div>
+                                            </th>
+
+                                            <!-- price Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    السعر
+                                                </div>
+                                            </th>
+
+                                            <!-- price_dollar Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    السعر (دولار)
+                                                </div>
+                                            </th>
+
+                                            <!-- note2 Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    الملاحظات
+                                                </div>
+                                            </th>
+
+                                            <!-- close_order Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    اغلاق الطلبية
+                                                </div>
+                                            </th>
+
+                                            <!-- update Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    تعديل
+                                                </div>
+                                            </th>
+
+                                        </tr>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-element let-index="rowIndex">
+                                        <tr class="p-selectable-row">
+
+                                            <!-- Index Column -->
+                                            <td>
+                                                {{index + 1}}
+                                            </td>
+
+                                            <!-- dyed_fabric_name Column -->
+                                            <td>
+                                                {{element.dyed_fabric_name}}
+                                            </td>
+
+                                            <!-- dyed_fabric_code Column -->
+                                            <td>
+                                                {{ element.dyed_fabric_code }}
+                                            </td>
+
+                                            <!-- quantity Column -->
+                                            <td>
+                                                {{ element.quantity | number}}
+                                            </td>
+
+                                            <!-- completed_quantity Column -->
+                                            <td>
+                                                {{ element.quantity - element.current_quantity | number}} </td>
+
+                                            <!-- current_quantity Column -->
+                                            <td>
+                                                {{ element.current_quantity | number}}
+                                            </td>
+
+                                            <!-- over_current_quantity Column -->
+                                            <td>
+                                                {{ element.over_current_quantity | number}}
+                                            </td>
+
+                                            <!-- color_category_name Column -->
+                                            <td>
+                                                {{ element.color_category_name }}
+                                            </td>
+
+                                            <!-- color_name Column -->
+                                            <td>
+                                                {{ element.color_name}} ({{ element.color_code}})
+                                            </td>
+
+                                            <!-- waste_ratio Column -->
+                                            <td>
+                                                {{ element.waste_ratio}}
+                                            </td>
+
+                                            <!-- fabric_width Column -->
+                                            <td>
+                                                {{ element.fabric_width}}
+                                            </td>
+
+                                            <!-- fabric_quantity_m2 Column -->
+                                            <td>
+                                                {{ element.fabric_quantity_m2}}
+                                            </td>
+
+                                            <!-- price Column -->
+                                            <td>
+                                                {{ element.price | number }}
+                                            </td>
+
+                                            <!-- price_dollar Column -->
+                                            <td>
+                                                {{ element.price_dollar | number }}
+                                            </td>
+
+                                            <!-- note2 Column -->
+                                            <td>
+                                                {{ element.note2 }}
+                                            </td>
+
+                                            <!-- close_order Column -->
+                                            <td>
+                                                <p-confirmPopup></p-confirmPopup>
+                                                <a *ngIf="router.url.split('/')[3].split('?')[0] != 'closed-details'"
+                                                    (click)="confirm($event, element)">
+                                                    <i class="fas fa-edit update-symbol"></i>
+                                                </a>
+                                            </td>
+
+                                            <!-- update Column -->
+                                            <td>
+                                                <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                                    (click)="getSelectedData(element)">
+                                                    <i class="fas fa-edit update-symbol"></i>
+                                                </a>
+                                            </td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="18">لا يوجد بيانات</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="footer">
+                                        <tr>
+                                            <!-- Index Column -->
+                                            <td data-html2canvas-ignore="true"></td>
+
+                                            <!-- dyed_fabric_name Column -->
+                                            <td>الإجمالي</td>
+
+                                            <!-- dyed_fabric_code Column -->
+                                            <td></td>
+                                            
+                                            <!-- quantity Column -->
+                                            <td>
+                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                    ==
+                                                    null ? dyedFabricOrderDetails:
+                                                    dt1?.filteredData,
+                                                'quantity') | number}}
+
+                                            </td>
+
+                                            <!-- completed_quantity Column -->
+                                            <td>
+                                                {{
+                                                _sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                ==
+                                                null ? dyedFabricOrderDetails:
+                                                dt1?.filteredData, 'quantity') 
+                                                -
+                                                _sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                ==
+                                                null ? dyedFabricOrderDetails:
+                                                dt1?.filteredData, 'current_quantity') | number}}
+                                            </td>
+
+                                            <!-- current_quantity Column -->
+                                            <td>
+                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                    ==
+                                                    null ? dyedFabricOrderDetails:
+                                                    dt1?.filteredData,
+                                                'current_quantity') | number}}
+
+                                            </td>
+
+                                            <!-- over_current_quantity Column -->
+                                            <td>
+                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                    ==
+                                                    null ? dyedFabricOrderDetails:
+                                                    dt1?.filteredData,
+                                                'over_current_quantity') | number}}
+
+                                            </td>
+
+                                            <!-- color_category_name Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- color_name Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- waste_ratio Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- fabric_width Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- fabric_quantity_m2 Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- price Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- price_dollar Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- note2 Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- close_order Column -->
+                                            <td>
+
+                                            </td>
+
+                                            <!-- update Column -->
+                                            <td>
+
+                                            </td>
+
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+
                         </div>
 
                         <!-- <mat-paginator #paginator [pageSize]="1000" [pageSizeOptions]="[5, 10, 20, 50, 100, 500, 1000]"
@@ -326,5 +538,7 @@
     </div>
 </section>
 <!-- *ngIf="showInputUpdate" -->
-<app-dyed-fabric-order-requisition-update-we *ngIf="showInputUpdate" [selectedData]="selectedDataToUpdate" #updateOrder></app-dyed-fabric-order-requisition-update-we>
-<app-dyed-fabric-order-requisition-add-details-form-we *ngIf="showAddDetails"></app-dyed-fabric-order-requisition-add-details-form-we>
+<app-dyed-fabric-order-requisition-update-we *ngIf="showInputUpdate" [selectedData]="selectedDataToUpdate"
+    #updateOrder></app-dyed-fabric-order-requisition-update-we>
+<app-dyed-fabric-order-requisition-add-details-form-we
+    *ngIf="showAddDetails"></app-dyed-fabric-order-requisition-add-details-form-we>

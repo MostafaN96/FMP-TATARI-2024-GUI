@@ -86,6 +86,10 @@
                                         التسلسل
                                     </th>
 
+                                    <th style="min-width: 180px;">
+                                        الطلبية
+                                    </th>
+
                                     <th style="min-width: 150px;">
                                         اسم القماش
                                     </th>
@@ -110,19 +114,23 @@
                                         السعر دولار
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 60px;">
+                                        عدد الاثواب
+                                    </th>
+
+                                    <th style="max-width: 80px;">
                                         الكمية المتوفرة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         الاجمالي
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         الاجمالي دولار
                                     </th>
 
@@ -130,11 +138,11 @@
                                         رقم رسالة المصبغة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 100px;">
                                         الوثيقة
                                     </th>
 
-                                    <th>
+                                    <th style="max-width: 120px;">
                                         البيان
                                     </th>
 
@@ -150,9 +158,30 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
+                                        <!-- order -->
+                                        <td class="table-td" style="min-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='fabricOrder' [fields]='fieldsFabricOrder' 
+                                            (filtering)="onFilteringFabricOrder($event)"
+                                            (change)='selectFabricOrder($event, row, index)'
+                                                [placeholder]='textFabricOrder' [autofill]='autofill'
+                                                formControlName="fabricOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('fabricOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('fabricOrderId').hasError('required') && (row.get('fabricOrderId').dirty 
+                                                || row.get('fabricOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                         <td class="table-td" style="min-width: 150px;">
-                                            <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric' 
-                                            (filtering)="onFilteringFabricName($event)"
+                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric' 
+                                            (filtering)="onFilteringFabricName($event, index)"
                                                 [placeholder]='textFabric' [autofill]='autofill'
                                                 formControlName="fabricId" (change)='selectFabric($event, row, index)'
                                                 [errorStateMatcher]="matcher" 
@@ -284,7 +313,28 @@
                                             </mat-form-field>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <!-- numberFabricPieces -->
+                                        <td style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>عدد الاثواب</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="numberFabricPieces" placeholder="مثال: 10"
+                                                    [errorStateMatcher]="matcher"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('required') && (row.get('numberFabricPieces').dirty 
+                                                    || row.get('numberFabricPieces').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('numberFabricPieces').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> 
                                                     الكمية المتوفرة
@@ -294,7 +344,7 @@
                                         </td>
                                         
                                         <!-- Initial Quantity -->
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>الكمية</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
@@ -323,14 +373,14 @@
                                         </td>
 
                                           <!-- total -->
-                                          <td class="align-middle text-center">
+                                          <td class="align-middle text-center" style="max-width: 80px;">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantity'].value) | number}}
                                             </span>
                                         </td>
 
                                           <!-- total priceDollar -->
-                                          <td class="align-middle text-center">
+                                          <td class="align-middle text-center" style="max-width: 80px;">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value, row.controls['quantity'].value) | number}}
                                             </span>
@@ -360,7 +410,7 @@
                                         </td>
 
                                         <!-- Document -->
-                                        <td style="max-width: 120px;">
+                                        <td style="max-width: 100px;">
                                         <mat-form-field class="w-100">
                                             <mat-label>الوثيقة</mat-label>
                                             <input autocomplete="off" type="text" matInput formControlName="document" placeholder="مثال: 10214"
@@ -384,7 +434,7 @@
                                     </td>
 
                                     <!-- Statement -->
-                                        <td>
+                                        <td style="max-width: 120px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> البيان </mat-label>
                                                 <textarea matInput rows="1"
@@ -419,7 +469,7 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="7"></td>
+                                  <td colspan="9"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(transportWcWdForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(transportWcWdForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(transportWcWdForm, 'items', 'quantity', 'priceDollar') | number}}</td>

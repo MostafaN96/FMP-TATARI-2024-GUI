@@ -27,6 +27,7 @@ export class SalesReportWeComponent implements OnInit {
   //////////////////////////////////// PrimeNG /////////////////////////////////
   @ViewChild('dt1') dt1: Table | undefined;
   loading: boolean = true;
+  selectedDyedFabricOrderNames: any[] = []
   selectedSellerNames: any[] = []
   selectedColors: any[] = []
   selectedColorCodes: any[] = []
@@ -50,6 +51,7 @@ export class SalesReportWeComponent implements OnInit {
   ngOnInit(): void {
     this.getData();
 
+    this.customFilterForDyedFabricOrderName();
     this.customFilterForSellerName();
     this.customFilterForColorCode();
     this.customFilterForColorName();
@@ -69,8 +71,43 @@ export class SalesReportWeComponent implements OnInit {
       this.loading = false;
     })
   }
-
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  
+  customFilterForDyedFabricOrderName() {
+    const customFilterName = "dyed-fabric-order-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedDyedFabricOrderNames
+
+      if (this.selectedDyedFabricOrderNames[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].we_dyed_fabric_order_requisition_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+  
+
   customFilterForSellerName() {
     const customFilterName = "sellers-name-filter";
     this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -364,6 +401,7 @@ export class SalesReportWeComponent implements OnInit {
   clear(table: Table) {
     table.clear();
     table.reset();
+    this.selectedDyedFabricOrderNames = []
     this.selectedSellerNames = []
     this.selectedColors = []
     this.selectedColorCodes = []
@@ -373,6 +411,11 @@ export class SalesReportWeComponent implements OnInit {
     this.selectedTypeOfRequisition = []
   }
 
+  onMultiselectedDyedFabricOrderNames(event) {
+    this.selectedDyedFabricOrderNames = event
+    this.dt1?._filter()
+  }
+  
   onMultiselectedSellerNames(event) {
     this.selectedSellerNames = event
     this.dt1?._filter()

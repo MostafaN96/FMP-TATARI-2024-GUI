@@ -44,8 +44,8 @@ export class ReportWbService {
       });
   }
 
-  selectInverntoryDetailsByIndustryByYarnByLot(industryId: string, yarnId: string, yarnLotId: string, consigmentYarnId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-details-by-industry-by-yarn-by-lot/${industryId}/${yarnId}/${yarnLotId}/${consigmentYarnId}`;
+  selectInverntoryDetailsByIndustryByYarnByLot(industryId: string, yarnId: string, yarnLotId: string, consigmentYarnId: string, yarnOrderId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-details-by-industry-by-yarn-by-lot/${industryId}/${yarnId}/${yarnLotId}/${consigmentYarnId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

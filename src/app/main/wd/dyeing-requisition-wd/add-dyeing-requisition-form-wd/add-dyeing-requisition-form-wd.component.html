@@ -19,6 +19,14 @@
                                     التسلسل
                                 </th>
 
+                                <th style="max-width: 80px;">
+                                    أمر الشغل
+                                </th>
+
+                                <th style="max-width: 150px;">
+                                    الطلبية
+                                </th>
+
                                 <th style="max-width: 150px;">
                                     نوع القماش الخام
                                 </th>
@@ -129,6 +137,36 @@
                                 <ng-container [formGroupName]="index">
                                     <td>
                                         <label style="width: 5px;">{{index+1}}</label>
+                                    </td>
+
+                                    <!-- workOrderNumber -->
+                                    <td style="max-width: 80px;">
+                                        <mat-form-field class="w-100">
+                                            <mat-label>أمر الشغل</mat-label>
+                                            <input type="text" matInput formControlName="workOrderNumber"
+                                                placeholder="مثال: 10214" [errorStateMatcher]="matcher"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                            <mat-error *ngIf="row.get('workOrderNumber').hasError('required') && (row.get('workOrderNumber').dirty 
+                                                || row.get('workOrderNumber').touched)">
+                                                <label [innerHTML]="_sharedComponentService.required_field">
+                                                </label>
+                                            </mat-error>
+                                            <mat-error *ngIf="row.get('workOrderNumber').hasError('pattern')">
+                                                <label
+                                                    [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                </label>
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </td>
+
+                                    <td class="table-td" style="max-width: 150px;">
+                                        <mat-form-field class="w-100">
+                                            <mat-label>
+                                                الطلبية
+                                            </mat-label>
+                                            <input [disabled]="true" matInput placeholder="الطلبية"
+                                                formControlName="fabricOrderName" readonly>
+                                        </mat-form-field>
                                     </td>
 
                                     <td class="table-td" style="max-width: 150px;">
@@ -476,26 +514,6 @@
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
                                         </td>
-                                        
-                                    <!-- workOrderNumber -->
-                                    <td style="max-width: 80px;">
-                                        <mat-form-field class="w-100">
-                                            <mat-label>أمر الشغل</mat-label>
-                                            <input type="text" matInput formControlName="workOrderNumber"
-                                                placeholder="مثال: 10214" [errorStateMatcher]="matcher"
-                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
-                                            <mat-error *ngIf="row.get('workOrderNumber').hasError('required') && (row.get('workOrderNumber').dirty 
-                                                || row.get('workOrderNumber').touched)">
-                                                <label [innerHTML]="_sharedComponentService.required_field">
-                                                </label>
-                                            </mat-error>
-                                            <mat-error *ngIf="row.get('workOrderNumber').hasError('pattern')">
-                                                <label
-                                                    [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
-                                                </label>
-                                            </mat-error>
-                                        </mat-form-field>
-                                    </td>
 
                                     <!-- Statement -->
                                     <td style="max-width: 100px;">
@@ -530,7 +548,7 @@
                             <tr>
                               <td>الاجمالي</td>
                             
-                              <td colspan="5"></td>
+                              <td colspan="8"></td>
                               <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items', 'validQuantity') | number}}</td>
                               <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items', 'quantity') | number}}</td>
                               <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm, 'items', 'quantity', 'price') | number}}</td>

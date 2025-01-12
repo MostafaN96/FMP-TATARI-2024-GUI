@@ -13,6 +13,7 @@ import { TransitionBetweenRequisitionWbService } from "src/app/services/main/wb/
 import { FabricService } from "src/app/services/main/fabric.service";
 import { WbService } from "src/app/services/main/wb/wb.service";
 import { ReportWbService } from "src/app/services/main/wb/report-wb.service";
+import { YarnOrderRequisitionWaService } from 'src/app/services/main/wa/yarn-order-requisition-wa.service';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -51,6 +52,7 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
   industries:any = []
   currentQuantity:any = []
   yarnsDetails:any = []
+  yarnOrder: any = []
   getListYarnPrices:any = []
   listYarnPrices:any = []
   listYarnPricesDollar:any = []
@@ -68,7 +70,7 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textYarn: string = "اسم الخيط"
 
-  public onFilteringYarnName (e: any)
+  public onFilteringYarnName (e: any, index)
   {
     e.preventDefaultAction=true;
          var predicate = new Predicate('name', 'contains', e.text);
@@ -77,7 +79,7 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
       //frame the query based on search string with filter type.
         query = (e.text != "") ? query.where(predicate) : query;
       //pass the filter data source, filter query to updateData method.
-        e.updateData(this.yarns, query);
+        e.updateData(this.yarns[index], query);
   }
 
   // --------------- Industry --------------
@@ -119,7 +121,7 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textFabric: string = "القماش المراد تصنيعه"
 
-  public onFilteringFabricName (e: any)
+  public onFilteringFabricName (e: any, index)
   {
     e.preventDefaultAction=true;
          var predicate = new Predicate('name', 'contains', e.text);
@@ -128,7 +130,7 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
       //frame the query based on search string with filter type.
         query = (e.text != "") ? query.where(predicate) : query;
       //pass the filter data source, filter query to updateData method.
-        e.updateData(this.fabrics, query);
+        e.updateData(this.fabrics[index], query);
   }
   
   // --------------- Lot --------------
@@ -137,7 +139,7 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textLot: string = "اللوط"
 
-  public onFilteringLot (e: any)
+  public onFilteringLot (e: any, index)
   {
     e.preventDefaultAction=true;
          var predicate = new Predicate('code', 'contains', e.text);
@@ -145,7 +147,7 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
       //frame the query based on search string with filter type.
         query = (e.text != "") ? query.where(predicate) : query;
       //pass the filter data source, filter query to updateData method.
-        e.updateData(this.yarns, query);
+        e.updateData(this.lots[index], query);
   }
 
   // --------------- consigment Yarn --------------
@@ -165,12 +167,30 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
         e.updateData(this.consigmentsYarns[index], query);
   }
 
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textYarnOrder: string = "اسم الطلبية"
+
+
+  public onFilteringYarnOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.yarnOrder, query);
+  }
+
   constructor(
     private _wbService: WbService,
     private _yarnService: YarnService,
     private _yarnLotService: YarnLotService,
     private _bussinessmanService: BussinessmanService,
     private _transitionBetweenRequisitionWbService: TransitionBetweenRequisitionWbService,
+    private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
@@ -192,16 +212,14 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
     this._bussinessmanService.selectTransportedManufacturersInWb().subscribe((response: any) => {
       this.industries = response
     })
-
-    this._fabricService.selectAll().subscribe((response: any) => {
-      this.fabrics = response
-    })
   }
   
 
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      yarnOrderId: new FormControl("", [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       yarnName: new FormControl(""),
       yarnCode: new FormControl(""),
@@ -238,11 +256,43 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
     this.listYarnPricesDollar.splice(index, 1);
    }
 
+  //  Yarn Order
+  selectYarnOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.yarnOrder.indexOf(event.itemData)
+
+    if (this.yarnOrder[indexData] !== event.itemData) {
+      row.controls['yarnOrderId'].setValue("")
+      row.controls['yarnId'].setValue(null)
+      row.controls['yarnCode'].setValue(null)
+      row.controls['yarnLotId'].setValue(null)
+      row.controls['consigmentYarnId'].setValue("")
+      row.controls['quantity'].setValue(null)
+      this.currentQuantity[index] = 0
+      this.fabrics[index] = []
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._yarnService.selectByIndustryWb(
+        this.addtransitionIndustriesRequisitionForm.controls['fromIndustryId'].value!, 
+        event.itemData.id
+      ).subscribe((response: any) => {
+        this.yarns[index] = response
+      })
+
+      
+    this._fabricService.selectFabricsByOrder(event.itemData.orders_requisitions_id).subscribe((response: any) => {
+      this.fabrics[index] = response
+    })
+
+    }
+  }
+
   //  Yarn
   selectYarn(event: { itemData: any; }, row: FormGroup, index) {
-    let indexData = this.yarns.indexOf(event.itemData)
+    let indexData = this.yarns[index].indexOf(event.itemData)
 
-    if (this.yarns[indexData] !== event.itemData) {
+    if (this.yarns[index][indexData] !== event.itemData) {
       row.controls['yarnLotId'].setValue("")
       row.controls['consigmentYarnId'].setValue("")
       row.controls['yarnId'].setValue("")
@@ -256,16 +306,18 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
 
       this._yarnLotService.selectByIndustryByYarnWb(
         this.addtransitionIndustriesRequisitionForm.controls['fromIndustryId'].value!,
-        event.itemData.id
+        event.itemData.id,
+        row.controls['yarnOrderId'].value!
         ).subscribe((response: any) => {
-        this.lots = response
+        this.lots[index] = response
 
-        if(this.lots[0] != null) {
-          row.controls['yarnLotId'].setValue(this.lots[0].id)
+        if(this.lots[index][0] != null) {
+          row.controls['yarnLotId'].setValue(this.lots[index][0].id)
           this.getSelectConsigmentYarnQuantityByYarnByIndustryByLotWb(
             this.addtransitionIndustriesRequisitionForm.controls['fromIndustryId'].value!,
             event.itemData.id,
-            this.lots[0].id,
+            this.lots[index][0].id,
+            row.controls['yarnOrderId'].value!,
             index
           )
         }
@@ -315,8 +367,8 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
   // Start Yarn Lot Autocomplete Section
   //  Yarn Lot
   selectYarnLot(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.lots.indexOf(event.itemData)
-    if (this.lots[indexData] !== event.itemData) {
+    let indexData = this.lots[index].indexOf(event.itemData)
+    if (this.lots[index][indexData] !== event.itemData) {
       row.controls['yarnLotId'].setValue(null)
       row.controls['consigmentYarnId'].setValue("")
       this.currentQuantity[index] = 0
@@ -325,16 +377,24 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
         this.addtransitionIndustriesRequisitionForm.controls['fromIndustryId'].value!,
         row.controls['yarnId'].value!,
         event.itemData.id,
+        row.controls['yarnOrderId'].value!,
         index
       )
     }
   }
 
-  getSelectConsigmentYarnQuantityByYarnByIndustryByLotWb(industryId: string, yarnId: string, lotId:string, index) {
+  getSelectConsigmentYarnQuantityByYarnByIndustryByLotWb(
+    industryId: string, 
+    yarnId: string, 
+    lotId:string, 
+    yarnOrderId:string, 
+    index
+  ) {
     this._wbService.selectConsigmentYarnQuantityByYarnByIndustryByLotWb(
       yarnId,
       industryId, 
-      lotId
+      lotId,
+      yarnOrderId
       ).subscribe((response: any) => {
         this.consigmentsYarns[index] = response
       })
@@ -364,8 +424,8 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
       this.addtransitionIndustriesRequisitionForm.controls.fromIndustryId.setValue(null)
     }
     else {
-      this._yarnService.selectByIndustryWb(event.itemData?.id).subscribe((response: any) => {
-        this.yarns = response
+      this._yarnOrderRequisitionWaService.selectByIndustryWb(event.itemData.id).subscribe((response: any) => {
+        this.yarnOrder = response
       })
   
       this._bussinessmanService.selectTransportedManufacturersNotSelectedInWb(event.itemData?.id).subscribe((response: any) => {
@@ -382,14 +442,14 @@ export class AddTransitionBetweenIndustriesWbComponent implements OnInit {
   }
 
   //  Fabric
-  selectFabric(index: { itemData: any; }, row: FormGroup) {
-    let indexData = this.fabrics.indexOf(index.itemData)
-    if (this.fabrics[indexData] !== index.itemData) {
+  selectFabric(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fabrics[index].indexOf(event.itemData)
+    if (this.fabrics[index][indexData] !== event.itemData) {
       row.controls['fabricToBeManufacturedId'].setValue(null)
       row.controls['fabricCode'].setValue(null)
     }
     else {
-      row.controls['fabricCode'].setValue(index.itemData.code)
+      row.controls['fabricCode'].setValue(event.itemData.code)
     }    
   }
 

@@ -124,7 +124,9 @@
                                             <b>الكمية الجاهزة</b>
                                         </th>
                                         <td mat-cell *matCellDef="let element">
-                                            <table class="table" *ngIf="element.warehouseDetails.length > 0">
+                                            {{ element.quantity - element.current_quantity | number}}
+
+                                            <!-- <table class="table" *ngIf="element.warehouseDetails.length > 0">
                                                 <thead>
                                                     <tr>
                                                         <th>
@@ -146,7 +148,7 @@
                                                         </td>
                                                     </tr>
                                                 </tbody>
-                                            </table>
+                                            </table> -->
                                         </td>
                                         <td mat-footer-cell *matFooterCellDef>
                                             {{ _sharedComponentService.getTotalQuantity(this.dataSourceSearchTabel?.filteredData ==

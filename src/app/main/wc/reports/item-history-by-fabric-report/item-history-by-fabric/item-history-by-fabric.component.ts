@@ -44,6 +44,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
   selectedDetailsDyeingCodes: any[] = []
   selectedWarehouses: any[] = []
   selectedConsigmentNumber: any[] = []
+  selectedFabricOrder: any[] = []
 
   constructor(
     public _sharedComponentService: SharedComponentService,
@@ -66,6 +67,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
     this.customFilterDetailsForName();
     this.customFilterForWarehouse();  
     this.customFilterForConsigmentNumber();
+    this.customFilterForFabricOrder();  
   }
 
   getData() {
@@ -262,6 +264,40 @@ export class ItemHistoryByFabricComponent implements OnInit {
     });
   }
 
+  customFilterForFabricOrder() {
+    const customFilterName = "fabric-order-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedFabricOrder
+
+      if (this.selectedFabricOrder[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].wc_fabric_order_requisition_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   // Reset table filters
   clear(table: Table) {
     table.clear();
@@ -271,6 +307,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
     this.selectedNames = []
     this.selectedWarehouses = []
     this.selectedConsigmentNumber = []
+    this.selectedFabricOrder = []
   }
 
   onMultiselectedCodes(event) {
@@ -295,6 +332,11 @@ export class ItemHistoryByFabricComponent implements OnInit {
 
   onMultiselectedConsigmentNumber(event) {
     this.selectedConsigmentNumber = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedFabricOrder(event) {
+    this.selectedFabricOrder = event
     this.dt1?._filter()
   }
 

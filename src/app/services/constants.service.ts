@@ -683,6 +683,12 @@ export class ConstantsService {
       'restore-grade-item', // [202]
 
       'dyed-fabric-order-report', // [203]
+
+      
+      // wc
+      'add-transition-between-orders-requisition-wc', // [204]
+      'show-all-transition-between-orders-requisition-wc', // [205]
+      'show-all-transition-between-orders-requisition-wc/details', // [206]
     ]
   }
 

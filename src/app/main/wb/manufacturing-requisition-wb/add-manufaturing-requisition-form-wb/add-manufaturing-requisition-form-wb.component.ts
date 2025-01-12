@@ -39,6 +39,8 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   addManufacturingRequisitionForm = new FormGroup({
     id: new FormControl(null, [Validators.required]),
+    ordersRequisitionsId: new FormControl("", [Validators.required]),
+    yarnOrderId: new FormControl(null, [Validators.required]),
     wbManufacturingOutputId: new FormControl(null, [Validators.required]),
     fabricId: new FormControl(null, [Validators.required]),
     industryId: new FormControl(null, [Validators.required]),
@@ -92,10 +94,14 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
 
       this.addManufacturingRequisitionForm.controls['wbManufacturingOutputId'].setValue(parentData[2] || params['wbManufacturingOutputId'])
     this.addManufacturingRequisitionForm.controls['isOrder'].setValue(parentData[5] || params['isOrder'])
+    this.addManufacturingRequisitionForm.controls['ordersRequisitionsId'].setValue(parentData[7])
+    this.addManufacturingRequisitionForm.controls['yarnOrderId'].setValue(parentData[8])
 
       this._wbService.selectQuantityByIndustryByFabricWb(
         params['industryId'] || parentData[0],
-        params['fabricId'] || parentData[1]).subscribe((response: any) => {
+        params['fabricId'] || parentData[1],
+        parentData[8]
+      ).subscribe((response: any) => {
           this.yarns = response
 
           this.dataSourceSearchTabel = new MatTableDataSource(this.yarns);
@@ -105,7 +111,7 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
   
     
     
-    console.log("parentData[6] :::: ", parentData[6]);
+    // console.log("parentData[6] :::: ", parentData[6]);
     
     // this._wbService.selectByIndustryByNeededFabricToBeManufacturedNotIncludedYarnsAndLotsWb(parentData[0], parentData[1], {
     //   yarns: parentData[3], yarnLots: parentData[4], consigmentsYarn: parentData[6]}).subscribe((response: any) => {
@@ -137,6 +143,7 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
   initItem(data: any, index: number) {
     return new FormGroup({
       index: new FormControl(index),
+      waYarnOrderRequisitionDetailsId: new FormControl(data.wa_yarn_order_requisition_details_id, [Validators.required]),
       yarnId: new FormControl(data.yarn_id, [Validators.required]),
       yarnName: new FormControl(data.yarn_name),
       yarnCode: new FormControl(data.yarn_code),

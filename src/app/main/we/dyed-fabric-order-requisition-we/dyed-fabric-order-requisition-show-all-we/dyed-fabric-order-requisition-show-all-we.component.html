@@ -168,11 +168,11 @@
                                         </th>
 
                                         <!-- report Column -->
-                                        <th data-html2canvas-ignore="true">
+                                        <!-- <th data-html2canvas-ignore="true">
                                             <div class="flex justify-content-between align-items-center">
                                                 التقرير
                                             </div>
-                                        </th>
+                                        </th> -->
 
                                     </tr>
 
@@ -371,7 +371,7 @@
                                             <ng-container *ngIf="element.yarnOrders.length < 1">
                                                 <a
                                                 [routerLink]="[goToRequisitionPage('add_yarn_order_requisition', element)]"
-                                                [queryParams]="{ id: element.id}">
+                                                [queryParams]="{ id: element.id, ordersRequisitionsId: element.orders_requisitions_id}">
                                                     <i class="fa-solid fa-square-plus update-symbol"></i>
                                                 </a>
                                             </ng-container>
@@ -457,12 +457,12 @@
                                         </td>
 
                                         <!-- report Column -->
-                                        <td data-html2canvas-ignore="true">
+                                        <!-- <td data-html2canvas-ignore="true">
                                             <a [routerLink]="['/dashboard', 'dyed-fabric-order-report']" 
                                             [queryParams]="{ id: element.id, sellerId: element.seller_id}">
                                                 <i class="fas fa-angle-double-right update-symbol"></i>
                                             </a>
-                                        </td>
+                                        </td> -->
 
                                     </tr>
                                 </ng-template>

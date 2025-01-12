@@ -13,8 +13,8 @@ export class WaService {
     private _constantsService: ConstantsService) { }
 
     
-  selectRemainingByWarehouseByYarnByLotWa(warehouseId: string, yarnId: string, yarnLotId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}remaining-by-warehouse-by-yarn-by-lot-wa/${warehouseId}/${yarnId}/${yarnLotId}`;
+  selectRemainingByWarehouseByYarnByLotWa(warehouseId: string, yarnId: string, yarnLotId: string, yarnOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}remaining-by-warehouse-by-yarn-by-lot-wa/${warehouseId}/${yarnId}/${yarnLotId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

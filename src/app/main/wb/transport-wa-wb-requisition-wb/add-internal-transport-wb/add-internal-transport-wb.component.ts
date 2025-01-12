@@ -37,6 +37,7 @@ export class AddInternalTransportWbComponent implements OnInit {
     industryId: new FormControl("", [Validators.required]),
     yarnId: new FormControl("", [Validators.required]),
     yarnLotId: new FormControl("", [Validators.required]),
+    yarnOrderId: new FormControl("", [Validators.required]),
     consigmentYarnId: new FormControl("", [Validators.required]),
     consigmentYarnNumber: new FormControl("", [Validators.required]),
     fromConsigmentYarnId: new FormControl(""),
@@ -99,6 +100,7 @@ export class AddInternalTransportWbComponent implements OnInit {
     this.internalTransportWbForm.controls['industryId'].setValue(this.internalSelectedData.industryId || this.internalSelectedData.manufacturer_id)
     this.internalTransportWbForm.controls['yarnId'].setValue(this.internalSelectedData.yarn_id)
     this.internalTransportWbForm.controls['yarnLotId'].setValue(this.internalSelectedData.yarn_lot_id)
+    this.internalTransportWbForm.controls['yarnOrderId'].setValue(this.internalSelectedData.wa_yarn_order_requisition_id)
     this.internalTransportWbForm.controls['consigmentYarnId'].setValue(this.internalSelectedData.consigment_yarn_id)
     this.internalTransportWbForm.controls['consigmentYarnNumber'].setValue(this.internalSelectedData.consigment_yarn_number)
     this.internalTransportWbForm.controls['fromConsigmentYarnId'].setValue(this.internalSelectedData.from_consigment_yarn_id)
@@ -106,10 +108,10 @@ export class AddInternalTransportWbComponent implements OnInit {
   }
 
   getData() {
-    this._fabricService.selectAll().subscribe((response: any) => {
-          this.fabrics = response
-        })        
-      }
+    this._fabricService.selectFabricsByOrder(this.internalSelectedData.orders_requisitions_id).subscribe((response: any) => {
+      this.fabrics = response
+    })
+  }
 
     //  Fabric
   selectFabric(index: { itemData: any; }) {

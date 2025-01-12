@@ -13,6 +13,7 @@ import { TransportWcWdService } from "src/app/services/main/wc/transport-wc-wd-r
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
 import { WarehouseService } from "src/app/services/main/warehouse.service";
 import { WcService } from "src/app/services/main/wc/wc.service";
+import { FabricOrderRequisitionWcService } from "src/app/services/main/wc/fabric-order-requisition-wc.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -49,6 +50,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
   consigments: any = []
   currentQuantity: any = []
   fabricsDetails: any
+  fabricOrder: any = []
   getListFabricPrices: any = []
   listFabricPrices: any = []
   listFabricPricesDollar: any = []
@@ -67,7 +69,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textFabric: string = "اسم القماش"
 
-  public onFilteringFabricName(e: any) {
+  public onFilteringFabricName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -76,7 +78,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.fabrics, query);
+    e.updateData(this.fabrics[index], query);
   }
 
   // --------------- Dyeing --------------
@@ -128,12 +130,30 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
     e.updateData(this.consigments[index], query);
   }
 
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsFabricOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textFabricOrder: string = "اسم الطلبية"
+
+
+  public onFilteringFabricOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.fabricOrder, query);
+  }
+
   constructor(
     private _warehouseService: WarehouseService,
     private _wcService: WcService,
     private _fabricService: FabricService,
     private _bussinessmanService: BussinessmanService,
     private _transportWcWdService: TransportWcWdService,
+    private _fabricOrderRequisitionWcService: FabricOrderRequisitionWcService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
@@ -166,6 +186,8 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      fabricOrderId: new FormControl("", [Validators.required]),
       dyeingId: new FormControl("", [Validators.required]),
       consigmentManufacturingId: new FormControl("", [Validators.required]),
       fabricId: new FormControl("", [Validators.required]),
@@ -176,6 +198,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       consigmentDyeingNumber: new FormControl('', [Validators.required]),
+      numberFabricPieces: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
@@ -201,17 +224,42 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
     this.listFabricPricesDollar.splice(index, 1);
   }
 
+  //  Fabric Order
+  selectFabricOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fabricOrder.indexOf(event.itemData)
+
+    if (this.fabricOrder[indexData] !== event.itemData) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['fabricOrderId'].setValue("")
+      row.controls['fabricId'].setValue("")
+      row.controls['fabricName'].setValue("")
+      row.controls['fabricCode'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['consigmentManufacturingId'].setValue("")
+      this.currentQuantity[index] = 0
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._fabricService.selectByWarehouseWc(this.transportWcWdForm.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+        this.fabrics[index] = response
+      })
+
+    }
+  }
+
   //  Fabric
   selectFabric(event: { itemData: any; }, row: FormGroup, index) {
-    let indexData = this.fabrics.indexOf(event.itemData)
+    let indexData = this.fabrics[index].indexOf(event.itemData)
 
-    if (this.fabrics[indexData] !== event.itemData) {
+    if (this.fabrics[index][indexData] !== event.itemData) {
       row.controls['fabricId'].setValue(null)
       row.controls['fabricCode'].setValue(null)
       row.controls['quantity'].setValue(null)
       row.controls['price'].setValue("")
       row.controls['consigmentManufacturingId'].setValue("")
       this.consigments[index] = []
+      this.fabrics[index] = []
       this.currentQuantity[index] = 0
     }
     else {
@@ -219,7 +267,11 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
       row.controls['fabricCode'].setValue(event.itemData.code)
       row.controls['fabricName'].setValue(event.itemData.name)
 
-      this._wcService.selectConsigmentManufacturingQuantityByWarehouseByFabricWc(this.transportWcWdForm.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+      this._wcService.selectConsigmentManufacturingQuantityByWarehouseByFabricWc(
+        this.transportWcWdForm.controls['warehouseId'].value!, 
+        event.itemData.id, 
+        row.controls['fabricOrderId'].value
+      ).subscribe((response: any) => {
         this.consigments[index] = response
       })
 
@@ -262,13 +314,24 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
 
   selectByWarehouseWc(id = this._constantsService.DEFAULT_WC_WAREHOUSE_READY_ORDER_ID) {
     this.transportWcWdForm.controls['warehouseId'].setValue(id)
-    this._fabricService.selectByWarehouseWc(id).subscribe((response: any) => {
-      this.fabrics = response
 
-      if (Array.isArray(this.fabrics) && this.fabrics.length < 1) {
-        this.transportWcWdForm.controls['warehouseId'].setValue("")
+    
+    this._fabricOrderRequisitionWcService.selectByWarehouseWc(id).subscribe((response: any) => {
+      this.fabricOrder = response
+
+      if (Array.isArray(this.fabricOrder) && this.fabricOrder.length < 1) {
+        this.transportWcWdForm.controls['warehouseId'].setValue(null)
       }
     })
+
+    // this._fabricService.selectByWarehouseWc(id).subscribe((response: any) => {
+    //   this.fabrics = response
+
+    //   if (Array.isArray(this.fabrics) && this.fabrics.length < 1) {
+    //     this.transportWcWdForm.controls['warehouseId'].setValue("")
+    //   }
+    // })
+
   }
 
   //  consigmentManufacturing

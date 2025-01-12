@@ -207,7 +207,9 @@
                                                         </td>
 
                                                         <td style="width: 200px;">
-                                                            <table class="table"
+                                                            {{ requestionDetailsData.quantity - requestionDetailsData.current_quantity | number}}
+
+                                                            <!-- <table class="table"
                                                                 *ngIf="requestionDetailsData.warehouseDetails.length > 0">
                                                                 <thead>
                                                                     <tr>
@@ -230,7 +232,8 @@
                                                                         </td>
                                                                     </tr>
                                                                 </tbody>
-                                                            </table>
+                                                            </table> -->
+
                                                         </td>
 
                                                         <td>

@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -42,7 +42,7 @@
                     <div class="col">
                         <ejs-autocomplete [dataSource]='dyers' [fields]='fieldsDyeing' 
                             (filtering)="onFilteringDyeing($event)" [placeholder]='textDyeing' [autofill]='autofill'
-                            formControlName="dyeingId" class="ejs-autocomplete" (change)="selectDyeing($event)">
+                            formControlName="dyeingId" class="ejs-autocomplete w-100" (change)="selectDyeing($event)">
                         </ejs-autocomplete>
                         <small class="text-danger" *ngIf="reconcilitionRequisitionWDForm.controls['dyeingId'].hasError('pattern')"
                             [innerHTML]="_sharedComponentService.invalid_message">
@@ -83,11 +83,15 @@
                                         التسلسل
                                     </th>
 
+                                    <th style="min-width: 180px;">
+                                        الطلبية
+                                    </th>
+
                                     <th style="width: 150px;">
                                         نوع القماش
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         كود المادة
                                     </th>
 
@@ -95,31 +99,31 @@
                                         رقم الرسالة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         السعر 
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         السعر دولار 
                                     </th>
                                     
-                                    <th style="max-width: 120px;">
+                                    <th style="max-width: 80px;">
                                         الكمية المتوفرة
                                     </th>
                                     
-                                    <th  style="max-width: 120px;">
+                                    <th  style="max-width: 80px;">
                                         الكمية 
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         الاجمالي
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         الاجمالي دولار
                                     </th>
 
-                                    <th>
+                                    <th style="max-width: 120px;">
                                         البيان
                                     </th>
 
@@ -135,13 +139,35 @@
                             <tbody formArrayName="items">
                                 <tr *ngFor="let row of getItem(reconcilitionRequisitionWDForm);let index = index;">
                                     <ng-container [formGroupName]="index">
+                                        
                                         <td>
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
-                                        <td class="table-td">
-                                            <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric'
-                                                 (filtering)="onFilteringFabricName($event)"
+                                        <!-- order -->
+                                        <td class="table-td" style="min-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='fabricOrder' [fields]='fieldsFabricOrder' 
+                                            (filtering)="onFilteringFabricOrder($event)"
+                                            (change)='selectFabricOrder($event, row, index)'
+                                                [placeholder]='textFabricOrder' [autofill]='autofill'
+                                                formControlName="fabricOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('fabricOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('fabricOrderId').hasError('required') && (row.get('fabricOrderId').dirty 
+                                                || row.get('fabricOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="width: 150px;">
+                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric'
+                                                 (filtering)="onFilteringFabricName($event, index)"
                                                 [placeholder]='textFabric' [autofill]='autofill'
                                                 formControlName="fabricId" (change)='selectFabric($event, row, index)'
                                                 [errorStateMatcher]="matcher">
@@ -155,7 +181,7 @@
                                             </small>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> 
                                                     كود المادة
@@ -165,7 +191,7 @@
                                         </td>
 
                                         <!-- consigmentDyeing -->
-                                        <td class="table-td">
+                                        <td class="table-td" style="width: 120px;">
                                             <ejs-autocomplete [dataSource]='consigments[index]' [fields]='fieldsConsigment' 
                                             (filtering)="onFilteringConsigments($event, index)"
                                                 [placeholder]='textConsigment' [autofill]='autofill'
@@ -185,7 +211,7 @@
                                         </td>
 
                                          <!-- Price -->
-                                         <td class="table-td" style="max-width: 120px">
+                                         <td class="table-td" style="max-width: 80px">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر</mat-label>
                                                 <input type="text" matInput formControlName="price" required placeholder="مثال: 15" [matAutocomplete]="autoGroup"
@@ -218,7 +244,7 @@
                                         </td>
 
                                          <!-- priceDollar -->
-                                         <td class="table-td" style="max-width: 120px">
+                                         <td class="table-td" style="max-width: 80px">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>السعر دولار</mat-label>
                                                 <input type="text" matInput formControlName="priceDollar" required placeholder="مثال: 15" [matAutocomplete]="autoGroup2"
@@ -260,7 +286,7 @@
                                         </td>
                                         
                                         <!-- Quantity -->
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="max-width: 80px;">
                                             <mat-form-field class="example-full-width w-100">
                                                 <mat-label>الكمية</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
@@ -290,21 +316,21 @@
                                         </td>
 
                                           <!-- total -->
-                                          <td class="align-middle text-center">
+                                          <td class="align-middle text-center" style="max-width: 80px;">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantity'].value) | number}}
                                             </span>
                                         </td>
 
                                           <!-- total priceDollar -->
-                                          <td class="align-middle text-center">
+                                          <td class="align-middle text-center" style="max-width: 80px;">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value, row.controls['quantity'].value) | number}}
                                             </span>
                                         </td>
 
                                     <!-- Statement -->
-                                        <td>
+                                        <td style="max-width: 120px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label> البيان </mat-label>
                                                 <textarea matInput rows="1"
@@ -344,7 +370,7 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="6"></td>
+                                  <td colspan="7"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(reconcilitionRequisitionWDForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(reconcilitionRequisitionWDForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(reconcilitionRequisitionWDForm, 'items', 'quantity', 'priceDollar') | number}}</td>

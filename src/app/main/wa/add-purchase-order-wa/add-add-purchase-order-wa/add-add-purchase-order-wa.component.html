@@ -60,7 +60,10 @@
                             (selectionChange)="selectRequisitionsOrderName($event)"
                                 multiple>
                                 <mat-option *ngFor="let order of requisitionsOrder"
-                                    [value]="{orderId: order.id, orderName: order.name}">
+                                    [value]="{
+                                        ordersRequisitionsId:  order.orders_requisitions_id, 
+                                        orderId: order.id, 
+                                        orderName: order.name}">
                                     {{order.name}}
                                 </mat-option>
                             </mat-select>

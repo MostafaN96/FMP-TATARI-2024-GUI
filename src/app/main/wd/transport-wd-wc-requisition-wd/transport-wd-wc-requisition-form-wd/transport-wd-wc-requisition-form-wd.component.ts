@@ -11,6 +11,7 @@ import { WdService } from "src/app/services/main/wd/wd.service";
 import { TransportWdWcRequisitionDetailsWdService } from "src/app/services/main/wd/transport-wd-wc-requisition-details-wd.service";
 import { ConsigmentDyeingService } from "src/app/services/main/consigment-dyeing.service";
 import { ReportWdService } from "src/app/services/main/wd/report-wd.service";
+import { FabricOrderRequisitionWcService } from "src/app/services/main/wc/fabric-order-requisition-wc.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -50,6 +51,7 @@ export class TransportWdWcRequisitionFormWdComponent implements OnInit {
   currentQuantity: any = []
   requisitionId: string = '';
   consigments: any = []
+  fabricOrder: any = []
   groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   listFabricPrices:any = []
   listFabricPricesDollar:any = []
@@ -66,7 +68,7 @@ export class TransportWdWcRequisitionFormWdComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textFabric: string = "نوع القماش"
 
-  public onFilteringFabricName(e: any) {
+  public onFilteringFabricName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('fabric_name', 'contains', e.text);
     predicate = predicate.or('fabric_code', 'contains', e.text);
@@ -74,7 +76,7 @@ export class TransportWdWcRequisitionFormWdComponent implements OnInit {
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.fabrics, query);
+    e.updateData(this.fabrics[index], query);
   }
 
   // --------------- Consigments --------------
@@ -93,9 +95,27 @@ export class TransportWdWcRequisitionFormWdComponent implements OnInit {
     e.updateData(this.consigments[index], query);
   }
 
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsFabricOrder: Object = { value: "wc_fabric_order_requisition_id", text: "wc_fabric_order_requisition_name" };
+  // set the placeholder to the AutoComplete input
+  public textFabricOrder: string = "اسم الطلبية"
+
+
+  public onFilteringFabricOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('wc_fabric_order_requisition_name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.fabricOrder, query);
+  }
+
   constructor(
     private _wdService: WdService,
     private _transportWdWcRequisitionDetailsWdService: TransportWdWcRequisitionDetailsWdService,
+    private _fabricOrderRequisitionWcService: FabricOrderRequisitionWcService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
@@ -120,9 +140,11 @@ private _reportWdService: ReportWdService
   }
 
   ngAfterViewInit(){
-    this._wdService.selectQuantityByDyeingWd(this.selectedData.dyeing_id).subscribe((response: any) => {
-      this.fabrics = response
+    
+    this._fabricOrderRequisitionWcService.selectByDyeingWd(this.selectedData.dyeing_id).subscribe((response: any) => {
+      this.fabricOrder = response
     })
+
     this.transportWdWcRequisitionForm.controls['dyeingId'].setValue(this.selectedData.dyeing_id)
     this.transportWdWcRequisitionForm.controls['warehouseId'].setValue(this.selectedData.warehouse_id)
   }
@@ -133,6 +155,8 @@ private _reportWdService: ReportWdService
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      fabricOrderId: new FormControl("", [Validators.required]),
       fabricId: new FormControl("", [Validators.required]),
       fabricCode: new FormControl(""),
       fabricName: new FormControl(""),
@@ -161,11 +185,40 @@ private _reportWdService: ReportWdService
     control.removeAt(index);
   }
 
+  //  Fabric Order
+  selectFabricOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fabricOrder.indexOf(event.itemData)
+
+    if (this.fabricOrder[indexData] !== event.itemData) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['fabricOrderId'].setValue("")
+      row.controls['fabricId'].setValue("")
+      row.controls['fabricCode'].setValue("")
+      row.controls['fabricName'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['consigmentDyeingId'].setValue("")
+      row.controls['consigmentManufacturingNumber'].setValue("")
+      this.currentQuantity[index] = 0
+      this.fabrics[index] = []
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._wdService.selectQuantityByDyeingByFabricOrderWd(
+        this.transportWdWcRequisitionForm.controls['dyeingId'].value!, 
+        event.itemData.wc_fabric_order_requisition_id
+      ).subscribe((response: any) => {
+        this.fabrics[index] = response
+      })
+
+    }
+  }
+
   //  Fabric
   selectFabric(event: { itemData: any; }, row: FormGroup, index) {
-    let indexData = this.fabrics.indexOf(event.itemData)
+    let indexData = this.fabrics[index].indexOf(event.itemData)
 
-    if (this.fabrics[indexData] !== event.itemData) {
+    if (this.fabrics[index][indexData] !== event.itemData) {
       row.controls['fabricId'].setValue(null)
       row.controls['fabricCode'].setValue(null)
       row.controls['fabricName'].setValue(null)
@@ -178,16 +231,14 @@ private _reportWdService: ReportWdService
       row.controls['fabricCode'].setValue(event.itemData.fabric_code)
       row.controls['fabricName'].setValue(event.itemData.fabric_name)
       
-      this._wdService.selectConsigmentDyeingQuantityByFabricByDyeingWd(event.itemData.fabric_id, this.transportWdWcRequisitionForm.controls['dyeingId'].value!).subscribe((response: any) => {
+      this._wdService.selectConsigmentDyeingQuantityByFabricByDyeingWd(
+        event.itemData.fabric_id, 
+        this.transportWdWcRequisitionForm.controls['dyeingId'].value!,
+        row.controls['fabricOrderId'].value
+      ).subscribe((response: any) => {
         this.consigments[index] = response
       })
 
-      // Get Prices
-      this._reportWdService.selectInverntoryByFabricAndDyeingForPriceInWd(event.itemData.id, this.transportWdWcRequisitionForm.controls['dyeingId'].value!).subscribe((response: any) => {
-        this.dyersDetails = response
-        this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice2(this.dyersDetails[0]) , this._sharedComponentService.getAvgInputesPrice2(this.dyersDetails[0]), parseFloat(this.dyersDetails[0].latest_price)]
-        this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgInputesPriceDynamicDetails(this.dyersDetails[0], 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPrice2DynamicDetails(this.dyersDetails[0], 'quantity', 'price_dollar'), parseFloat(this.dyersDetails[0].latest_price_dollar)]
-      })
     }
     this.validate(row, index)
   }
@@ -215,6 +266,34 @@ private _reportWdService: ReportWdService
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
       row.controls['consigmentManufacturingNumber'].setValue(event.itemData.number)
+
+      // Get Prices
+      this._reportWdService.selectPriceByFabricByDyeingByConsigmentDyeingInWd(
+        row.controls['fabricId'].value, 
+        this.transportWdWcRequisitionForm.controls['dyeingId'].value!,
+        event.itemData.id
+      ).subscribe((response: any) => {
+        this.dyersDetails = response
+
+        this.listFabricPrices[index] = [
+          this._sharedComponentService.getAvgPrice(this.dyersDetails), 
+          this._sharedComponentService.getAvgInputesPrice(this.dyersDetails), 
+          parseFloat(this.dyersDetails[0].latest_price)
+        ]
+
+        this.listFabricPricesDollar[index] = [
+          this._sharedComponentService.getAvgPriceDynamic(
+            this.dyersDetails, 
+            'quantity', 
+            'price_dollar'
+          ), 
+          this._sharedComponentService.getAvgInputesPriceDynamic(
+            this.dyersDetails, 
+            'quantity', 
+            'price_dollar'
+          ), parseFloat(this.dyersDetails[0].latest_price_dollar)
+        ]
+      })
 
     }
   }

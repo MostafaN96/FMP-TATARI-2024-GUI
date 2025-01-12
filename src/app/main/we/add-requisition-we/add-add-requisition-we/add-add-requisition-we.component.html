@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -39,7 +39,7 @@
 
                     <!-- Supplier -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='suppliers' [fields]='fieldsSupplier' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='suppliers' [fields]='fieldsSupplier' class="ejs-autocomplete w-100"
                         (filtering)="onFilteringSupplier($event)"
                             [placeholder]='textSupplier' [autofill]='autofill'
                             formControlName="supplierId"
@@ -106,11 +106,15 @@
                                         التسلسل
                                     </th>
 
-                                    <th style="max-width: 180px;">
-                                        المخزن
+                                    <th style="min-width: 180px;">
+                                        الطلبية
                                     </th>
 
-                                    <th style="width: 220px;">
+                                    <th style="min-width: 150px;">
+                                        المخزن
+                                    </th>
+                                    
+                                    <th style="min-width: 150px;">
                                         اسم القماش
                                     </th>
 
@@ -118,11 +122,11 @@
                                         كود المادة
                                     </th>
 
-                                    <th style="width: 100px;">
+                                    <th style="min-width: 100px;">
                                         فئة اللون
                                     </th>
 
-                                    <th style="width: 100px;">
+                                    <th style="min-width: 100px;">
                                         اللون
                                     </th>
 
@@ -146,11 +150,11 @@
                                         الكمية
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         الاجمالي
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="max-width: 80px;">
                                         الاجمالي دولار
                                     </th>
 
@@ -194,7 +198,28 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 180px;">
+                                        <!-- order -->
+                                        <td class="table-td" style="min-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='dyedFabricOrder' [fields]='fieldsDyedFabricOrder' 
+                                            (filtering)="onFilteringDyedFabricOrder($event)"
+                                            (change)='selectDyedFabricOrder($event, row, index)'
+                                                [placeholder]='textDyedFabricOrder' [autofill]='autofill'
+                                                formControlName="dyedFabricOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('dyedFabricOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('dyedFabricOrderId').hasError('required') && (row.get('dyedFabricOrderId').dirty 
+                                                || row.get('dyedFabricOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="min-width: 150px;">
                                             <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' 
                                             (filtering)="onFilteringWarehouse($event)"
                                             (change)="selectWarehouse($event, row)"
@@ -214,7 +239,7 @@
                                             </small>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 220px;">
+                                        <td class="table-td" style="max-width: 150px;">
                                             <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric' 
                                             (filtering)="onFilteringFabricName($event)"
                                                 [placeholder]='textFabric' [autofill]='autofill'
@@ -243,7 +268,7 @@
                                         </td>
 
                                         <!-- Color Category -->
-                                        <td class="table-td" style="max-width: 80px">
+                                        <td class="table-td" style="max-width: 100px">
                                             <ejs-autocomplete [dataSource]='colorCategories'
                                                 [fields]='fieldsColorCategory' 
                                                 (filtering)="onFilteringColorCategoryName($event)"
@@ -323,7 +348,7 @@
                                          <!-- Price -->
                                         <td class="table-td" style="max-width: 60px;">
                                             <mat-form-field class="example-full-width w-100">
-                                                <mat-label>السعر*</mat-label>
+                                                <mat-label>السعر</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="price" placeholder="مثال: 15"
                                                     [errorStateMatcher]="matcher" (change)="changePrice('priceEG', row)"
                                                     oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
@@ -394,14 +419,14 @@
                                         </td>
 
                                           <!-- total -->
-                                          <td class="align-middle text-center">
+                                          <td class="align-middle text-center" style="max-width: 80px;">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value, row.controls['quantity'].value) | number}}
                                             </span>
                                         </td>
 
                                           <!-- total priceDollar -->
-                                          <td class="align-middle text-center">
+                                          <td class="align-middle text-center" style="max-width: 80px;">
                                             <span>
                                                 {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value, row.controls['quantity'].value) | number}}
                                             </span>
@@ -562,7 +587,7 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="9"></td>
+                                  <td colspan="10"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(addRequisitionForm, 'items', 'quantity', 'priceDollar') | number}}</td>

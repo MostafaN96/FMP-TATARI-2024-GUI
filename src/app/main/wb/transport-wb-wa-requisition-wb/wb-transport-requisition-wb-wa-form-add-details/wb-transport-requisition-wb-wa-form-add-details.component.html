@@ -17,27 +17,31 @@
                                     التسلسل
                                 </th>
 
-                                <th style="max-width: 120px;">
+                                <th style="max-width: 100px;">
+                                    الطلبية
+                                </th>
+
+                                <th style="max-width: 180px;">
                                     اسم الخيط
                                 </th>
 
-                                <th style="max-width: 60px;">
+                                <th style="max-width: 80px;">
                                     كود المادة
                                 </th>
 
-                                <th style="max-width: 60px;">
+                                <th style="max-width: 80px;">
                                     اللوط
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     رقم الرسالة
                                 </th>
 
-                                <th style="max-width: 60px;">
+                                <th style="max-width: 80px;">
                                     السعر
                                 </th>
 
-                                <th style="max-width: 60px;">
+                                <th style="max-width: 80px;">
                                     السعر دولار
                                 </th>
 
@@ -45,15 +49,15 @@
                                     الكمية المتوفرة
                                 </th>
 
-                                <th style="max-width: 60px;">
+                                <th style="max-width: 80px;">
                                     الكمية
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     الاجمالي
                                 </th>
 
-                                <th style="max-width: 70px;">
+                                <th style="max-width: 100px;">
                                     الوثيقة
                                 </th>
 
@@ -73,9 +77,30 @@
                                         <label style="width: 5px;">{{index+1}}</label>
                                     </td>
 
-                                    <td class="table-td" style="max-width: 120px;">
-                                        <ejs-autocomplete [dataSource]='yarns' [fields]='fieldsYarn'
-                                            (filtering)="onFilteringYarnName($event)" [placeholder]='textYarn'
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 100px;">
+                                            <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' 
+                                            (filtering)="onFilteringYarnOrder($event)"
+                                            (change)='selectYarnOrder($event, row, index)'
+                                                [placeholder]='textYarnOrder' [autofill]='autofill'
+                                                formControlName="yarnOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('yarnOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('yarnOrderId').hasError('required') && (row.get('yarnOrderId').dirty 
+                                                || row.get('yarnOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                    <td class="table-td" style="max-width: 180px;">
+                                        <ejs-autocomplete [dataSource]='yarns[index]' [fields]='fieldsYarn'
+                                            (filtering)="onFilteringYarnName($event, index)" [placeholder]='textYarn'
                                             [autofill]='autofill' formControlName="yarnId"
                                             (change)='selectYarn($event, row, index)'>
                                         </ejs-autocomplete>
@@ -88,7 +113,7 @@
                                         </small>
                                     </td>
 
-                                    <td class="table-td" style="max-width: 60px;">
+                                    <td class="table-td" style="max-width: 80px;">
                                         <mat-form-field class="w-100">
                                             <mat-label>
                                                 كود المادة
@@ -99,9 +124,9 @@
                                     </td>
 
                                     <!-- Lot -->
-                                    <td class="table-td" style="max-width: 180px;">
-                                        <ejs-autocomplete [dataSource]='lots' [fields]='fieldsLot' 
-                                        (filtering)="onFilteringLot($event)"
+                                    <td class="table-td" style="max-width: 80px;">
+                                        <ejs-autocomplete [dataSource]='lots[index]' [fields]='fieldsLot' 
+                                        (filtering)="onFilteringLot($event, index)"
                                         (change)='selectYarnLot($event, row, index)'
                                             [placeholder]='textLot' [autofill]='autofill'
                                             formControlName="yarnLotId"
@@ -120,7 +145,7 @@
                                     </td>
 
                                     <!-- Consigment Yarn -->
-                                    <td class="table-td" style="max-width: 180px;">
+                                    <td class="table-td" style="max-width: 80px;">
                                         <ejs-autocomplete [dataSource]='consigmentsYarns[index]' [fields]='fieldsConsigmentYarn' 
                                         (filtering)="onFilteringConsigmentYarn($event, index)"
                                         (change)='selectConsigmentYarn($event, row, index)'
@@ -141,7 +166,7 @@
                                     </td>
 
                                     <!-- Price -->
-                                    <td class="table-td" style="max-width: 60px">
+                                    <td class="table-td" style="max-width: 80px">
                                         <mat-form-field class="example-full-width w-100">
                                             <mat-label>السعر</mat-label>
                                             <input type="text" matInput formControlName="price" required
@@ -176,7 +201,7 @@
                                     </td>
 
                                     <!-- priceDollar -->
-                                    <td class="table-td" style="max-width: 60px">
+                                    <td class="table-td" style="max-width: 80px">
                                         <mat-form-field class="example-full-width w-100">
                                             <mat-label>السعر دولار</mat-label>
                                             <input type="text" matInput formControlName="priceDollar" required
@@ -221,7 +246,7 @@
                                     </td>
 
                                     <!-- Initial Quantity -->
-                                    <td class="table-td" style="max-width: 60px;">
+                                    <td class="table-td" style="max-width: 80px;">
                                         <mat-form-field class="example-full-width w-100">
                                             <mat-label>الكمية</mat-label>
                                             <input autocomplete="off" type="text" matInput
@@ -259,7 +284,7 @@
                                     </td>
 
                                     <!-- Document -->
-                                    <td style="max-width: 70px;">
+                                    <td style="max-width: 100px;">
                                         <mat-form-field class="w-100">
                                             <mat-label>الوثيقة</mat-label>
                                             <input autocomplete="off" type="text" matInput formControlName="document"
@@ -314,13 +339,13 @@
                             <tr>
                                 <td>الاجمالي</td>
 
-                                <td colspan="6"></td>
+                                <td colspan="8"></td>
                                 <td>{{_sharedComponentService.getTotalQuantityForm(transportWbWaRequisitionForm, 'items',
                                     'quantity') | number}}</td>
                                 <td class="text-center">
                                     {{_sharedComponentService.getTotalPriceXQuantityForm(transportWbWaRequisitionForm, 'items',
                                     'quantity', 'price') | number}}</td>
-                                <td colspan="4"></td>
+                                <td colspan="3"></td>
                             </tr>
                         </tfoot>
 

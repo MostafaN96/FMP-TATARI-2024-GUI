@@ -34,7 +34,7 @@ export class ReportWdService {
 
     
   selectInventoryDetailsByDyeingByFabricByConsigmentDyeing(object:any): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-details-by-dyeing-by-fabric-by-lot/${object.dyeingId}/${object.fabricId}/${object.consigmentDyeingId}`;
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-details-by-dyeing-by-fabric-by-lot/${object.dyeingId}/${object.fabricId}/${object.consigmentDyeingId}/${object.fabricOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

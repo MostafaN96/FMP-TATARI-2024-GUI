@@ -34,6 +34,10 @@
                                     كود المادة
                                 </th>
 
+                                <th style="width: 120px;">
+                                    الطلبية
+                                </th>
+
                                 <th style="max-width: 120px;">
                                     فئة اللون
                                 </th>
@@ -54,19 +58,19 @@
                                     السعر دولار
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     الكمية المتوفرة
                                 </th>
 
-                                <th style="max-width: 120px;">
+                                <th style="max-width: 80px;">
                                     الكمية
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     الاجمالي
                                 </th>
 
-                                <th style="max-width: 100px;">
+                                <th style="max-width: 80px;">
                                     الاجمالي دولار
                                 </th>
 
@@ -142,6 +146,16 @@
                                         </mat-form-field>
                                     </td>
 
+                                    <td class="table-td" style="max-width: 120px;">
+                                        <mat-form-field class="w-100">
+                                            <mat-label>
+                                                الطلبية
+                                            </mat-label>
+                                            <input [disabled]="true" matInput placeholder="الطلبية" readonly
+                                                formControlName="dyedFabricOrderName">
+                                        </mat-form-field>
+                                    </td>
+
                                     <td class="table-td" style="max-width: 100px;">
                                         <mat-form-field class="w-100">
                                             <mat-label>
@@ -213,7 +227,7 @@
                                         </mat-form-field>
                                     </td>
 
-                                    <td class="table-td" style="max-width: 100px;">
+                                    <td class="table-td" style="max-width: 80px;">
                                         <mat-form-field class="w-100">
                                             <mat-label>
                                                 الكمية المتوفرة
@@ -224,7 +238,7 @@
                                     </td>
 
                                     <!-- Quantity -->
-                                    <td class="table-td" style="max-width: 120px;">
+                                    <td class="table-td" style="max-width: 80px;">
                                         <mat-form-field class="example-full-width w-100">
                                             <mat-label>الكمية</mat-label>
                                             <input autocomplete="off" type="text" matInput formControlName="quantity"
@@ -253,7 +267,7 @@
                                     </td>
 
                                     <!-- total -->
-                                    <td class="align-middle text-center">
+                                    <td class="align-middle text-center" style="max-width: 80px;">
                                         <span>
                                             {{_sharedComponentService.getPriceXQuantity(row.controls['price'].value,
                                             row.controls['quantity'].value) | number}}
@@ -261,7 +275,7 @@
                                     </td>
 
                                     <!-- total priceDollar -->
-                                    <td class="align-middle text-center">
+                                    <td class="align-middle text-center" style="max-width: 80px;">
                                         <span>
                                             {{_sharedComponentService.getPriceXQuantity(row.controls['priceDollar'].value,
                                             row.controls['quantity'].value) | number}}
@@ -382,7 +396,7 @@
                             <tr>
                                 <td>الاجمالي</td>
 
-                                <td colspan="10"></td>
+                                <td colspan="12"></td>
                                 <td>{{_sharedComponentService.getTotalQuantityForm(sellRequisitionFormWe, 'items',
                                     'quantity') | number}}</td>
                                 <td class="text-center">

@@ -84,5 +84,36 @@ export class YarnOrderRequisitionWaService {
       });
   }
 
+  
+  selectByWarehouseWa(id: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wa/${id}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+  
+  selectByIndustryWb(id: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-industry-wb/${id}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+  
+  selectByIndustryByFabricWb(id: string, fabricId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-industry-by-fabric-wb/${id}/${fabricId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 }
 

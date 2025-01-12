@@ -45,6 +45,7 @@ export class ItemHistoryReportWbComponent implements OnInit {
   selectedNames: any[] = []
   selectedLotCodes: any[] = []
   selectedConsigmentNumber: any[] = []
+  selectedYarnOrder: any[] = []
 
   constructor(
     public _sharedComponentService: SharedComponentService,
@@ -66,6 +67,7 @@ export class ItemHistoryReportWbComponent implements OnInit {
     this.customFilterForName();
     this.customFilterForLotCode();
     this.customFilterForConsigmentNumber();
+    this.customFilterForYarnOrder();  
   }
 
   getData() {
@@ -271,6 +273,40 @@ export class ItemHistoryReportWbComponent implements OnInit {
     });
   }
 
+  customFilterForYarnOrder() {
+    const customFilterName = "yarn-order-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedYarnOrder
+
+      if (this.selectedYarnOrder[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value == filter[j].wa_yarn_order_requisition_name ) {
+                // count++
+                // if (count == filter.length) {
+                  return true;
+                // }
+              }
+            }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
   clear(table: Table) {
     table.clear();
     table.reset();
@@ -279,6 +315,7 @@ export class ItemHistoryReportWbComponent implements OnInit {
     this.selectedNames = []
     this.selectedLotCodes = []
     this.selectedConsigmentNumber = []
+    this.selectedYarnOrder = []
     // this.getData();
   }
 
@@ -307,6 +344,11 @@ export class ItemHistoryReportWbComponent implements OnInit {
     this.dt1?._filter()
   }
 
+  onMultiselectedYarnOrder(event) {
+    this.selectedYarnOrder = event
+    this.dt1?._filter()
+  }
+  
   getTotalTotalAmountQuantityInput() {
     let sum = 0;
     let data:any[] = this.dt1?.filteredValue == null ? this.yarns:  this.dt1?.filteredValue

@@ -137,6 +137,9 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
 
     return new FormGroup({
       index: new FormControl(index),
+      ordersRequisitionsId: new FormControl(data.orders_requisitions_id, [Validators.required]),
+      fabricOrderId: new FormControl(data.wc_fabric_order_requisition_id, [Validators.required]),
+      fabricOrderName: new FormControl(data.wc_fabric_order_requisition_name ?? ""),
       wdFormDyeingOrderRequisitionDetailsId: new FormControl(data.wd_form_dyeing_order_requisition_details_id ?? ""),
       wdFormRequisitionDetailsId: new FormControl(data.id, [Validators.required]),
       fabricName: new FormControl(data.fabric_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
@@ -164,7 +167,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       fabricWidth: new FormControl(data.fabric_width, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       fabricQuantityM2: new FormControl(data.fabric_quantity_m2, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      workOrderNumber: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
+      workOrderNumber: new FormControl(data.work_order_number_details, [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }

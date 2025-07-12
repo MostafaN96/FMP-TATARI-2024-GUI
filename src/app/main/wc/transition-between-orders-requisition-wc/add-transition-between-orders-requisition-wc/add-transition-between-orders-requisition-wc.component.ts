@@ -425,7 +425,7 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
         this._constantsService.spinner.hide();
         if (response.msg == "data inserted") {
           this._constantsService.successAddMessage()
-          this._sharedComponentService.openNewTab(`${this._constantsService.ROUTING_MAIN_LINKS[0]}${this._constantsService.ROUTING_LINKS[199]}`, { id: response.id });
+          this._sharedComponentService.openNewTab(`${this._constantsService.ROUTING_MAIN_LINKS[0]}${this._constantsService.ROUTING_LINKS[206]}`, { id: response.id });
           this._sharedComponentService.reloadPage();
         }
         else {

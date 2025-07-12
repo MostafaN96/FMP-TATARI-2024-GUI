@@ -132,6 +132,63 @@
                             </div>
 
                             <div class="col">
+                                <p-columnFilter field="we_dyed_fabric_order_requisition_name" matchMode="we-dyed-fabric-order-requisition-name-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="weDyedFAbricOrderRequisitionName"
+                                            [options]="_sharedComponentService.uniqueArray(dt1.filteredValue == null ?
+                                            dyersAndRequisitionsFabrics: dt1.filteredValue, 'we_dyed_fabric_order_requisition_name')"
+                                            (onChange)="onMultiselectedWeDyedFAbricOrderRequisitionName($event.value)"
+                                            placeholder="البحث بـ الطلبية" optionLabel="we_dyed_fabric_order_requisition_name">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.we_dyed_fabric_order_requisition_name}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="we_order_seller_name" matchMode="we-order-seller-name-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="selectedWeSellerName"
+                                            [options]="_sharedComponentService.uniqueArray(dt1.filteredValue == null ?
+                                            dyersAndRequisitionsFabrics: dt1.filteredValue, 'we_order_seller_name')"
+                                            (onChange)="onMultiselectedWeSellerName($event.value)"
+                                            placeholder="البحث بـ عميل الطلبية" optionLabel="we_order_seller_name">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.we_order_seller_name}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
+                                <p-columnFilter field="release_process" matchMode="release-process-filter" [showMenu]="false"
+                                    [showClearButton]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="selectedReleaseProcess"
+                                            [options]="_sharedComponentService.uniqueArray(dt1.filteredValue == null ?
+                                            dyersAndRequisitionsFabrics: dt1.filteredValue, 'release_process')"
+                                            (onChange)="onMultiselectedReleaseProcess($event.value)"
+                                            placeholder="البحث بـ رقم ايصال الصباغة" optionLabel="release_process">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="p-multiselect-representative-option">
+                                                    <span class="ml-1">{{option.release_process}}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </div>
+
+                            <div class="col">
                                 <input pInputText type="text"
                                     (input)="dt1.filter($event.target.value, 'current_quantity')"
                                     [value]="dt1.filters['current_quantity']?.value" placeholder="الكمية المتوفرة"
@@ -490,6 +547,20 @@
                                 </div>
                             </th>
 
+                            <th pResizableColumn pSortableColumn="we_order_seller_name" style="max-width: 100px">
+                                <div class="flex justify-content-between align-items-center">
+                                    عميل الطلبية
+                                    <p-sortIcon field="we_order_seller_name"></p-sortIcon>
+                                </div>
+                            </th>
+
+                            <th pResizableColumn pSortableColumn="release_process" style="max-width: 100px">
+                                <div class="flex justify-content-between align-items-center">
+                                    رقم ايصال الصباغة
+                                    <p-sortIcon field="release_process"></p-sortIcon>
+                                </div>
+                            </th>
+
                             <th pResizableColumn pSortableColumn="current_quantity" style="max-width: 100px">
                                 <div class="flex justify-content-between align-items-center">
                                     الكمية المتوفرة<p-sortIcon field="current_quantity"></p-sortIcon>
@@ -676,6 +747,14 @@
                             </td>
 
                             <td style="max-width: 100px">
+                                {{element.we_order_seller_name}}
+                            </td>
+
+                            <td style="max-width: 100px">
+                                {{element.release_process}}
+                            </td>
+
+                            <td style="max-width: 100px">
                                 {{element.current_quantity | number}}
                             </td>
 
@@ -750,7 +829,6 @@
                                     [queryParams]="{ id: element?.wd_form_dyeing_order_requisition_id}">
                                     {{element.order_number}}
                                 </a>
-
                             </td>
 
                             <td [hidden]="!isShowOrderCustomerName" style="max-width: 80px">
@@ -813,6 +891,8 @@
                             <td style="max-width: 100%"></td>
                             <td style="max-width: 80px"></td>
                             <td style="max-width: 80px"></td>
+                            <td style="max-width: 100px"></td>
+                            <td style="max-width: 100px"></td>
                             <td style="max-width: 100px"></td>
                             <td style="max-width: 100px"></td>
                             <td style="max-width: 100px">

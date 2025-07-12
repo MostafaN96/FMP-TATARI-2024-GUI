@@ -701,6 +701,9 @@ export class ItemHostoryByDyedFabricDetailsComponent implements OnInit {
     else if (typeOfRequisition == 'اذن نقل بين المخازن') {
       return `/dashboard/show-all-transition-between-wh-requisition-we/details`
     }
+    else if (typeOfRequisition == 'اذن نقل بين الطلبيات') {
+      return `/dashboard/show-all-transition-between-orders-requisition-we/details`
+    }
     return
   }
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////

@@ -38,6 +38,19 @@ export class AddRequisitionWcService {
       });
   }
   
+  // Add By Order
+  addByOrder(obj: any): Observable<any> {
+
+    let url = `${this._constantsService.BASE_URL}${this.urlService}by-order`;
+
+    return this._http.post(url, obj,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+  
   // Select
   selectAll(): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}`;

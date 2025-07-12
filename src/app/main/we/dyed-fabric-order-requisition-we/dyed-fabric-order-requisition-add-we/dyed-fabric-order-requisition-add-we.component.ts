@@ -95,7 +95,7 @@ export class DyedFabricOrderRequisitionAddWeComponent implements OnInit {
     e.updateData(this.dyedFabrics, query);
   }
 
-    // --------------- Color Category --------------
+  // --------------- Color Category --------------
   // maps the appropriate column to fields property
   public fieldsColorCategory: Object = { value: "id", text: "name" };
   // set the placeholder to the AutoComplete input
@@ -141,7 +141,7 @@ export class DyedFabricOrderRequisitionAddWeComponent implements OnInit {
     public _exportDataService: ExportDataService,
     private _colorCategoryService: ColorCategoryService,
     private _colorService: ColorService,
-        private router: Router,
+    private router: Router,
 
   ) {
     this._sharedComponentService.configRouterReloadPage()
@@ -162,62 +162,65 @@ export class DyedFabricOrderRequisitionAddWeComponent implements OnInit {
 
     this._colorCategoryService.selectAll().subscribe((response: any) => {
       this.colorCategories = response
+
+      this.selectColorsByCategory(0, this._constantsService.DEFAULT_COLOR_CATEGORY_ID)
     })
   }
 
-// Initialize Form Builder
-initItem() {
-  return new FormGroup({
-    dyedFabricId: new FormControl("", [Validators.required]),
-    dyedFabricCode: new FormControl(""),
-    colorCategoryId: new FormControl("", [Validators.required]),
-    colorId: new FormControl("", [Validators.required]),
-    colorCode: new FormControl("", [Validators.required]),
-    quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    wasteRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-  });
-}
+  // Initialize Form Builder
+  initItem() {
+    return new FormGroup({
+      dyedFabricId: new FormControl("", [Validators.required]),
+      dyedFabricCode: new FormControl(""),
+      colorCategoryId: new FormControl(this._constantsService.DEFAULT_COLOR_CATEGORY_ID, [Validators.required]),
+      colorId: new FormControl("", [Validators.required]),
+      colorCode: new FormControl("", [Validators.required]),
+      quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      wasteRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
+    });
+  }
 
-addItem() {
-  const control = <FormArray>this.addOrderForm.get('items');
-  control.push(this.initItem());
-}
+  addItem() {
+    const control = <FormArray>this.addOrderForm.get('items');
+    control.push(this.initItem());
+    this.selectColorsByCategory(this.addOrderForm.controls['items'].value.length-1, this._constantsService.DEFAULT_COLOR_CATEGORY_ID)
+  }
 
-initItemFromFile(data) {
-  return new FormGroup({
-    dyedFabricId: new FormControl(data[0], [Validators.required]),
-    dyedFabricCode: new FormControl(""),
-    colorCategoryId: new FormControl("", [Validators.required]),
-    colorId: new FormControl("", [Validators.required]),
-    colorCode: new FormControl("", [Validators.required]),
-    quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    wasteRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
-  });
-}
+  initItemFromFile(data) {
+    return new FormGroup({
+      dyedFabricId: new FormControl(data[0], [Validators.required]),
+      dyedFabricCode: new FormControl(""),
+      colorCategoryId: new FormControl("", [Validators.required]),
+      colorId: new FormControl("", [Validators.required]),
+      colorCode: new FormControl("", [Validators.required]),
+      quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      wasteRatio: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
+    });
+  }
 
-addItemFromFile(data) {
-  const control = <FormArray>this.addOrderForm.get('items');
-  control.push(this.initItemFromFile(data));
-}
+  addItemFromFile(data) {
+    const control = <FormArray>this.addOrderForm.get('items');
+    control.push(this.initItemFromFile(data));
+  }
 
-getItem(form: any) {    
-  return form.controls.items.controls;
-}
+  getItem(form: any) {
+    return form.controls.items.controls;
+  }
 
-removeItem(index: number){
-  const control = <FormArray>this.addOrderForm.get('items');
-  control.removeAt(index);
- }
+  removeItem(index: number) {
+    const control = <FormArray>this.addOrderForm.get('items');
+    control.removeAt(index);
+  }
 
   //  Dyeing
   selectDyeing(event: { itemData: any; }) {
@@ -245,10 +248,11 @@ removeItem(index: number){
       // console.log("row", row.controls['dyedFabricCode']);
       row.controls['dyedFabricCode'].setValue(element.itemData.code)
       row.controls['wasteRatio'].setValue(element.itemData.waste_ratio)
+      row.controls['fabricQuantityM2'].setValue(element.itemData.fabric_quantity_m2)
       this.fabricName = element.itemData.name
       this.fabricCode = element.itemData.code
       this.wasteRatio = element.itemData.wast_ratio
-    }    
+    }
   }
 
   // Color Category
@@ -260,9 +264,7 @@ removeItem(index: number){
       this.colors[index] = []
     }
     else {
-      this._colorService.selectByCategory(event.itemData.id).subscribe((response: any) => {
-        this.colors[index] = response        
-      })
+      this.selectColorsByCategory(index, event.itemData.id)
     }
   }
 
@@ -280,10 +282,21 @@ removeItem(index: number){
     }
   }
 
-  inquireFabricAvilability(data: any) {    
+  
+  selectColorsByCategory(index, colorCategoryId = this._constantsService.DEFAULT_COLOR_CATEGORY_ID) {
+    const control = <FormArray>this.addOrderForm.get('items');
+    
+    control.controls[index]['controls']['colorCategoryId'].setValue(colorCategoryId)
+    this._colorService.selectByCategory(colorCategoryId).subscribe((response: any) => {
+      this.colors[index] = response
+    })
+  }
+
+  inquireFabricAvilability(data: any) {
     data.markAllAsTouched();
-    if (data.valid) {    
-      let inquireFabricData = {data: data.value, 
+    if (data.valid) {
+      let inquireFabricData = {
+        data: data.value,
         fabricName: this.fabricName,
         fabricCode: this.fabricCode,
         colorName: this.colorName,
@@ -291,36 +304,36 @@ removeItem(index: number){
         wasteRatio: this.wasteRatio
       }
 
-    localStorage.setItem('inquireFabricData', JSON.stringify(inquireFabricData))
-    this._sharedComponentService.openPageNewTabWithoutParams(this._constantsService.ROUTING_MAIN_LINKS[0]+this._constantsService.ROUTING_LINKS[154])
-    
-  //   this.router.navigateByUrl('/' + location.pathname.split("/")[1] + "/"+ this._constantsService.ROUTING_LINKS[154], {
-  //     state: {data: data.value, 
-  //       fabricName: this.fabricName,
-  //       fabricCode: this.fabricCode,
-  //       colorName: this.colorName,
-  //       colorCode: this.colorCode,
-  //       wasteRatio: this.wasteRatio
-  //     }
-  // })
+      localStorage.setItem('inquireFabricData', JSON.stringify(inquireFabricData))
+      this._sharedComponentService.openPageNewTabWithoutParams(this._constantsService.ROUTING_MAIN_LINKS[0] + this._constantsService.ROUTING_LINKS[154])
 
-  // this.router.navigate([], {
-  //   state: {data: data.value}
-  // }).then(result => { window.open('/' + location.pathname.split("/")[1] + "/"+ this._constantsService.ROUTING_LINKS[154], '_blank') });
-}
+      //   this.router.navigateByUrl('/' + location.pathname.split("/")[1] + "/"+ this._constantsService.ROUTING_LINKS[154], {
+      //     state: {data: data.value, 
+      //       fabricName: this.fabricName,
+      //       fabricCode: this.fabricCode,
+      //       colorName: this.colorName,
+      //       colorCode: this.colorCode,
+      //       wasteRatio: this.wasteRatio
+      //     }
+      // })
+
+      // this.router.navigate([], {
+      //   state: {data: data.value}
+      // }).then(result => { window.open('/' + location.pathname.split("/")[1] + "/"+ this._constantsService.ROUTING_LINKS[154], '_blank') });
+    }
   }
-  
+
   // price
   changePrice(type, row: FormGroup) {
-    if(type == "priceEG") {
+    if (type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
       row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
-  
+
   // WasteRatio
-  changeWasteRatio(event) {    
+  changeWasteRatio(event) {
     this.wasteRatio = event.target.value
   }
 
@@ -374,8 +387,8 @@ removeItem(index: number){
       // console.log(this.data);
       this.addItemFromFile(this.data[1])
 
-         const control = <FormArray>this.addOrderForm.get('items');
-      
+      const control = <FormArray>this.addOrderForm.get('items');
+
       for (let i = 0; i < control.length; i++) {
         const element = control[i];
         this.checkValidity(element)
@@ -394,7 +407,7 @@ removeItem(index: number){
     Object.keys(g.controls).forEach(key => {
       g.get(key)!.updateValueAndValidity();
     });
-    }
+  }
 
 }
 

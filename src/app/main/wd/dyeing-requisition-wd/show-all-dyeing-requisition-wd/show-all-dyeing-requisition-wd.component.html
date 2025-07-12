@@ -150,7 +150,28 @@
                                                 </p-sortIcon>
                                             </div>
                                         </th>
+
                                         
+                                        <!-- details Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th style="width: 80px;">
+                                                                السعر
+                                                            </th>
+
+                                                            <th style="width: 80px;">
+                                                            اجرة الصباغة
+                                                            </th>
+
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </th>
                                       
                                         <!-- note Column -->
                                         <th>
@@ -195,6 +216,26 @@
                                         <!-- release_process Column -->
                                         <td>
                                             {{ element.release_process }}
+                                        </td>
+                                        
+                                        <!-- details Column -->
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr *ngFor="let item of element.details">
+
+                                                        <td style="width: 80px;">
+                                                            {{item.price}}
+                                                        </td>
+
+                                                        <td style="width: 80px;">
+                                                            {{item.dyeing_fee}}
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
+
+                                            </table>
                                         </td>
 
                                         <!-- note Column -->

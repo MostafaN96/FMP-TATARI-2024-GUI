@@ -100,6 +100,16 @@ export class ReportWcService {
       });
   }
 
+  fabricOrdersReport(): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}fabric-orders-report`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   selectByFabric(fabricId: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-fabric/${fabricId}`;
     return this._http.get(url);

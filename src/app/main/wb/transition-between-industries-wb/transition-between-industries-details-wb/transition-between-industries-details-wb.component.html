@@ -184,6 +184,32 @@
                                     <td mat-footer-cell *matFooterCellDef> {{_sharedComponentService.getTotalCollectTimes(dataSourceSearchTabel?.filteredData, "price_dollar", "quantity") | number}} </td>
                                 </ng-container>
                                 
+                                
+                                <!-- yarnOrderRequisitions Column -->
+                                <ng-container matColumnDef="yarn_order_requisitions">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>من اذن</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <table class="w-100">
+                                            <tbody>
+                                                <tr
+                                                    *ngFor="let yarnOrderRequisition of element.yarnOrderRequisitions">
+                                                    <a [routerLink]="[goToRequisitionPage(yarnOrderRequisition?.type_of_requisition, yarnOrderRequisition)]"
+                                                        [queryParams]="{id: yarnOrderRequisition?.requisition_id}">
+                                                        <td>{{yarnOrderRequisition.type_of_requisition}}</td>
+                                                        <td>
+
+                                                            ({{ yarnOrderRequisition.number}})
+                                                        </td>
+                                                    </a>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+                                
                                 <!-- document Column -->
                                 <ng-container matColumnDef="document">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>

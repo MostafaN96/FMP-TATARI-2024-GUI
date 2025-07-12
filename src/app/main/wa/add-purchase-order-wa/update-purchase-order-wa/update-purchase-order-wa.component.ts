@@ -69,7 +69,7 @@ export class UpdatePurchaseOrderWaComponent implements OnInit {
     if(type == "priceEG") {
       this.purchaseOrderWaForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.purchaseOrderWaForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.purchaseOrderWaForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.purchaseOrderWaForm.controls['priceDollar'].value))
+      this.purchaseOrderWaForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(this.purchaseOrderWaForm.controls['priceDollar'].value))
     }
   }
 

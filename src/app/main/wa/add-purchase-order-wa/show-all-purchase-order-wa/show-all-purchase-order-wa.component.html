@@ -2,7 +2,7 @@
     <!-- Title Page Section -->
     <div [class]="_sharedComponentService.titlePageClass">
         <!-- Sub Title Page -->
-        <div [class]="_sharedComponentService.subTitlePageClass">
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
             <h2 [class]="_sharedComponentService.TitleTextClass">إظهار جميع طلبيات الشراء</h2>
         </div>
     </div>
@@ -10,6 +10,27 @@
     <!-- Main Page Form -->
     <div [class]="_sharedComponentService.mainPageFormClass">
         <div [class]="_sharedComponentService.subMainPageFormClass">
+            <div class="row row-cols-3">
+
+                <div class="col">
+                    <div class="btn-export-section">
+                        <a (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'طلبيات الشراء')">
+                            <i title="PDF" class="far fa-file-pdf"></i>
+                        </a>
+
+                        <a
+                            (click)="_exportDataService.exportToExcel('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'طلبيات الشراء')">
+                            <i title="Excel" class="far fa-file-excel px-2"></i>
+                        </a>
+
+                        <a (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'طلبيات الشراء')">
+                            <i title="Print" class="fas fa-print pe-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
             <!-- Form Body -->
             <div [class]="_sharedComponentService.gridForm2Class">
                 <div class="col">
@@ -34,6 +55,24 @@
                                             </p-calendar>
                                         </div>
 
+
+                                        <div class="col">
+                                            <p-columnFilter field="name" matchMode="order-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedOrderName"
+                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'name')"
+                                                        (onChange)="onMultiselectedOrderName($event.value)"
+                                                        placeholder="البحث بـ اسم الطلبية" optionLabel="name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
 
                                         <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
@@ -66,16 +105,16 @@
                                         </th>
 
                                         <!-- order_name Column -->
-                                        <th pResizableColumn pSortableColumn="order_name">
+                                        <th pResizableColumn pSortableColumn="name">
                                             <div class="flex justify-content-between align-items-center">
                                                 اسم الطلبية
-                                                <p-sortIcon data-html2canvas-ignore="true" field="order_name">
+                                                <p-sortIcon data-html2canvas-ignore="true" field="name">
                                                 </p-sortIcon>
                                             </div>
                                         </th>
 
                                         <!-- requisition_details Column -->
-                                        <th>
+                                        <th style="min-width: 600px;">
                                             <div class="flex justify-content-between align-items-center">
                                                 نوع الخيوط
                                             </div>
@@ -126,11 +165,11 @@
                                         </td>
 
                                         <!-- requisition_details Column -->
-                                        <td>
+                                        <td style="min-width: 600px;">
                                             <table class="table" *ngIf="element.requestionDetails.length > 0">
                                                 <thead>
                                                     <tr>
-                                                        <th>
+                                                        <th style="width: 300px;">
                                                             نوع الخيط
                                                         </th>
                                                         <th>
@@ -141,7 +180,7 @@
                                                             الكمية المطلوبة
                                                         </th>
 
-                                                        <th style="width: 200px;">
+                                                        <th style="width: 100px;">
                                                             الكمية الجاهزة
                                                         </th>
 
@@ -149,7 +188,7 @@
                                                             الكمية المتبقية
                                                        </th>
                                                        
-                                                       <th style="width: 200px;">
+                                                       <th style="width: 100px;">
                                                         الكمية الزائدة
                                                         </th>
 
@@ -158,7 +197,7 @@
                                                 <tbody>
                                                     <tr *ngFor="let requestionDetailsData of element.requestionDetails">
 
-                                                        <td>
+                                                        <td style="width: 300px;">
                                                             {{ requestionDetailsData.yarn_name}}
                                                         </td>
 
@@ -170,7 +209,7 @@
                                                             {{ requestionDetailsData.quantity}}
                                                         </td>
 
-                                                        <td style="width: 200px;">
+                                                        <td style="width: 100px;">
                                                             <table class="table"
                                                                 *ngIf="requestionDetailsData.warehouseDetails.length > 0">
                                                                 <thead>

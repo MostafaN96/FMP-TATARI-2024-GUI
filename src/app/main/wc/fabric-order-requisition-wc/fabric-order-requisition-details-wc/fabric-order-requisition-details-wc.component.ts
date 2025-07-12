@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild,} from '@angular/core';
+import { Component, Input, OnInit, ViewChild,} from '@angular/core';
 
 // Angular Material Table
 import { MatTableDataSource } from '@angular/material/table';
@@ -32,6 +32,7 @@ export class FabricOrderRequisitionDetailsWcComponent implements OnInit {
   fabricOrderDetails: any[] = []
   totalPriceXQuantityWithWast: any
   selectedDataToUpdate: any
+  selectedDataToAdd: any
   showInputUpdate = false
   showAddDetails = false
 
@@ -45,6 +46,7 @@ export class FabricOrderRequisitionDetailsWcComponent implements OnInit {
     'completed_quantity',
     'current_quantity',
     'over_current_quantity',
+    'over_current_quantity_ratio',
     'fabric_width',
     'fabric_quantity_m2',
     'note2',
@@ -113,6 +115,7 @@ export class FabricOrderRequisitionDetailsWcComponent implements OnInit {
   }
 
   showAddDetailsFunc() {
+    this.selectedDataToAdd = this.fabricOrderDetails[0]
     this.showAddDetails = true;
   }
 }

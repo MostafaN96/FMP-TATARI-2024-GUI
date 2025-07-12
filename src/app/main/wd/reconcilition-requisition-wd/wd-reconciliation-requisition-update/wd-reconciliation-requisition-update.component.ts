@@ -73,7 +73,7 @@ export class WdReconciliationRequisitionUpdateComponent implements OnInit {
     if(type == "priceEG") {
       this.wdReconciliationRequisitionForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.wdReconciliationRequisitionForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.wdReconciliationRequisitionForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.wdReconciliationRequisitionForm.controls['priceDollar'].value))
+      this.wdReconciliationRequisitionForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(this.wdReconciliationRequisitionForm.controls['priceDollar'].value))
     }
   }
 

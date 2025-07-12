@@ -207,7 +207,7 @@
                                                         </td>
 
                                                         <td style="width: 200px;">
-                                                            {{ requestionDetailsData.quantity - requestionDetailsData.current_quantity | number}}
+                                                            {{ requestionDetailsData.net_current_quantity | number}}
 
                                                             <!-- <table class="table"
                                                                 *ngIf="requestionDetailsData.warehouseDetails.length > 0">
@@ -264,10 +264,7 @@
                                                         <td>
                                                             {{
                                                                 _sharedComponentService.getTotalQuantity(element.requestionDetails,
-                                                                'quantity') 
-                                                                -
-                                                            _sharedComponentService.getTotalQuantity(element.requestionDetails,
-                                                            'current_quantity') | number}}
+                                                                'net_current_quantity') | number}}
                                                         </td>
 
                                                         <td>

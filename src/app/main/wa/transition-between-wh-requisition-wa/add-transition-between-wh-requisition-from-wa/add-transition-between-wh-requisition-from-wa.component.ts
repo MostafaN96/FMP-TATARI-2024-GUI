@@ -50,6 +50,7 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
   yarns:any = []
   fromWarehouses:any = []
   yarnOrder: any = []
+  fromYarnOrder: any = []
   currentQuantity:any = []
   yarnsDetails:any = []
   getListYarnPrices:any = []
@@ -166,21 +167,38 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
         e.updateData(this.toConsigmentsYarns, query);
   }
 
-  // --------------- Requisitio nOrder --------------
+  // --------------- From Requisition Order --------------
   // maps the appropriate column to fields property
-  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  public fieldsFromYarnOrder: Object = { value: "id", text: "name" };
   // set the placeholder to the AutoComplete input
-  public textYarnOrder: string = "اسم الطلبية"
+  public textFromYarnOrder: string = "من طلبية"
 
 
-  public onFilteringYarnOrder(e: any) {
+  public onFilteringFromYarnOrder(e: any) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     var query = new Query();
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.yarnOrder, query);
+    e.updateData(this.fromYarnOrder, query);
+  }
+
+  // --------------- Requisition Order --------------
+  // maps the appropriate column to fields property
+  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textYarnOrder: string = "الى طلبية"
+
+
+  public onFilteringYarnOrder(e: any, index) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.yarnOrder[index], query);
   }
 
   constructor(
@@ -229,6 +247,9 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
       fromWarehouseId: new FormControl("", [Validators.required]),
       ordersRequisitionsId: new FormControl("", [Validators.required]),
       yarnOrderId: new FormControl("", [Validators.required]),
+      waYarnOrderRequisitionDetailsId: new FormControl("", [Validators.required]),
+      fromOrdersRequisitionsId: new FormControl("", [Validators.required]),
+      fromYarnOrderId: new FormControl("", [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       yarnName: new FormControl(""),
       yarnCode: new FormControl(""),
@@ -280,6 +301,7 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
       this.currentQuantity[index] = 0
       this.fromLots[index] = []
       this.lots[index] = []
+      this.yarnOrder[index] = []
     }
     else {
       let flag = true
@@ -290,10 +312,14 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
         this.lots[index] = response
       })
       
+    this._yarnOrderRequisitionWaService.selectByYarnWa(event.itemData.id).subscribe((response: any) => {
+      this.yarnOrder[index] = response
+    })
+
       this._yarnLotService.selectByWarehouseByYarnWa(
         row.controls['fromWarehouseId'].value!,
         event.itemData.id,
-        row.controls['yarnOrderId'].value!
+        row.controls['fromYarnOrderId'].value!
         ).subscribe((response: any) => {
         this.fromLots[index] = response
         // console.log(this.fromLots);
@@ -304,7 +330,7 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
             row.controls['fromWarehouseId'].value!,
             event.itemData.id,
             this.fromLots[0].id,
-            row.controls['yarnOrderId'].value!,
+            row.controls['fromYarnOrderId'].value!,
             index
           )
         }
@@ -354,7 +380,7 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
         row.controls['fromWarehouseId'].value!,
         row.controls['yarnId'].value!,
         event.itemData.id,
-        row.controls['yarnOrderId'].value!,
+        row.controls['fromYarnOrderId'].value!,
         index
       )
     }
@@ -409,24 +435,34 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
   selectFromWarehouse(event: { itemData: any; }, row: FormGroup, index: number) {
     if(!this.fromWarehouses.includes(event.itemData)) {
       row.controls['fromWarehouseId'].setValue("")
+      row.controls['fromOrdersRequisitionsId'].setValue("")
+      row.controls['fromYarnOrderId'].setValue("")
+      row.controls['yarnId'].setValue("")
+      row.controls['yarnCode'].setValue("")
+      row.controls['yarnName'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['fromYarnLotId'].setValue("")
+      row.controls['fromConsigmentYarnId'].setValue("")
+      this.currentQuantity[index] = 0
       this.yarns[index] = []
     }
     else {
   
       this._yarnOrderRequisitionWaService.selectByWarehouseWa(event.itemData?.id).subscribe((response: any) => {
-        this.yarnOrder = response
+        this.fromYarnOrder = response
       })
 
     }
   }
 
-  //  Yarn Order
-  selectYarnOrder(event: { itemData: any; }, row: FormGroup, index) {
-    let indexData = this.yarnOrder.indexOf(event.itemData)
+  
+  //  From Yarn Order
+  selectFromYarnOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fromYarnOrder.indexOf(event.itemData)
 
-    if (this.yarnOrder[indexData] !== event.itemData) {
-      row.controls['ordersRequisitionsId'].setValue("")
-      row.controls['yarnOrderId'].setValue("")
+    if (this.fromYarnOrder[indexData] !== event.itemData) {
+      row.controls['fromOrdersRequisitionsId'].setValue("")
+      row.controls['fromYarnOrderId'].setValue("")
       row.controls['yarnId'].setValue("")
       row.controls['yarnCode'].setValue("")
       row.controls['yarnName'].setValue("")
@@ -436,15 +472,27 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
       this.currentQuantity[index] = 0
     }
     else {
-      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+      row.controls['fromOrdersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
 
-      this._yarnService.selectByWarehouseWa(
-        row.controls['fromWarehouseId'].value!, 
-        event.itemData.id
-      ).subscribe((response: any) => {
+      this._yarnService.selectByWarehouseWa(row.controls['fromWarehouseId'].value!, event.itemData.id).subscribe((response: any) => {
         this.yarns[index] = response
       })
 
+    }
+  }
+
+  //  Yarn Order
+  selectYarnOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.yarnOrder[index].indexOf(event.itemData)
+
+    if (this.yarnOrder[index][indexData] !== event.itemData) {
+      row.controls['ordersRequisitionsId'].setValue("")
+      row.controls['waYarnOrderRequisitionDetailsId'].setValue("")
+      row.controls['yarnOrderId'].setValue("")
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+      row.controls['yarnOrderId'].setValue(event.itemData.wa_yarn_order_requisition_id)
     }
   }
 

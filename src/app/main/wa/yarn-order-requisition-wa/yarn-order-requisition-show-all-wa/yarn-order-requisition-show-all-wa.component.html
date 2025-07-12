@@ -53,6 +53,24 @@
                                         </div>
 
                                         <div class="col">
+                                            <p-columnFilter field="name" matchMode="order-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedOrderName"
+                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'name')"
+                                                        (onChange)="onMultiselectedOrderName($event.value)"
+                                                        placeholder="البحث بـ اسم الطلبية" optionLabel="name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
                                                 <button data-html2canvas-ignore="true" pButton label="اعادة"
                                                     class="p-button-outlined" icon="pi pi-filter-slash"
@@ -92,10 +110,10 @@
                                         </th>
 
                                         <!-- order_name Column -->
-                                        <th pResizableColumn pSortableColumn="order_name">
+                                        <th pResizableColumn pSortableColumn="name">
                                             <div class="flex justify-content-between align-items-center">
                                                 اسم الطلبية
-                                                <p-sortIcon data-html2canvas-ignore="true" field="order_name">
+                                                <p-sortIcon data-html2canvas-ignore="true" field="name">
                                                 </p-sortIcon>
                                             </div>
                                         </th>
@@ -202,7 +220,7 @@
                                                         </td>
 
                                                         <td style="width: 200px;">
-                                                            {{ requestionDetailsData.quantity - requestionDetailsData.current_quantity | number}}
+                                                            {{ requestionDetailsData.net_current_quantity | number}}
                                                             <!-- <table class="table"
                                                                 *ngIf="requestionDetailsData.warehouseDetails.length > 0">
                                                                 <thead>
@@ -250,10 +268,7 @@
                                                         <td>
                                                             {{
                                                                 _sharedComponentService.getTotalQuantity(element.requestionDetails,
-                                                                'quantity') 
-                                                                -
-                                                            _sharedComponentService.getTotalQuantity(element.requestionDetails,
-                                                            'current_quantity') | number}}
+                                                                'net_current_quantity') | number}}
                                                         </td>
 
                                                         <td>

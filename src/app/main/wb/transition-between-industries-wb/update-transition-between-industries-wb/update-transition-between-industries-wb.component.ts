@@ -22,6 +22,7 @@ import { ActivatedRoute } from '@angular/router';
 export class UpdateTransitionBetweenIndustriesWbComponent implements OnInit {
 
   requisitionId!: string;
+  exchangeRatePrice = 0
 
   @Input() selectedData: any
   transitionBetweenIndustriesRequisitionWcForm: FormGroup = new FormGroup({
@@ -54,6 +55,8 @@ export class UpdateTransitionBetweenIndustriesWbComponent implements OnInit {
   }
 
   ngOnChanges() {
+    this.exchangeRatePrice = parseFloat((this.selectedData?.price / this.selectedData?.price_dollar).toFixed(3))
+
     this.transitionBetweenIndustriesRequisitionWcForm.controls['date'].setValue(this.selectedData?.date)
     this.transitionBetweenIndustriesRequisitionWcForm.controls['note'].setValue(this.selectedData?.note)
     this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].setValue(this.selectedData?.price)
@@ -66,9 +69,9 @@ export class UpdateTransitionBetweenIndustriesWbComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].value))
+      this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].value, this.exchangeRatePrice))
     } else if (type == "priceDollar") {
-      this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].value))
+      this.transitionBetweenIndustriesRequisitionWcForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.transitionBetweenIndustriesRequisitionWcForm.controls['priceDollar'].value, this.exchangeRatePrice))
     }
   }
 

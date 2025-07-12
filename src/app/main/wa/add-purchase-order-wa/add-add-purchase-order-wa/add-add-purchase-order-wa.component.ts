@@ -158,7 +158,7 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
       this.yarns = response
     })
 
-    this._dyedFabricOrderRequisitionWeService.selectAll('opened').subscribe((response: any) => {
+    this._dyedFabricOrderRequisitionWeService.selectOrdersForAddPurchaseWa('opened').subscribe((response: any) => {
       this.requisitionsOrder = response
     })
 

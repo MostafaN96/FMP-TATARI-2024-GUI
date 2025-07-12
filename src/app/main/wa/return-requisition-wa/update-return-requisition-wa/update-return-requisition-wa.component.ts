@@ -72,7 +72,7 @@ export class UpdateReturnRequisitionWaComponent implements OnInit {
     if(type == "priceEG") {
       this.returnRequisitionWaForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.returnRequisitionWaForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.returnRequisitionWaForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.returnRequisitionWaForm.controls['priceDollar'].value))
+      this.returnRequisitionWaForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(this.returnRequisitionWaForm.controls['priceDollar'].value))
     }
   }
 

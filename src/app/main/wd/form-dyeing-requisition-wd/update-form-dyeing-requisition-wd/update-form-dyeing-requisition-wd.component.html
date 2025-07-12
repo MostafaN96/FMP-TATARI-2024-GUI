@@ -88,6 +88,17 @@
                         </div>
                     </div>
 
+                    <!-- Exchange Rate -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>سعر الصرف</mat-label>
+                            <input type="text" matInput [(ngModel)]="exchangeRatePrice" [ngModelOptions]="{standalone: true}"
+                            (click)="$event.target.select()"
+                            placeholder="مثال: 50"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                        </mat-form-field>
+                    </div>
+                    
                     <!-- Price -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

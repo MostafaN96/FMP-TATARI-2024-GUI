@@ -76,7 +76,7 @@ export class UpdateReturnSellRequisitionWeComponent implements OnInit {
     if(type == "priceEG") {
       this.returnRequisitionWeForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.returnRequisitionWeForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.returnRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.returnRequisitionWeForm.controls['priceDollar'].value))
+      this.returnRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(this.returnRequisitionWeForm.controls['priceDollar'].value))
     }
   }
 

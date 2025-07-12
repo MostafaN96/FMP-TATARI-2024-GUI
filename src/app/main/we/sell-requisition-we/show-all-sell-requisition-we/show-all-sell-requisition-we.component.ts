@@ -2,9 +2,11 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 
 import { Router } from '@angular/router';
 
-// Angular Material Table
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortable } from '@angular/material/sort';
+// PrimeNG Table
+import { PrimeNGConfig } from 'primeng/api';
+import { Table } from 'primeng/table';
+import { FilterService } from 'primeng/api';
+import * as moment from 'moment';
 
 import { ConfirmationService } from 'primeng/api';
 
@@ -28,54 +30,36 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
   /////////////////// Variables ///////////////////
   fabrics: any[] = []
   titlePage = ""
-  //////////////////////////////////// Tabel Angular Material /////////////////////////////////
-  @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
-  displayedColumns: string[] = [
-    'number', 
-    'date', 
-    'seller_name', 
-    'delivery_car_name', 
-    'note', 
-    'confirm_approved', 
-    'details', 
-    'confirm'];
-  filter = "";
-  dataSourceSearchTabel: any;
-  filterSelectObj = [
-    {
-      name: 'رقم الإذن',
-      columnProp: 'number',
-      options: []
-    }, {
-      name: 'العميل',
-      columnProp: 'seller_name',
-      options: []
-    }, {
-      name: 'اسم السائق',
-      columnProp: 'delivery_car_name',
-      options: []
-    }
-  ]
-  filterValues = {};
+  //////////////////////////////////// PrimeNG /////////////////////////////////
+  @ViewChild('dt1') dt1: Table | undefined;
+  loading: boolean = true;
+  selectedSellerName: any[] = []
+  selectedDeliveryCarName: any[] = []
+
+  dateFilters: any
   startDate: any
   endDate: any
+
+  isShowConfirmDirectSell = false
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _sellRequisitionWeService: SellRequisitionWeService,
-    private _constantsService: ConstantsService,
-    private _sessionManagerService: SessionManagerService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
     private confirmationService: ConfirmationService,
+    private primengConfig: PrimeNGConfig,
+    private filterService: FilterService,
     private router: Router
 
   ) {
-    this._sharedComponentService.angularMaterialTableConfig()
-    if(this.router.url === '/dashboard/show-all-sell-requisition-direct-we') {
+    if (this.router.url === '/dashboard/show-all-sell-requisition-direct-we') {
+      this.isShowConfirmDirectSell = true
       this.titlePage = "إظهار جميع اذونات التسليم المباشر"
       this.getData("direct");
     }
     else {
-      this.displayedColumns.pop()
+      this.isShowConfirmDirectSell = false
       this.titlePage = "إظهار جميع اذونات بيع القماش"
       this.getData();
     }
@@ -83,81 +67,194 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sortColumns.sort(({ id: 'number', start: 'desc'}) as MatSortable);
-  }
-
-  getData(isDirect?:string) {
-    this._sellRequisitionWeService.selectAll(isDirect).subscribe((response: any) => {
-      this.fabrics = response
-      this.dataSourceSearchTabel = new MatTableDataSource(this.fabrics);
-
-      this.dataSourceSearchTabel.sort = this.sortColumns;
-
-      // Setup Filter
-      this._sharedComponentService.setupFilter(response, this.dataSourceSearchTabel, this.filterSelectObj)
-    })
+    this.customFilterForSellerName();
+    this.customFilterForDeliveryCarName();
   }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  applyFilter(filterValue: string) {
-    this.dataSourceSearchTabel = new MatTableDataSource(this.fabrics);
-    this.dataSourceSearchTabel.sort = this.sortColumns;
-    this.dataSourceSearchTabel.filter = filterValue.trim().toLowerCase();
+  customFilterForSellerName() {
+    const customFilterName = "seller-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedSellerName
+
+      if (this.selectedSellerName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].seller_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForDeliveryCarName() {
+    const customFilterName = "delivery-car-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedDeliveryCarName
+
+      if (this.selectedDeliveryCarName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].delivery_car_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  selectedDate(event) {
+    this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
+      filter = this.dateFilters
+
+      if (event != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+          if (filter[0] != null && filter[1] != null) {
+
+            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&
+              moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
+              return true;
+            }
+
+          } else if (filter[0] != null && filter[1] == null) {
+
+            if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    })
+    this.dt1?.filter(event, "date", "date-filter")
   }
 
   // Reset table filters
-  resetFilters(filterSelectObj) {
-    this.filterValues = {}
-    filterSelectObj.forEach((value, key) => {
-      value.modelValue = undefined;
-    })
-    this.dataSourceSearchTabel.filter = "";
-    this.startDate = null
-    this.endDate = null
-    this.getData();
+  clear(table: Table) {
+    table.clear();
+    table.reset();
+    this.selectedSellerName = []
+    this.selectedDeliveryCarName = []
+    this.dateFilters = []
   }
+
+
+  onMultiselectedSellerName(event) {
+    this.selectedSellerName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedDeliveryCarName(event) {
+    this.selectedDeliveryCarName = event
+    this.dt1?._filter()
+  }
+
+  getData(isDirect?: string) {
+    this._sellRequisitionWeService.selectAll(isDirect).subscribe((response: any) => {
+      this.fabrics = response
+
+      // PrimeNG Table
+      this.primengConfig.ripple = true;
+      this.loading = false;
+    })
+  }
+
+
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
 
   confirmCancelReceived(event: Event, element, isApproved) {
-    if(isApproved == "0") {
+    if (isApproved == "0") {
       this.popupReceived(event, element, 'تأكيد الأستلام', "1")
     } else if (isApproved == "1") {
       this.popupReceived(event, element, 'إلغاء الأستلام', "0")
     }
   }
-  
-popupReceived(event: Event, element, message, isApproved) {
-  this.confirmationService.confirm({
+
+  popupReceived(event: Event, element, message, isApproved) {
+    this.confirmationService.confirm({
       target: event.target!,
       message: message,
       acceptLabel: 'نعم',
       rejectLabel: 'لا',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-          this.executeConfirmReceived(element, isApproved);
+        this.executeConfirmReceived(element, isApproved);
       },
       reject: () => {
       }
-  });
-}
-
-executeConfirmReceived(data, isApproved) {
-  this._constantsService.spinner.show()
-  const formData = {
-    isApproved: isApproved,
-    personid: this._sessionManagerService.Person_ID,
-    ipaddress: this._sessionManagerService.IP_ADDRESS
+    });
   }
-  this._sellRequisitionWeService.confirmReceived(formData, data.id).subscribe((response: any) => {
-    this._constantsService.spinner.hide();
-    if (response.msg == "data updated") {
-      this._constantsService.successUpdateMessage()
-      this.getData()
+
+  executeConfirmReceived(data, isApproved) {
+    this._constantsService.spinner.show()
+    const formData = {
+      isApproved: isApproved,
+      personid: this._sessionManagerService.Person_ID,
+      ipaddress: this._sessionManagerService.IP_ADDRESS
     }
-    else {
+    this._sellRequisitionWeService.confirmReceived(formData, data.id).subscribe((response: any) => {
+      this._constantsService.spinner.hide();
+      if (response.msg == "data updated") {
+        this._constantsService.successUpdateMessage()
+        this.getData()
+      }
+      else {
         this._constantsService.userErrorMessage()
-    }
-  })
-}
+      }
+    })
+  }
 
 }

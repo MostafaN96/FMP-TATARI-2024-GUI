@@ -381,7 +381,7 @@
 
                                         <!-- requisition_number Column -->
                                         <td>
-                                            <a [routerLink]="[goToRequisitionPage(element.type_of_requisition)]"
+                                            <a [routerLink]="[goToRequisitionPage(element.type_of_requisition, element?.is_order)]"
                                                 [queryParams]="{id: element.requisition_id}">
                                                 {{ element.number}}
                                             </a>

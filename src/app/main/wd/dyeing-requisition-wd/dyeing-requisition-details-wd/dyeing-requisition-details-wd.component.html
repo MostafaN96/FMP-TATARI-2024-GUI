@@ -91,6 +91,17 @@
                                     <td mat-footer-cell *matFooterCellDef> <b> الإجمالي </b> </td>
                                 </ng-container>
 
+                                <!-- we_fabric_order_requisition_name Column -->
+                                <ng-container matColumnDef="we_fabric_order_requisition_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>طلبية</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.we_fabric_order_requisition_name }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
                                 <!-- fabric_name Column -->
                                 <ng-container matColumnDef="fabric_name">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -138,12 +149,23 @@
                                 <!-- quantity Column -->
                                 <ng-container matColumnDef="quantity">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>الكمية</b>
+                                        <b>كمية الخام</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
                                         {{ element.quantity | number}}
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef> {{getTotalQuantity() | number}} </td>
+                                </ng-container>
+
+                                <!-- Dyeing Quantity Column -->
+                                <ng-container matColumnDef="dyeing_quantity">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>كمية المصبوغ</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.dyeing_quantity | number}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> {{getTotalDyeingQuantity() | number}} </td>
                                 </ng-container>
 
                                 <!-- fabric_piece Column -->
@@ -260,7 +282,9 @@
                                     <td mat-cell *matCellDef="let element">
                                         {{_sharedComponentService.getDyeingCost((element.is_calc_dyeing_net == '1') ? element.dyeing_quantity : element.quantity,
                                         element.dyeingServices,
-                                        (+element.dyeing_fee + element.added_cost), element.fabric_piece) | number}}
+                                        +element.dyeing_fee, 
+                                        element.fabric_piece) | number}}
+                                        <!-- (+element.dyeing_fee + element.added_cost), element.fabric_piece) | number}} -->
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef>
                                         {{_sharedComponentService.getSumTotalDyeingCost(dataSourceSearchTabel?.filteredData)
@@ -273,9 +297,15 @@
                                         <b>إجمالي التكلفة</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
-                                        {{_sharedComponentService.getTotalCost(element.price, (element.is_calc_dyeing_net == '1') ? element.dyeing_quantity : element.quantity,
+                                        {{_sharedComponentService.getTotalCost(
+                                            element.price, 
+                                            (element.is_calc_dyeing_net == '1') ? element.dyeing_quantity : element.quantity,
                                         element.dyeingServices,
-                                        (+element.dyeing_fee + element.added_cost), element.fabric_piece) | number}}
+                                        +element.dyeing_fee, 
+                                        element.fabric_piece,
+                                        element.added_cost
+                                        ) | number}}
+                                        <!-- (+element.dyeing_fee + element.added_cost), element.fabric_piece) | number}} -->
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef>
                                         {{_sharedComponentService.getSumTotalCost(dataSourceSearchTabel?.filteredData) |
@@ -417,9 +447,15 @@
                                         <b>إجمالي التكلفة</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
-                                        {{_sharedComponentService.getTotalCost(element.price,(element.is_calc_dyeing_net == '1') ? element.dyeing_quantity : element.quantity,
+                                        {{_sharedComponentService.getTotalCost(
+                                            element.price,
+                                            (element.is_calc_dyeing_net == '1') ? element.dyeing_quantity : element.quantity,
                                         element.dyeingServices,
-                                        (+element.dyeing_fee + element.added_cost), element.fabric_piece) | number}}
+                                        +element.dyeing_fee, 
+                                        element.fabric_piece,
+                                        element.added_cost
+                                        ) | number}}
+                                        <!-- (+element.dyeing_fee + element.added_cost), element.fabric_piece) | number}} -->
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef>
                                         {{_sharedComponentService.getSumTotalCost(dataSourceSearchTabel?.filteredData) |
@@ -432,9 +468,13 @@
                                         <b>وسطي سعر الكيلو</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
-                                        {{_sharedComponentService.getTotalCost(element.price, (element.is_calc_dyeing_net == '1') ? element.dyeing_quantity : element.quantity,
+                                        {{(_sharedComponentService.getTotalCost(
+                                            element.price, (element.is_calc_dyeing_net == '1') ? element.dyeing_quantity : element.quantity,
                                         element.dyeingServices,
-                                        (+element.dyeing_fee + element.added_cost), element.fabric_piece) / element.dyeing_quantity | number}}
+                                        +element.dyeing_fee, 
+                                        element.fabric_piece,
+                                        element.added_cost
+                                        ) / element.dyeing_quantity) | number}}
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef></td>
                                 </ng-container>

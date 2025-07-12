@@ -23,6 +23,7 @@ export class UpdateTransportWcWdRequisitionWcComponent implements OnInit {
 
   requisitionId!: string;
   warehouseId!: string;
+  exchangeRatePrice = 0
 
   @Input() selectedData: any
   transportWcWdRequisitionWcForm: FormGroup = new FormGroup({
@@ -44,8 +45,8 @@ export class UpdateTransportWcWdRequisitionWcComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public matcher: MyErrorStateMatcher,
     private _wdTransportWcWdRequisitionDetailsService: WdTransportWcWdRequisitionDetailsService,
-    private _sessionManagerService: SessionManagerService,
-    private _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
+    public _constantsService: ConstantsService,
 
   ) { }
 
@@ -58,6 +59,8 @@ export class UpdateTransportWcWdRequisitionWcComponent implements OnInit {
   }
 
   ngOnChanges() {
+    this.exchangeRatePrice = parseFloat((this.selectedData?.price / this.selectedData?.price_dollar).toFixed(3))
+
     this.transportWcWdRequisitionWcForm.controls['date'].setValue(this.selectedData?.date)
     this.transportWcWdRequisitionWcForm.controls['note'].setValue(this.selectedData?.note)
     this.transportWcWdRequisitionWcForm.controls['price'].setValue(this.selectedData?.price)
@@ -71,9 +74,9 @@ export class UpdateTransportWcWdRequisitionWcComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transportWcWdRequisitionWcForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transportWcWdRequisitionWcForm.controls['price'].value))
+      this.transportWcWdRequisitionWcForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.transportWcWdRequisitionWcForm.controls['price'].value, this.exchangeRatePrice))
     } else if (type == "priceDollar") {
-      this.transportWcWdRequisitionWcForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transportWcWdRequisitionWcForm.controls['priceDollar'].value))
+      this.transportWcWdRequisitionWcForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.transportWcWdRequisitionWcForm.controls['priceDollar'].value, this.exchangeRatePrice))
     }
   }
 

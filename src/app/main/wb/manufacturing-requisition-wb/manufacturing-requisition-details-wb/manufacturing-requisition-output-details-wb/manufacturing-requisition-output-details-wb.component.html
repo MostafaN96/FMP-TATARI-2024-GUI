@@ -29,6 +29,17 @@
                                     <td mat-cell *matCellDef="let index = index"> {{index + 1}} </td>
                                 </ng-container>
 
+                                        <!-- wc_fabric_order_requisition_name Column -->
+                                        <ng-container matColumnDef="wc_fabric_order_requisition_name">
+                                            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                                <b>طلبية</b>
+                                            </th>
+                                            <td mat-cell *matCellDef="let element">
+                                                {{ element.wc_fabric_order_requisition_name }}
+                                            </td>
+                                            <td mat-footer-cell *matFooterCellDef> </td>
+                                        </ng-container>
+
                                 <!-- yarn_name Column -->
                                 <ng-container matColumnDef="fabric_name">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -220,6 +231,30 @@
                                     </th>
                                     <td mat-cell *matCellDef="let element">
                                         {{ element.statement }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- fabric_order_requisitions Column -->
+                                <ng-container matColumnDef="fabric_order_requisitions">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>اذون التشكيل</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <table class="w-100">
+                                            <tbody>
+                                                <tr
+                                                    *ngFor="let fabricOrderRequisition of element.fabricOrderRequisitions">
+                                                    <a [routerLink]="[goToRequisitionPage(fabricOrderRequisition?.type_of_requisition, element)]"
+                                                        [queryParams]="{id: fabricOrderRequisition?.requisition_id}">
+                                                        <td>{{fabricOrderRequisition.type_of_requisition}}</td>
+                                                        <td>
+                                                            ({{ fabricOrderRequisition.number}})
+                                                        </td>
+                                                    </a>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>

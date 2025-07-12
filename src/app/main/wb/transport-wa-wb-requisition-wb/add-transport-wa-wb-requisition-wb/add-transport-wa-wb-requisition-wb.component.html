@@ -10,7 +10,7 @@
     <!-- Main Page Form -->
     <div [class]="_sharedComponentService.mainPageFormClass">
         <form [formGroup]="transportWaWbForm" (ngSubmit)="onTransportWaWbRequisition()">
-            <div [class]="_sharedComponentService.subMainPageForm2Class">
+            <div [class]="_sharedComponentService.subMainPageForm2Class" class="overflow-auto">
                 <!-- Form Body -->
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
@@ -76,7 +76,7 @@
 
 
                 <!-- Form Builder Section -->
-                <div class="row row-cols-1">
+                    <div class="row row-cols-1">
                     <div class="col">
                         <button type="button" class="btn-add-item btn-add-pos" (click)="addItem()"
                                 *ngIf="transportWaWbForm">
@@ -89,11 +89,11 @@
                                         التسلسل
                                     </th>
 
-                                    <th style="max-width: 100px;">
-                                        الطلبية
+                                    <th style="min-width: 120px;">
+                                        من طلبية
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="min-width: 120px;">
                                         اسم الصنف
                                     </th>
 
@@ -101,18 +101,47 @@
                                         كود الصنف
                                     </th>
 
-                                    <th style="max-width: 60px;">
+                                    <th style="min-width: 60px;">
                                         اللوط
                                     </th>
 
-                                    <th style="max-width: 100px;">
+                                    <th style="min-width: 120px;">
                                         رقم الرسالة
                                     </th>
 
-                                    <th style="max-width: 120px;">
+                                    <th style="min-width: 120px;">
                                         المصنع
                                     </th>
 
+                                    <th style="min-width: 120px;">
+                                        الى طلبية
+                                    </th>
+
+                                    <th style="min-width: 140px;">
+                                        القماش المراد تصنيعه
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        كود القماش
+                                    </th>
+
+                                    <th style="max-width: 80px;">
+                                        الكمية المتوفرة
+                                    </th>
+
+                                    <th style="max-width: 80px;">
+                                        الكمية المطلوبة
+                                    </th>
+
+                                    <!-- exceeded_ratio -->
+                                    <th style="max-width: 80px;">
+                                        النسبة الزائدة
+                                    </th>
+
+                                    <th style="max-width: 60px;">
+                                        الكمية
+                                    </th>
+                                    
                                     <th style="max-width: 60px;"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">
                                         السعر
@@ -121,14 +150,6 @@
                                     <th style="max-width: 60px;"
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">
                                         السعر دولار
-                                    </th>
-
-                                    <th style="max-width: 80px;">
-                                        الكمية المتوفرة
-                                    </th>
-
-                                    <th style="max-width: 60px;">
-                                        الكمية
                                     </th>
 
                                     <th style="max-width: 100px;"
@@ -140,17 +161,9 @@
                                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">
                                         الاجمالي دولار
                                     </th>
-                                    
+
                                     <th style="max-width: 100px;">
                                         الى الرسالة
-                                    </th>
-
-                                    <th style="max-width: 120px;">
-                                        القماش المراد تصنيعه
-                                    </th>
-
-                                    <th style="max-width: 60px;">
-                                        كود القماش
                                     </th>
 
                                     <th style="max-width: 70px;">
@@ -173,28 +186,28 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
-                                        <!-- order -->
-                                        <td class="table-td" style="max-width: 180px;">
-                                            <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' 
-                                            (filtering)="onFilteringYarnOrder($event)"
-                                            (change)='selectYarnOrder($event, row, index)'
-                                                [placeholder]='textYarnOrder' [autofill]='autofill'
-                                                formControlName="yarnOrderId"
+                                        <!-- from order -->
+                                        <td class="table-td" style="min-width: 120px;">
+                                            <ejs-autocomplete [dataSource]='fromYarnOrder' [fields]='fieldsFromYarnOrder' 
+                                            (filtering)="onFilteringFromYarnOrder($event)"
+                                            (change)='selectFromYarnOrder($event, row, index)'
+                                                [placeholder]='textFromYarnOrder' [autofill]='autofill'
+                                                formControlName="fromYarnOrderId"
                                                 [errorStateMatcher]="matcher" 
                                                 >
                                             </ejs-autocomplete>
                                             <small class="text-danger"
-                                            *ngIf="row.get('yarnOrderId').hasError('pattern')"
+                                            *ngIf="row.get('fromYarnOrderId').hasError('pattern')"
                                             [innerHTML]="_sharedComponentService.invalid_message">
                                             </small>
                                             <small class="text-danger"
-                                                *ngIf="row.get('yarnOrderId').hasError('required') && (row.get('yarnOrderId').dirty 
-                                                || row.get('yarnOrderId').touched)"
+                                                *ngIf="row.get('fromYarnOrderId').hasError('required') && (row.get('fromYarnOrderId').dirty 
+                                                || row.get('fromYarnOrderId').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 120px;">
+                                        <td class="table-td" style="min-width: 120px;">
                                             <ejs-autocomplete [dataSource]='yarns[index]' [fields]='fieldsYarn' 
                                             (filtering)="onFilteringYarnName($event, index)"
                                                 [placeholder]='textYarn' [autofill]='autofill'
@@ -222,7 +235,7 @@
                                         </td>
 
                                         <!-- Lot -->
-                                        <td class="table-td" style="max-width: 180px;">
+                                        <td class="table-td" style="min-width: 60px;">
                                             <ejs-autocomplete [dataSource]='lots' [fields]='fieldsLot' 
                                             (filtering)="onFilteringLot($event)"
                                             (change)='selectYarnLot($event, row, index)'
@@ -243,7 +256,7 @@
                                         </td>
 
                                         <!-- From Consigment Yarn -->
-                                        <td class="table-td" style="max-width: 180px;">
+                                        <td class="table-td" style="min-width: 120px;">
                                             <ejs-autocomplete [dataSource]='fromConsigmentsYarns[index]' [fields]='fieldsFromConsigmentYarn' 
                                             (filtering)="onFilteringFromConsigmentYarn($event, index)"
                                             (change)='selectFromConsigmentYarn($event, row, index)'
@@ -264,7 +277,7 @@
                                         </td>
                                         
                                         <!-- Industry -->
-                                        <td class="table-td">
+                                        <td class="table-td" style="min-width: 120px;">
                                             <ejs-autocomplete [dataSource]='industries' [fields]='fieldsIndustry' 
                                             (filtering)="onFilteringIndustry($event)"
                                                 [placeholder]='textIndustry' [autofill]='autofill'
@@ -281,6 +294,130 @@
                                                 || row.get('industryId').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
+                                        </td>
+
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='yarnOrder[index]' [fields]='fieldsYarnOrder' 
+                                            (filtering)="onFilteringYarnOrder($event, index)"
+                                            (change)='selectYarnOrder($event, row, index)'
+                                                [placeholder]='textYarnOrder' [autofill]='autofill'
+                                                formControlName="waYarnOrderRequisitionDetailsId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('waYarnOrderRequisitionDetailsId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('waYarnOrderRequisitionDetailsId').hasError('required') && (row.get('waYarnOrderRequisitionDetailsId').dirty 
+                                                || row.get('waYarnOrderRequisitionDetailsId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <!-- fabric to be manufactured -->
+                                        <td class="table-td" style="min-width: 140px;">
+                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric' 
+                                            (filtering)="onFilteringFabricName($event, index)"
+                                                [placeholder]='textFabric' [autofill]='autofill'
+                                                formControlName="fabricToBeManufacturedId" (change)='selectFabric($event, row, index)'
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('fabricToBeManufacturedId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('fabricToBeManufacturedId').hasError('required') && (row.get('fabricToBeManufacturedId').dirty 
+                                                || row.get('fabricToBeManufacturedId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label> 
+                                                    كود القماش
+                                                </mat-label>
+                                                <input matInput placeholder="كود القماش" readonly formControlName="fabricCode">
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label> 
+                                                    الكمية المتوفرة
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="الكمية المتوفرة" value="{{currentQuantity[index]}}" readonly>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <td class="table-td" style="max-width: 80px;">
+                                            <mat-form-field class="w-100">
+                                                <mat-label> 
+                                                    الكمية المطلوبة
+                                                </mat-label>
+                                                <input [disabled]="true" matInput placeholder="الكمية المطلوبة" value="{{neededYarnQuantity[index]}}" readonly>
+                                            </mat-form-field>
+                                        </td>
+                                        
+                                        <!-- exceeded_ratio -->
+                                        <td class="table-td" style="max-width: 60px">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>النسبة الزائدة</mat-label>
+                                                <input autocomplete="off" type="text" matInput
+                                                    formControlName="exceededRatio" placeholder="مثال: 5"
+                                                    [errorStateMatcher]="matcher" (blur)="changeExceededRatio($event, row, index)"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                <mat-error
+                                                    *ngIf="row.get('exceededRatio').hasError('required') && (row.get('exceededRatio').dirty 
+                                                                                            || row.get('exceededRatio').touched)">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('exceededRatio').hasError('required')">
+                                                    <label [innerHTML]="_sharedComponentService.required_field">
+                                                    </label>
+                                                </mat-error>
+                                                <mat-error *ngIf="row.get('exceededRatio').hasError('pattern')">
+                                                    <label
+                                                        [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                    </label>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+
+                                        <!-- Initial Quantity -->
+                                        <td class="table-td" style="max-width: 60px;">
+                                            <mat-form-field class="example-full-width w-100">
+                                                <mat-label>الكمية</mat-label>
+                                                <input autocomplete="off" type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
+                                                    [errorStateMatcher]="matcher" 
+                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1'); "
+                                                    (change)="validate(row, index)"
+                                                    (blur)="getRatioWithValue($event, row, index)"
+                                                    required/>
+                                                    <mat-error class="text-danger"
+                                                    *ngIf="row.get('quantity').hasError('incorrect')">
+                                                    الكمية المدخلة غير متوفرة
+                                                    </mat-error>
+                                                    <mat-error *ngIf="row.get('quantity').hasError('required')">
+                                                        <label [innerHTML]="_sharedComponentService.required_field">
+                                                        </label>
+                                                    </mat-error>
+                                                    <mat-error *ngIf="row.get('quantity').hasError('required') && (row.get('quantity').dirty 
+                                                    || row.get('quantity').touched)">
+                                                        <label [innerHTML]="_sharedComponentService.required_field">
+                                                        </label>
+                                                    </mat-error>
+                                                    <mat-error *ngIf="row.get('quantity').hasError('pattern')">
+                                                        <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                                        </label>
+                                                    </mat-error>
+                                            </mat-form-field>
                                         </td>
 
                                         <!-- Price -->
@@ -351,44 +488,6 @@
                                             </mat-form-field>
                                         </td>
 
-                                        <td class="table-td" style="max-width: 80px;">
-                                            <mat-form-field class="w-100">
-                                                <mat-label> 
-                                                    الكمية المتوفرة
-                                                </mat-label>
-                                                <input [disabled]="true" matInput placeholder="الكمية المتوفرة" value="{{currentQuantity[index]}}" readonly>
-                                            </mat-form-field>
-                                        </td>
-
-                                        <!-- Initial Quantity -->
-                                        <td class="table-td" style="max-width: 60px;">
-                                            <mat-form-field class="example-full-width w-100">
-                                                <mat-label>الكمية</mat-label>
-                                                <input autocomplete="off" type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
-                                                    [errorStateMatcher]="matcher" 
-                                                    oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1'); "
-                                                    (change)="validate(row, index)"
-                                                    required/>
-                                                    <mat-error class="text-danger"
-                                                    *ngIf="row.get('quantity').hasError('incorrect')">
-                                                    الكمية المدخلة غير متوفرة
-                                                    </mat-error>
-                                                    <mat-error *ngIf="row.get('quantity').hasError('required')">
-                                                        <label [innerHTML]="_sharedComponentService.required_field">
-                                                        </label>
-                                                    </mat-error>
-                                                    <mat-error *ngIf="row.get('quantity').hasError('required') && (row.get('quantity').dirty 
-                                                    || row.get('quantity').touched)">
-                                                        <label [innerHTML]="_sharedComponentService.required_field">
-                                                        </label>
-                                                    </mat-error>
-                                                    <mat-error *ngIf="row.get('quantity').hasError('pattern')">
-                                                        <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
-                                                        </label>
-                                                    </mat-error>
-                                            </mat-form-field>
-                                        </td>
-
                                          <!-- total -->
                                          <td class="align-middle text-center"
                                          *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">
@@ -407,7 +506,7 @@
 
                                         
                                         <!-- Consigment Yarn -->
-                                        <td class="table-td" style="max-width: 180px;">
+                                        <td class="table-td" style="min-width: 120px;">
                                             <ejs-autocomplete [dataSource]='consigmentsYarns' [fields]='fieldsConsigmentYarn' 
                                             (filtering)="onFilteringConsigmentYarn($event)"
                                             (change)='selectConsigmentYarn($event, row)'
@@ -425,35 +524,6 @@
                                                 || row.get('consigmentYarnNumber').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
-                                        </td>
-
-                                        <!-- fabric to be manufactured -->
-                                        <td class="table-td" style="max-width: 120px;">
-                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric' 
-                                            (filtering)="onFilteringFabricName($event, index)"
-                                                [placeholder]='textFabric' [autofill]='autofill'
-                                                formControlName="fabricToBeManufacturedId" (change)='selectFabric($event, row, index)'
-                                                [errorStateMatcher]="matcher" 
-                                                >
-                                            </ejs-autocomplete>
-                                            <small class="text-danger"
-                                            *ngIf="row.get('fabricToBeManufacturedId').hasError('pattern')"
-                                            [innerHTML]="_sharedComponentService.invalid_message">
-                                            </small>
-                                            <small class="text-danger"
-                                                *ngIf="row.get('fabricToBeManufacturedId').hasError('required') && (row.get('fabricToBeManufacturedId').dirty 
-                                                || row.get('fabricToBeManufacturedId').touched)"
-                                                [innerHTML]="_sharedComponentService.required_field">
-                                            </small>
-                                        </td>
-
-                                        <td class="table-td" style="max-width: 60px;">
-                                            <mat-form-field class="w-100">
-                                                <mat-label> 
-                                                    كود القماش
-                                                </mat-label>
-                                                <input matInput placeholder="كود القماش" readonly formControlName="fabricCode">
-                                            </mat-form-field>
                                         </td>
 
                                         <!-- Document -->
@@ -517,14 +587,16 @@
                                   <td>الاجمالي</td>
                                 
                                   <td colspan="7"></td>
-                                  <td colspan="2"
+                                  <td colspan="4"
                                   *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])"></td>
+                                  <td colspan="1"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(transportWaWbForm, 'items', 'quantity') | number}}</td>
+                                  <td colspan="2"></td>
                                   <td class="text-center"
                                   *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">{{_sharedComponentService.getTotalPriceXQuantityForm(transportWaWbForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center"
                                   *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">{{_sharedComponentService.getTotalPriceXQuantityForm(transportWaWbForm, 'items', 'quantity', 'priceDollar') | number}}</td>
-                                  <td colspan="8"></td>
+                                  <td colspan="7"></td>
                                 </tr>
                               </tfoot>
 
@@ -532,6 +604,7 @@
 
                     </div>
                 </div>
+
             </div>
             <!-- Buttons Section -->
             <div [class]="_sharedComponentService.btnSectionClass">

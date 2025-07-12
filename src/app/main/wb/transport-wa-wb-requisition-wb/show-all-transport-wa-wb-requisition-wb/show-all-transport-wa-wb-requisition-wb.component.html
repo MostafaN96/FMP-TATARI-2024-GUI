@@ -17,7 +17,8 @@
                         <div id="table-header-data-report">
                             <p-table #dt1 [value]="yarns" dataKey="id" columnResizeMode="expand"
                                 styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
-                                [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
+                                [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20, 50, {showAll: 'All'}]" 
+                                [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
                                 scrollHeight="600px" [filterDelay]="0" sortField="number" [responsive]="true"
                                 [sortOrder]="0" appendTo="body" [autoLayout]="true">
                                 <ng-template data-html2canvas-ignore="true" pTemplate="caption">
@@ -120,6 +121,14 @@
                                                             </th>
 
                                                             <th style="width: 80px;">
+                                                                من طلبية
+                                                            </th>
+
+                                                            <th style="width: 80px;">
+                                                                الى طلبية
+                                                            </th>
+
+                                                            <th style="width: 80px;">
                                                                 نوع الخيط
                                                             </th>
 
@@ -200,6 +209,14 @@
                                                         </td>
 
                                                         <td style="width: 80px;">
+                                                            {{item.from_wa_yarn_order_requisition_name}}
+                                                        </td>
+
+                                                        <td style="width: 80px;">
+                                                            {{item.wa_yarn_order_requisition_name}}
+                                                        </td>
+
+                                                        <td style="width: 80px;">
                                                             {{item.yarn_name}}
                                                         </td>
 
@@ -231,6 +248,8 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td style="width: 80px;">الإجمالي</td>
+                                                        <td style="width: 80px;"></td>
+                                                        <td style="width: 80px;"></td>
                                                         <td style="width: 80px;"></td>
                                                         <td style="width: 80px;"></td>
                                                         <td style="width: 80px;"></td>

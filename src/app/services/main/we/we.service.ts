@@ -22,6 +22,16 @@ export class WeService {
         })
       });
   }
+  
+  selectStoreWeByWeDyedFabricOrderRequisitionIdOfOrderDyedFabrics(weDyedFabricOrderRequisitionId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-by-order-store-we-of-order-dyed-fabrics/${weDyedFabricOrderRequisitionId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
 
   selectStoreBySupplierForReturnWe(supplierId: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}select-store-by-supplier-for-return-we/${supplierId}`;

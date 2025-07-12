@@ -15,17 +15,17 @@
             <div class="col">
                 <div class="btn-export-section">
                     <a
-                        (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير البيع')">
+                        (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير طلبيات عملاء الجاهز')">
                         <i title="PDF" class="far fa-file-pdf"></i>
                     </a>
 
                     <a
-                        (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'تقرير البيع')">
+                        (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'تقرير طلبيات عملاء الجاهز')">
                         <i title="Excel" class="far fa-file-excel px-2"></i>
                     </a>
 
                     <a
-                        (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير البيع', 'table-data-2')">
+                        (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير طلبيات عملاء الجاهز', 'table-data-2')">
                         <i title="Print" class="fas fa-print pe-2"></i>
                     </a>
                 </div>
@@ -170,6 +170,14 @@
                                             </div>
                                         </th>
 
+                                        <!-- color_name Column -->
+                                        <th pResizableColumn pSortableColumn="color_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                اللون<p-sortIcon data-html2canvas-ignore="true" field="color_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
                                         <!-- needed_quantity Column -->
                                         <th pResizableColumn pSortableColumn="needed_quantity">
                                             <div class="flex justify-content-between align-items-center">
@@ -177,8 +185,8 @@
                                             </div>
                                         </th>
 
-                                        <!-- executed_quantity Column -->
-                                        <th pResizableColumn pSortableColumn="executed_quantity">
+                                        <!-- net_current_quantity Column -->
+                                        <th pResizableColumn pSortableColumn="net_current_quantity">
                                             <div class="flex justify-content-between align-items-center">
                                                 المنتهي
                                             </div>
@@ -188,6 +196,20 @@
                                         <th pResizableColumn pSortableColumn="current_quantity">
                                             <div class="flex justify-content-between align-items-center">
                                                 المتبقي
+                                            </div>
+                                        </th>
+
+                                        <!-- over_current_quantity Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                الزائدة
+                                            </div>
+                                        </th>
+
+                                        <!-- over_current_quantity_ratio Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                نسبة الزيادة
                                             </div>
                                         </th>
 
@@ -221,19 +243,34 @@
                                             {{ element.dyed_fabric_name }}
                                         </td>
 
+                                        <!-- color_name Column -->
+                                        <td>
+                                            {{ element.color_name }} ({{ element.color_code }})
+                                        </td>
+
                                         <!-- needed_quantity Column -->
                                         <td>
                                             {{ element.needed_quantity | number}}
                                         </td>
 
-                                        <!-- executed_quantity Column -->
+                                        <!-- net_current_quantity Column -->
                                         <td>
-                                            {{ element.needed_quantity - element.current_quantity | number}}
+                                            {{ element.net_current_quantity  | number}}
                                         </td>
 
                                         <!-- current_quantity Column -->
                                         <td>
                                             {{ element.current_quantity | number}}
+                                        </td>
+
+                                        <!-- over_current_quantity Column -->
+                                        <td>
+                                            {{ element.over_current_quantity | number}}
+                                        </td>
+
+                                        <!-- over_current_quantity_ratio Column -->
+                                        <td>
+                                            {{ element.over_current_quantity_ratio | number}}%
                                         </td>
 
                                     </tr>
@@ -259,6 +296,9 @@
 
                                         <!-- dyed_fabric_name Column -->
                                         <td></td>
+
+                                        <!-- color_name Column -->
+                                        <td></td>
                                         
                                         <!-- needed_quantity Column -->
                                         <td>
@@ -266,18 +306,27 @@
                                                 null ? results: dt1.filteredValue, 'needed_quantity') | number}}
                                         </td>
 
-                                        <!-- executed_quantity Column -->
+                                        <!-- net_current_quantity Column -->
                                         <td>
-                                            {{ _sharedComponentService.getTotalQuantity(dt1?.filteredData ==
-                                                null ? results: dt1?.filteredData, 'needed_quantity') - 
-                                                _sharedComponentService.getTotalQuantity(dt1?.filteredData ==
-                                                null ? results: dt1?.filteredData, 'current_quantity') | number}}
+                                            {{ (_sharedComponentService.getTotalQuantity( dt1?.filteredValue ==
+                                                null ? results: dt1?.filteredValue, 'net_current_quantity'))  | number}}
                                         </td>
                                         
                                         <!-- current_quantity Column -->
                                         <td>
                                             {{ _sharedComponentService.getTotalQuantity(dt1.filteredValue ==
                                                 null ? results: dt1.filteredValue, 'current_quantity') | number}}
+                                        </td>
+                                        
+                                        <!-- over_current_quantity Column -->
+                                        <td>
+                                            {{ _sharedComponentService.getTotalQuantity(dt1.filteredValue ==
+                                                null ? results: dt1.filteredValue, 'over_current_quantity') | number}}
+                                        </td>
+                                        
+                                        <!-- over_current_quantity_ratio Column -->
+                                        <td>
+                                            
                                         </td>
                                        
                                     </tr>

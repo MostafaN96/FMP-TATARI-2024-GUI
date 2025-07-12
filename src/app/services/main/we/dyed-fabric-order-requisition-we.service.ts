@@ -73,6 +73,20 @@ export class DyedFabricOrderRequisitionWeService {
       });
   }
 
+  // Select
+  selectOrdersForAddPurchaseWa(isClosed): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}opened-orders-for-purchase-wa`;
+    if(isClosed == "closed") {
+      url = `${this._constantsService.BASE_URL}${this.urlService}closed-orders-for-purchase-wa`;
+    }
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   closeOrderByRequisition(id: string): Observable<any> {
     let url = `${this._constantsService.BASE_URL}${this.urlService}close-order-by-requisition/${id}`;
 

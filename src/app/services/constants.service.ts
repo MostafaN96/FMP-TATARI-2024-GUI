@@ -689,6 +689,19 @@ export class ConstantsService {
       'add-transition-between-orders-requisition-wc', // [204]
       'show-all-transition-between-orders-requisition-wc', // [205]
       'show-all-transition-between-orders-requisition-wc/details', // [206]
+
+      // wa
+      'yarn-orders-report', // [207]
+
+      // wc
+      'fabric-orders-report', // [208]
+
+      'add-add-requisition-by-order-wc', // [209]
+      'show-all-add-requisition-wc/order-details', // [210]
+
+      'add-transition-between-orders-requisition-we', // [211]
+      'show-all-transition-between-orders-requisition-we', // [212]
+      'show-all-transition-between-orders-requisition-we/details', // [213]
     ]
   }
 

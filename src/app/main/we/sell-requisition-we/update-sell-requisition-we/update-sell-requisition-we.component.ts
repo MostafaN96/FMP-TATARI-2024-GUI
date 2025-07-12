@@ -27,6 +27,7 @@ export class UpdateSellRequisitionWeComponent implements OnInit {
 
   requisitionId!: string;
   deliveryCars: any
+  exchangeRatePrice = 0
 
   @Input() selectedData: any
   sellRequisitionWeForm: FormGroup = new FormGroup({
@@ -90,6 +91,8 @@ export class UpdateSellRequisitionWeComponent implements OnInit {
       this.deliveryCars = response
     })
 
+    this.exchangeRatePrice = parseFloat((this.selectedData?.price / this.selectedData?.price_dollar).toFixed(3))
+
     this.sellRequisitionWeForm.controls['weSellRequisitionId'].setValue(this.selectedData?.requisition_id)
     this.sellRequisitionWeForm.controls['deliveryCarId'].setValue(this.selectedData?.delivery_car_id)
     this.sellRequisitionWeForm.controls['date'].setValue(this.selectedData?.date)
@@ -105,9 +108,9 @@ export class UpdateSellRequisitionWeComponent implements OnInit {
 // price
 changePrice(type) {
   if(type == "priceEG") {
-    this.sellRequisitionWeForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.sellRequisitionWeForm.controls['price'].value))
+    this.sellRequisitionWeForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.sellRequisitionWeForm.controls['price'].value, this.exchangeRatePrice))
   } else if (type == "priceDollar") {
-    this.sellRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.sellRequisitionWeForm.controls['priceDollar'].value))
+    this.sellRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.sellRequisitionWeForm.controls['priceDollar'].value, this.exchangeRatePrice))
   }
 }
 

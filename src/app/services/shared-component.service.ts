@@ -413,7 +413,7 @@ setTimeout(() => {
         sum = sum + (quantity * element.price)
       }
     }
-    sum = sum + (dyeingFee * quantity)
+    sum = sum + (this.notZero(dyeingFee) * quantity)
     return sum
   }
 
@@ -422,7 +422,7 @@ setTimeout(() => {
     for (let index = 0; index < dataSourceSearchTabel?.length; index++) {
       const element = dataSourceSearchTabel[index];
       sum = sum + this.getDyeingCost(element.quantity, element.dyeingServices,
-        parseFloat(element.dyeing_fee) + parseFloat(element.added_cost), element.fabric_piece)
+         parseFloat(element.dyeing_fee), element.fabric_piece)
     }
     return sum
   }
@@ -438,28 +438,57 @@ setTimeout(() => {
     return sum
   }
 
-  getTotalCost(price: number, quantity: number, services: any, dyeingFee: number, fabricPiece: number) {
+  getTotalCost(
+    price: number, 
+    quantity: number, 
+    services: any, 
+    dyeingFee: number, 
+    fabricPiece: number,
+    addedCost: number) {
+      console.log("price :::: ", price);
+      console.log("quantity :::: ", quantity);
+      console.log("dyeingFee :::: ", dyeingFee);
+      console.log("fabricPiece :::: ", fabricPiece);
+      console.log("addedCost :::: ", addedCost);
+      
+      
+      let sumCostWithoutFabricPiece = 0
     let sum = 0
 
     for (let index = 0; index < services.length; index++) {
       const element = services[index];
       if (element.is_fabric_piece) {
-        sum = sum + (element.price * fabricPiece)
+        sum = sum + (parseFloat(String(element.price)) * fabricPiece)
       }
       else {
-        sum = sum + (quantity * element.price)
+        sumCostWithoutFabricPiece = sumCostWithoutFabricPiece + parseFloat(String(element.price))
       }
     }
-    sum = sum + (dyeingFee * quantity)
-    return sum + (price * quantity)
+
+    sumCostWithoutFabricPiece = sumCostWithoutFabricPiece + parseFloat(String(dyeingFee))
+    sumCostWithoutFabricPiece = sumCostWithoutFabricPiece + parseFloat(String(addedCost))
+    sumCostWithoutFabricPiece = sumCostWithoutFabricPiece + parseFloat(String(price))
+    sumCostWithoutFabricPiece = sumCostWithoutFabricPiece * this.notZero(quantity)
+        // console.log("sumCostWithoutFabricPiece -----========= ", sumCostWithoutFabricPiece);
+
+    sum = sum + sumCostWithoutFabricPiece
+    // console.log("sum -----========= ", sum);
+    
+    return sum 
   }
 
   getSumTotalCost(dataSourceSearchTabel) {
     let sum = 0
     for (let index = 0; index < dataSourceSearchTabel?.length; index++) {
       const element = dataSourceSearchTabel[index];
-      sum = sum + this.getTotalCost(element.price, element.quantity, element.dyeingServices,
-        parseFloat(element.dyeing_fee) + parseFloat(element.added_cost), element.fabric_piece)
+      sum = sum + this.getTotalCost(
+        element.price, 
+        element.quantity, 
+        element.dyeingServices,
+       +element.dyeing_fee, 
+       element.fabric_piece,
+      element.added_cost
+      )
     }
     return sum
   }
@@ -471,8 +500,14 @@ setTimeout(() => {
     }
     let sum = 0
     const element = dataSourceSearchTabel;
-    sum = this.getTotalCost(element.price, element.quantity, element.dyeingServices,
-      element.dyeing_fee, element.fabric_piece) / element.dyeing_quantity
+    sum = this.getTotalCost(
+      element.price, 
+      element.quantity, 
+      element.dyeingServices,
+      element.dyeing_fee, 
+      element.fabric_piece,
+      element.added_cost
+    ) / element.dyeing_quantity
     return parseFloat((sum).toFixed(3))
   }
 
@@ -684,6 +719,26 @@ setTimeout(() => {
     }
   }
 
+  getValueWithRatio(quantity, ratio) {
+    if(ratio >= 0) {
+      return parseFloat(( quantity / ( this.notZero(1 - (this.notZero(ratio) / 100))) ).toFixed(3))
+    } else {
+      return quantity
+    }
+  }
+
+  getRatioWithValue(quantity, neededQuantity) {
+    if (neededQuantity >= 0) {
+      if (neededQuantity >= quantity) {
+        return 0
+      } else {
+        return parseFloat((100 - (((neededQuantity / quantity) * 100))).toFixed(3))
+      }
+    } else {
+      return 0
+    }
+  }
+
   calcDollarToEgp(dollar) {
     // dollarPrice
     this.globalService.exchangeRate.subscribe({
@@ -702,5 +757,13 @@ setTimeout(() => {
       }
     });
     return parseFloat((egp / this.dollarPrice).toFixed(3))
+  }
+
+  calcDollarToEgp2(dollar, dollarPrice) {
+    return parseFloat((dollarPrice * dollar).toFixed(3))
+  }
+
+  calcEgpToDollar2(egp, dollarPrice) {
+    return parseFloat((egp / dollarPrice).toFixed(3))
   }
 }

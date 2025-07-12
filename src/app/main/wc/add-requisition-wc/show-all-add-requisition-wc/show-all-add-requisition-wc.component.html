@@ -141,11 +141,18 @@
     
                                             <!-- Details Column -->
                                             <td data-html2canvas-ignore="true">
-                                                <a
+                                                <a *ngIf="element.is_order == 0"
                                         [routerLink]="['details']"
                                         [queryParams]="{ id: element.id}">
                                             <i class="fas fa-angle-double-right update-symbol"></i>
                                         </a>
+                                        
+                                        <a *ngIf="element.is_order == 1" 
+                                        [routerLink]="['/dashboard/'+_constantsService.ROUTING_LINKS[210]]"
+                                            [queryParams]="{ id: element.id}">
+                                            <i class="fas fa-angle-double-right update-symbol"></i>
+                                        </a>
+
                                             </td>
     
                                         </tr>

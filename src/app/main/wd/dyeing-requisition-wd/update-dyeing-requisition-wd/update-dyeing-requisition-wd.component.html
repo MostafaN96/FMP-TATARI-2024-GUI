@@ -246,6 +246,7 @@
                             <input type="text" matInput formControlName="dyeingQuantity" placeholder="مثال: 12000"
                                 [errorStateMatcher]="matcher"
                                 oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                (change)="validateDyeingQuantity()"
                                 required />
                             <mat-error class="text-danger"
                                 *ngIf="inputDyeingWdForm.controls['dyeingQuantity'].hasError('incorrect')">
@@ -353,3 +354,6 @@
         </form>
     </div>
 </section>
+<!-- <pre>
+    {{inputDyeingWdForm.value | json}}
+</pre> -->

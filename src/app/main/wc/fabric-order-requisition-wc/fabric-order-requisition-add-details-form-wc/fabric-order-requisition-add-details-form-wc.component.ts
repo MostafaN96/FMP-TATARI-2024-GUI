@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 // Form Services
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -29,6 +29,7 @@ export class FabricOrderRequisitionAddDetailsFormWcComponent implements OnInit {
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   addOrderForm = new FormGroup({
     id: new FormControl(null, [Validators.required]),
+    ordersRequisitionsId: new FormControl(null, [Validators.required]),
     items: new FormArray([this.initItem()]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
@@ -36,6 +37,7 @@ export class FabricOrderRequisitionAddDetailsFormWcComponent implements OnInit {
 
   ///////////////////////////////// General ////////////////////////////////////////////////
   fabrics: any
+  @Input() selectedData: any
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -78,8 +80,11 @@ export class FabricOrderRequisitionAddDetailsFormWcComponent implements OnInit {
   }
 
   getData() {
+    console.log(this.selectedData);
+
     this.route.queryParams.subscribe(params => {
       this.addOrderForm.controls.id.setValue(params['id'])
+      this.addOrderForm.controls.ordersRequisitionsId.setValue(this.selectedData['orders_requisitions_id'])
     })
 
     this._fabricService.selectAll().subscribe((response: any) => {
@@ -95,7 +100,7 @@ export class FabricOrderRequisitionAddDetailsFormWcComponent implements OnInit {
       fabricCode: new FormControl(""),
       quantity: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       fabricWidth: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-    fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      fabricQuantityM2: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }
@@ -125,7 +130,7 @@ export class FabricOrderRequisitionAddDetailsFormWcComponent implements OnInit {
     else {
       row.controls['fabricCode'].setValue(element.itemData.code)
 
-    }    
+    }
   }
   // End Fabric Autocomplete Section
 

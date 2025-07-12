@@ -96,6 +96,7 @@ sellRequisitionFormWe = new FormGroup({
       dyedFabricId: new FormControl(data.dyed_fabric_id, [Validators.required]),
       dyedFabricCode: new FormControl(data.dyed_fabric_code),
       colorCategoryName: new FormControl(data.color_category_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
+      colorId: new FormControl(data.color_id, [Validators.required]),
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCode: new FormControl(data.color_code),
       gradeItemName: new FormControl(data.grade_item_name, [Validators.required]),

@@ -112,4 +112,15 @@ export class ReportWaService {
         })
       });
   }
+  
+  yarnOrdersReport(): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}yarn-orders-report`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+  
 }

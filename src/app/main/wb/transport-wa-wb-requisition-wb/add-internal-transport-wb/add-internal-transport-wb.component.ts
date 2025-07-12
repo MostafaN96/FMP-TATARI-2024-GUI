@@ -37,7 +37,11 @@ export class AddInternalTransportWbComponent implements OnInit {
     industryId: new FormControl("", [Validators.required]),
     yarnId: new FormControl("", [Validators.required]),
     yarnLotId: new FormControl("", [Validators.required]),
+    fromOrdersRequisitionsId: new FormControl(""),
+    fromYarnOrderId: new FormControl(""),
+    ordersRequisitionsId: new FormControl("", [Validators.required]),
     yarnOrderId: new FormControl("", [Validators.required]),
+    waYarnOrderRequisitionDetailsId: new FormControl("", [Validators.required]),
     consigmentYarnId: new FormControl("", [Validators.required]),
     consigmentYarnNumber: new FormControl("", [Validators.required]),
     fromConsigmentYarnId: new FormControl(""),
@@ -92,7 +96,7 @@ export class AddInternalTransportWbComponent implements OnInit {
   }
 
   ngOnChanges() {
-    // console.log("this.internalSelectedData :::: ", this.internalSelectedData);
+    console.log("this.internalSelectedData :::: ", this.internalSelectedData);
     
     this.yarnName = this.internalSelectedData.name || this.internalSelectedData.yarn_name
 
@@ -100,7 +104,11 @@ export class AddInternalTransportWbComponent implements OnInit {
     this.internalTransportWbForm.controls['industryId'].setValue(this.internalSelectedData.industryId || this.internalSelectedData.manufacturer_id)
     this.internalTransportWbForm.controls['yarnId'].setValue(this.internalSelectedData.yarn_id)
     this.internalTransportWbForm.controls['yarnLotId'].setValue(this.internalSelectedData.yarn_lot_id)
+    this.internalTransportWbForm.controls['fromOrdersRequisitionsId'].setValue(this.internalSelectedData.from_orders_requisitions_id)
+    this.internalTransportWbForm.controls['fromYarnOrderId'].setValue(this.internalSelectedData.from_wa_yarn_order_requisition_id)
+    this.internalTransportWbForm.controls['ordersRequisitionsId'].setValue(this.internalSelectedData.orders_requisitions_id)
     this.internalTransportWbForm.controls['yarnOrderId'].setValue(this.internalSelectedData.wa_yarn_order_requisition_id)
+    this.internalTransportWbForm.controls['waYarnOrderRequisitionDetailsId'].setValue(this.internalSelectedData.wa_yarn_order_requisition_details_id)
     this.internalTransportWbForm.controls['consigmentYarnId'].setValue(this.internalSelectedData.consigment_yarn_id)
     this.internalTransportWbForm.controls['consigmentYarnNumber'].setValue(this.internalSelectedData.consigment_yarn_number)
     this.internalTransportWbForm.controls['fromConsigmentYarnId'].setValue(this.internalSelectedData.from_consigment_yarn_id)

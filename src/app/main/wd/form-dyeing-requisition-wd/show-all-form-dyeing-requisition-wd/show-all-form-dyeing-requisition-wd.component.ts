@@ -22,12 +22,15 @@ export class ShowAllFormDyeingRequisitionWdComponent implements OnInit {
 
   /////////////////// Variables ///////////////////
   fabrics: any[] = []
+  formDetails: any[] = []
 
 //////////////////////////////////// PrimeNG /////////////////////////////////
 @ViewChild('dt1') dt1: Table | undefined;
 loading: boolean = true;
 selectedDyeingName: any[] = []
 selectedWorkOrderNumber: any[] = []
+selectedWorkOrderNumberDetails: any[] = []
+selectedFabricName: any[] = []
 selectedSellerName: any[] = []
 selectedQuantity: any[] = []
 selectedFormCurrentQuantity: any[] = []
@@ -49,10 +52,13 @@ dateFilters: any
     this.getData();
     this.customFilterForDyeingName();
     this.customFilterForWorkOrderNumber();
+    this.customFilterForWorkOrderNumberDetails();
     this.customFilterForSellerName();
     this.customFilterForQuantity();
     this.customFilterForFormCurrentQuantity();
     this.customFilterForOrderNumber();
+    this.customFilterForWorkOrderNumberDetails();
+    this.customFilterForFabricName();
   }
 
   getData() {
@@ -60,11 +66,29 @@ dateFilters: any
 
     this._formDyeingRequisitionWdService.selectAll().subscribe((response: any) => {
       this.fabrics = response
+
+      this.getFormDetails(this.fabrics)
+
       // PrimeNG Table
       this.primengConfig.ripple = true;
       this.loading = false;
     })
   }
+
+  
+ getFormDetails(data) {
+  let filter = [{}]
+    for (let i = 0; i < data.length; i++) {
+      const fabric = data[i];
+      for (let j = 0; j < fabric.details.length; j++) {
+        let element = fabric.details[j];          
+        if (filter.indexOf(element['work_order_number_details']) < 0) {
+          filter.push(element['work_order_number_details'])
+          this.formDetails.push(element)
+        }
+      }
+    }
+}
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   customFilterForDyeingName() {
@@ -127,6 +151,72 @@ customFilterForWorkOrderNumber() {
           }
         }
         // }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
+customFilterForWorkOrderNumberDetails() {
+  const customFilterName = "work-order-number-details-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedWorkOrderNumberDetails
+
+    if (this.selectedWorkOrderNumberDetails[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        let count = 0
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value[i].work_order_number_details == filter[j].work_order_number_details) {
+              count++
+              if (count == filter.length) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
+customFilterForFabricName() {
+  const customFilterName = "fabric-name-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedFabricName
+
+    if (this.selectedFabricName[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        let count = 0
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value[i].dyed_fabric_name == filter[j].dyed_fabric_name) {
+              count++
+              if (count == filter.length) {
+                return true;
+              }
+            }
+          }
+        }
       }
       return false;
     }
@@ -242,6 +332,7 @@ customFilterForFormCurrentQuantity() {
 }
 
 ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+
 customFilterForOrderNumber() {
   const customFilterName = "order-number-filter";
   this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -259,7 +350,7 @@ customFilterForOrderNumber() {
 
         // for (let i = 0; i < value.length; i++) {
         for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].order_number) {
+          if (value == filter[j].wc_fabric_order_requisition_name) {
             // count++
             // if (count == filter.length) {
             return true;
@@ -324,6 +415,8 @@ clear(table: Table) {
   table.reset();
   this.selectedDyeingName = []
   this.selectedWorkOrderNumber = []
+  this.selectedWorkOrderNumberDetails = []
+  this.selectedFabricName = []
   this.selectedSellerName = []
   this.selectedQuantity = []
   this.selectedFormCurrentQuantity = []
@@ -338,6 +431,16 @@ onMultiselectedDyeingName(event) {
 
 onMultiselectedWorkOrderNumber(event) {
   this.selectedWorkOrderNumber = event
+  this.dt1?._filter()
+}
+
+onMultiselectedWorkOrderNumberDetails(event) {
+  this.selectedWorkOrderNumberDetails = event
+  this.dt1?._filter()
+}
+
+onMultiselectedFabricName(event) {
+  this.selectedFabricName = event
   this.dt1?._filter()
 }
 

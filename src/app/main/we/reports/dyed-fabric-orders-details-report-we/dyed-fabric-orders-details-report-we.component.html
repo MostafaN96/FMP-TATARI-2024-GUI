@@ -15,17 +15,17 @@
             <div class="col">
                 <div class="btn-export-section">
                     <a
-                        (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير البيع')">
+                        (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير طلبيات عملاء الجاهز')">
                         <i title="PDF" class="far fa-file-pdf"></i>
                     </a>
 
                     <a
-                        (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'تقرير البيع')">
+                        (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'تقرير طلبيات عملاء الجاهز')">
                         <i title="Excel" class="far fa-file-excel px-2"></i>
                     </a>
 
                     <a
-                        (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير البيع', 'table-data-2')">
+                        (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير طلبيات عملاء الجاهز', 'table-data-2')">
                         <i title="Print" class="fas fa-print pe-2"></i>
                     </a>
                 </div>

@@ -31,11 +31,26 @@
                           </mat-form-field>
                     </div>
 
+                    <!-- Dyers -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='dyers' [fields]='fieldsDyeing'
+                            (filtering)="onFilteringDyeing($event)" [placeholder]='textDyeing' [autofill]='autofill'
+                            formControlName="sellerName" class="ejs-autocomplete w-100" (change)="selectDyeing($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['sellerId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['sellerId'].hasError('required') && (manufacturingOrderWdForm.controls['sellerId'].dirty 
+                            || manufacturingOrderWdForm.controls['sellerId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+                    
                     <!-- dyedFabrics -->
                     <div class="col">
                         <ejs-autocomplete [dataSource]='dyedFabrics' [fields]='fieldsDyedFabric' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringDyedFabricName($event)" [placeholder]='textDyedFabric' [autofill]='autofill'
-                            formControlName="dyedFabricId" (change)="selectDyedFabric($event)" style="width: 260px;">
+                            formControlName="dyedFabricName" (change)="selectDyedFabric($event)" style="width: 260px;">
                         </ejs-autocomplete>
                         <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['dyedFabricId'].hasError('pattern')"
                             [innerHTML]="_sharedComponentService.invalid_message">
@@ -80,6 +95,46 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- Color Category -->
+                    <div class="col">
+                        <ejs-autocomplete [dataSource]='colorCategories' [fields]='fieldsColorCategory' 
+                            (filtering)="onFilteringColorCategoryName($event)" [placeholder]='textColorCategory' [autofill]='autofill'
+                            formControlName="colorCategoryId" class="ejs-autocomplete w-100" (change)="selectColorCategory($event)">
+                        </ejs-autocomplete>
+                        <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['colorCategoryId'].hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                        </small>
+                        <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['colorCategoryId'].hasError('required') && (manufacturingOrderWdForm.controls['colorCategoryId'].dirty 
+                            || manufacturingOrderWdForm.controls['colorCategoryId'].touched)"
+                            [innerHTML]="_sharedComponentService.required_field">
+                        </small>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-8">
+                                <ejs-autocomplete [dataSource]='colors' [fields]='fieldsColor'  
+                                (filtering)="onFilteringColorName($event)" [placeholder]='textColor' [autofill]='autofill'
+                                formControlName="colorName" class="ejs-autocomplete w-100" (change)="selectColor($event)">
+                            </ejs-autocomplete>
+                            <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['colorId'].hasError('pattern')"
+                                [innerHTML]="_sharedComponentService.invalid_message">
+                            </small>
+                            <small class="text-danger" *ngIf="manufacturingOrderWdForm.controls['colorId'].hasError('required') && (manufacturingOrderWdForm.controls['colorId'].dirty 
+                                || manufacturingOrderWdForm.controls['colorId'].touched)"
+                                [innerHTML]="_sharedComponentService.required_field">
+                            </small>
+                            </div>
+                            <div class="col-4">
+                                <mat-form-field appearance="outline" class="example-full-width w-100">
+                                    <input type="text" matInput formControlName="colorCode" placeholder="كود اللون"
+                                    disabled/>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Quantity -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

@@ -51,6 +51,9 @@ export class CurrentStockReportWeComponent implements OnInit {
   selectedCodes: any[] = []
   selectedDyeingCodes: any[] = []
   selectedDyeingSupplier: any[] = []
+  weDyedFAbricOrderRequisitionName: any[] = []
+  selectedWeSellerName: any[] = []
+  selectedReleaseProcess: any[] = []
   selectedRequisitionNumber: any[] = []
   selectedColorCodes: any[] = []
   selectedColorCategories: any[] = []
@@ -105,6 +108,9 @@ export class CurrentStockReportWeComponent implements OnInit {
     this.customFilterForFabricNames()
     this.customFilterForCode()
     this.customFilterForDyeingCode()
+    this.customFilterForWeDyedFAbricOrderRequisitionName()
+    this.customFilterForWeSellerName()
+    this.customFilterForReleaseProcess()
     this.customFilterForDyeingSupplier()
     this.customFilterForRequisitionNumber()
     this.customFilterForColorCode();
@@ -370,6 +376,108 @@ export class CurrentStockReportWeComponent implements OnInit {
           // for (let i = 0; i < value.length; i++) {
           for (let j = 0; j < filter.length; j++) {
             if (value == filter[j].number) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForWeDyedFAbricOrderRequisitionName() {
+    const customFilterName = "we-dyed-fabric-order-requisition-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.weDyedFAbricOrderRequisitionName
+
+      if (this.weDyedFAbricOrderRequisitionName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].we_dyed_fabric_order_requisition_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForWeSellerName() {
+    const customFilterName = "we-order-seller-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedWeSellerName
+
+      if (this.selectedWeSellerName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].we_order_seller_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForReleaseProcess() {
+    const customFilterName = "release-process-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedReleaseProcess
+
+      if (this.selectedReleaseProcess[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].release_process) {
               // count++
               // if (count == filter.length) {
               return true;
@@ -822,6 +930,21 @@ export class CurrentStockReportWeComponent implements OnInit {
 
   onMultiselectedRequisitionNumber(event) {
     this.selectedRequisitionNumber = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedWeDyedFAbricOrderRequisitionName(event) {
+    this.weDyedFAbricOrderRequisitionName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedWeSellerName(event) {
+    this.selectedWeSellerName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedReleaseProcess(event) {
+    this.selectedReleaseProcess = event
     this.dt1?._filter()
   }
 

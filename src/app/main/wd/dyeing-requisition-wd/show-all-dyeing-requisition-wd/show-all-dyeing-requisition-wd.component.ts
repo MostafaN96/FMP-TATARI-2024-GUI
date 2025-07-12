@@ -8,6 +8,8 @@ import * as moment from 'moment';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { DyeingRequisitionWdService } from "src/app/services/main/wd/dyeing-requisition-wd.service";
@@ -22,22 +24,24 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
   /////////////////// Variables ///////////////////
   fabrics: any[] = []
 
-     //////////////////////////////////// PrimeNG /////////////////////////////////
-     @ViewChild('dt1') dt1: Table | undefined;
-     loading: boolean = true;
-     selectedDyeingName: any[] = []
-     selectedWarehouseName: any[] = []
-     selectedReleaseProcess: any[] = []
-     startDate: any
-     endDate: any
-     dateFilters: any
- 
+  //////////////////////////////////// PrimeNG /////////////////////////////////
+  @ViewChild('dt1') dt1: Table | undefined;
+  loading: boolean = true;
+  selectedDyeingName: any[] = []
+  selectedWarehouseName: any[] = []
+  selectedReleaseProcess: any[] = []
+  startDate: any
+  endDate: any
+  dateFilters: any
+
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _dyeingRequisitionWdService: DyeingRequisitionWdService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+    public _constantsService: ConstantsService,
+    public _sessionManagerService: SessionManagerService,
   ) {
 
   }
@@ -54,185 +58,185 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
     this._dyeingRequisitionWdService.selectAll().subscribe((response: any) => {
       this.fabrics = response
 
-         // PrimeNG Table
-         this.primengConfig.ripple = true;
-         this.loading = false;
+      // PrimeNG Table
+      this.primengConfig.ripple = true;
+      this.loading = false;
     })
   }
 
- 
-  
-    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-    customFilterForDyeingName() {
-      const customFilterName = "dyeing-name-filter";
-      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-        filter = this.selectedDyeingName
-  
-        if (this.selectedDyeingName[0] != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
-          }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
-          }
-          if (filter.length > 0) {
-            // let count = 0
-  
-            // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].dyeing_name) {
-                // count++
-                // if (count == filter.length) {
-                return true;
-                // }
-              }
-            }
-            // }
-          }
-          return false;
-        }
-        else {
-          return true;
-        }
-      });
-    }
 
 
-   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-    customFilterForWarehouseName() {
-      const customFilterName = "warehouse-name-filter";
-      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-        filter = this.selectedWarehouseName
-  
-        if (this.selectedWarehouseName[0] != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
-          }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
-          }
-          if (filter.length > 0) {
-            // let count = 0
-  
-            // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].warehouse_name) {
-                // count++
-                // if (count == filter.length) {
-                return true;
-                // }
-              }
-            }
-            // }
-          }
-          return false;
-        }
-        else {
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForDyeingName() {
+    const customFilterName = "dyeing-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedDyeingName
+
+      if (this.selectedDyeingName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-      });
-    }
-   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-   customFilterForReleaseProcess() {
-      const customFilterName = "release-process-filter";
-      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-        filter = this.selectedReleaseProcess
-  
-        if (this.selectedReleaseProcess[0] != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
-          }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
-          }
-          if (filter.length > 0) {
-            // let count = 0
-  
-            // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].release_process) {
-                // count++
-                // if (count == filter.length) {
-                return true;
-                // }
-              }
-            }
-            // }
-          }
+        if (value === undefined || value === null || value.length == 0) {
           return false;
         }
-        else {
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].dyeing_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForWarehouseName() {
+    const customFilterName = "warehouse-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedWarehouseName
+
+      if (this.selectedWarehouseName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
           return true;
         }
-      });
-    }
-    
-     ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-     selectedDate(event) {
-      this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
-        filter = this.dateFilters
-        
-        if (event != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].warehouse_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
           }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForReleaseProcess() {
+    const customFilterName = "release-process-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedReleaseProcess
+
+      if (this.selectedReleaseProcess[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].release_process) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
           }
-          if (filter.length > 0) {
-            // let count = 0
-            if(filter[0] != null && filter[1] != null) {
-              
-              if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&  
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  selectedDate(event) {
+    this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
+      filter = this.dateFilters
+
+      if (event != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+          if (filter[0] != null && filter[1] != null) {
+
+            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&
               moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
-                return true;
-                }
-              
-            } else if (filter[0] != null && filter[1] == null) {
-              
-              if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
-                return false;
-                } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
-                  return false;
-                } else {
-                  return true;
-                }
+              return true;
             }
-  
+
+          } else if (filter[0] != null && filter[1] == null) {
+
+            if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else {
+              return true;
+            }
           }
-          return false;
-        }
-        else {
-          return true;
-        }
-      })
-      this.dt1?.filter(event, "date", "date-filter")
-    }
-  
-    // Reset table filters
-    clear(table: Table) {
-      table.clear();
-      table.reset();
-      this.selectedDyeingName = []
-      this.selectedWarehouseName = []
-      this.selectedReleaseProcess = []
-      this.dateFilters = []
-    }
-  
-    onMultiselectedDyeingName(event) {
-      this.selectedDyeingName = event
-      this.dt1?._filter()
-    }
 
-    onMultiselectedWarehouseName(event) {
-      this.selectedWarehouseName = event
-      this.dt1?._filter()
-    }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    })
+    this.dt1?.filter(event, "date", "date-filter")
+  }
 
-    onMultiselectedReleaseProcess(event) {
-      this.selectedReleaseProcess = event
-      this.dt1?._filter()
-    }
+  // Reset table filters
+  clear(table: Table) {
+    table.clear();
+    table.reset();
+    this.selectedDyeingName = []
+    this.selectedWarehouseName = []
+    this.selectedReleaseProcess = []
+    this.dateFilters = []
+  }
+
+  onMultiselectedDyeingName(event) {
+    this.selectedDyeingName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedWarehouseName(event) {
+    this.selectedWarehouseName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedReleaseProcess(event) {
+    this.selectedReleaseProcess = event
+    this.dt1?._filter()
+  }
 
 
 }

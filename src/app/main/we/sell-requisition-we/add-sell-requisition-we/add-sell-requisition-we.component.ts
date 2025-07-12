@@ -160,6 +160,7 @@ initItem(data:any, index:number) {
     dyedFabricCode: new FormControl(data.dyed_fabric_code),
     colorCategoryName: new FormControl(data.color_category_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
     colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
+    colorId: new FormControl(data.color_id, [Validators.required]),
     colorCode: new FormControl(data.color_code),
     gradeItemName: new FormControl(data.grade_item_name, [Validators.required]),
     price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),

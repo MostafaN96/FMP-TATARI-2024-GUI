@@ -8,6 +8,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ConstantsService } from "src/app/services/constants.service";
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
 
 // Call Service
 import { WaAddRequisitionDetailsService } from "src/app/services/main/wa/wa-add-requisition-details.service";
@@ -27,6 +28,7 @@ export class UpdateAddRequisitionByOrderWaComponent implements OnInit {
   ///////////////////////////////// General ////////////////////////////////////////////////
   requisitionId!: string;
   suppliers: any
+  exchangeRatePrice = 0
 
   @Input() selectedData: any
   addRequisitionWaForm: FormGroup = new FormGroup({
@@ -66,8 +68,10 @@ export class UpdateAddRequisitionByOrderWaComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public matcher: MyErrorStateMatcher,
     private _waAddRequisitionDetailsService: WaAddRequisitionDetailsService,
-    private _constantsService: ConstantsService,
+    public _constantsService: ConstantsService,
     private _supplierService: BussinessmanService,
+        public _sessionManagerService: SessionManagerService,
+    
   ) {
     this.getData();
   }
@@ -87,6 +91,8 @@ export class UpdateAddRequisitionByOrderWaComponent implements OnInit {
 
 
   ngOnChanges() {
+    this.exchangeRatePrice = parseFloat((this.selectedData?.price / this.selectedData?.price_dollar).toFixed(3))
+
     this.addRequisitionWaForm.controls['date'].setValue(this.selectedData?.date)
     this.addRequisitionWaForm.controls['price'].setValue(this.selectedData?.price)
     this.addRequisitionWaForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
@@ -110,9 +116,9 @@ export class UpdateAddRequisitionByOrderWaComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.addRequisitionWaForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.addRequisitionWaForm.controls['price'].value))
+      this.addRequisitionWaForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.addRequisitionWaForm.controls['price'].value, this.exchangeRatePrice))
     } else if (type == "priceDollar") {
-      this.addRequisitionWaForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.addRequisitionWaForm.controls['priceDollar'].value))
+      this.addRequisitionWaForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.addRequisitionWaForm.controls['priceDollar'].value, this.exchangeRatePrice))
     }
   }
 

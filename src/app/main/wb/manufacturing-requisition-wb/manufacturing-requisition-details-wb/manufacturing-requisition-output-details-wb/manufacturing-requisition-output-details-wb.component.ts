@@ -35,6 +35,7 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
   displayedColumns: string[] = [
     'index',
+    'wc_fabric_order_requisition_name',
     'fabric_name',
     'fabric_code',
     'fabric_piece',
@@ -52,6 +53,7 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
     'warehouse_name',
     'document',
     'statement',
+    'fabric_order_requisitions',
     'update'];
   filter = "";
   dataSourceSearchTabel: any;
@@ -81,6 +83,8 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
 
           this._wbManufacturingOutputService.selectByRequisitionId(params['id']).subscribe((response: any) => {
             this.manufacturingRequisitionDetails = response
+            console.log("this.manufacturingRequisitionDetails ::: ", this.manufacturingRequisitionDetails);
+            
             this.dataSourceSearchTabel = new MatTableDataSource(this.manufacturingRequisitionDetails);
   
             // this.sortColumns.sort(({ id: 'number', start: 'asc' }) as MatSortable);
@@ -171,4 +175,13 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
 
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
 
+  goToRequisitionPage(typeOfRequisition, element?) {
+    if (typeOfRequisition == 'اذن تشكيل' && element?.is_order != '1') {
+      return `/dashboard/show-all-form-dyeing-requisition-wd/details`
+    }
+    else if (typeOfRequisition == 'اذن تشكيل' && element?.is_order == '1') {
+      return `/dashboard/show-all-form-dyeing-order-requisition-wd/order-details`
+    }
+    return
+  }
 }

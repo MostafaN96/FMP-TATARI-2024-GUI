@@ -44,6 +44,7 @@ export class TransitionBetweenIndustriesDetailsWbComponent implements OnInit {
     'price_dollar',
     'total',
     'total_dollar',
+    'yarn_order_requisitions',
     'document',
     'statement',
     'update'];
@@ -125,5 +126,25 @@ export class TransitionBetweenIndustriesDetailsWbComponent implements OnInit {
     this.parentData = [this.transitionBetweenIndustriesDetails[0].from_industry_id,
     this.transitionBetweenIndustriesDetails[0].to_industry_id,
   this.addedYarnsLots]
+  }
+
+  
+  goToRequisitionPage(typeOfRequisition, element?) {
+    if (typeOfRequisition == 'اذن نقل من (A) الى (B)') {
+      return `/dashboard/show-all-transport-wa-wb-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن تسوية') {
+      return `/dashboard/show-all-reconciliation-requisition-wb/details`
+    }
+    else if (typeOfRequisition == 'اذن تصنيع' && element?.is_order != '1') {
+      return `/dashboard/show-all-manufacturing-requisition-wb/details`
+    }
+    else if (typeOfRequisition == 'اذن تصنيع' && element?.is_order == '1') {
+      return `/dashboard/show-all-manufacturing-order-requisition-wb/order-details`
+    }
+    else if (typeOfRequisition == 'اذن نقل بين المصانع') {
+      return `/dashboard/show-all-transport-between-industries-requisition/details`
+    }
+    return
   }
 }

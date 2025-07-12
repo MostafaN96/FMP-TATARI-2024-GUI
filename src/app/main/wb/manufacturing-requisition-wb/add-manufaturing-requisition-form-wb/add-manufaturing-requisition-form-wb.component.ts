@@ -153,7 +153,7 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
       consigmentYarnNumber: new FormControl(data.consigment_yarn_number),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      wastRatio: new FormControl(data.wast_ratio, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      wastRatio: new FormControl(String(data.wast_ratio), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       quantityWithWaste: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -188,7 +188,8 @@ export class AddManufaturingRequisitionFormWbComponent implements OnInit {
   validate(row: FormGroup, index) {
     // (1) 17-1-2022
     // let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value)).toFixed(2)) || ''
-    let quantityWithWaste = ((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value) || 0
+    // let quantityWithWaste = ((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value) || 0
+        let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) / (1 - (this._sharedComponentService.notZero(parseFloat(row.controls['wastRatio'].value)) / 100)) )) ).toFixed(3)) || 0
     if(quantityWithWaste  > parseFloat(row.controls['validQuantity'].value)) {
       row.controls['quantity'].setErrors({'incorrect': true});
       row.controls['quantity'].markAsTouched()

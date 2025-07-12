@@ -130,6 +130,10 @@
                                                         <th>
                                                             الكمية
                                                         </th>
+
+                                                        <!-- <th>
+                                                            تعديل
+                                                        </th> -->
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -141,6 +145,12 @@
                                                         <td>
                                                             {{ warehouseData.quantity | number}}
                                                         </td>
+                                                        <!-- <td>
+                                                            <a onClick="document.getElementById('update-form').scrollIntoView();"
+                                                                (click)="getSelectedData(warehouseData)">
+                                                                <i class="fas fa-edit update-symbol"></i>
+                                                            </a>
+                                                        </td> -->
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -205,8 +215,21 @@
                                         <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
                                     </ng-container>
 
+                                    <!-- wa_add_requisition Column -->
+                                    <ng-container matColumnDef="wa_add_requisition">
+                                        <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
+                                            <b>اذن الشراء</b>
+                                        </th>
+                                        <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
+                                            <a [routerLink]="['/dashboard/'+_constantsService.ROUTING_LINKS[174]]" [queryParams]="{ id: row.wa_add_requisition_id}">
+                                                <i class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
+                                        </td>
+                                        <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
+                                    </ng-container>
+
                                     <!-- Update Column -->
-                                    <ng-container matColumnDef="update">
+                                    <!-- <ng-container matColumnDef="update">
                                         <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
                                             <b>تعديل</b>
                                         </th>
@@ -217,7 +240,7 @@
                                             </a>
                                         </td>
                                         <td data-html2canvas-ignore="true" mat-footer-cell *matFooterCellDef> </td>
-                                    </ng-container>
+                                    </ng-container> -->
 
                                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                                     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
@@ -235,16 +258,18 @@
 
         </div>
         <!-- Buttons Section -->
-        <div *ngIf="!showAddDetails" [class]="_sharedComponentService.btnSectionClass">
+        <!-- <div *ngIf="!showAddDetails" [class]="_sharedComponentService.btnSectionClass">
             <div class="row row-cols-auto">
                 <div class="col">
                     <button (click)="showAddDetailsFunc()" type="button" class="btn-style submit-btn">اضافة
                         بيانات</button>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </section>
 <!-- *ngIf="showInputUpdate" -->
 <app-update-purchase-order-wa *ngIf="showInputUpdate" [selectedData]="selectedDataToUpdate" #updateOrder></app-update-purchase-order-wa>
+<!-- <app-update-add-requisition-by-order-wa *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-update-add-requisition-by-order-wa> -->
+
 <app-add-add-purchase-form-details-order-wa *ngIf="showAddDetails"></app-add-add-purchase-form-details-order-wa>

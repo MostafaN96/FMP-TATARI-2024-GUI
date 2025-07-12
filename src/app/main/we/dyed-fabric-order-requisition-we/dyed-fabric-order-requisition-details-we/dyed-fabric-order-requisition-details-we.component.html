@@ -47,17 +47,17 @@
                 <div class="col">
                     <div class="btn-export-section">
                         <a
-                            (click)="_exportDataService.exportToPDF('table-header-data', 'table-data', 'طلبية العميل قماش جاهز')">
+                            (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'طلبية العميل قماش جاهز')">
                             <i title="PDF" class="far fa-file-pdf"></i>
                         </a>
 
                         <a
-                            (click)="_exportDataService.exportToExcel('table-header-data', 'table-data', 'طلبية العميل قماش جاهز')">
+                            (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'طلبية العميل قماش جاهز')">
                             <i title="Excel" class="far fa-file-excel px-2"></i>
                         </a>
 
                         <a
-                            (click)="_exportDataService.print('table-header-data', 'table-data', 'طلبية العميل قماش جاهز')">
+                            (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'طلبية العميل قماش جاهز')">
                             <i title="Print" class="fas fa-print pe-2"></i>
                         </a>
                     </div>
@@ -75,11 +75,12 @@
                                 <p-table #dt1 [value]="dyedFabricOrderDetails" dataKey="id" columnResizeMode="expand"
                                     styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
                                     [rowHover]="true" [rows]="10" [showCurrentPageReport]="true" [loading]="loading"
-                                    responsiveLayout="scroll" scrollHeight="600px" [filterDelay]="0" sortField="number"
-                                    [responsive]="true" [sortOrder]="0" appendTo="body" [autoLayout]="true">
+                                    responsiveLayout="scroll" scrollHeight="600px" [filterDelay]="0" sortField="date"
+                                    [responsive]="true" sortOrder="1" appendTo="body" [autoLayout]="true">
+                                    
+                                    <!-- Start Filter Section -->
                                     <ng-template data-html2canvas-ignore="true" pTemplate="caption">
 
-                                        <!-- Start Filter Section -->
                                         <div class="row row-cols-md-5 align-items-center">
 
                                             <div class="col">
@@ -123,6 +124,7 @@
                                                     </ng-template>
                                                 </p-columnFilter>
                                             </div>
+                                            
                                             <div class="col">
                                                 <p-columnFilter field="color_category_name"
                                                     matchMode="color-category-filter" [showMenu]="false"
@@ -162,6 +164,17 @@
                                                         </p-multiSelect>
                                                     </ng-template>
                                                 </p-columnFilter>
+                                            </div>
+
+                                            <div class="col">
+                                                <mat-form-field appearance="outline" class="w-100">
+                                                    <mat-label>اظهار واخفاء العامود</mat-label>
+                                                    <mat-select #checkbox placeholder="اظهار واخفاء العامود" multiple>
+                                                        <mat-option [value]="item" *ngFor="let item of showHideItems">
+                                                            {{item}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
                                             </div>
 
                                             <div class="col">
@@ -228,6 +241,13 @@
                                                 </div>
                                             </th>
 
+                                            <!-- over_current_quantity_ratio Column -->
+                                            <th>
+                                                <div class="flex justify-content-between align-items-center">
+                                                    نسبة الكمية الزائدة
+                                                </div>
+                                            </th>
+
                                             <!-- color_category_name Column -->
                                             <th pResizableColumn pSortableColumn="color_category_name">
                                                 <div class="flex justify-content-between align-items-center">
@@ -289,6 +309,13 @@
                                                 </div>
                                             </th>
 
+                                            <!-- dyedFabricOrderRequisitions Column -->
+                                            <th [hidden]="!checkbox?.value?.includes('من اذن')">
+                                                <div class="flex justify-content-between align-items-center">
+                                                    من اذن
+                                                </div>
+                                            </th>
+
                                             <!-- close_order Column -->
                                             <th>
                                                 <div class="flex justify-content-between align-items-center">
@@ -306,6 +333,18 @@
                                         </tr>
 
                                     </ng-template>
+                                    <!-- <ng-template pTemplate="groupfooter" let-element>
+                                        <tr class="p-table-group-tr">
+                                            <td colspan="1" class="text-right font-bold pr-6">
+                                                إجمالي
+                                                </td>
+                                            <td colspan="17" class="text-right font-bold pr-6">
+                                                 الكمية : {{_sharedComponentService.getTotalQuantityWithCondition(dt1.filteredValue == null ?
+                                                    dyedFabricOrderDetails: dt1.filteredValue,
+                                                    "quantity", "dyed_fabric_code", element.dyed_fabric_code) | number}}
+                                            </td>
+                                        </tr>
+                                    </ng-template> -->
                                     <ng-template pTemplate="body" let-element let-index="rowIndex">
                                         <tr class="p-selectable-row">
 
@@ -331,7 +370,8 @@
 
                                             <!-- completed_quantity Column -->
                                             <td>
-                                                {{ element.quantity - element.current_quantity | number}} </td>
+                                                {{ element.net_current_quantity | number}} 
+                                            </td>
 
                                             <!-- current_quantity Column -->
                                             <td>
@@ -341,6 +381,11 @@
                                             <!-- over_current_quantity Column -->
                                             <td>
                                                 {{ element.over_current_quantity | number}}
+                                            </td>
+
+                                            <!-- over_current_quantity_ratio Column -->
+                                            <td>
+                                                {{ element.over_current_quantity_ratio | number}}%
                                             </td>
 
                                             <!-- color_category_name Column -->
@@ -383,6 +428,24 @@
                                                 {{ element.note2 }}
                                             </td>
 
+                                            <!-- dyedFabricOrderRequisitions Column -->
+                                            <td [hidden]="!checkbox.value?.includes('من اذن')">
+                                                <table class="w-100">
+                                                    <tbody>
+                                                        <tr *ngFor="let dyedFabricOrderRequisition of element.dyedFabricOrderRequisitions">
+                                                            <a [routerLink]="[goToRequisitionPage(dyedFabricOrderRequisition?.type_of_requisition, dyedFabricOrderRequisition)]"
+                                                                    [queryParams]="{id: dyedFabricOrderRequisition?.requisition_id}">
+                                                            <td>{{dyedFabricOrderRequisition.type_of_requisition}}</td>
+                                                            <td>
+                                                                
+                                                                    ({{ dyedFabricOrderRequisition.number}})
+                                                            </td>
+                                                        </a>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+
                                             <!-- close_order Column -->
                                             <td>
                                                 <p-confirmPopup></p-confirmPopup>
@@ -420,45 +483,45 @@
                                             
                                             <!-- quantity Column -->
                                             <td>
-                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredValue
                                                     ==
                                                     null ? dyedFabricOrderDetails:
-                                                    dt1?.filteredData,
+                                                    dt1?.filteredValue,
                                                 'quantity') | number}}
-
                                             </td>
 
                                             <!-- completed_quantity Column -->
                                             <td>
                                                 {{
-                                                _sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                _sharedComponentService.getTotalQuantity(dt1?.filteredValue
                                                 ==
                                                 null ? dyedFabricOrderDetails:
-                                                dt1?.filteredData, 'quantity') 
-                                                -
-                                                _sharedComponentService.getTotalQuantity(dt1?.filteredData
-                                                ==
-                                                null ? dyedFabricOrderDetails:
-                                                dt1?.filteredData, 'current_quantity') | number}}
+                                                dt1?.filteredValue, 'net_current_quantity') | number
+                                                }}
                                             </td>
 
                                             <!-- current_quantity Column -->
                                             <td>
-                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredValue
                                                     ==
                                                     null ? dyedFabricOrderDetails:
-                                                    dt1?.filteredData,
+                                                    dt1?.filteredValue,
                                                 'current_quantity') | number}}
 
                                             </td>
 
                                             <!-- over_current_quantity Column -->
                                             <td>
-                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredData
+                                                {{_sharedComponentService.getTotalQuantity(dt1?.filteredValue
                                                     ==
                                                     null ? dyedFabricOrderDetails:
-                                                    dt1?.filteredData,
+                                                    dt1?.filteredValue,
                                                 'over_current_quantity') | number}}
+
+                                            </td>
+
+                                            <!-- over_current_quantity_ratio Column -->
+                                            <td>
 
                                             </td>
 
@@ -502,6 +565,11 @@
 
                                             </td>
 
+                                            <!-- dyedFabricOrderRequisitions Column -->
+                                            <td [hidden]="!checkbox?.value?.includes('من اذن')">
+
+                                            </td>
+
                                             <!-- close_order Column -->
                                             <td>
 
@@ -537,6 +605,7 @@
         </div>
     </div>
 </section>
+
 <!-- *ngIf="showInputUpdate" -->
 <app-dyed-fabric-order-requisition-update-we *ngIf="showInputUpdate" [selectedData]="selectedDataToUpdate"
     #updateOrder></app-dyed-fabric-order-requisition-update-we>

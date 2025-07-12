@@ -84,7 +84,7 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
 
   // --------------- Dyed Fabric --------------
   // maps the appropriate column to fields property
-  public fieldsDyedFabric: Object = { value: "id", text: "name" };
+  public fieldsDyedFabric: Object = { value: "name", text: "name" };
   // set the placeholder to the AutoComplete input
   public textDyedFabric: string = "نوع القماش المصبوغ"
 
@@ -194,11 +194,17 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
     if (this.selectArrayValues.includes(objectData)) {
       this.fabricMap.set(objectData, objectData?.current_quantity)
     }
-    this.selectArrayValues.push(objectData);
-    this.addItem(objectData)
+
     // Get Prices
     this._reportWdService.selectPriceByFabricByDyeingByConsigmentDyeingInWd(objectData.fabric_id, objectData.dyeing_id, objectData.consigment_dyeing_id).subscribe((response: any) => {
       this.fabricsDetails = response
+
+      objectData.price = this.fabricsDetails[0].latest_price
+      objectData.priceDollar = this.fabricsDetails[0].latest_price_dollar
+
+      this.selectArrayValues.push(objectData);
+      this.addItem(objectData)
+
       this.getListFabricPrices[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails), this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails), parseFloat(this.fabricsDetails[0].latest_price)]
       this.listFabricPricesDollar[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), parseFloat(this.fabricsDetails[0].latest_price_dollar)]
     })
@@ -217,8 +223,8 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
       fabricName: new FormControl(data.fabric_name),
       consigmentDyeingId: new FormControl(data.consigment_dyeing_id, [Validators.required]),
       consigmentDyeingNumber: new FormControl(data.consigment_dyeing_number, [Validators.required]),
-      price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      price: new FormControl(data.price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      priceDollar: new FormControl(data.priceDollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       colorCategoryId: new FormControl(null, [Validators.required]),
@@ -226,8 +232,9 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
       colorCode: new FormControl(null),
       dyeingColorsPricesId: new FormControl(null, [Validators.required]),
       dyeingServices: new FormControl(null, [Validators.required]),
-      dyedFabricId: new FormControl(null, [Validators.required]),
-      dyedFabricCode: new FormControl(null),
+      dyedFabricId: new FormControl(data.dyed_fabric_id, [Validators.required]),
+      dyedFabricName: new FormControl(data.dyed_fabric_name),
+      dyedFabricCode: new FormControl(data.dyed_fabric_code),
       fabricWidth: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       fabricQuantityM2: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       workOrderNumberDetails: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -265,12 +272,14 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
 
   // Dyed Fabric
   selectDyedFabric(index: { itemData: any; }, row: FormGroup) {
-    let indexData = this.dyedFabrics.indexOf(index.itemData)
-    if (this.dyedFabrics[indexData] !== index.itemData) {
+      if (!this.dyedFabrics.includes(index.itemData)) {
+
       row.controls['dyedFabricId'].setValue(null)
       row.controls['dyedFabricCode'].setValue(null)
+      row.controls['dyedFabricName'].setValue(null)
     }
     else {
+      row.controls['dyedFabricId'].setValue(index.itemData.id)
       row.controls['dyedFabricCode'].setValue(index.itemData.code)
     }    
   }
@@ -343,7 +352,7 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
         const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.addRequisitionForm, 'items',
           ['index', 'fabricCode', 'fabricName', 'dyeingCode', 
           'fabricCode', 'colorCategoryId',
-          'colorId', 'colorCode', 'consigmentDyeingNumber', 'dyedFabricCode', 'validQuantity'])
+          'colorId', 'colorCode', 'consigmentDyeingNumber', 'dyedFabricCode', 'dyedFabricName', 'validQuantity'])
         this._constantsService.spinner.show()
         this._formDyeingRequisitionDetailsWdService.add(formGroup.value).subscribe(response => {
           this._constantsService.spinner.hide();

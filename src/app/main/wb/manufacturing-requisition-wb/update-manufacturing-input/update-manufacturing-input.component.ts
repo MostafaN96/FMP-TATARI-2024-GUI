@@ -9,6 +9,7 @@ import { MyErrorStateMatcher } from 'src/app/services/error-state-matcher.servic
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ConstantsService } from "src/app/services/constants.service";
 import { SessionManagerService } from "src/app/services/main/session-manager.service";
+import { GlobalService } from "src/app/services/exchange-rate.service";
 
 // Call Service
 import { WbManufacturingInputService } from "src/app/services/main/wb/wb-manufacturing-input.service";
@@ -22,7 +23,8 @@ import { ActivatedRoute } from '@angular/router';
 export class UpdateManufacturingInputComponent implements OnInit {
 
   requisitionId!: string;
-
+  exchangeRatePrice = 0
+  
   @Input() selectedData: any
   inputManufacturedWbForm: FormGroup = new FormGroup({
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
@@ -50,6 +52,8 @@ export class UpdateManufacturingInputComponent implements OnInit {
     private _wbManufacturingInputService: WbManufacturingInputService,
     public _constantsService: ConstantsService,
     public _sessionManagerService: SessionManagerService,
+    private globalService: GlobalService,
+
   ) { }
 
   ngOnInit(): void {
@@ -61,6 +65,14 @@ export class UpdateManufacturingInputComponent implements OnInit {
       .subscribe(params => {
         this.requisitionId = params['id']
       })
+
+      // dollarPrice
+      // this.globalService.exchangeRate.subscribe({
+      //   next: newValue => {
+      //     this.exchangeRatePrice = newValue.dollarPrice
+      //   }
+      // });
+      this.exchangeRatePrice = parseFloat((this.selectedData?.price / this.selectedData?.price_dollar).toFixed(3))
 
     this.inputManufacturedWbForm.controls['date'].setValue(this.selectedData?.date)
     this.inputManufacturedWbForm.controls['note'].setValue(this.selectedData?.note)
@@ -77,16 +89,16 @@ export class UpdateManufacturingInputComponent implements OnInit {
 
   getQuantity() {
     this.inputManufacturedWbForm.controls['quantityWithWaste'].setValue(
-      String(((parseFloat(this.inputManufacturedWbForm.controls['quantity'].value) * parseFloat(this.inputManufacturedWbForm.controls['wastRatio'].value)) / 100) + parseFloat(this.inputManufacturedWbForm.controls['quantity'].value))
+      String(((parseFloat(this.inputManufacturedWbForm.controls['quantity'].value) / (1 - (this._sharedComponentService.notZero(parseFloat(this.inputManufacturedWbForm.controls['wastRatio'].value)) / 100 )))) )
       )
   }
 
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.inputManufacturedWbForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.inputManufacturedWbForm.controls['price'].value))
+      this.inputManufacturedWbForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.inputManufacturedWbForm.controls['price'].value, this.exchangeRatePrice))
     } else if (type == "priceDollar") {
-      this.inputManufacturedWbForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.inputManufacturedWbForm.controls['priceDollar'].value))
+      this.inputManufacturedWbForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.inputManufacturedWbForm.controls['priceDollar'].value, this.exchangeRatePrice))
     }
   }
 

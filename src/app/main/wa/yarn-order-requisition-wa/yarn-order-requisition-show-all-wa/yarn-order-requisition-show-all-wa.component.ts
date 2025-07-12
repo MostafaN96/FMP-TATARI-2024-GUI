@@ -32,6 +32,7 @@ export class YarnOrderRequisitionShowAllWaComponent implements OnInit {
    @ViewChild('dt1') dt1: Table | undefined;
    loading: boolean = true;
    selectedSellerName: any[] = []
+   selectedOrderName: any[] = []
    startDate: any
    endDate: any
    dateFilters: any
@@ -57,6 +58,7 @@ export class YarnOrderRequisitionShowAllWaComponent implements OnInit {
       this.getData()
     }
     this.customFilterForSellerName();
+    this.customFilterForOrderNumber();
 
   }
 
@@ -107,6 +109,40 @@ export class YarnOrderRequisitionShowAllWaComponent implements OnInit {
     });
   }
   
+  customFilterForOrderNumber() {
+    const customFilterName = "order-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedOrderName
+
+      if (this.selectedOrderName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
    selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -154,6 +190,7 @@ export class YarnOrderRequisitionShowAllWaComponent implements OnInit {
     table.clear();
     table.reset();
     this.selectedSellerName = []
+    this.selectedOrderName = []
     this.dateFilters = []
   }
 
@@ -163,6 +200,10 @@ export class YarnOrderRequisitionShowAllWaComponent implements OnInit {
     this.dt1?._filter()
   }
 
+  onMultiselectedOrderName(event) {
+    this.selectedOrderName = event
+    this.dt1?._filter()
+  }
 
   confirm(event: Event, element) {
     console.log("dfgsdffdsf");

@@ -54,10 +54,11 @@
                         </small> -->
 
                         
+                        <!-- (selectionChange)="selectRequisitionsOrderName($event)" -->
                         <mat-form-field appearance="outline" class="w-100">
                             <mat-label>طلبيات الجاهز</mat-label>
                             <mat-select placeholder="طلبيات الجاهز" formControlName="orderId"
-                            (selectionChange)="selectRequisitionsOrderName($event)"
+                            
                                 multiple>
                                 <mat-option *ngFor="let order of requisitionsOrder"
                                     [value]="{
@@ -133,6 +134,15 @@
 
                 </div>
 
+                <div [class]="_sharedComponentService.gridForm3Class">
+                    <div class="col">
+                        <button type="button" class="btn-style submit-btn"
+                        (click)="selectRequisitionsOrderName($event)">
+                            عرض
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Form Builder Section -->
                 <div class="row row-cols-1">
                     <div class="col">
@@ -164,7 +174,7 @@
                                     </th>
                                     
                                     <th style="max-width: 40px;">
-                                        السعر
+                                        السعر جنيه
                                     </th>
 
                                     <th style="max-width: 40px;">
@@ -247,6 +257,7 @@
                                                 <input autocomplete="off" type="text" matInput
                                                     formControlName="quantity" placeholder="مثال: 12000"
                                                     [errorStateMatcher]="matcher"
+                                                    (click)="$event.target.select()"
                                                     oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                                     required />
                                                 <mat-error class="text-danger"
@@ -273,6 +284,7 @@
                                                 <mat-label>السعر*</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="price" placeholder="مثال: 15"
                                                     [errorStateMatcher]="matcher" (change)="changePrice('priceEG', row)"
+                                                    (click)="$event.target.select()"
                                                     oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
                                                     <mat-error *ngIf="row.get('price').hasError('required') && (row.get('price').dirty 
                                                     || row.get('price').touched)">
@@ -292,6 +304,7 @@
                                                 <mat-label>السعر دولار</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="priceDollar" placeholder="مثال: 15"
                                                     [errorStateMatcher]="matcher" (change)="changePrice('priceDollar', row)"
+                                                    (click)="$event.target.select()"
                                                     oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
                                                     <mat-error *ngIf="row.get('priceDollar').hasError('required') && (row.get('priceDollar').dirty 
                                                     || row.get('priceDollar').touched)">

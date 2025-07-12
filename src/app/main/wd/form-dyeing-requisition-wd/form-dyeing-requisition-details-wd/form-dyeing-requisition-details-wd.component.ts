@@ -35,6 +35,7 @@ export class FormDyeingRequisitionDetailsWdComponent implements OnInit {
   displayedColumns: string[] = [
     'index',
     'work_order_number_details',
+    'wc_fabric_order_requisition_name',
     'fabric_name',
     'fabric_code',
     'fabric_dyeing_code',
@@ -50,6 +51,7 @@ export class FormDyeingRequisitionDetailsWdComponent implements OnInit {
     'color_name',
     'color_code',
     'dyeing_services',
+    'fabric_order_requisitions',
     'document',
     'is_prepare_dyeing',
     'update',
@@ -142,4 +144,16 @@ export class FormDyeingRequisitionDetailsWdComponent implements OnInit {
   }
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
 
+  goToRequisitionPage(typeOfRequisition = '') {
+    if (typeOfRequisition == 'اذن نقل من الخام الى المصبغة') {
+      return `/dashboard/show-all-transport-wc-wd-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن تسوية') {
+      return `/dashboard/show-all-reconciliation-requisition-wd/details`
+    }
+    else if (typeOfRequisition == 'اذن نقل بين المصابغ') {
+      return `/dashboard/show-all-transport-between-dyers-requisition/details`
+    }
+    return ``
+  }
 }

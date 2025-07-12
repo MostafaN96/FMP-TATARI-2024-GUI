@@ -162,7 +162,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
       dyeingQuantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       costPrice: new FormControl(0, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       price: new FormControl((data.price != 0) ? data.price : data.price_dollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      quantity: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      quantity: new FormControl(data.current_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       validQuantity: new FormControl(data.current_quantity),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       fabricWidth: new FormControl(data.fabric_width, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -200,6 +200,26 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
     }
   }
 
+  validateDyeingQuantity(row: FormGroup) {
+    const rowQuantity = parseFloat(row.controls['quantity'].value)
+    const dyeingQuantity = parseFloat(row.controls['dyeingQuantity'].value)
+    if (rowQuantity > 0) {
+      if (dyeingQuantity > rowQuantity) {
+        const ratio = (rowQuantity / dyeingQuantity) * 100
+        const calcRatio = 100 - ratio
+        if (calcRatio <= 10) {
+
+        } else { 
+          row.controls['dyeingQuantity'].setErrors({ 'incorrect': null });
+          row.controls['dyeingQuantity'].updateValueAndValidity()
+        }
+      }
+    } else {
+      row.controls['dyeingQuantity'].setErrors({ 'incorrect': null });
+      row.controls['dyeingQuantity'].updateValueAndValidity()
+    }
+  }
+
   getServicesCost(element, servicePrice) {
     if (servicePrice.is_fabric_piece) {
       return +element.controls['numberFabricPieces'].value * servicePrice.price
@@ -215,11 +235,23 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
     let sum = 0
     for (let index = 0; index < dataSourceSearchTabel.length; index++) {
       const element = dataSourceSearchTabel[index];
-      sum = sum + this._sharedComponentService.getTotalCost(element.price, element.quantity, dyeingServices[index].dyeingServices,
-        (parseFloat(element.dyeingFee) + parseFloat(control['controls'][index]['controls']['addedCost'].value)), element.numberFabricPieces)
+      sum = sum + this._sharedComponentService.getTotalCost(
+        element.price, 
+        element.quantity, 
+        dyeingServices[index].dyeingServices,
+        (parseFloat(element.dyeingFee)), 
+        element.numberFabricPieces,
+      element.addedCost
+      )
 
-        control['controls'][index]['controls']['costPrice'].setValue((this._sharedComponentService.getTotalCost(element.price, element.quantity, dyeingServices[index]?.dyeingServices,
-          (parseFloat(element.dyeingFee) + parseFloat(control['controls'][index]['controls']['addedCost'].value)), element.numberFabricPieces) / element.dyeingQuantity).toFixed(3))
+        control['controls'][index]['controls']['costPrice'].setValue((this._sharedComponentService.getTotalCost(
+          element.price, 
+          element.quantity, 
+          dyeingServices[index]?.dyeingServices,
+          (parseFloat(element.dyeingFee)), 
+          element.numberFabricPieces,
+          element.addedCost
+        ) / element.dyeingQuantity).toFixed(3))
     }
     return sum
   }

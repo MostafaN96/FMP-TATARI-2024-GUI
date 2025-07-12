@@ -48,8 +48,10 @@ export class AddPurchaseDetailsOrderWaComponent implements OnInit {
     'over_current_quantity',
     'note2',
     'close_order',
+    'wa_add_requisition',
     // 'open_order',
-    'update'];
+    // 'update'
+  ];
   filter = "";
   dataSourceSearchTabel: any;
 

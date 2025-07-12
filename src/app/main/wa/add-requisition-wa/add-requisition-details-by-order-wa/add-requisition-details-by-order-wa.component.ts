@@ -40,6 +40,8 @@ export class AddRequisitionDetailsByOrderWaComponent implements OnInit {
     'yarn_lot_code',
     'consigment_yarn_number',
     'quantity',
+    'current_quantity',
+    'over_current_quantity',
     'price',
     'price_dollar',
     'total',

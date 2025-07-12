@@ -129,6 +129,8 @@ export class DyedFabricOrderRequisitionAddDetailsFormWeComponent implements OnIn
 
     this._colorCategoryService.selectAll().subscribe((response: any) => {
       this.colorCategories = response
+
+      this.selectColorsByCategory(0, this._constantsService.DEFAULT_COLOR_CATEGORY_ID)
     })
   }
 
@@ -137,7 +139,7 @@ initItem() {
   return new FormGroup({
     dyedFabricId: new FormControl("", [Validators.required]),
     dyedFabricCode: new FormControl(""),
-    colorCategoryId: new FormControl("", [Validators.required]),
+    colorCategoryId: new FormControl(this._constantsService.DEFAULT_COLOR_CATEGORY_ID, [Validators.required]),
     colorId: new FormControl("", [Validators.required]),
     colorCode: new FormControl("", [Validators.required]),
     quantity: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -153,6 +155,7 @@ initItem() {
 addItem() {
   const control = <FormArray>this.addOrderForm.get('items');
   control.push(this.initItem());
+  this.selectColorsByCategory(this.addOrderForm.controls['items'].value.length-1, this._constantsService.DEFAULT_COLOR_CATEGORY_ID)
 }
 
 getItem(form: any) {    
@@ -170,9 +173,12 @@ removeItem(index: number){
     if (this.dyedFabrics[indexData] !== element.itemData) {
       row.controls['dyedFabricId'].setValue(null)
       row.controls['dyedFabricCode'].setValue(null)
+      row.controls['wasteRatio'].setValue(null)
     }
     else {
       row.controls['dyedFabricCode'].setValue(element.itemData.code)
+      row.controls['wasteRatio'].setValue(element.itemData.waste_ratio)
+      row.controls['fabricQuantityM2'].setValue(element.itemData.fabric_quantity_m2)
     }    
   }
 
@@ -185,9 +191,7 @@ removeItem(index: number){
       this.colors[index] = []
     }
     else {
-      this._colorService.selectByCategory(event.itemData.id).subscribe((response: any) => {
-        this.colors[index] = response
-      })
+      this.selectColorsByCategory(index, event.itemData.id)
     }
   }
 
@@ -201,6 +205,15 @@ removeItem(index: number){
     }
   }
 
+  selectColorsByCategory(index, colorCategoryId = this._constantsService.DEFAULT_COLOR_CATEGORY_ID) {
+    const control = <FormArray>this.addOrderForm.get('items');
+    
+    control.controls[index]['controls']['colorCategoryId'].setValue(colorCategoryId)
+    this._colorService.selectByCategory(colorCategoryId).subscribe((response: any) => {
+      this.colors[index] = response
+    })
+  }
+  
   // price
   changePrice(type, row: FormGroup) {
     if(type == "priceEG") {

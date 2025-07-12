@@ -40,9 +40,11 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
    selectedIsApprivedStatusName: any[] = []
    selectedManufactureName: any[] = []
    selectedCircularKnittingMachineName: any[] = []
+   selectedWcFAbricOrderRequisitionName: any[] = []
    selectedFabricCode: any[] = []
    selectedFabricName: any[] = []
    selectedOrderNumber: any[] = []
+   selectedRequisitionDocumnet: any[] = []
    selectedRequisitionNote: any[] = []
    startDate: any
    endDate: any
@@ -65,12 +67,14 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.getData();
     this.customFilterForSellerName();
     this.customFilterForStatusName();
+    this.customFilterForWcFAbricOrderRequisitionName();
     this.customFilterForIsApprovedStatusName();
     this.customFilterForManufactureName();
     this.customFilterForCircularKnittingMachineName();
     this.customFilterForFabricCode();
     this.customFilterForFabricName();
     this.customFilterForOrderNumber();
+    this.customFilterForRequisitionDocumnet();
     this.customFilterForRequisitionNote();
 
   }
@@ -238,6 +242,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     }
 
     ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+
     customFilterForCircularKnittingMachineName() {
       const customFilterName = "circular-knitting-machine-name-filter";
       this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -294,6 +299,40 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
           // for (let i = 0; i < value.length; i++) {
           for (let j = 0; j < filter.length; j++) {
             if (value == filter[j].fabric_code) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+  customFilterForWcFAbricOrderRequisitionName() {
+    const customFilterName = "wc-fabric-order-requisition-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedWcFAbricOrderRequisitionName
+
+      if (this.selectedWcFAbricOrderRequisitionName[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].wc_fabric_order_requisition_name) {
               // count++
               // if (count == filter.length) {
               return true;
@@ -380,6 +419,40 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     });
   }
   
+customFilterForRequisitionDocumnet() {
+  const customFilterName = "requisition-document-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedRequisitionDocumnet
+
+    if (this.selectedRequisitionDocumnet[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        // let count = 0
+
+        // for (let i = 0; i < value.length; i++) {
+        for (let j = 0; j < filter.length; j++) {
+          if (value == filter[j].document) {
+            // count++
+            // if (count == filter.length) {
+            return true;
+            // }
+          }
+        }
+        // }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+  
 customFilterForRequisitionNote() {
   const customFilterName = "requisition-note-filter";
   this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -465,9 +538,11 @@ customFilterForRequisitionNote() {
     this.selectedIsApprivedStatusName = []
     this.selectedManufactureName = []
     this.selectedCircularKnittingMachineName = []
+    this.selectedWcFAbricOrderRequisitionName = []
     this.selectedFabricCode = []
     this.selectedFabricName = []
     this.selectedOrderNumber = []
+    this.selectedRequisitionDocumnet = []
     this.selectedRequisitionNote = []
     this.dateFilters = []
   }
@@ -497,6 +572,11 @@ customFilterForRequisitionNote() {
     this.dt1?._filter()
   }
 
+  onMultiselectedWcFAbricOrderRequisitionName(event) {
+    this.selectedWcFAbricOrderRequisitionName = event
+    this.dt1?._filter()
+  }
+
   onMultiselectedFabricCode(event) {
     this.selectedFabricCode = event
     this.dt1?._filter()
@@ -509,6 +589,11 @@ customFilterForRequisitionNote() {
 
   onMultiselectedOrderNumber(event) {
     this.selectedOrderNumber = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedRequisitionDocumnet(event) {
+    this.selectedRequisitionDocumnet = event
     this.dt1?._filter()
   }
 

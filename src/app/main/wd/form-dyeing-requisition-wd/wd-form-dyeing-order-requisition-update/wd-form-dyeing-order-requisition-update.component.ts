@@ -30,6 +30,7 @@ export class WdFormDyeingOrderRequisitionUpdateComponent implements OnInit {
   quantityWithWaste = 0
   colorCategories: any = []
   colors: any = []
+  exchangeRatePrice = 0
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -176,9 +177,9 @@ export class WdFormDyeingOrderRequisitionUpdateComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.inputDyeingWdForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.inputDyeingWdForm.controls['price'].value))
+      this.inputDyeingWdForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.inputDyeingWdForm.controls['price'].value, this.exchangeRatePrice))
     } else if (type == "priceDollar") {
-      this.inputDyeingWdForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.inputDyeingWdForm.controls['priceDollar'].value))
+      this.inputDyeingWdForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.inputDyeingWdForm.controls['priceDollar'].value, this.exchangeRatePrice))
     }
   }
   

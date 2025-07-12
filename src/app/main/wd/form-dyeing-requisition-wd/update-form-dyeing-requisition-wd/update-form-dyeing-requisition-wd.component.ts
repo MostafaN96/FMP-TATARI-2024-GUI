@@ -30,6 +30,7 @@ export class UpdateFormDyeingRequisitionWdComponent implements OnInit {
   quantityWithWaste = 0
   colorCategories: any = []
   colors: any = []
+  exchangeRatePrice = 0
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -118,6 +119,8 @@ export class UpdateFormDyeingRequisitionWdComponent implements OnInit {
     this._colorService.selectByCategoryAndDeying(this.selectedData?.dyeing_id, this.selectedData?.color_category_id).subscribe((response: any) => {
       this.colors = response
 
+      this.exchangeRatePrice = parseFloat((this.selectedData?.price / this.selectedData?.price_dollar).toFixed(3))
+
       this.inputDyeingWdForm.controls['note'].setValue(this.selectedData?.note)
       this.inputDyeingWdForm.controls['date'].setValue(this.selectedData?.date)
       this.inputDyeingWdForm.controls['price'].setValue(this.selectedData?.price)
@@ -178,9 +181,9 @@ export class UpdateFormDyeingRequisitionWdComponent implements OnInit {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.inputDyeingWdForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.inputDyeingWdForm.controls['price'].value))
+      this.inputDyeingWdForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.inputDyeingWdForm.controls['price'].value, this.exchangeRatePrice))
     } else if (type == "priceDollar") {
-      this.inputDyeingWdForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.inputDyeingWdForm.controls['priceDollar'].value))
+      this.inputDyeingWdForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.inputDyeingWdForm.controls['priceDollar'].value, this.exchangeRatePrice))
     }
   }
 

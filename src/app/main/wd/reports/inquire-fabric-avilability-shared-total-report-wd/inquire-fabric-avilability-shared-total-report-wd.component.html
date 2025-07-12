@@ -201,6 +201,9 @@
                         <th>
                             الكمية المراد شرائها
                         </th>
+                        <th>
+                             الغزول
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -216,6 +219,13 @@
                         </td>
                         <td>
                             {{wcFabric.needed_quantity | number}}
+                        </td>
+                        <td>
+                            <ul *ngFor="let yarn of wcFabric.yarnsDetails">
+                                <li>
+                                    {{yarn.yarn_name}} --- ({{yarn.ratio | number}}%)
+                                </li>
+                            </ul>
                         </td>
                     </tr>
                 </tbody>
@@ -237,6 +247,10 @@
                         <td>
                             {{ _sharedComponentService.getTotalQuantity(dataReport.wcFabrics, 'needed_quantity') |
                             number}}
+                        </td>
+
+                        <td>
+
                         </td>
                     </tr>
                 </tfoot>

@@ -10,7 +10,7 @@
     <!-- Main Page Form -->
     <div [class]="_sharedComponentService.mainPageFormClass">
         <form [formGroup]="addRequisitionForm" (ngSubmit)="onAddRequisition()">
-            <div [class]="_sharedComponentService.subMainPageForm2Class">
+            <div [class]="_sharedComponentService.subMainPageForm2Class" class="overflow-auto">
                 <!-- Form Body -->
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
@@ -690,7 +690,7 @@
                                             <ejs-autocomplete [dataSource]='dyedFabrics' [fields]='fieldsDyedFabric'
                                                  (filtering)="onFilteringDyedFabricName($event)"
                                                 [placeholder]='textDyedFabric' [autofill]='autofill'
-                                                formControlName="dyedFabricId" (change)='selectDyedFabric($event, row, index)'
+                                                formControlName="dyedFabricName" (change)='selectDyedFabric($event, row, index)'
                                                 [errorStateMatcher]="matcher">
                                             </ejs-autocomplete>
                                             <small class="text-danger" *ngIf="row.get('dyedFabricId').hasError('pattern')"

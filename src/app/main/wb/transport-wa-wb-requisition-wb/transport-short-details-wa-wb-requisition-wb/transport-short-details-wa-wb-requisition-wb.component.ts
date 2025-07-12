@@ -30,6 +30,8 @@ export class TransportShortDetailsWaWbRequisitionWbComponent implements OnInit {
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
   displayedColumns: string[] = [
     'index',
+    'from_wa_yarn_order_requisition_name',
+    'wa_yarn_order_requisition_name',
     'yarn_name',
     'yarn_code',
     'yarn_lot_code',

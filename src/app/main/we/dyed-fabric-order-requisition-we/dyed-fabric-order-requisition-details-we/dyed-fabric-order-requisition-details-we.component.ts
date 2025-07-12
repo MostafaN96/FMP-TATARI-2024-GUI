@@ -39,6 +39,10 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
   showInputUpdate = false
   showAddDetails = false
 
+  
+ @ViewChild('checkbox') checkbox = {value : "من اذن"};
+  showHideItems = ["من اذن"]
+
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('dt1') dt1: Table | undefined;
   loading: boolean = true;
@@ -63,6 +67,8 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // this.checkbox.value = ["من اذن"]
+
     this.customFilterForFabricNames()
     this.customFilterForFabricCodes()
     this.customFilterForColorCategory()
@@ -75,6 +81,7 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     else {
       this.getData()
     }
+
   }
 
   getData(isClosed?: string) {
@@ -304,5 +311,13 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
 
   showAddDetailsFunc() {
     this.showAddDetails = true;
+  }
+
+  
+  goToRequisitionPage(typeOfRequisition = '', element?) {
+    if (typeOfRequisition == 'اذن صباغة') {
+      return `/dashboard/show-all-dyeing-requisition-wd/details`
+    }
+    return ``
   }
 }

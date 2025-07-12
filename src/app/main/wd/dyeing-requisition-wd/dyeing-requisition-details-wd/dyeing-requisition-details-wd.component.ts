@@ -38,11 +38,13 @@ export class DyeingRequisitionDetailsWdComponent implements OnInit {
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
   displayedColumns: string[] = [
     'index',
+    'we_fabric_order_requisition_name',
     'fabric_name',
     'fabric_code',
     'fabric_dyeing_code',
     'consigment_dyeing_number',
     'quantity',
+    'dyeing_quantity',
     'fabric_piece',
     'price',
     'total',

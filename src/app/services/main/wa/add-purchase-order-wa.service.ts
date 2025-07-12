@@ -83,5 +83,16 @@ export class AddPurchaseOrderWaService {
       });
   }
 
+  getCurrentNeededYarnQuantityOfFabricForOrder(dyeingOrdersRequisitions: any): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}get-current-needed-quantity-of-fabric-for-order`;
+
+    return this._http.post(url, dyeingOrdersRequisitions,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 
 }

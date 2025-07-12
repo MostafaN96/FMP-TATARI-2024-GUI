@@ -300,6 +300,8 @@ export class WaReconciliationRequisitionFormAddDetailsComponent implements OnIni
         this.yarnsDetails = response
         this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price, this.yarnsDetails[0].latest_consigment_price]
         this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar, this.yarnsDetails[0].latest_consigment_price_dollar]
+        row.controls['price'].setValue(String(this.yarnsDetails[0].latest_price))
+        row.controls['priceDollar'].setValue(String(this.yarnsDetails[0].latest_price_dollar))
       })
     }    
   }

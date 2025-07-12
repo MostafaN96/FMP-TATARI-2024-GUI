@@ -192,7 +192,7 @@
                                         </td>
 
                                         <td>
-                                            <!-- النوع: {{ element.circular_knitting_machine_type }} -->
+                                            النوع: {{ element.circular_knitting_machine_type }}
                                             <br>
                                             القطر: {{ element.circular_knitting_machine_diameter }}
                                             <br>
@@ -207,6 +207,12 @@
                                             <table>
                                                 <tbody>
                                                     <tr *ngFor="let yarn of element.details">
+
+                                                        <td style="width: 200px; border: 1px solid #e9ecef;">
+                                                            {{yarn.wa_yarn_order_requisition_name}}</td>
+
+                                                            <td style="width: 200px; border: 1px solid #e9ecef;">
+                                                                {{yarn.consigment_yarn_number}}</td>
                                                         <td style="width: 200px; border: 1px solid #e9ecef;">
                                                             {{yarn.yarn_name}}</td>
                                                         <td style="width: 100px; border: 1px solid #e9ecef;">{{yarn.quantity |

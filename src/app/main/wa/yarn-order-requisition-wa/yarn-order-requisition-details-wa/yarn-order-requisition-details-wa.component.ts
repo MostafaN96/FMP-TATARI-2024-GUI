@@ -32,6 +32,7 @@ export class YarnOrderRequisitionDetailsWaComponent implements OnInit {
   manufacturingOrderDetails: any[] = []
   totalPriceXQuantityWithWast: any
   selectedDataToUpdate: any
+  selectedDataToAdd: any
   showInputUpdate = false
   showAddDetails = false
 
@@ -45,6 +46,7 @@ export class YarnOrderRequisitionDetailsWaComponent implements OnInit {
     'completed_quantity',
     'current_quantity',
     'over_current_quantity',
+    'over_current_quantity_ratio',
     'note2',
     'close_order',
     // 'open_order',
@@ -113,6 +115,7 @@ export class YarnOrderRequisitionDetailsWaComponent implements OnInit {
 
   showAddDetailsFunc() {
     this.showAddDetails = true;
+    this.selectedDataToAdd = this.manufacturingOrderDetails
   }
 }
 

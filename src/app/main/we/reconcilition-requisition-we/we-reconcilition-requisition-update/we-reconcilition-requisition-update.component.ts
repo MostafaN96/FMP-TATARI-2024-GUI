@@ -148,7 +148,7 @@ export class WeReconcilitionRequisitionUpdateComponent implements OnInit {
     if(type == "priceEG") {
       this.reconcilitionRequisitionWEForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.reconcilitionRequisitionWEForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.reconcilitionRequisitionWEForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.reconcilitionRequisitionWEForm.controls['priceDollar'].value))
+      this.reconcilitionRequisitionWEForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(this.reconcilitionRequisitionWEForm.controls['priceDollar'].value))
     }
   }
 

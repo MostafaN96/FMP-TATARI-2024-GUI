@@ -151,7 +151,7 @@ export class UpdateAddRequisitionWeComponent implements OnInit {
     if(type == "priceEG") {
       this.addRequisitionWeForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.addRequisitionWeForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.addRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.addRequisitionWeForm.controls['priceDollar'].value))
+      this.addRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(this.addRequisitionWeForm.controls['priceDollar'].value))
     }
   }
 

@@ -255,6 +255,27 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     }
   }
 
+  validateDyeingQuantity(row: FormGroup) {
+    const rowQuantity = parseFloat(row.controls['quantity'].value)
+    const dyeingQuantity = parseFloat(row.controls['dyeingQuantity'].value)
+    if (rowQuantity > 0) {
+      if (dyeingQuantity > rowQuantity) {
+        const ratio = (rowQuantity / dyeingQuantity) * 100
+        const calcRatio = 100 - ratio
+        if (calcRatio <= 10) {
+
+        } else { 
+          row.controls['dyeingQuantity'].setErrors({ 'incorrect': null });
+          row.controls['dyeingQuantity'].updateValueAndValidity()
+        }
+      }
+    } else {
+      row.controls['dyeingQuantity'].setErrors({ 'incorrect': null });
+      row.controls['dyeingQuantity'].updateValueAndValidity()
+    }
+  }
+  
+
   //  Dyeing
   selectDyeing(event: { itemData: any; }) {
     if (this.dyers.includes(event.itemData)) {
@@ -308,11 +329,22 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     for (let index = 0; index < dataSourceSearchTabel.length; index++) {
       const element = dataSourceSearchTabel[index];
       
-      sum = sum + this._sharedComponentService.getTotalCost(element.price, element.quantity, dyeingServices[index]?.dyeingServices,
-        (parseFloat(element.dyeingFee) + parseFloat(control['controls'][index]['controls']['addedCost'].value)), element.numberFabricPieces)
+      sum = sum + this._sharedComponentService.getTotalCost(
+        element.price, element.quantity, 
+        dyeingServices[index]?.dyeingServices,
+        (parseFloat(element.dyeingFee)), 
+        element.numberFabricPieces,
+        element.addedCost
+      )
 
-      control['controls'][index]['controls']['costPrice'].setValue((this._sharedComponentService.getTotalCost(element.price, element.quantity, dyeingServices[index]?.dyeingServices,
-        (parseFloat(element.dyeingFee) + parseFloat(control['controls'][index]['controls']['addedCost'].value)), element.numberFabricPieces) / element.dyeingQuantity).toFixed(3))
+      control['controls'][index]['controls']['costPrice'].setValue((this._sharedComponentService.getTotalCost(
+        element.price, 
+        element.quantity, 
+        dyeingServices[index]?.dyeingServices,
+        (parseFloat(element.dyeingFee)), 
+        element.numberFabricPieces,
+      element.addedCost
+      ) / element.dyeingQuantity).toFixed(3))
     }
     return sum
   }

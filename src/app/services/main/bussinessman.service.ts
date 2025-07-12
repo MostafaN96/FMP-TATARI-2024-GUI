@@ -26,7 +26,7 @@ export class BussinessmanService {
   }
 
 
-  selectAll(): Observable<any> {    
+  selectAll(): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}`;
     return this._http.get(url,
       {

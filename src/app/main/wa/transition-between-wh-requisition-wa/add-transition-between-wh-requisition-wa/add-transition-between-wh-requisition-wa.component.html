@@ -87,7 +87,7 @@
                                     </th>
                                     
                                     <th style="min-width: 120px;">
-                                        الطلبية
+                                        من طلبية
                                     </th>
 
                                     <th style="max-width: 120px;">
@@ -122,6 +122,10 @@
                                     <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" 
                                     style="max-width: 60px;">
                                         السعر دولار 
+                                    </th>
+
+                                    <th style="min-width: 120px;">
+                                        الى طلبية
                                     </th>
 
                                     <th style="max-width: 120px;">
@@ -169,21 +173,21 @@
 
                                         <!-- order -->
                                         <td class="table-td" style="max-width: 120px;">
-                                            <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' 
-                                            (filtering)="onFilteringYarnOrder($event)"
-                                            (change)='selectYarnOrder($event, row, index)'
-                                                [placeholder]='textYarnOrder' [autofill]='autofill'
-                                                formControlName="yarnOrderId"
+                                            <ejs-autocomplete [dataSource]='fromYarnOrder' [fields]='fieldsFromYarnOrder' 
+                                            (filtering)="onFilteringFromYarnOrder($event)"
+                                            (change)='selectFromYarnOrder($event, row, index)'
+                                                [placeholder]='textFromYarnOrder' [autofill]='autofill'
+                                                formControlName="fromYarnOrderId"
                                                 [errorStateMatcher]="matcher" 
                                                 >
                                             </ejs-autocomplete>
                                             <small class="text-danger"
-                                            *ngIf="row.get('yarnOrderId').hasError('pattern')"
+                                            *ngIf="row.get('fromYarnOrderId').hasError('pattern')"
                                             [innerHTML]="_sharedComponentService.invalid_message">
                                             </small>
                                             <small class="text-danger"
-                                                *ngIf="row.get('yarnOrderId').hasError('required') && (row.get('yarnOrderId').dirty 
-                                                || row.get('yarnOrderId').touched)"
+                                                *ngIf="row.get('fromYarnOrderId').hasError('required') && (row.get('fromYarnOrderId').dirty 
+                                                || row.get('fromYarnOrderId').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
                                         </td>
@@ -362,6 +366,27 @@
                                             </mat-form-field>
                                         </td>
 
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 120px;">
+                                            <ejs-autocomplete [dataSource]='yarnOrder[index]' [fields]='fieldsYarnOrder' 
+                                            (filtering)="onFilteringYarnOrder($event, index)"
+                                            (change)='selectYarnOrder($event, row, index)'
+                                                [placeholder]='textYarnOrder' [autofill]='autofill'
+                                                formControlName="waYarnOrderRequisitionDetailsId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('waYarnOrderRequisitionDetailsId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('waYarnOrderRequisitionDetailsId').hasError('required') && (row.get('waYarnOrderRequisitionDetailsId').dirty 
+                                                || row.get('waYarnOrderRequisitionDetailsId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                         <!-- new consigment Yarn Number -->
                                         <td style="max-width: 120px;">
                                             <ejs-autocomplete [dataSource]='toConsigmentsYarns' [fields]='fieldsToConsigmentYarn' 
@@ -465,7 +490,7 @@
                                   <td colspan="2"style="max-width: 120px;"
                                   *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[2])" >
                                     </td>
-                                  <td colspan="5"></td>
+                                  <td colspan="6"></td>
                                 </tr>
                               </tfoot>
 

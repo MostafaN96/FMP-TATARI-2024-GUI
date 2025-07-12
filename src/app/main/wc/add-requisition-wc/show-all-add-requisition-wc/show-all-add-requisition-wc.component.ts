@@ -10,6 +10,7 @@ import * as moment from 'moment';
 
 // Shared Service
 import { SharedComponentService } from "../../../../services/shared-component.service";
+import { ConstantsService } from 'src/app/services/constants.service';
 
 // Call Service
 import { AddRequisitionWcService } from "../../../../services/main/wc/add-requisition-wc.service";
@@ -37,6 +38,7 @@ export class ShowAllAddRequisitionWcComponent implements OnInit {
     private _addRequisitionWcService: AddRequisitionWcService,
     private primengConfig: PrimeNGConfig,
     private filterService: FilterService,
+        public _constantsService: ConstantsService,
   ) {
 
   }

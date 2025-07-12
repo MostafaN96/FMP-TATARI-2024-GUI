@@ -22,6 +22,7 @@ import { ActivatedRoute } from '@angular/router';
 export class UpdateTransitionBetweenWhRequisitionWeComponent {
 
   requisitionId!: string;
+  exchangeRatePrice = 0
 
   @Input() selectedData: any
   transitionBetweenWhRequisitionWeForm: FormGroup = new FormGroup({
@@ -31,7 +32,7 @@ export class UpdateTransitionBetweenWhRequisitionWeComponent {
     priceDollar: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
-    colorCode: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
+    colorCode: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
@@ -57,6 +58,8 @@ export class UpdateTransitionBetweenWhRequisitionWeComponent {
   }
 
   ngOnChanges() {
+    this.exchangeRatePrice = parseFloat((this.selectedData?.price / this.selectedData?.price_dollar).toFixed(3))
+
     this.transitionBetweenWhRequisitionWeForm.controls['colorCode'].setValue(String(this.selectedData?.color_code))
     this.transitionBetweenWhRequisitionWeForm.controls['date'].setValue(this.selectedData?.date)
     this.transitionBetweenWhRequisitionWeForm.controls['note'].setValue(this.selectedData?.note)
@@ -72,9 +75,9 @@ export class UpdateTransitionBetweenWhRequisitionWeComponent {
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenWhRequisitionWeForm.controls['price'].value))
+      this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.transitionBetweenWhRequisitionWeForm.controls['price'].value, this.exchangeRatePrice))
     } else if (type == "priceDollar") {
-      this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].value))
+      this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].value, this.exchangeRatePrice))
     }
   }
 

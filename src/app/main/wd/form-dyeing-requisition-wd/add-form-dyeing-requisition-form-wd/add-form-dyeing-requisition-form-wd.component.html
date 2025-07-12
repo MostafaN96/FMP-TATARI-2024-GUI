@@ -478,7 +478,7 @@
                                             <ejs-autocomplete [dataSource]='dyedFabrics' [fields]='fieldsDyedFabric'
                                                  (filtering)="onFilteringDyedFabricName($event)"
                                                 [placeholder]='textDyedFabric' [autofill]='autofill'
-                                                formControlName="dyedFabricId" (change)='selectDyedFabric($event, row, index)'
+                                                formControlName="dyedFabricName" (change)='selectDyedFabric($event, row, index)'
                                                 [errorStateMatcher]="matcher">
                                             </ejs-autocomplete>
                                             <small class="text-danger" *ngIf="row.get('dyedFabricId').hasError('pattern')"

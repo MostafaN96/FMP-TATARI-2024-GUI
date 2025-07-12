@@ -24,7 +24,7 @@
                 <p-table #dt1 [value]="formDyeingFabricsByDyer" dataKey="id" columnResizeMode="expand"
                     styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true" [rows]="10"
                     [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll" scrollHeight="600px"
-                    [filterDelay]="0" sortField="fabric_code" sortOrder="1" [responsive]="true" appendTo="body"
+                    [filterDelay]="0" sortField="work_order_number_details" sortOrder="1" [responsive]="true" appendTo="body"
                     [autoLayout]="true">
                     <ng-template data-html2canvas-ignore="true" pTemplate="caption">
                         <div data-html2canvas-ignore="true" class="flex">
@@ -277,6 +277,14 @@
                                 </div>
                             </th>
 
+                            <!-- is_prepare_dyeing Column -->
+                            <th pResizableColumn pSortableColumn="is_prepare_dyeing">
+                                <div class="flex justify-content-between align-items-center">
+                                    نزل المصبغة
+                                    <p-sortIcon data-html2canvas-ignore="true" field="is_prepare_dyeing">
+                                    </p-sortIcon>
+                                </div>
+                            </th>
                             
                             <!-- quantity Column -->
                             <th pResizableColumn>
@@ -482,6 +490,12 @@
                                 {{ element.consigment_dyeing_number }}
                             </td>
 
+                            <!-- is_prepare_dyeing Column -->
+                            <td>
+                                <p-checkbox [(ngModel)]="element.is_prepare_dyeing"
+                                        [binary]="true" [trueValue]="1" [falseValue]="0" [disabled]="true"></p-checkbox>
+                            </td>
+
                             <!-- quantity Column -->
                             <td>
                                 {{ element.quantity }}
@@ -632,6 +646,9 @@
                             <td></td>
 
                             <!-- consigment_dyeing_number Column -->
+                            <td></td>
+
+                            <!-- is_prepare_dyeing Column -->
                             <td></td>
 
                             <!-- quantity Column -->

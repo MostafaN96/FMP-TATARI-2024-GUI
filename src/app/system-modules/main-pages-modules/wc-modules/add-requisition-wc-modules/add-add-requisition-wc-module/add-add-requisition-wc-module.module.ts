@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AddAddRequisitionWcModuleRoutingModule } from './add-add-requisition-wc-module-routing.module';
 
 // Component
-import { AddAddRequisitionWcComponent } from '../../../../../main/wc/add-requisition-wc/add-add-requisition-wc/add-add-requisition-wc.component';
+import { AddAddRequisitionWcComponent } from 'src/app/main/wc/add-requisition-wc/add-add-requisition-wc/add-add-requisition-wc.component';
 
 // Shared Module
 import { SharedModule } from '../../../../../shared-modules/shared.module';

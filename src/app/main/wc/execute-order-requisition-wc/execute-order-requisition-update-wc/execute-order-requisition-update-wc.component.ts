@@ -74,7 +74,7 @@ export class ExecuteOrderRequisitionUpdateWcComponent implements OnInit {
     if(type == "priceEG") {
       this.executeOrderRequisitionForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.executeOrderRequisitionForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.executeOrderRequisitionForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.executeOrderRequisitionForm.controls['priceDollar'].value))
+      this.executeOrderRequisitionForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(this.executeOrderRequisitionForm.controls['priceDollar'].value))
     }
   }
 

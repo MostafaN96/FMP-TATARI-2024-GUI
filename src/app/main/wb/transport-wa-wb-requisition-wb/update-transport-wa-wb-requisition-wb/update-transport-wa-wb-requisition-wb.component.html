@@ -44,6 +44,18 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- Exchange Rate -->
+                    <div class="col"
+                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>سعر الصرف</mat-label>
+                            <input type="text" matInput [(ngModel)]="exchangeRatePrice" [ngModelOptions]="{standalone: true}"
+                            (click)="$event.target.select()"
+                            placeholder="مثال: 50"
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                        </mat-form-field>
+                    </div>
+                    
                     <!-- Price -->
                     <div class="col"
                     *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])">
@@ -92,13 +104,47 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- neededYarnQuantity -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>الكمية المطلوبة</mat-label>
+                            <input [disabled]="true" matInput placeholder="الكمية المطلوبة" value="{{neededYarnQuantity}}" readonly>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- exceeded_ratio -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>النسبة الزائدة</mat-label>
+                            <input autocomplete="off" type="text" matInput
+                                                    formControlName="exceededRatio" placeholder="مثال: 5"
+                                                    [errorStateMatcher]="matcher" (blur)="changeExceededRatio($event)"
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                            <mat-error *ngIf="transportWaWbRequisitionWbForm.controls['exceededRatio'].hasError('required') && (transportWaWbRequisitionWbForm.controls['exceededRatio'].dirty 
+                                    || transportWaWbRequisitionWbForm.controls['exceededRatio'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="transportWaWbRequisitionWbForm.controls['exceededRatio'].hasError('required')">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                            <mat-error *ngIf="transportWaWbRequisitionWbForm.controls['exceededRatio'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_pattern_number_only">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
                     <!-- Quantity -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">
                             <mat-label>الكمية*</mat-label>
                             <input type="text" matInput formControlName="quantity" placeholder="مثال: 12000"
                                 [errorStateMatcher]="matcher"
-                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" 
+                                />
+                                 <!-- (blur)="getRatioWithValue($event)" -->
                             <mat-error class="text-danger"
                                 *ngIf="transportWaWbRequisitionWbForm.controls['quantity'].hasError('incorrect')">
                                 الكمية المدخلة غير متوفرة

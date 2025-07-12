@@ -71,7 +71,7 @@ export class TransitionBetweenWhRequisitionUpdateWcComponent implements OnInit {
     if(type == "priceEG") {
       this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenWhRequisitionWeForm.controls['price'].value))
     } else if (type == "priceDollar") {
-      this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].value))
+      this.transitionBetweenWhRequisitionWeForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(this.transitionBetweenWhRequisitionWeForm.controls['priceDollar'].value))
     }
   }
 

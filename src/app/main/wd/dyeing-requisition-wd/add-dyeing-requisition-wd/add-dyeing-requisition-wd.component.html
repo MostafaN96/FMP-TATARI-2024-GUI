@@ -507,7 +507,7 @@
                                                 {{_sharedComponentService.getDyeingCost((isCalcDyeingNet == '1') ?
                                                 row.controls['dyeingQuantity'].value : row.controls['quantity'].value,
                                                 selectArrayValues[index].dyeingServices,
-                                                row.controls['dyeingFee'].value + row.controls['addedCost'].value,
+                                                row.controls['dyeingFee'].value,
                                                 row.controls['numberFabricPieces'].value) | number}}
                                             </span>
                                         </td>
@@ -518,8 +518,10 @@
                                                 {{_sharedComponentService.getTotalCost(row.controls['price'].value,
                                                 (isCalcDyeingNet == '1') ? row.controls['dyeingQuantity'].value :
                                                 row.controls['quantity'].value, selectArrayValues[index].dyeingServices,
-                                                row.controls['dyeingFee'].value + row.controls['addedCost'].value,
-                                                row.controls['numberFabricPieces'].value) | number}}
+                                                row.controls['dyeingFee'].value,
+                                                row.controls['numberFabricPieces'].value,
+                                                row.controls['addedCost'].value
+                                                ) | number}}
                                             </span>
                                         </td>
 
@@ -551,7 +553,8 @@
                                                     formControlName="dyeingQuantity" placeholder="مثال: 12000"
                                                     [errorStateMatcher]="matcher"
                                                     oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                                    required />
+                                                    required 
+                                                    (change)="validateDyeingQuantity(row)"/>
                                                 <mat-error class="text-danger"
                                                     *ngIf="row.get('dyeingQuantity').hasError('incorrect')">
                                                     الكمية المدخلة غير متوفرة
@@ -737,7 +740,7 @@
                                 <tr>
                                     <td>الاجمالي</td>
 
-                                    <td colspan="8"></td>
+                                    <td colspan="7"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
                                         'validQuantity') | number}}</td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',

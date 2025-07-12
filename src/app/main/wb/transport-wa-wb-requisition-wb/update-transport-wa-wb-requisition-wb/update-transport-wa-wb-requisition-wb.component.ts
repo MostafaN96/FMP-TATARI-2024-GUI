@@ -12,6 +12,7 @@ import { SessionManagerService } from "src/app/services/main/session-manager.ser
 
 // Call Service
 import { WbTransportWaWbRequisitionDetailsService } from "src/app/services/main/wb/wb-transport-wa-wb-requisition-details.service";
+import { AddPurchaseOrderWaService } from "src/app/services/main/wa/add-purchase-order-wa.service";
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -23,6 +24,8 @@ export class UpdateTransportWaWbRequisitionWbComponent implements OnInit {
 
   requisitionId!: string;
   warehouseId!: string;
+  neededYarnQuantity = 0;
+  exchangeRatePrice = 0
 
   @Input() selectedData: any
   transportWaWbRequisitionWbForm: FormGroup = new FormGroup({
@@ -31,6 +34,7 @@ export class UpdateTransportWaWbRequisitionWbComponent implements OnInit {
     price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+    exceededRatio: new FormControl(10, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
@@ -43,6 +47,7 @@ export class UpdateTransportWaWbRequisitionWbComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public matcher: MyErrorStateMatcher,
     private _wbTransportWaWbRequisitionDetailsService: WbTransportWaWbRequisitionDetailsService,
+        private _addPurchaseOrderWaService: AddPurchaseOrderWaService,
     public _constantsService: ConstantsService,
     public _sessionManagerService: SessionManagerService,
 
@@ -57,21 +62,45 @@ export class UpdateTransportWaWbRequisitionWbComponent implements OnInit {
   }
 
   ngOnChanges() {
+    this.exchangeRatePrice = parseFloat((this.selectedData?.price / this.selectedData?.price_dollar).toFixed(3))
+
     this.transportWaWbRequisitionWbForm.controls['date'].setValue(this.selectedData?.date)
     this.transportWaWbRequisitionWbForm.controls['note'].setValue(this.selectedData?.note)
+    this.transportWaWbRequisitionWbForm.controls['exceededRatio'].setValue(this.selectedData?.exceeded_ratio)
+    this.transportWaWbRequisitionWbForm.controls['quantity'].setValue(String(this.selectedData?.quantity ?? ''))
     this.transportWaWbRequisitionWbForm.controls['price'].setValue(this.selectedData?.price)
     this.transportWaWbRequisitionWbForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
-    this.transportWaWbRequisitionWbForm.controls['quantity'].setValue(String(this.selectedData?.quantity) ?? '')
     this.transportWaWbRequisitionWbForm.controls['document'].setValue(this.selectedData?.document)
     this.transportWaWbRequisitionWbForm.controls['statement'].setValue(this.selectedData?.statement)
+
+    this._addPurchaseOrderWaService.getCurrentNeededYarnQuantityOfFabricForOrder({
+      ordersRequisitionsId: this.selectedData?.orders_requisitions_id, 
+      yarnId: this.selectedData?.yarn_id, 
+      fabricId: this.selectedData?.fabric_to_be_manufactured_id
+    }).subscribe((response: any) => {
+      if (Array.isArray(response)) {
+        this.neededYarnQuantity = response[0].needed_quantity
+      }
+    })
+
+  }
+
+  // exceededRatio
+  changeExceededRatio(event) {
+    this.transportWaWbRequisitionWbForm.controls['quantity'].setValue(this._sharedComponentService.getValueWithRatio(this.transportWaWbRequisitionWbForm.controls['quantity'].value, event.target.value))
+  }
+
+  // getRatioWithValue
+  getRatioWithValue(event) {
+    this.transportWaWbRequisitionWbForm.controls['exceededRatio'].setValue(this._sharedComponentService.getRatioWithValue(event.target.value, this.neededYarnQuantity))
   }
 
   // price
   changePrice(type) {
     if(type == "priceEG") {
-      this.transportWaWbRequisitionWbForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(this.transportWaWbRequisitionWbForm.controls['price'].value))
+      this.transportWaWbRequisitionWbForm.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar2(this.transportWaWbRequisitionWbForm.controls['price'].value, this.exchangeRatePrice))
     } else if (type == "priceDollar") {
-      this.transportWaWbRequisitionWbForm.controls['price'].setValue(this._sharedComponentService.calcEgpToDollar(this.transportWaWbRequisitionWbForm.controls['priceDollar'].value))
+      this.transportWaWbRequisitionWbForm.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp2(this.transportWaWbRequisitionWbForm.controls['priceDollar'].value, this.exchangeRatePrice))
     }
   }
 

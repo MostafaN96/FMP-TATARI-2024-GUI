@@ -77,6 +77,60 @@
                                         </div>
 
                                         <div class="col">
+                                            <p-columnFilter field="details" matchMode="work-order-number-details-filter" [showMenu]="false"
+                                                [showClearButton]="false" [matchModeOptions]="selectedWorkOrderNumberDetails">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedWorkOrderNumberDetails" 
+                                                    [options]="_sharedComponentService.uniqueArray(formDetails, 'work_order_number_details')"
+                                                        (onChange)="onMultiselectedWorkOrderNumberDetails($event.value)"
+                                                        placeholder="البحث بـ أمر الشغل" optionLabel="work_order_number_details">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.work_order_number_details}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+    
+                                        <div class="col">
+                                            <p-columnFilter field="details" matchMode="fabric-name-filter" [showMenu]="false"
+                                                [showClearButton]="false" [matchModeOptions]="selectedFabricName">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedFabricName" 
+                                                    [options]="_sharedComponentService.uniqueArray(formDetails, 'dyed_fabric_name')"
+                                                        (onChange)="onMultiselectedFabricName($event.value)"
+                                                        placeholder="البحث بـ نوع القماش" optionLabel="dyed_fabric_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.dyed_fabric_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+    
+                                        <div class="col">
+                                            <p-columnFilter field="wc_fabric_order_requisition_name" matchMode="order-number-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedOrderNumber"
+                                                        [options]="_sharedComponentService.uniqueArray(fabrics, 'wc_fabric_order_requisition_name')"
+                                                        (onChange)="onMultiselectedOrderNumber($event.value)"
+                                                        placeholder="البحث بـ رقم الطلبية" optionLabel="wc_fabric_order_requisition_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.wc_fabric_order_requisition_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <!-- <div class="col">
                                             <p-columnFilter field="seller_name" matchMode="seller-name-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -92,9 +146,9 @@
                                                     </p-multiSelect>
                                                 </ng-template>
                                             </p-columnFilter>
-                                        </div>
+                                        </div> -->
 
-                                        <div class="col">
+                                        <!-- <div class="col">
                                             <p-columnFilter field="quantity" matchMode="quantity-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -110,9 +164,9 @@
                                                     </p-multiSelect>
                                                 </ng-template>
                                             </p-columnFilter>
-                                        </div>
+                                        </div> -->
 
-                                        <div class="col">
+                                        <!-- <div class="col">
                                             <p-columnFilter field="form_current_quantity" matchMode="form-current-quantity-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -128,9 +182,9 @@
                                                     </p-multiSelect>
                                                 </ng-template>
                                             </p-columnFilter>
-                                        </div>                                        
+                                        </div>                                         -->
 
-                                        <div class="col">
+                                        <!-- <div class="col">
                                             <p-columnFilter field="order_number" matchMode="order-number-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -146,7 +200,7 @@
                                                     </p-multiSelect>
                                                 </ng-template>
                                             </p-columnFilter>
-                                        </div>
+                                        </div> -->
                                         
                                         <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
@@ -196,41 +250,79 @@
                                             </div>
                                         </th>
 
+                                         <!-- wc_fabric_order_requisition_name Column -->
+                                         <th pResizableColumn pSortableColumn="wc_fabric_order_requisition_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                طلبية
+                                                <p-sortIcon data-html2canvas-ignore="true" field="wc_fabric_order_requisition_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- details Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th style="width: 80px;">
+                                                                امر الشغل
+                                                            </th>
+
+                                                            <th style="width: 80px;">
+                                                                نوع القماش
+                                                            </th>
+
+                                                            <th style="width: 80px;">
+                                                                الكمية
+                                                            </th>
+
+                                                            <th style="width: 80px;">
+                                                                نزل المصبغة
+                                                            </th>
+
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </th>
+
                                         <!-- seller_name Column -->
-                                        <th pResizableColumn pSortableColumn="seller_name">
+                                        <!-- <th pResizableColumn pSortableColumn="seller_name">
                                             <div class="flex justify-content-between align-items-center">
                                                 العميل
                                                 <p-sortIcon data-html2canvas-ignore="true" field="seller_name">
                                                 </p-sortIcon>
                                             </div>
-                                        </th>
+                                        </th> -->
 
                                         <!-- quantity Column -->
-                                        <th pResizableColumn pSortableColumn="quantity">
+                                        <!-- <th pResizableColumn pSortableColumn="quantity">
                                             <div class="flex justify-content-between align-items-center">
                                                 الكمية المطلوبة
                                                 <p-sortIcon data-html2canvas-ignore="true" field="quantity">
                                                 </p-sortIcon>
                                             </div>
-                                        </th>
+                                        </th> -->
                                         
                                          <!-- form_current_quantity Column -->
-                                         <th pResizableColumn pSortableColumn="form_current_quantity">
+                                         <!-- <th pResizableColumn pSortableColumn="form_current_quantity">
                                             <div class="flex justify-content-between align-items-center">
                                                 الكمية المتبقية
                                                 <p-sortIcon data-html2canvas-ignore="true" field="form_current_quantity">
                                                 </p-sortIcon>
                                             </div>
-                                        </th>
+                                        </th> -->
 
                                          <!-- order_number Column -->
-                                         <th pResizableColumn pSortableColumn="order_number">
+                                         <!-- <th pResizableColumn pSortableColumn="order_number">
                                             <div class="flex justify-content-between align-items-center">
                                                 رقم طلبية العميل
                                                 <p-sortIcon data-html2canvas-ignore="true" field="order_number">
                                                 </p-sortIcon>
                                             </div>
-                                        </th>
+                                        </th> -->
                                       
                                         <!-- note Column -->
                                         <th>
@@ -271,26 +363,70 @@
                                         <td>
                                             {{ element.work_order_number }}
                                         </td>
-                                        
-                                        <!-- seller_name Column -->
+
+                                        <!-- wc_fabric_order_requisition_name Column -->
                                         <td>
-                                            {{ element.seller_name }}
+                                            {{ element.wc_fabric_order_requisition_name }}
                                         </td>
+                                        
+                                        <!-- details Column -->
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr *ngFor="let item of element.details">
+
+                                                        <td style="width: 80px;">
+                                                            {{item.work_order_number_details}}
+                                                        </td>
+
+                                                        <td style="width: 80px;">
+                                                            {{item.dyed_fabric_name}}
+                                                        </td>
+
+                                                        <td style="width: 80px;">
+                                                            {{item.quantity}}
+                                                        </td>
+
+                                                        <td style="width: 80px;">
+                                                            <p-checkbox [(ngModel)]="item.is_prepare_dyeing"
+                                        [binary]="true" [trueValue]="1" [falseValue]="0" [disabled]="true"></p-checkbox>
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td style="width: 80px;">الإجمالي</td>
+                                                        <td style="width: 80px;"></td>
+                                                        <td style="width: 80px;">
+                                                            {{_sharedComponentService.getTotalQuantity(element.details,
+                                                            'quantity') | number}}
+                                                        </td>
+                                                        <td style="width: 80px;"></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </td>
+
+                                        <!-- seller_name Column -->
+                                        <!-- <td>
+                                            {{ element.seller_name }}
+                                        </td> -->
 
                                         <!-- quantity Column -->
-                                        <td>
+                                        <!-- <td>
                                             {{ element.quantity }}
-                                        </td>
+                                        </td> -->
 
                                          <!-- form_current_quantity Column -->
-                                         <td>
+                                         <!-- <td>
                                             {{ element.form_current_quantity }}
-                                        </td>
+                                        </td> -->
 
                                         <!-- order_number Column -->
-                                        <td>
+                                        <!-- <td>
                                             {{ element.order_number }}
-                                        </td>
+                                        </td> -->
 
                                         <!-- note Column -->
                                         <td>
@@ -313,7 +449,7 @@
                                 </ng-template>
                                 <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                     <tr>
-                                        <td colspan="10">لا يوجد بيانات</td>
+                                        <td colspan="11">لا يوجد بيانات</td>
                                     </tr>
                                 </ng-template>
                             </p-table>

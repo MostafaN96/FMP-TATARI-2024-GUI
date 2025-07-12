@@ -808,6 +808,12 @@ input[type=number] {
     top: 4.5rem !important;
     z-index: 1;
   }
+
+  
+  .p-table-group-tr {
+    background-color: var(--primary-color-1) !important;
+    color: #ffffff !important;
+}
   
   /* .tfoot-pdf-style {
     position: -webkit-sticky !important;

@@ -33,6 +33,7 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
   @ViewChild('dt1') dt1: Table | undefined;
   loading: boolean = true;
   selectedSellerName: any[] = []
+  selectedOrderNumber: any[] = []
   selectedNote: any[] = []
   startDate: any
   endDate: any
@@ -56,8 +57,9 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getData();
+    // this.getData();
     this.customFilterForSellerName();
+    this.customFilterForOrderNumber();
     this.customFilterForNote();
 
     if (this.router.url === '/dashboard/show-all-closed-dyed-fabric-order-requisition-we') {
@@ -147,6 +149,41 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
     });
   }
 
+      ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+      customFilterForOrderNumber() {
+        const customFilterName = "order-number-filter";
+        this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+          filter = this.selectedOrderNumber
+    
+          if (this.selectedOrderNumber[0] != null) {
+            if (filter === undefined || filter === null || !filter.length) {
+              return true;
+            }
+            if (value === undefined || value === null || value.length == 0) {
+              return false;
+            }
+            if (filter.length > 0) {
+              // let count = 0
+    
+              // for (let i = 0; i < value.length; i++) {
+              for (let j = 0; j < filter.length; j++) {
+                if (value == filter[j].name) {
+                  // count++
+                  // if (count == filter.length) {
+                  return true;
+                  // }
+                }
+              }
+              // }
+            }
+            return false;
+          }
+          else {
+            return true;
+          }
+        });
+      }
+
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -194,12 +231,18 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
     table.clear();
     table.reset();
     this.selectedSellerName = []
+    this.selectedOrderNumber = []
     this.selectedNote = []
     this.dateFilters = []
   }
 
   onMultiselectedSellerName(event) {
     this.selectedSellerName = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedOrderNumber(event) {
+    this.selectedOrderNumber = event
     this.dt1?._filter()
   }
 

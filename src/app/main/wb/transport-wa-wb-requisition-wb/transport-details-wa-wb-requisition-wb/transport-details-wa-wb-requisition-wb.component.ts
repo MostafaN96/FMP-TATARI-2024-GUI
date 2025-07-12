@@ -35,6 +35,8 @@ export class TransportDetailsWaWbRequisitionWbComponent implements OnInit {
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
   displayedColumns: string[] = [
     'index',
+    'from_wa_yarn_order_requisition_name',
+    'wa_yarn_order_requisition_name',
     'yarn_name',
     'yarn_code',
     'yarn_lot_code',
@@ -50,6 +52,7 @@ export class TransportDetailsWaWbRequisitionWbComponent implements OnInit {
     'fabric_name',
     'fabric_code',
     'consigment_yarn_number',
+    'yarn_order_requisitions',
     'document',
     'statement',
     'update',
@@ -129,4 +132,27 @@ export class TransportDetailsWaWbRequisitionWbComponent implements OnInit {
     this.selectedDataToDetails = this.transportWaWbDetails
     this.showAddDetails = true;
   }
+  
+  goToRequisitionPage(typeOfRequisition, element) {
+    if (typeOfRequisition == 'اذن اضافة' && element.is_order == "0") {
+      return `/dashboard/show-all-add-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن اضافة' && element.is_order == "1") {
+      return `/dashboard/show-all-add-requisition/order-details`
+    }
+    else if (typeOfRequisition == 'اذن نقل من (A) الى (B)') {
+      return `/dashboard/show-all-transport-wa-wb-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن تسوية') {
+      return `/dashboard/show-all-reconciliation-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن نقل من (B) الى (A)') {
+      return `/dashboard/show-all-transport-wb-wa-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن نقل بين المخازن') {
+      return `/dashboard/show-all-transition-between-wh-requisition-wa/details`
+    }
+    return
+  }
+
 }

@@ -85,6 +85,16 @@ export class YarnOrderRequisitionWaService {
   }
 
   
+  selectByYarnWa(id: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-yarn-wa/${id}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+  
   selectByWarehouseWa(id: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wa/${id}`;
     return this._http.get(url,

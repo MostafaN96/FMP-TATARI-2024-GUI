@@ -93,6 +93,28 @@
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
 
+                                        <!-- from_wa_yarn_order_requisition_name Column -->
+                                        <ng-container matColumnDef="from_wa_yarn_order_requisition_name">
+                                            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                                <b>من طلبية</b>
+                                            </th>
+                                            <td mat-cell *matCellDef="let element">
+                                                {{ element.from_wa_yarn_order_requisition_name }}
+                                            </td>
+                                            <td mat-footer-cell *matFooterCellDef> </td>
+                                        </ng-container>
+
+                                        <!-- wa_yarn_order_requisition_name Column -->
+                                        <ng-container matColumnDef="wa_yarn_order_requisition_name">
+                                            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                                <b>الى طلبية</b>
+                                            </th>
+                                            <td mat-cell *matCellDef="let element">
+                                                {{ element.wa_yarn_order_requisition_name }}
+                                            </td>
+                                            <td mat-footer-cell *matFooterCellDef> </td>
+                                        </ng-container>
+                                        
                                 <!-- yarn_name Column -->
                                 <ng-container matColumnDef="yarn_name">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -203,6 +225,31 @@
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
 
+                                <!-- yarnOrderRequisitions Column -->
+                                <ng-container matColumnDef="yarn_order_requisitions">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>من اذن</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <table class="w-100">
+                                            <tbody>
+                                                <tr
+                                                    *ngFor="let yarnOrderRequisition of element.yarnOrderRequisitions">
+                                                    <a [routerLink]="[goToRequisitionPage(yarnOrderRequisition?.type_of_requisition, yarnOrderRequisition)]"
+                                                        [queryParams]="{id: yarnOrderRequisition?.requisition_id}">
+                                                        <td>{{yarnOrderRequisition.type_of_requisition}}</td>
+                                                        <td>
+
+                                                            ({{ yarnOrderRequisition.number}})
+                                                        </td>
+                                                    </a>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+                                
                                 <!-- document Column -->
                                 <ng-container matColumnDef="document">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>

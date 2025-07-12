@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 // Form Services
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -29,6 +29,7 @@ export class YarnOrderRequisitionAddDetailsFormWaComponent implements OnInit {
   ///////////////////////////////// Form Group & Form Control ////////////////////////////////
   addOrderForm = new FormGroup({
     id: new FormControl(null, [Validators.required]),
+    ordersRequisitionsId: new FormControl(""),
     items: new FormArray([this.initItem()]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
@@ -36,6 +37,7 @@ export class YarnOrderRequisitionAddDetailsFormWaComponent implements OnInit {
 
   ///////////////////////////////// General ////////////////////////////////////////////////
   yarns: any
+  @Input() selectedData: any
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -87,6 +89,10 @@ export class YarnOrderRequisitionAddDetailsFormWaComponent implements OnInit {
     })
 
   }
+
+  ngOnChanges() {
+    this.addOrderForm.controls['ordersRequisitionsId'].setValue(this.selectedData[0]?.orders_requisitions_id)
+}
 
   // Initialize Form Builder
   initItem() {

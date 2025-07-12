@@ -34,6 +34,7 @@ export class TransportWcWdRequisitionDetailsWcComponent implements OnInit {
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
   displayedColumns: string[] = [
     'index',
+    'wc_fabric_order_requisition_name', 
     'fabric_name', 
     'fabric_code',
     'consigment_manufacturing_number',
@@ -43,6 +44,7 @@ export class TransportWcWdRequisitionDetailsWcComponent implements OnInit {
     'price_dollar',
     'total',
     'total_dollar',
+    'fabric_order_requisitions',
     'document',
     'statement',
     'update'];
@@ -102,5 +104,24 @@ export class TransportWcWdRequisitionDetailsWcComponent implements OnInit {
   showAddDetailsFunc() {
     this.selectedDataToAddDetails = this.transportWcWdDetails[0]
     this.showAddDetails = true;
+  }
+  
+  goToRequisitionPage(typeOfRequisition, element?) {
+    if (typeOfRequisition == 'اذن اضافة') {
+      return `/dashboard/show-all-add-requisition-wc/details`
+    }
+    else if (typeOfRequisition == 'اذن تصنيع' && element?.is_order != '1') {
+      return `/dashboard/show-all-manufacturing-requisition-wb/details`
+    }
+    else if (typeOfRequisition == 'اذن تصنيع' && element?.is_order == '1') {
+      return `/dashboard/show-all-manufacturing-order-requisition-wb/order-details`
+    }
+    else if (typeOfRequisition == 'اذن نقل من (D) الى (C)') {
+      return `/dashboard/show-all-transport-wd-wc-requisition/details`
+    }
+    else if (typeOfRequisition == 'اذن نقل بين المخازن') {
+      return `/dashboard/show-all-transition-between-wh-requisition-wc/details`
+    }
+    return
   }
 }

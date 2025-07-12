@@ -127,6 +127,8 @@ export class UpdateDyeingRequisitionWdComponent implements OnInit {
   }
 
   ngOnChanges() {
+    console.log("this.selectedData ::::::: ", this.selectedData);
+    
     this.inputDyeingWdForm.controls['wdFormDyeingOrderRequisitionDetailsId'].setValue(this.selectedData?.wd_form_dyeing_order_requisition_details_id)
     this.inputDyeingWdForm.controls['date'].setValue(this.selectedData?.date)
     this.inputDyeingWdForm.controls['note'].setValue(this.selectedData?.note)
@@ -190,13 +192,43 @@ export class UpdateDyeingRequisitionWdComponent implements OnInit {
     }
     let sum = 0
     const element = dataSourceSearchTabel;
-    sum = this._sharedComponentService.getTotalCost(element.price, element.quantity, element.dyeingServices,
-      element.dyeing_fee, element.fabric_piece) / element.dyeing_quantity
+    console.log("element.dyeing_quantity ::: ", element.dyeing_quantity);
+    
+    sum = this._sharedComponentService.getTotalCost(
+      element.price, 
+      element.quantity, 
+      element.dyeingServices,
+      element.dyeing_fee, 
+      element.fabric_piece,
+      element.added_cost
+    ) / element.dyeing_quantity
+    console.log("sum ========getSumTotalCost======= ", sum);
+    
     return parseFloat((sum).toFixed(3))
   }
 
   isChecked(control, value) {
     this.inputDyeingWdForm.controls[control].setValue(value)
+  }
+
+  validateDyeingQuantity() {
+    const rowQuantity = parseFloat(this.inputDyeingWdForm.controls['quantity'].value)
+    const dyeingQuantity = parseFloat(this.inputDyeingWdForm.controls['dyeingQuantity'].value)
+    if (rowQuantity > 0) {
+      if (dyeingQuantity > rowQuantity) {
+        const ratio = (rowQuantity / dyeingQuantity) * 100
+        const calcRatio = 100 - ratio
+        if (calcRatio <= 10) {
+
+        } else { 
+          this.inputDyeingWdForm.controls['dyeingQuantity'].setErrors({ 'incorrect': null });
+          this.inputDyeingWdForm.controls['dyeingQuantity'].updateValueAndValidity()
+        }
+      }
+    } else {
+      this.inputDyeingWdForm.controls['dyeingQuantity'].setErrors({ 'incorrect': null });
+      this.inputDyeingWdForm.controls['dyeingQuantity'].updateValueAndValidity()
+    }
   }
 
   async onUpdate() {

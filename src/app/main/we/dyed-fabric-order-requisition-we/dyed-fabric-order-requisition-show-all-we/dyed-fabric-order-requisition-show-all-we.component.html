@@ -19,8 +19,8 @@
                             <p-table #dt1 [value]="fabrics" [(selection)]="selectedData" dataKey="id" columnResizeMode="expand"
                                 styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
                                 [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
-                                scrollHeight="600px" [filterDelay]="0" sortField="number" [responsive]="true"
-                                [sortOrder]="0" appendTo="body" [autoLayout]="true">
+                                scrollHeight="600px" [filterDelay]="0" [responsive]="true"
+                                 appendTo="body" [autoLayout]="true">
                                 <ng-template data-html2canvas-ignore="true" pTemplate="caption">
 
                                     <!-- Start Filter Section -->
@@ -45,6 +45,24 @@
                                                         <ng-template let-option pTemplate="item">
                                                             <div class="p-multiselect-representative-option">
                                                                 <span class="ml-1">{{option.seller_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="name" matchMode="order-number-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedOrderNumber"
+                                                        [options]="_sharedComponentService.uniqueArray(fabrics, 'name')"
+                                                        (onChange)="onMultiselectedOrderNumber($event.value)"
+                                                        placeholder="البحث بـ رقم الطلبية" optionLabel="name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.name}}</span>
                                                             </div>
                                                         </ng-template>
                                                     </p-multiSelect>
@@ -84,14 +102,14 @@
                                 </ng-template>
                                 <ng-template pTemplate="header">
                                     <tr>
-
-                                        <!-- select Column -->
-                                        <th *ngIf="router.url == '/dashboard/show-all-opened-dyed-fabric-order-requisition-we'">
-                                            اختيار
+                                        
+                                        <!-- Select Column -->
+                                        <th data-html2canvas-ignore="true" *ngIf="router.url == '/dashboard/show-all-opened-dyed-fabric-order-requisition-we'">
+                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                                         </th>
 
                                         <!-- Number Column -->
-                                        <th>
+                                        <th pSortableColumn="number">
                                             رقم الإذن
                                             <p-sortIcon data-html2canvas-ignore="true" field="number"></p-sortIcon>
                                         </th>
@@ -183,7 +201,8 @@
 
                                         <!-- Select Column -->
                                         <td *ngIf="router.url == '/dashboard/show-all-opened-dyed-fabric-order-requisition-we'" data-html2canvas-ignore="true">
-                                            <p-tableCheckbox [value]="element"></p-tableCheckbox>
+                                            <p-tableCheckbox [value]="element">
+                                            </p-tableCheckbox>
                                         </td>
 
                                         <!-- Index Column -->

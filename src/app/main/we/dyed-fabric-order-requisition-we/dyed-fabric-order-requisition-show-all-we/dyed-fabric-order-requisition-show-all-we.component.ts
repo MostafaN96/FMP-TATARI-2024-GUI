@@ -40,6 +40,7 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
   dateFilters: any
 
   selectedData: any = []
+  selectedMirgedOrders: any = []
 
   constructor(
     public _sharedComponentService: SharedComponentService,
@@ -316,5 +317,29 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
     this._sharedComponentService.openPageNewTabWithoutParams(this._constantsService.ROUTING_MAIN_LINKS[0]+this._constantsService.ROUTING_LINKS[159])
     
 
+  }
+
+  selectedMirgeOrders() {
+    this.selectedMirgedOrders = this.selectedData.map(item => ({
+  id: item.id,
+  orders_requisitions_id: item.orders_requisitions_id
+}))
+  }
+
+  mirgeOrders() {
+    console.log(this.selectedMirgedOrders);
+    
+    this._constantsService.spinner.show()
+    this._dyedFabricOrderRequisitionWeService.mirgeOrders(this.selectedMirgedOrders).subscribe((response: any) => {
+      this._constantsService.spinner.hide();
+      if (response.msg == "data updated") {
+        this._constantsService.successUpdateMessage()
+        this.getData()
+      }
+      else {
+        this._constantsService.userErrorMessage()
+      }
+    })
+    
   }
 }

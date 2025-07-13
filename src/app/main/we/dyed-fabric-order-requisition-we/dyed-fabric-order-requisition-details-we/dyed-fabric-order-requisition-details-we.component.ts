@@ -103,6 +103,8 @@ export class DyedFabricOrderRequisitionDetailsWeComponent implements OnInit {
     selectedData.yarnOrders = this.dyedFabricOrderDetails[0]['yarnOrders']
     selectedData.fabricOrders = this.dyedFabricOrderDetails[0]['fabricOrders']
     this.selectedDataToUpdate = selectedData
+    console.log("this.selectedDataToUpdate ::: ", this.selectedDataToUpdate);
+    
   }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////

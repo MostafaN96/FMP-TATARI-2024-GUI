@@ -201,7 +201,7 @@
 
                                         <!-- Select Column -->
                                         <td *ngIf="router.url == '/dashboard/show-all-opened-dyed-fabric-order-requisition-we'" data-html2canvas-ignore="true">
-                                            <p-tableCheckbox [value]="element">
+                                            <p-tableCheckbox [value]="element" (click)="selectedMirgeOrders()">
                                             </p-tableCheckbox>
                                         </td>
 
@@ -505,6 +505,13 @@
                         type="submit"
                             class="btn-style submit-btn">
                         استعلام عن توافر القماش
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button [disabled]="selectedMirgedOrders.length < 2" (click)="mirgeOrders()" 
+                        type="button"
+                            class="btn-style submit-btn">
+                        دمج الطلبيات
                         </button>
                     </div>
                 </div>

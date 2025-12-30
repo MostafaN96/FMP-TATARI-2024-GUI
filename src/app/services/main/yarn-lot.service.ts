@@ -56,8 +56,8 @@ export class YarnLotService {
       });
   }
 
-  selectBySupplierByWarehouseByYarnWa(supplierId: string, warehouseId: string, yarnId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-by-yarn-wa/${supplierId}/${warehouseId}/${yarnId}`;
+  selectBySupplierByWarehouseByYarnWa(supplierId: string, warehouseId: string, yarnId: string, yarnOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-by-yarn-wa/${supplierId}/${warehouseId}/${yarnId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

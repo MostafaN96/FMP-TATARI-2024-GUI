@@ -156,6 +156,16 @@ export class ReportWeService {
       });
   }
 
+  generalOrdersReport(): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}general-orders-report`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   inquireFabricAvilabilityReportWe(object:any): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}inquire-fabric-avilability-report-we`;
     return this._http.post(url,object,
@@ -188,6 +198,16 @@ export class ReportWeService {
 
   inquireFabricAvilabilityByDyeingOrderRequisitionTotalReportWe(object:any): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}inquire-fabric-avilability-by-dyeing-order-requisition-total-report-we`;
+    return this._http.post(url,object,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
+  inquireFabricNeededByDyeingOrderRequisitionTotalReportWe(object:any): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}inquire-fabric-needed-by-dyeing-order-requisition-total-report-we`;
     return this._http.post(url,object,
       {
         headers: new HttpHeaders({

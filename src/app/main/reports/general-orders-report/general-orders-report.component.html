@@ -1,1 +1,613 @@
-<p>general-orders-report works!</p>
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div [class]="_sharedComponentService.titlePageClass">
+        <!-- Sub Title Page -->
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">
+                تقرير عام لطلبيات العملاء
+            </h2>
+        </div>
+    </div>
+    <!-- Form Section -->
+
+    <div class="container-fluid mt-2">
+        <div class="row row-cols-3">
+            <div class="col">
+                <div class="btn-export-section">
+                    <a
+                        (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير عام لطلبيات العملاء')">
+                        <i title="PDF" class="far fa-file-pdf"></i>
+                    </a>
+
+                    <a
+                        (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'تقرير عام لطلبيات العملاء')">
+                        <i title="Excel" class="far fa-file-excel px-2"></i>
+                    </a>
+
+                    <a
+                        (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير عام لطلبيات العملاء', 'table-data-2')">
+                        <i title="Print" class="fas fa-print pe-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Page Form -->
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+            <!-- Form Body -->
+            <div [class]="_sharedComponentService.gridForm2Class">
+                <div class="col">
+                    <div [class]="_sharedComponentService.tableSectionClass">
+
+                        <div id="table-header-data-report">
+
+                            <p-table #dt1 [value]="results" dataKey="id" columnResizeMode="expand"
+                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
+                                [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
+                                scrollHeight="600px" [filterDelay]="0" sortField="we_dyed_fabric_order_requisition_id"
+                                sortOrder="1" [responsive]="true" appendTo="body" [autoLayout]="true">
+                                <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+                                    <div data-html2canvas-ignore="true" class="flex">
+                                        <button data-html2canvas-ignore="true" pButton label="اعادة"
+                                            class="p-button-outlined" icon="pi pi-filter-slash"
+                                            (click)="clear(dt1)"></button>
+                                    </div>
+
+                                    <!-- Start Filter Section -->
+                                    <div class="row row-cols-5">
+
+                                        <div class="col">
+                                            <p-columnFilter field="bussiness_man_name" matchMode="sellers-name-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedFabricNames"
+                                                        [options]="_sharedComponentService.uniqueArray(results, 'bussiness_man_name')"
+                                                        (onChange)="onMultiselectedSellerNames($event.value)"
+                                                        placeholder="البحث بـ العميل" optionLabel="bussiness_man_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.bussiness_man_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="we_dyed_fabric_order_requisition_name"
+                                                matchMode="dyed-fabric-order-name-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedDyedFabricOrderNames"
+                                                        [options]="_sharedComponentService.uniqueArray(results, 'we_dyed_fabric_order_requisition_name')"
+                                                        (onChange)="onMultiselectedDyedFabricOrderNames($event.value)"
+                                                        placeholder="البحث بـ رقم العقد"
+                                                        optionLabel="we_dyed_fabric_order_requisition_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span
+                                                                    class="ml-1">{{option.we_dyed_fabric_order_requisition_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
+                                            <p-columnFilter field="dyed_fabric_name" matchMode="fabric-name-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedFabricNames"
+                                                        [options]="_sharedComponentService.uniqueArray(results, 'dyed_fabric_name')"
+                                                        (onChange)="onMultiselectedFabricNames($event.value)"
+                                                        placeholder="البحث بـ اسم المادة"
+                                                        optionLabel="dyed_fabric_name">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.dyed_fabric_name}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <!-- <div class="col">
+                                            <p-columnFilter field="dyed_fabric_code" matchMode="fabric-code-filter" [showMenu]="false"
+                                                [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedFabricCodes" [options]="_sharedComponentService.uniqueArray(results, 'dyed_fabric_code')"
+                                                        (onChange)="onMultiselectedFabricCodes($event.value)"
+                                                        placeholder="البحث بـ كود المادة" optionLabel="dyed_fabric_code">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.dyed_fabric_code}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div> -->
+
+                                    </div>
+                                    <!-- End Filter Section -->
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <!-- Index Column -->
+                                        <th data-html2canvas-ignore="true">
+                                            التسلسل
+                                        </th>
+
+                                        <!-- bussiness_man_name Column -->
+                                        <th pResizableColumn pSortableColumn="bussiness_man_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                العميل
+                                                <p-sortIcon data-html2canvas-ignore="true" field="bussiness_man_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- we_dyed_fabric_order_requisition_name Column -->
+                                        <th pResizableColumn pSortableColumn="we_dyed_fabric_order_requisition_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                رقم العقد<p-sortIcon data-html2canvas-ignore="true"
+                                                    field="we_dyed_fabric_order_requisition_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- dyed_fabric_code Column -->
+                                        <!-- <th pResizableColumn pSortableColumn="dyed_fabric_code">
+                                            <div class="flex justify-content-between align-items-center">
+                                                رقم المادة<p-sortIcon data-html2canvas-ignore="true" field="dyed_fabric_code">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th> -->
+
+                                        <!-- dyed_fabric_name Column -->
+                                        <th pResizableColumn pSortableColumn="dyed_fabric_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                قماش الجاهز<p-sortIcon data-html2canvas-ignore="true"
+                                                    field="dyed_fabric_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
+                                        <!-- needed_quantity Column -->
+                                        <th pResizableColumn pSortableColumn="needed_quantity">
+                                            <div class="flex justify-content-between align-items-center">
+                                                الكمية المطلوبة
+                                            </div>
+                                        </th>
+
+                                        <!-- net_current_quantity Column -->
+                                        <th pResizableColumn pSortableColumn="net_current_quantity">
+                                            <div class="flex justify-content-between align-items-center">
+                                                الكمية المنفذة
+                                            </div>
+                                        </th>
+
+                                        <!-- current_quantity Column -->
+                                        <th pResizableColumn pSortableColumn="current_quantity">
+                                            <div class="flex justify-content-between align-items-center">
+                                                المتبقي
+                                            </div>
+                                        </th>
+
+                                        <!-- over_current_quantity Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                الزائدة
+                                            </div>
+                                        </th>
+
+                                        <!-- over_current_quantity_ratio Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                نسبة الزيادة
+                                            </div>
+                                        </th>
+
+                                        <!-- raw_fabric Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            
+                                                            <!-- waste_ratio Column -->
+                                                            <th style="min-width: 100px; word-wrap: break-word; white-space: normal !important;">
+                                                                <div class="flex justify-content-between align-items-center">
+                                                                    نسبة الهالك المتوقعة للصباغة
+                                                                </div>
+                                                            </th>
+                                                            
+                                                            <!-- waste_ratio_e Column -->
+                                                            <th style="min-width: 100px; word-wrap: break-word; white-space: normal !important;">
+                                                                <div class="flex justify-content-between align-items-center">
+                                                                    نسبة الهالك الفعلية للصباغة
+                                                                </div>
+                                                            </th>
+
+                                                            <th style="width: 150px;">
+                                                                قماش الخام
+                                                            </th>
+                                                            <th style="min-width: 80px;">
+                                                                الكمية المطلوبة
+                                                            </th>
+                                                            <th style="min-width: 80px;">
+                                                                الكمية المنفذة
+                                                            </th>
+                                                            <th style="min-width: 80px;">
+                                                                المتبقي
+                                                            </th>
+                                                            <th style="min-width: 80px;">
+                                                                الزائدة
+                                                            </th>
+                                                            <th style="min-width: 80px;">
+                                                                نسبة الزيادة
+                                                            </th>
+                                                            <!-- waste_ratio Column -->
+                                                            <!-- <th>
+                                                                <div class="flex justify-content-between align-items-center">
+                                                                    نسبة الهالك
+                                                                </div>
+                                                            </th> -->
+                                                            <th style="min-width: 500px;">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                        
+                                                            <!-- waste_ratio Column -->
+                                                            <th style="min-width: 100px; word-wrap: break-word; white-space: normal !important;">
+                                                                <div class="flex justify-content-between align-items-center">
+                                                                    نسبة الهالك المتوقعة
+                                                                </div>
+                                                            </th>
+                                                            
+                                                            <!-- waste_ratio_e Column -->
+                                                            <th style="min-width: 100px; word-wrap: break-word; white-space: normal !important;">
+                                                                <div class="flex justify-content-between align-items-center">
+                                                                    نسبة الهالك الفعلية
+                                                                </div>
+                                                            </th>
+
+                                                                            <th style="width: 150px;">
+                                                                                الخيوط
+                                                                            </th>
+                                                                            <th style="min-width: 80px; word-wrap: break-word; white-space: normal !important;">
+                                                                                الكمية المطلوبة
+                                                                            </th>
+                                                                            <th style="min-width: 80px; word-wrap: break-word; white-space: normal !important;">
+                                                                                الكمية المنفذة
+                                                                            </th>
+                                                                            <th style="min-width: 80px;">
+                                                                                المتبقي
+                                                                            </th>
+                                                                            <th style="min-width: 80px;">
+                                                                                الزائدة
+                                                                            </th>
+                                                                            <th style="min-width: 80px;">
+                                                                                نسبة الزيادة
+                                                                            </th>
+                                                                            <!-- waste_ratio Column -->
+                                                                            <!-- <th>
+                                                                                <div class="flex justify-content-between align-items-center">
+                                                                                    نسبة الهالك
+                                                                                </div>
+                                                                            </th> -->
+                                                                        </tr>
+                                                                    </thead>
+                                                                </table>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </th>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-element let-index="rowIndex">
+                                    <tr class="p-selectable-row">
+
+                                        <!-- Index Column -->
+                                        <td data-html2canvas-ignore="true">
+                                            {{index + 1}}
+                                        </td>
+
+                                        <!-- bussiness_man_name Column -->
+                                        <td>
+                                            {{ element.bussiness_man_name }}
+                                        </td>
+
+                                        <!-- we_dyed_fabric_order_requisition_name Column -->
+                                        <td>
+                                            {{ element.we_dyed_fabric_order_requisition_name }}
+                                        </td>
+
+                                        <!-- dyed_fabric_code Column -->
+                                        <!-- <td>
+                                            {{ element.dyed_fabric_code }}
+                                        </td> -->
+
+                                        <!-- dyed_fabric_name Column -->
+                                        <td>
+                                            <a [routerLink]="[goToRequisitionPage('we_dyed_fabric_order')]"
+                                                [queryParams]="{id: element.we_dyed_fabric_order_requisition_id}">
+                                                <!-- {{ element.dyed_fabric_name }} -->
+                                                  قماش الجاهز
+                                            </a>
+                                        </td>
+
+                                        <!-- needed_quantity Column -->
+                                        <td>
+                                            {{ element.needed_quantity | number : '1.2-2'}}
+                                        </td>
+
+                                        <!-- net_current_quantity Column -->
+                                        <td>
+                                            {{ element.net_current_quantity | number : '1.2-2'}}
+                                        </td>
+
+                                        <!-- current_quantity Column -->
+                                        <td>
+                                            {{ element.current_quantity | number : '1.2-2'}}
+                                        </td>
+
+                                        <!-- over_current_quantity Column -->
+                                        <td>
+                                            {{ element.over_current_quantity | number : '1.2-2'}}
+                                        </td>
+
+                                        <!-- over_current_quantity_ratio Column -->
+                                        <td>
+                                            {{ _sharedComponentService.calcOverCurrentQuantityRatio(element) | number : '1.2-2'}}%
+                                        </td>
+
+                                        <!-- raw_fabric Column -->
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr *ngFor="let rowFabric of element.wcFabricOrders">
+                                                                        
+                                                        <!-- waste_ratio Column -->
+                                                        <td style="min-width: 100px;">
+                                                            {{ element.waste_ratio | number : '1.2-2'}}%
+                                                        </td>
+
+                                                        <!-- waste_ratio_e Column -->
+                                                        <td style="min-width: 100px;">
+                                                            {{ ((1 - (element.net_current_quantity / rowFabric.net_current_quantity))) * 100 | number : '1.2-2'}}%
+                                                        </td>
+
+                                                        <td style="width: 150px;">
+                                                            <a [routerLink]="[goToRequisitionPage('wc_fabric_order')]"
+                                                                [queryParams]="{id: rowFabric.wc_fabric_order_requisition_id}">
+                                                                <!-- {{rowFabric.fabric_name}} -->
+                                                                 قماش الخام
+                                                            </a>
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                                            {{rowFabric.needed_quantity | number : '1.2-2'}}
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                                            {{rowFabric.net_current_quantity | number : '1.2-2'}}
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                                            {{rowFabric.current_quantity | number : '1.2-2'}}
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                                            {{rowFabric.over_current_quantity | number : '1.2-2'}}
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                            {{ _sharedComponentService.calcOverCurrentQuantityRatio(rowFabric) | number : '1.2-2'}}%
+                                                        </td>
+                                                        <!-- <td style="min-width: 80px;">
+                                                            {{rowFabric.waste_ratio | number}}%
+                                                        </td> -->
+                                                        <td style="min-width: 500px;">
+                                                            <table>
+                                                                <tbody>
+                                                                    <tr *ngFor="let yarnData of rowFabric.waYarnOrders">
+                                                                                                      
+                                                                        <!-- waste_ratio Column -->
+                                                                        <td style="min-width: 100px;">
+                                                                            {{ rowFabric.wast_ratio | number : '1.2-2'}}%
+                                                                        </td>
+
+                                                                        <!-- waste_ratio_e Column -->
+                                                                        <td style="min-width: 100px;">
+                                                                            {{ ((1 - (rowFabric.net_current_quantity / yarnData.net_current_quantity))) * 100 | number : '1.2-2'}}%
+                                                                        </td>
+                                                                        
+                                                                        <td style="width: 150px;">
+                                                                            <a [routerLink]="[goToRequisitionPage('wa_yarn_order')]"
+                                                                                [queryParams]="{id: yarnData.wa_yarn_order_requisition_id}">
+                                                                                <!-- {{yarnData.yarn_name}} -->
+                                                                                  الخيوط
+                                                                            </a>
+                                                                        </td>
+                                                                        <td style="min-width: 80px;">
+                                                                            {{yarnData.needed_quantity | number : '1.2-2'}}
+                                                                        </td>
+                                                                        <td style="min-width: 80px;">
+                                                                            {{yarnData.net_current_quantity | number : '1.2-2'}}
+                                                                        </td>
+                                                                        <td style="min-width: 80px;">
+                                                                            {{yarnData.current_quantity | number : '1.2-2'}}
+                                                                        </td>
+                                                                        <td style="min-width: 80px;">
+                                                                            {{yarnData.over_current_quantity | number : '1.2-2'}}
+                                                                        </td>
+                                                                        <td style="min-width: 80px;">
+                                                                        {{ _sharedComponentService.calcOverCurrentQuantityRatio(yarnData) | number : '1.2-2'}}%
+
+                                                                        </td>
+                                                                        <!-- <td style="min-width: 80px;">
+                                                                            {{yarnData.waste_ratio | number}}%
+                                                                        </td> -->
+                                                                    </tr>
+                                                                </tbody>
+                                                                <!-- <tfoot>
+                                                                    <tr>
+                                                                        <td style="width: 250px;">
+
+                                                                        </td>
+                                                                        <td style="min-width: 80px;">
+                                                                            {{
+                                                                            _sharedComponentService.getTotalQuantity(rowFabric.waYarnOrders,
+                                                                            'needed_quantity') | number}} </td>
+                                                                        <td style="min-width: 80px;">
+                                                                            {{
+                                                                            (_sharedComponentService.getTotalQuantity(
+                                                                            rowFabric.waYarnOrders,
+                                                                            'net_current_quantity')) | number}} </td>
+                                                                        <td style="min-width: 80px;">
+                                                                            {{
+                                                                            _sharedComponentService.getTotalQuantity(rowFabric.waYarnOrders,
+                                                                            'current_quantity') | number}} </td>
+                                                                        <td style="min-width: 80px;">
+                                                                            {{
+                                                                            _sharedComponentService.getTotalQuantity(rowFabric.waYarnOrders,
+                                                                            'over_current_quantity') | number}} </td>
+                                                                        <td style="min-width: 80px;">
+
+                                                                        </td> 
+                                                                       
+                                                                    </tr>
+                                                                </tfoot> -->
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                                <!-- <tfoot>
+                                                    <tr *ngFor="let rowFabric of element.wcFabricOrders"> -->
+                                                        
+                                                        <!-- waste_ratio_e Column -->
+                                                        <!-- <td style="width: 250px;">
+
+
+                                                        </td> -->
+                                                        
+                                                        <!-- waste_ratio_e Column -->
+                                                        <!-- <td style="width: 250px;">
+
+
+                                                        </td> -->
+
+                                                        <!-- <td style="width: 250px;">
+
+
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                                            {{
+                                                            _sharedComponentService.getTotalQuantity(element.wcFabricOrders,
+                                                            'needed_quantity') | number}}
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                                            {{ (_sharedComponentService.getTotalQuantity(
+                                                            element.wcFabricOrders, 'net_current_quantity')) | number}}
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                                            {{
+                                                            _sharedComponentService.getTotalQuantity(element.wcFabricOrders,
+                                                            'current_quantity') | number}}
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+                                                            {{
+                                                            _sharedComponentService.getTotalQuantity(element.wcFabricOrders,
+                                                            'over_current_quantity') | number}}
+                                                        </td>
+                                                        <td style="min-width: 80px;">
+
+                                                        </td>
+                                               
+                                                        <td style="min-width: 500px;">
+
+                                                        </td>
+                                                    </tr>
+                                                </tfoot> -->
+                                            </table>
+                                        </td>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="14">لا يوجد بيانات</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <!-- Index Column -->
+                                        <td data-html2canvas-ignore="true"></td>
+
+                                        <!-- bussiness_man_name Column -->
+                                        <td>الإجمالي</td>
+
+                                        <!-- we_dyed_fabric_order_requisition_name Column -->
+                                        <td></td>
+
+                                        <!-- dyed_fabric_code Column -->
+                                        <!-- <td></td> -->
+
+                                        <!-- dyed_fabric_name Column -->
+                                        <td></td>
+
+                                        <!-- needed_quantity Column -->
+                                        <td>
+                                            {{ _sharedComponentService.getTotalQuantity(dt1.filteredValue ==
+                                            null ? results: dt1.filteredValue, 'needed_quantity') | number : '1.2-2'}}
+                                        </td>
+
+                                        <!-- net_current_quantity Column -->
+                                        <td>
+                                            {{ (_sharedComponentService.getTotalQuantity( dt1?.filteredValue ==
+                                            null ? results: dt1?.filteredValue, 'net_current_quantity')) | number : '1.2-2'}}
+                                        </td>
+
+                                        <!-- current_quantity Column -->
+                                        <td>
+                                            {{ _sharedComponentService.getTotalQuantity(dt1.filteredValue ==
+                                            null ? results: dt1.filteredValue, 'current_quantity') | number : '1.2-2'}}
+                                        </td>
+
+                                        <!-- over_current_quantity Column -->
+                                        <td>
+                                            {{ _sharedComponentService.getTotalQuantity(dt1.filteredValue ==
+                                            null ? results: dt1.filteredValue, 'over_current_quantity') | number : '1.2-2'}}
+                                        </td>
+
+                                        <!-- over_current_quantity_ratio Column -->
+                                        <td>
+
+                                        </td>
+
+
+                                        <!-- raw_fabric Column -->
+                                        <td>
+
+                                        </td>
+
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

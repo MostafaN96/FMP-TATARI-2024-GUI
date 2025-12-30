@@ -35,6 +35,8 @@ export class AddSellRequisitionFormWaComponent implements OnInit {
   sellRequisitionForm = new FormGroup({
     id: new FormControl(null, [Validators.required]),
     warehouseId: new FormControl(null, [Validators.required]),
+        yarnOrderId: new FormControl("", [Validators.required]),
+    ordersRequisitionsId: new FormControl("", [Validators.required]),
     items: new FormArray([
       this.initItem(),
     ]),
@@ -138,10 +140,13 @@ export class AddSellRequisitionFormWaComponent implements OnInit {
   getData() {
     this.sellRequisitionForm.controls.id.setValue(this.selectedData[0]['requisition_id'])
     this.sellRequisitionForm.controls.warehouseId.setValue(this.selectedData[0]['warehouse_id'])
+      this.sellRequisitionForm.controls.ordersRequisitionsId.setValue(this.selectedData[0]['orders_requisitions_id'])
+      this.sellRequisitionForm.controls.yarnOrderId.setValue(this.selectedData[0]['wa_yarn_order_requisition_id'])
 
-    this._yarnService.selectByWarehouseWa(this.selectedData[0]['warehouse_id']).subscribe((response: any) => {
+    this._yarnService.selectByWarehouseWa(this.selectedData[0]['warehouse_id'], this.selectedData[0]['wa_yarn_order_requisition_id']).subscribe((response: any) => {
       this.yarns = response
     })
+
   }
 
   // Initialize Form Builder
@@ -198,8 +203,22 @@ export class AddSellRequisitionFormWaComponent implements OnInit {
       row.controls['yarnCode'].setValue(event.itemData.code)
       row.controls['yarnName'].setValue(event.itemData.name)
 
-      this._yarnLotService.selectByWarehouseByYarnWa(this.sellRequisitionForm.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+      this._yarnLotService.selectByWarehouseByYarnWa(
+        this.sellRequisitionForm.controls['warehouseId'].value!,
+        event.itemData.id,
+        this.sellRequisitionForm.controls['yarnOrderId'].value!
+      ).subscribe((response: any) => {
         this.lots = response
+        if (this.lots[0] != null) {
+          row.controls['yarnLotId'].setValue(this.lots[0].id)
+          this.getRemainingByWarehouseByYarnByLotWa(
+            this.sellRequisitionForm.controls['warehouseId'].value!,
+            event.itemData.id,
+            this.lots[0].id,
+            this.sellRequisitionForm.controls['yarnOrderId'].value!,
+            index
+          )
+        }
       })
 
     }
@@ -224,19 +243,29 @@ export class AddSellRequisitionFormWaComponent implements OnInit {
       row.controls['yarnLotId'].setValue(null)
       this.currentQuantity[index] = 0
     } else {
-      this.getRemainingByWarehouseByYarnByLotWa(this.sellRequisitionForm.controls['warehouseId'].value!,
-      row.controls['yarnId'].value!,
-      event.itemData.id, index)
+      this.getRemainingByWarehouseByYarnByLotWa(
+        this.sellRequisitionForm.controls['warehouseId'].value!,
+        row.controls['yarnId'].value!,
+        event.itemData.id,
+        row.controls['yarnOrderId'].value!,
+        index)
     }
   }
 
-  getRemainingByWarehouseByYarnByLotWa(warehouseId: string, yarnId: string, lotId:string, index) {
+  getRemainingByWarehouseByYarnByLotWa(
+    warehouseId: string,
+    yarnId: string,
+    lotId: string,
+    yarnOrderId: string,
+    index) {
     this._waService.selectRemainingByWarehouseByYarnByLotWa(
       warehouseId,
       yarnId,
-      lotId).subscribe((response: any) => {
-        this.consigmentsYarns[index] = response
-      })
+      lotId,
+      yarnOrderId
+    ).subscribe((response: any) => {
+      this.consigmentsYarns[index] = response
+    })
   }
   // End Yarn Lot Autocomplete Section
 

@@ -30,6 +30,9 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
   /////////////////// Variables ///////////////////
   yarns: any[] = []
   circularKnittingMachineNames: any[] = new Array()
+consigmentDetails: any[] = []
+  detailsData: any[] = new Array()
+  filtredDetailsData: any[] = new Array()
   selectedDataToUpdate: any
 
    //////////////////////////////////// PrimeNG /////////////////////////////////
@@ -46,6 +49,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
    selectedOrderNumber: any[] = []
    selectedRequisitionDocumnet: any[] = []
    selectedRequisitionNote: any[] = []
+   selectedConsigmentYarnNumber: any[] = []
    startDate: any
    endDate: any
    dateFilters: any
@@ -76,6 +80,7 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.customFilterForOrderNumber();
     this.customFilterForRequisitionDocumnet();
     this.customFilterForRequisitionNote();
+    this.customFilterForConsigmentName();
 
   }
 
@@ -83,7 +88,8 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.loading = true;
     this._manufacturingRequisitionWbService.selectAll().subscribe((response: any) => {
       this.yarns = response
-      this.getCircularKnittingMachineName(this.yarns)
+      // this.getCircularKnittingMachineName(this.yarns)
+      this.getDetailsData(this.yarns)
 
       // PrimeNG Table
       this.primengConfig.ripple = true;
@@ -96,11 +102,18 @@ export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
     this.selectedDataToUpdate = selectedData
   }
 
-  getCircularKnittingMachineName(data) {
+  // getCircularKnittingMachineName(data) {
+  //   for (let i = 0; i < data.length; i++) {
+  //     const element = data[i].details;
+  //     this.circularKnittingMachineNames.push(element)
+  //   }    
+  // }
+
+  getDetailsData(data) {
     for (let i = 0; i < data.length; i++) {
       const element = data[i].details;
-      this.circularKnittingMachineNames.push(element)
-    }    
+      this.detailsData.push(element)
+    }
   }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
@@ -453,6 +466,41 @@ customFilterForRequisitionDocumnet() {
   });
 }
   
+customFilterForConsigmentName() {
+  const customFilterName = "consigment-yarn-number-details-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedConsigmentYarnNumber
+
+    if (this.selectedConsigmentYarnNumber[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        let count = 0
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value[i].consigment_yarn_number == filter[j].consigment_yarn_number) {
+              count++
+              if (count == filter.length) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
+
+
 customFilterForRequisitionNote() {
   const customFilterName = "requisition-note-filter";
   this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
@@ -544,6 +592,7 @@ customFilterForRequisitionNote() {
     this.selectedOrderNumber = []
     this.selectedRequisitionDocumnet = []
     this.selectedRequisitionNote = []
+    this.selectedConsigmentYarnNumber = []
     this.dateFilters = []
   }
 
@@ -602,6 +651,18 @@ customFilterForRequisitionNote() {
     this.dt1?._filter()
   }
 
+    onMultiselectedConsigmentYarnNumber(event) {
+      this.selectedConsigmentYarnNumber = event
+      this.dt1?._filter()
+    }
+  handleFilter(event) {
+    this.filtredDetailsData = []
+    for (let i = 0; i < event.filteredValue.length; i++) {
+      const element = event.filteredValue[i].details;
+      this.filtredDetailsData.push(element)
+    }
+    
+  }
   confirmCancelReceived(event: Event, element, isApproved) {
     if(isApproved == "0") {
       this.popupReceived(event, element, 'تأكيد الأستلام', "1")

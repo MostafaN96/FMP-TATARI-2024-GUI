@@ -66,6 +66,16 @@ export class YarnService {
       });
   }
 
+  selectByWarehouseWaByFabricByFromYarnOrder(warehouseId: string, fabricId: string, yarnOrderId?: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wa-by-fabric-by-from-yarn-order/${warehouseId}/${fabricId}/${yarnOrderId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   selectRemaining(): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}/remaining`;
     return this._http.get(url);
@@ -81,8 +91,8 @@ export class YarnService {
       });
   }
 
-  selectStoredWaYarnsBySupplier(id: string, warehouseId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}stored-wa-yarns/${id}/${warehouseId}`;
+  selectStoredWaYarnsBySupplier(id: string, warehouseId: string, yarnOrderId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}stored-wa-yarns/${id}/${warehouseId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

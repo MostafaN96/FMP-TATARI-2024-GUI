@@ -68,6 +68,15 @@ export class ColorCategoryService {
       });
   }
 
+  selectByOrderByDyedFabricWe(orderRequisitionId: string, dyedFabricId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-order-by-dyed-fabric/${orderRequisitionId}/${dyedFabricId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
 
   update(obj: any, id: string): Observable<any> {
     let url = `${this._constantsService.BASE_URL}${this.urlService}${id}`;

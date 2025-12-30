@@ -304,7 +304,7 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
       this.yarnOrder[index] = []
     }
     else {
-      let flag = true
+      // let flag = true
       row.controls['yarnCode'].setValue(event.itemData.code)
       row.controls['yarnName'].setValue(event.itemData.name)
 
@@ -336,22 +336,22 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
         }
       })
 
-      for (let i = 0; i < this.addtransitionIndustriesRequisitionForm.controls.items['controls'].length; i++) {
-        if(this.addtransitionIndustriesRequisitionForm.controls.items['controls'][i].value.yarnId?.includes(event.itemData.id)) {
-          row.controls['fromYarnLotId'].setValue("")
-          row.controls['yarnId'].setValue("")
-          row.controls['yarnCode'].setValue("")
-          row.controls['yarnName'].setValue("")
-          row.controls['quantity'].setValue("")
-          this.currentQuantity[index] = 0
-          flag = false
-        }
-      }
-      if(flag) {
+      // for (let i = 0; i < this.addtransitionIndustriesRequisitionForm.controls.items['controls'].length; i++) {
+      //   if(this.addtransitionIndustriesRequisitionForm.controls.items['controls'][i].value.yarnId?.includes(event.itemData.id)) {
+      //     row.controls['fromYarnLotId'].setValue("")
+      //     row.controls['yarnId'].setValue("")
+      //     row.controls['yarnCode'].setValue("")
+      //     row.controls['yarnName'].setValue("")
+      //     row.controls['quantity'].setValue("")
+      //     this.currentQuantity[index] = 0
+      //     flag = false
+      //   }
+      // }
+      // if(flag) {
         row.controls['yarnId'].setValue(event.itemData.id)
         row.controls['yarnCode'].setValue(event.itemData.code)
         row.controls['yarnName'].setValue(event.itemData.name)
-      }
+      // }
     }
     this.validate(row, index)    
   }
@@ -520,8 +520,9 @@ export class AddTransitionBetweenWhRequisitionFromWaComponent implements OnInit 
   async onAddTransitionIndustriesRequisition() {
     this.addtransitionIndustriesRequisitionForm.markAllAsTouched();
     if (this.addtransitionIndustriesRequisitionForm.valid) {
-      if (this._quantityOccurrencesValidationService.validateCurrentQuantity(
+      if (this._quantityOccurrencesValidationService.validateQuantitySellDirectWe(
         this.addtransitionIndustriesRequisitionForm.controls.items.value, this.addtransitionIndustriesRequisitionForm.controls.items.value, 
+        'fromYarnOrderId', 'fromYarnOrderId', 
         'fromConsigmentYarnId', 'fromConsigmentYarnId', 
         'fromYarnLotId', 'fromYarnLotId', 
         'yarnId', 'yarnId', 

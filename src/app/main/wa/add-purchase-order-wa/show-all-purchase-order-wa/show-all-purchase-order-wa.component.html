@@ -191,6 +191,10 @@
                                                        <th style="width: 100px;">
                                                         الكمية الزائدة
                                                         </th>
+                                                       
+                                                       <th style="width: 100px;">
+                                                            السعر
+                                                        </th>
 
                                                     </tr>
                                                 </thead>
@@ -243,6 +247,10 @@
                                                         <td>
                                                             {{ requestionDetailsData.over_current_quantity}}
                                                         </td>
+                                                        
+                                                        <td>
+                                                            {{ requestionDetailsData.price}}
+                                                        </td>
 
                                                     </tr>
                                                 </tbody>
@@ -271,6 +279,10 @@
                                                         <td>
                                                             {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
                                                             'over_current_quantity') | number}}
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            
                                                         </td>
 
                                                     </tr>

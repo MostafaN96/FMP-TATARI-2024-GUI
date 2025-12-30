@@ -23,6 +23,7 @@ import { SessionManagerService } from "src/app/services/main/session-manager.ser
 
 // Auto Complete
 import { Query, Predicate } from '@syncfusion/ej2-data';
+import { indexOf } from '@amcharts/amcharts4/.internal/core/utils/Array';
 
 @Component({
   selector: 'app-add-add-requisition-we',
@@ -36,6 +37,7 @@ export class AddAddRequisitionWeComponent implements OnInit {
   addRequisitionForm = new FormGroup({
     date: new FormControl(new Date(), [Validators.required]),
     supplierId: new FormControl('', [Validators.required]),
+    orderId: new FormControl('', [Validators.required]),
     workOrderNumber: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     items: new FormArray([
@@ -50,10 +52,12 @@ export class AddAddRequisitionWeComponent implements OnInit {
   suppliers: any = []
   colors: any = []
   colorCategories: any = []
-  warehouses:any = []
-  consigmentsDyeing:any = []
-  gradeItems:any = []
+  warehouses: any = []
+  consigmentsDyeing: any = []
+  gradeItems: any = []
   dyedFabricOrder: any = []
+  requisitionsOrder: any
+  mappedRequisitionsOrder: any
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -66,7 +70,7 @@ export class AddAddRequisitionWeComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textFabric: string = "اسم القماش"
 
-  public onFilteringFabricName(e: any) {
+  public onFilteringFabricName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -100,7 +104,7 @@ export class AddAddRequisitionWeComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textColorCategory: string = "فئة اللون"
 
-  public onFilteringColorCategoryName(e: any) {
+  public onFilteringColorCategoryName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -117,7 +121,7 @@ export class AddAddRequisitionWeComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textColor: string = "اللون"
 
-  public onFilteringColorName(e: any) {
+  public onFilteringColorName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -130,19 +134,18 @@ export class AddAddRequisitionWeComponent implements OnInit {
 
   // --------------- Warehouse --------------
   // maps the appropriate column to fields property
-  public fieldsWarehouse: Object = { value: "id", text:"name"};
+  public fieldsWarehouse: Object = { value: "id", text: "name" };
   // set the placeholder to the AutoComplete input
   public textWarehouse: string = "المخزن"
 
-  public onFilteringWarehouse (e: any)
-  {
-    e.preventDefaultAction=true;
-         var predicate = new Predicate('name', 'contains', e.text);
-          var query = new Query();
-      //frame the query based on search string with filter type.
-        query = (e.text != "") ? query.where(predicate) : query;
-      //pass the filter data source, filter query to updateData method.
-        e.updateData(this.warehouses, query);
+  public onFilteringWarehouse(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.warehouses, query);
   }
 
   // --------------- Consigment --------------
@@ -179,9 +182,9 @@ export class AddAddRequisitionWeComponent implements OnInit {
 
   // --------------- Requisition nOrder --------------
   // maps the appropriate column to fields property
-  public fieldsDyedFabricOrder: Object = { 
-    value: "id", 
-    text: "name" 
+  public fieldsDyedFabricOrder: Object = {
+    value: "id",
+    text: "name"
   };
   // set the placeholder to the AutoComplete input
   public textDyedFabricOrder: string = "اسم الطلبية"
@@ -223,22 +226,17 @@ export class AddAddRequisitionWeComponent implements OnInit {
   getData() {
     this._dyedFabricOrderRequisitionWeService.selectAll('opened').subscribe((response: any) => {
       this.dyedFabricOrder = response
-    })
 
-    this._fabricService.selectAll("dyed").subscribe((response: any) => {
-      this.fabrics = response
+      
+      this.mappedRequisitionsOrder = this.dyedFabricOrder.map(c => ({
+        ordersRequisitionsId: c.orders_requisitions_id,
+        orderId: c.id,
+        orderName: c.name
+      }));
     })
 
     this._supplierService.selectSupplier().subscribe((response: any) => {
       this.suppliers = response
-    })
-
-    this._colorService.selectAll().subscribe((response: any) => {
-      this.colors = response
-    })
-
-    this._colorCategoryService.selectAll().subscribe((response: any) => {
-      this.colorCategories = response
     })
 
     this._warehouseService.selectAll().subscribe((response: any) => {
@@ -248,9 +246,23 @@ export class AddAddRequisitionWeComponent implements OnInit {
     this._consigmentDyeingService.selectAll().subscribe((response: any) => {
       this.consigmentsDyeing = response
     })
-    
+
     this._gradeItemService.selectAll().subscribe((response: any) => {
       this.gradeItems = response
+    })
+
+    
+      this._fabricService.selectAll("dyed").subscribe((response: any) => {
+        this.fabrics = response
+      })
+
+      
+      this._colorCategoryService.selectAll().subscribe((response: any) => {
+        this.colorCategories = response
+      })
+
+this._colorService.selectAll().subscribe((response: any) => {
+      this.colors = response
     })
 
   }
@@ -258,14 +270,14 @@ export class AddAddRequisitionWeComponent implements OnInit {
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
-      ordersRequisitionsId: new FormControl("", [Validators.required]),
-      dyedFabricOrderId: new FormControl("", [Validators.required]),
+      // ordersRequisitionsId: new FormControl("", [Validators.required]),
+      // dyedFabricOrderId: new FormControl("", [Validators.required]),
       warehouseId: new FormControl(this._constantsService.DEFAULT_WE_WAREHOUSE_ID, [Validators.required]),
       dyedFabricId: new FormControl(null, [Validators.required]),
       dyedFabricCode: new FormControl(null),
       colorCategoryId: new FormControl(null, [Validators.required]),
       colorId: new FormControl(null, [Validators.required]),
-      colorCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
+      colorCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       gradeItemId: new FormControl("", [Validators.required]),
       consigmentDyeingNumber: new FormControl("", [Validators.required]),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
@@ -294,16 +306,47 @@ export class AddAddRequisitionWeComponent implements OnInit {
     control.removeAt(index);
   }
 
+  // Start Dyed Fabric Order Autocomplete Section
+  //  Dyed Fabric Order
+  // selectDyedFabricOrder(event: { itemData: any; }, row: FormGroup, index) {
+  //   let indexData = this.dyedFabricOrder.indexOf(event.itemData)
+  //   if (this.dyedFabricOrder[indexData] !== event.itemData) {
+  //     row.controls['dyedFabricId'].setValue(null)
+  //     row.controls['dyedFabricCode'].setValue(null)
+  //     this.fabrics[index] = []
+  //     this.colorCategories[index] = []
+  //   }
+  //   else {
+  //     // console.log("event.itemData ::: ", event.itemData);
+  //     // row.controls['dyedFabricCode'].setValue(event.itemData.code)
+  //     row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+
+  //     this._fabricService.selectDyedFabricsByOrder(event.itemData.orders_requisitions_id, "dyed").subscribe((response: any) => {
+  //       this.fabrics[index] = response
+  //     })
+  //   }
+  // }
+  // End Fabric Autocomplete Section
+
   // Start Fabric Autocomplete Section
   //  Fabric
-  selectFabric(index: { itemData: any; }, row: FormGroup) {
-    let indexData = this.fabrics.indexOf(index.itemData)
-    if (this.fabrics[indexData] !== index.itemData) {
+  selectFabric(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.fabrics.indexOf(event.itemData)
+    if (this.fabrics[indexData] !== event.itemData) {
       row.controls['dyedFabricId'].setValue(null)
       row.controls['dyedFabricCode'].setValue(null)
+      // this.colorCategories[index] = []
+      // this.colors[index] = []
+
     }
     else {
-      row.controls['dyedFabricCode'].setValue(index.itemData.code)
+      row.controls['dyedFabricCode'].setValue(event.itemData.code)
+
+
+      // this._colorCategoryService.selectByOrderByDyedFabricWe(row.controls['ordersRequisitionsId'].value, event.itemData.id).subscribe((response: any) => {
+      //   this.colorCategories[index] = response
+      // })
     }
   }
   // End Fabric Autocomplete Section
@@ -323,7 +366,15 @@ export class AddAddRequisitionWeComponent implements OnInit {
       row.controls['colorCategoryId'].setValue(null)
       row.controls['colorId'].setValue(null)
       row.controls['colorCode'].setValue(null)
-      // this.colors = []
+    } else {
+
+      // this._colorService.selectByOrderByDyedFabricByColorCategoryWe(
+      //   row.controls['ordersRequisitionsId'].value,
+      //   row.controls['dyedFabricId'].value,
+      //   event.itemData.id
+      // ).subscribe((response: any) => {
+      //   this.colors[index] = response
+      // })
     }
   }
 
@@ -347,16 +398,16 @@ export class AddAddRequisitionWeComponent implements OnInit {
       row.controls['gradeItemId'].setValue("")
     }
   }
-  
+
   // price
   changePrice(type, row: FormGroup) {
-    if(type == "priceEG") {
+    if (type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
       row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
-  
+
   async onAddRequisition() {
     this.addRequisitionForm.markAllAsTouched();
     if (this.addRequisitionForm.valid) {
@@ -367,7 +418,7 @@ export class AddAddRequisitionWeComponent implements OnInit {
         this._constantsService.spinner.hide();
         if (response.msg === "data inserted") {
           this._constantsService.successAddMessage()
-          this._sharedComponentService.openNewTab(`${this._constantsService.ROUTING_MAIN_LINKS[0]}${this._constantsService.ROUTING_LINKS[77]}/details`, {id: response.id});
+          this._sharedComponentService.openNewTab(`${this._constantsService.ROUTING_MAIN_LINKS[0]}${this._constantsService.ROUTING_LINKS[77]}/details`, { id: response.id });
           this._sharedComponentService.reloadPage();
         }
         else {

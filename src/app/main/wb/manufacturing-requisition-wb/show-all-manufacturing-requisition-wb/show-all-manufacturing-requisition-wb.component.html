@@ -21,7 +21,8 @@
                                 [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20, 50, {showAll: 'All'}]" 
                                 [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
                                 scrollHeight="600px" [filterDelay]="0" sortField="number" [responsive]="true"
-                                [sortOrder]="0" appendTo="body" [autoLayout]="true">
+                                [sortOrder]="0" appendTo="body" [autoLayout]="true"
+                                (onFilter)="handleFilter($event)">
                                 <ng-template data-html2canvas-ignore="true" pTemplate="caption">
 
                                     <!-- Start Filter Section -->
@@ -81,7 +82,7 @@
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                                     <p-multiSelect [ngModel]="selectedCircularKnittingMachineName"
-                                                        [options]="_sharedComponentService.uniqueArray(circularKnittingMachineNames, 'circular_knitting_machine_name')"
+                                                        [options]="_sharedComponentService.uniqueArray(detailsData, 'circular_knitting_machine_name')"
                                                         (onChange)="onMultiselectedCircularKnittingMachineName($event.value)"
                                                         placeholder="البحث بـ الماكينة" optionLabel="circular_knitting_machine_name">
                                                         <ng-template let-option pTemplate="item">
@@ -130,7 +131,7 @@
                                             </p-columnFilter>
                                         </div>
 
-                                        <div class="col">
+                                        <!-- <div class="col">
                                             <p-columnFilter field="order_number" matchMode="order-number-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -146,9 +147,9 @@
                                                     </p-multiSelect>
                                                 </ng-template>
                                             </p-columnFilter>
-                                        </div>
+                                        </div> -->
 
-                                        <div class="col">
+                                        <!-- <div class="col">
                                             <p-columnFilter field="seller_name" matchMode="seller-name-filter" [showMenu]="false"
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -164,7 +165,7 @@
                                                     </p-multiSelect>
                                                 </ng-template>
                                             </p-columnFilter>
-                                        </div>
+                                        </div> -->
 
                                         <div class="col" *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])">
                                             <p-columnFilter field="status_name" matchMode="status-name-filter" [showMenu]="false"
@@ -211,7 +212,7 @@
                                                     <p-multiSelect [ngModel]="selectedRequisitionDocumnet"
                                                         [options]="_sharedComponentService.uniqueArray(yarns, 'document')"
                                                         (onChange)="onMultiselectedRequisitionDocumnet($event.value)"
-                                                        placeholder="البحث بـ الوثيقة" optionLabel="document">
+                                                        placeholder="البحث بـ رقم الايصال" optionLabel="document">
                                                         <ng-template let-option pTemplate="item">
                                                             <div class="p-multiselect-representative-option">
                                                                 <span class="ml-1">{{option.document}}</span>
@@ -239,6 +240,31 @@
                                                 </ng-template>
                                             </p-columnFilter>
                                         </div>
+
+                                        <!-- <div class="col">
+                                            <p-columnFilter field="details" matchMode="consigment-yarn-number-details-filter"
+                                                [showMenu]="false" [showClearButton]="false">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedConsigmentYarnNumber"
+                                                        [options]="_sharedComponentService.uniqueArray(detailsData, 'consigment_yarn_number')"
+                                                        (onChange)="onMultiselectedConsigmentYarnNumber($event.value)"
+                                                        placeholder="البحث بـ رقم الرسالة" optionLabel="consigment_yarn_number">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.consigment_yarn_number}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div> -->
+                                         
+                            <div class="col">
+                                <input pInputText type="text"
+                                    (input)="dt1.filter($event.target.value, 'details.quantity')"
+                                    [value]="dt1.filters['quantity']?.value" placeholder="ب أصل الكمية"
+                                    class="p-inputtext-md w-100">
+                            </div>
                                         
                                         <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
@@ -353,6 +379,15 @@
                                             </div>
                                         </th>
 
+                                         <!-- current_quantity Column -->
+                                         <th pResizableColumn pSortableColumn="current_quantity">
+                                            <div class="flex justify-content-between align-items-center">
+                                                الباقي من الكمية
+                                                <p-sortIcon data-html2canvas-ignore="true" field="current_quantity">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
                                          <!-- price Column -->
                                          <th
                                          *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
@@ -416,9 +451,16 @@
                                         <!-- document Column -->
                                         <th>
                                             <div class="flex justify-content-between align-items-center">
-                                                الوثيقة
+                                                رقم الايصال
                                             </div>
                                         </th>
+                                      
+                                        <!-- consigment_yarn_number Column -->
+                                        <!-- <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                رقم الرسالة
+                                            </div>
+                                        </th> -->
                                       
                                         <!-- note Column -->
                                         <th>
@@ -505,6 +547,11 @@
                                             {{ element.details.quantity }}
                                         </td>
                                         
+                                        <!-- current_quantity Column -->
+                                        <td>
+                                            {{ element.details.current_quantity }}
+                                        </td>
+                                        
                                         <!-- price Column -->
                                         <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
                                             {{ element.details.price | number }}
@@ -545,6 +592,11 @@
                                         <td>
                                             {{ element.document }}
                                         </td>
+
+                                        <!-- consigment_yarn_number Column -->
+                                        <!-- <td>
+                                            {{ element.consigment_yarn_number }}
+                                        </td> -->
 
                                         <!-- note Column -->
                                         <td>
@@ -594,6 +646,98 @@
 
                                     </tr>
                                 </ng-template>
+
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <!-- Index Column -->
+                                        <td style="max-width: 20px;"></td>
+
+                                        <!-- Date Column -->
+                                        <td style="max-width: 60px;">الإجمالي</td>
+
+                                        <!-- manufacture_name Column -->
+                                        <td style="max-width: 60px;"></td>
+
+                                        <!-- wc_fabric_order_requisition_name Column -->
+                                        <td style="max-width: 60px;"></td>
+
+                                        <!-- circular_knitting_machine_name Column -->
+                                        <td style="max-width: 60px;"></td>
+
+                                        <!-- fabric_code Column -->
+                                        <td style="max-width: 60px;"></td>
+
+                                        <!-- fabric_name Column -->
+                                        <td style="max-width: 60px;"></td>
+
+                                        <!-- fabric_piece Column -->
+                                        <td style="max-width: 60px;">
+                                            {{_sharedComponentService.getTotalQuantity(filtredDetailsData.length
+                                                            <
+                                                            1 ? detailsData: filtredDetailsData, 'fabric_piece') |
+                                                            number}}
+                                        </td>
+
+                                        <!-- quantity Column -->
+                                        <td style="max-width: 220px;">
+                                            {{_sharedComponentService.getTotalQuantity(filtredDetailsData.length
+                                                            <
+                                                            1 ? detailsData: filtredDetailsData, 'quantity') |
+                                                            number}}
+                                        </td>
+
+                                        <!-- current_quantity Column -->
+                                        <td style="max-width: 220px;">
+                                            {{_sharedComponentService.getTotalQuantity(filtredDetailsData.length
+                                                            <
+                                                            1 ? detailsData: filtredDetailsData, 'current_quantity') |
+                                                            number}}
+                                        </td>
+
+                                        <!-- price Column -->
+                                        <td></td>
+
+                                        <!-- price_dollar Column -->
+                                        <td></td>
+
+                                        <!-- manufacturing_fee Column -->
+                                        <td></td>
+
+                                        <!-- manufacturing_fee_dollar Column -->
+                                        <td></td>
+
+                                        <!-- order_number Column -->
+                                        <td></td>
+
+                                        <!-- seller_name Column -->
+                                        <td></td>
+
+                                        <!-- status_name Column -->
+                                        <td></td>
+
+                                        <!-- document Column -->
+                                        <td></td>
+
+                                        <!-- consigment_yarn_number Column -->
+                                        <!-- <td></td> -->
+
+                                        <!-- note Column -->
+                                        <td></td>
+
+                                        <!-- confirm_received Column -->
+                                        <td></td>
+
+                                        <!-- update Column -->
+                                        <td></td>
+
+                                        <!-- Details Column -->
+                                        <td></td>
+
+                                    </tr>
+                                </ng-template>
+
+
+
                                 <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                     <tr>
                                         <td colspan="14">لا يوجد بيانات</td>

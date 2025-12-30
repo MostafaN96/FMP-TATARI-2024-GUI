@@ -57,6 +57,37 @@
                         </small>
                     </div>
 
+                    <!--  fabricOrders -->
+                    <div class="col">
+                        
+                        <p-multiSelect 
+                            [options]="mappedRequisitionsOrder" 
+                            formControlName="ordersRequisitionsItems" 
+                            optionLabel="orderName"
+                            display="chip" 
+                            defaultLabel="طلبيات الخام"
+                            [maxSelectedLabels]="2"
+                            styleClass="w-100">
+                            </p-multiSelect>
+<!-- 
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>طلبيات الخام</mat-label>
+                            <mat-select placeholder="طلبيات الخام" formControlName="ordersRequisitionsItems" multiple>
+                                <mat-option *ngFor="let order of  fabricOrders" [value]="{
+                                        ordersRequisitionsId:  order.orders_requisitions_id, 
+                                        orderId: order.id, 
+                                        orderName: order.name}">
+                                    {{order.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="addRequisitionWCForm.controls['ordersRequisitionsItems'].hasError('required') && (addRequisitionWCForm.controls['ordersRequisitionsItems'].dirty 
+                                || addRequisitionWCForm.controls['ordersRequisitionsItems'].touched)">
+                                <label [innerHTML]="_sharedComponentService.required_field">
+                                </label>
+                            </mat-error>
+                        </mat-form-field> -->
+                    </div>
+
                       <!-- Note -->
                       <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

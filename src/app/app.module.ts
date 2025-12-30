@@ -16,6 +16,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // import { NgxSpinnerModule } from "ngx-spinner";
 import { UniquePipePipe } from './services/custom-pipe/unique-pipe.pipe';
+import { CustomLoadingCellRendererComponent } from './general-pages/custom-loading-cell-renderer/custom-loading-cell-renderer.component';
+
 
 @NgModule({
   declarations: [
@@ -24,6 +26,7 @@ import { UniquePipePipe } from './services/custom-pipe/unique-pipe.pipe';
     // Main
     SidebarComponent,
     UniquePipePipe,
+    CustomLoadingCellRendererComponent,
 
   ],
   imports: [

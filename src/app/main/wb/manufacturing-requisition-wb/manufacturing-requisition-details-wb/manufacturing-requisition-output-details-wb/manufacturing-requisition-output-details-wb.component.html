@@ -70,6 +70,16 @@
                                     </td>
                                 </ng-container>
 
+                                <!-- current_quantity Column -->
+                                <ng-container matColumnDef="current_quantity">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الباقي من الكمية</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.current_quantity | number}}
+                                    </td>
+                                </ng-container>
+
                             <!-- fabric_piece Column -->
                             <ng-container matColumnDef="fabric_piece">
                                 <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -217,7 +227,7 @@
                                 <!-- document Column -->
                                 <ng-container matColumnDef="document">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>الوثيقة</b>
+                                        <b>رقم الايصال</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
                                         {{ element.document }}

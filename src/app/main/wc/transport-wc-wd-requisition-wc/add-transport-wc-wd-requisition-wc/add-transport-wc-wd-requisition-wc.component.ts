@@ -259,7 +259,7 @@ export class AddTransportWcWdRequisitionWcComponent implements OnInit {
       row.controls['price'].setValue("")
       row.controls['consigmentManufacturingId'].setValue("")
       this.consigments[index] = []
-      this.fabrics[index] = []
+      // this.fabrics[index] = []
       this.currentQuantity[index] = 0
     }
     else {

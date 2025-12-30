@@ -88,6 +88,24 @@
                                         </div>
 
                                         <div class="col">
+                                            <p-columnFilter field="details" matchMode="document-details-filter" [showMenu]="false"
+                                                [showClearButton]="false" [matchModeOptions]="selectedDocumentDetails">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedDocumentDetails" 
+                                                    [options]="_sharedComponentService.uniqueArray(requisitionDetails, 'document')"
+                                                        (onChange)="onMultiselectedDocumentDetails($event.value)"
+                                                        placeholder="البحث بـ رقم الإيصال" optionLabel="document">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.document}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
                                                 <button data-html2canvas-ignore="true" pButton label="اعادة"
                                                     class="p-button-outlined" icon="pi pi-filter-slash"

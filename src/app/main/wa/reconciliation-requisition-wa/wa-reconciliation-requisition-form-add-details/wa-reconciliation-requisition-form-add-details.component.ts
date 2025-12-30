@@ -236,7 +236,10 @@ export class WaReconciliationRequisitionFormAddDetailsComponent implements OnIni
       row.controls['yarnLotId'].setValue("")
       row.controls['consigmentYarnId'].setValue("")
       row.controls['quantity'].setValue("")
+      row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0
+      this.consigmentsYarns[index] = []
+      this.lots[index] = []
     }
     else {
       row.controls['yarnCode'].setValue(event.itemData.code)
@@ -270,6 +273,10 @@ export class WaReconciliationRequisitionFormAddDetailsComponent implements OnIni
     let indexData = this.lots[index].indexOf(event.itemData)
     if (this.lots[index][indexData] !== event.itemData) {
       row.controls['yarnLotId'].setValue(null)
+      row.controls['consigmentYarnId'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['validQuantity'].setValue(null)
+      this.consigmentsYarns[index] = []
       this.currentQuantity[index] = 0
     } else {
       this._waService.selectRemainingByWarehouseByYarnByLotWa(
@@ -288,6 +295,7 @@ export class WaReconciliationRequisitionFormAddDetailsComponent implements OnIni
     let indexData = this.consigmentsYarns.indexOf(event.itemData)
     if (this.consigmentsYarns[indexData] !== event.itemData) {
       row.controls['consigmentYarnId'].setValue(null)
+      row.controls['quantity'].setValue("")
       row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0
     }

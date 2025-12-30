@@ -32,6 +32,9 @@ export class ShowAllTransportWaWbRequisitionWbComponent implements OnInit {
   endDate: any
   dateFilters: any
 
+  documentDetails: any[] = []
+  selectedDocumnetDetails: any[] = []
+
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _transportWaWbService: TransportWaWbService,
@@ -45,17 +48,34 @@ export class ShowAllTransportWaWbRequisitionWbComponent implements OnInit {
 
     this.customFilterForWarehouseName();
     this.customFilterForRequisitionNote();
+    this.customFilterForDocumnetDetails();
   }
 
   getData() {
     this._transportWaWbService.selectAll().subscribe((response: any) => {
       this.yarns = response
 
+      this.getDocumentDetails(this.yarns)
+
       // PrimeNG Table
       this.primengConfig.ripple = true;
       this.loading = false;
     })
   }
+
+  getDocumentDetails(data) {
+  let filter = [{}]
+    for (let i = 0; i < data.length; i++) {
+      const fabric = data[i];
+      for (let j = 0; j < fabric.details.length; j++) {
+        let element = fabric.details[j];          
+        if (filter.indexOf(element['document']) < 0) {
+          filter.push(element['document'])
+          this.documentDetails.push(element)
+        }
+      }
+    }
+}
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
 
@@ -127,6 +147,39 @@ export class ShowAllTransportWaWbRequisitionWbComponent implements OnInit {
     });
   }
 
+customFilterForDocumnetDetails() {
+  const customFilterName = "document-details-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedDocumnetDetails
+
+    if (this.selectedDocumnetDetails[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        let count = 0
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value[i].document == filter[j].document) {
+              count++
+              if (count == filter.length) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -175,6 +228,7 @@ export class ShowAllTransportWaWbRequisitionWbComponent implements OnInit {
     table.reset();
     this.selectedWarehouseName = []
     this.selectedRequisitionNote = []
+    this.selectedDocumnetDetails = []
     this.dateFilters = []
   }
 
@@ -185,6 +239,11 @@ export class ShowAllTransportWaWbRequisitionWbComponent implements OnInit {
 
   onMultiselectedRequisitionNote(event) {
     this.selectedRequisitionNote = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedDocumentDetails(event) {
+    this.selectedDocumnetDetails = event
     this.dt1?._filter()
   }
 

@@ -217,10 +217,21 @@
                                 <!-- from_consigment_yarn_number Column -->
                                 <ng-container matColumnDef="from_consigment_yarn_number">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>الى رسالة</b>
+                                        <b>من الرسالة</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
                                         {{ element.from_consigment_yarn_number }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- from_yarn_lot_code Column -->
+                                <ng-container matColumnDef="from_yarn_lot_code">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>من اللوط</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.from_yarn_lot_code }}
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>

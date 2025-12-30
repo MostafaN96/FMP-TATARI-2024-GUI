@@ -14,6 +14,7 @@ import { ReturnRequisitionWaService } from "src/app/services/main/wa/return-requ
 import { ReportWaService } from "src/app/services/main/wa/report-wa.service";
 import { WarehouseService } from "src/app/services/main/warehouse.service";
 import { WaService } from "src/app/services/main/wa/wa.service";
+import { YarnOrderRequisitionWaService } from 'src/app/services/main/wa/yarn-order-requisition-wa.service';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -47,6 +48,7 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   ///////////////////////////////// General ////////////////////////////////////////////////
   yarns: any = []
   warehouses: any = []
+  yarnOrder: any = []
   lots: any = []
   consigmentsYarns: any = []
   suppliers: any = []
@@ -67,7 +69,7 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textYarn: string = "اسم الصنف"
 
-  public onFilteringYarnName(e: any) {
+  public onFilteringYarnName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -75,7 +77,7 @@ export class AddReturnRequisitionWaComponent implements OnInit {
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.yarns, query);
+    e.updateData(this.yarns[index], query);
   }
 
   // --------------- Supplier --------------
@@ -116,14 +118,14 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textLot: string = "اللوط"
 
-  public onFilteringLot(e: any) {
+  public onFilteringLot(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('code', 'contains', e.text);
     var query = new Query();
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.yarns, query);
+    e.updateData(this.lots[index], query);
   }
 
   // --------------- consigment Yarn --------------
@@ -132,14 +134,31 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textConsigmentYarn: string = "رقم الرسالة"
 
-  public onFilteringConsigmentYarn(e: any) {
+  public onFilteringConsigmentYarn(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('number', 'contains', e.text);
     var query = new Query();
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.consigmentsYarns, query);
+    e.updateData(this.consigmentsYarns[index], query);
+  }
+
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textYarnOrder: string = "اسم الطلبية"
+
+
+  public onFilteringYarnOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.yarnOrder, query);
   }
 
   constructor(
@@ -149,6 +168,7 @@ export class AddReturnRequisitionWaComponent implements OnInit {
     private _waService: WaService,
     private _supplierService: BussinessmanService,
     private _returnRequisitionWaService: ReturnRequisitionWaService,
+    private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
@@ -175,6 +195,8 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   // Initialize Form Builder
   initItem() {
     return new FormGroup({
+      ordersRequisitionsId: new FormControl("", [Validators.required]),
+      yarnOrderId: new FormControl("", [Validators.required]),
       yarnId: new FormControl("", [Validators.required]),
       yarnCode: new FormControl(""),
       yarnName: new FormControl(""),
@@ -212,27 +234,63 @@ export class AddReturnRequisitionWaComponent implements OnInit {
     this.listYarnPricesDollar.splice(index, 1);
   }
 
+
+  //  Yarn Order
+  selectYarnOrder(event: { itemData: any; }, row: FormGroup, index) {
+    let indexData = this.yarnOrder.indexOf(event.itemData)
+
+    if (this.yarnOrder[indexData] !== event.itemData) {
+      row.controls['yarnOrderId'].setValue("")
+      row.controls['yarnId'].setValue(null)
+      row.controls['yarnCode'].setValue(null)
+      row.controls['yarnName'].setValue(null)
+      row.controls['yarnLotId'].setValue(null)
+      row.controls['consigmentYarnId'].setValue("")
+      row.controls['quantity'].setValue(null)
+      this.currentQuantity[index] = 0
+      this.consigmentsYarns[index] = []
+      this.yarns[index] = []
+    }
+    else {
+      row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._yarnService.selectStoredWaYarnsBySupplier(
+        this.returnRequisitionForm.controls['supplierId'].value!,
+        this.returnRequisitionForm.controls['warehouseId'].value!,
+        event.itemData.id
+      ).subscribe((response: any) => {
+        this.yarns[index] = response
+      })
+
+    }
+    this.validate(row, index)
+  }
+
   //  Yarn
   selectYarn(event: { itemData: any; }, row: FormGroup, index) {
-    let indexData = this.yarns.indexOf(event.itemData)
+    let indexData = this.yarns[index].indexOf(event.itemData)
 
-    if (this.yarns[indexData] !== event.itemData) {
+    if (this.yarns[index][indexData] !== event.itemData) {
       row.controls['yarnId'].setValue("")
       row.controls['yarnCode'].setValue("")
       row.controls['yarnName'].setValue("")
       row.controls['yarnLotId'].setValue("")
       row.controls['consigmentYarnId'].setValue("")
       row.controls['quantity'].setValue("")
+            this.consigmentsYarns[index] = []
       this.currentQuantity[index] = 0
     }
     else {
       row.controls['yarnCode'].setValue(event.itemData.code)
       row.controls['yarnName'].setValue(event.itemData.name)
 
-      this._yarnLotService.selectBySupplierByWarehouseByYarnWa(this.returnRequisitionForm.controls['supplierId'].value!,
+      this._yarnLotService.selectBySupplierByWarehouseByYarnWa(
+        this.returnRequisitionForm.controls['supplierId'].value!,
         this.returnRequisitionForm.controls['warehouseId'].value!,
-        event.itemData.id).subscribe((response: any) => {
-          this.lots = response
+        event.itemData.id,
+        row.controls['yarnOrderId'].value!,
+      ).subscribe((response: any) => {
+          this.lots[index] = response
         })
 
     }
@@ -253,6 +311,10 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   selectSupplier(event: { itemData: any; }) {
     if (!this.suppliers.includes(event.itemData)) {
       this.returnRequisitionForm.controls['supplierId'].setValue(null)
+      this.returnRequisitionForm.controls['warehouseId'].setValue("")
+      this.returnRequisitionForm.controls.items.reset()
+      this.currentQuantity = []
+      this.yarns = [];
     } else {
       this._warehouseService.selectWhereInWaBySupplier(event.itemData.id).subscribe((response: any) => {
         this.warehouses = response
@@ -275,11 +337,10 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   }
 
   selectStoredWaYarnsBySupplier(supplierId, warehouseId = this._constantsService.DEFAULT_WA_WAREHOUSE_ID) {
-    this.returnRequisitionForm.controls['warehouseId'].setValue(warehouseId)
-    this._yarnService.selectStoredWaYarnsBySupplier(supplierId, warehouseId).subscribe((response: any) => {
-      this.yarns = response
+    this._yarnOrderRequisitionWaService.selectByWarehouseBySupplierWa(warehouseId, supplierId).subscribe((response: any) => {
+      this.yarnOrder = response
 
-      if(this.yarns[0] == null) {
+      if(this.yarnOrder[0] == null) {
         this.returnRequisitionForm.controls['warehouseId'].setValue("")
       }
     })
@@ -288,8 +349,8 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   // Start Yarn Lot Autocomplete Section
   //  Yarn Lot
   selectYarnLot(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.lots.indexOf(event.itemData)
-    if (this.lots[indexData] !== event.itemData) {
+    let indexData = this.lots[index].indexOf(event.itemData)
+    if (this.lots[index][indexData] !== event.itemData) {
       row.controls['yarnLotId'].setValue(null)
       this.currentQuantity[index] = 0
     } else {
@@ -297,8 +358,10 @@ export class AddReturnRequisitionWaComponent implements OnInit {
         this.returnRequisitionForm.controls['supplierId'].value!,
         this.returnRequisitionForm.controls['warehouseId'].value!,
         row.controls['yarnId'].value!,
-        event.itemData.id).subscribe((response: any) => {
-          this.consigmentsYarns = response
+        event.itemData.id,
+        row.controls['yarnOrderId'].value!
+      ).subscribe((response: any) => {
+          this.consigmentsYarns[index] = response
         })
     }
   }
@@ -307,8 +370,8 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   // Start Consigment Yarn Autocomplete Section
   //  Consigment Yarn
   selectConsigmentYarn(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.consigmentsYarns.indexOf(event.itemData)
-    if (this.consigmentsYarns[indexData] !== event.itemData) {
+    let indexData = this.consigmentsYarns[index].indexOf(event.itemData)
+    if (this.consigmentsYarns[index][indexData] !== event.itemData) {
       row.controls['consigmentYarnId'].setValue(null)
       row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0
@@ -339,7 +402,12 @@ export class AddReturnRequisitionWaComponent implements OnInit {
   async onReturnRequisition() {
     this.returnRequisitionForm.markAllAsTouched();
     if (this.returnRequisitionForm.valid) {
-      if (this._quantityOccurrencesValidationService.validateQuantity(this.returnRequisitionForm.controls.items.value, 'yarnId', this.returnRequisitionForm.controls.items.value, 'yarnId', 'quantity', 'yarnName', 'validQuantity')) {
+      if (this._quantityOccurrencesValidationService.validateCurrentQuantity(
+        this.returnRequisitionForm.controls['items'].value, this.returnRequisitionForm.controls['items'].value, 
+        'yarnId', 'yarnId',
+        'yarnLotId', 'yarnLotId',
+        'consigmentYarnId', 'consigmentYarnId',
+        'quantity', 'yarnCode', this.currentQuantity)) {
         const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.returnRequisitionForm, 'items',
           ['yarnName', 'yarnCode', 'validQuantity'])
         this._constantsService.spinner.show()

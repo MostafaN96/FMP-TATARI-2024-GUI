@@ -85,7 +85,7 @@
                             <div class="col-8">
                                 <ejs-autocomplete [dataSource]='colors' [fields]='fieldsColor'  
                                 (filtering)="onFilteringColorName($event)" [placeholder]='textColor' [autofill]='autofill'
-                                formControlName="colorId" class="ejs-autocomplete w-100" (change)="selectColor($event)">
+                                formControlName="colorName" class="ejs-autocomplete w-100" (change)="selectColor($event)">
                             </ejs-autocomplete>
                             <small class="text-danger" *ngIf="addRequisitionWeForm.controls['colorId'].hasError('pattern')"
                                 [innerHTML]="_sharedComponentService.invalid_message">

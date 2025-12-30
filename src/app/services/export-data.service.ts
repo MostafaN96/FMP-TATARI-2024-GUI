@@ -17,6 +17,16 @@ import * as XLSX from "xlsx";
 // Reload Page
 import { Router, NavigationEnd } from '@angular/router';
 
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+
+// ✅ السطر الصحيح (بدون .pdfMake)
+(pdfMake as any).vfs = pdfFonts.vfs;
+import { CairoFonts } from '../../assets/fonts/cairo.font';
+
+import * as printJS from 'print-js';
+import { GridApi } from 'ag-grid-community';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,8 +34,10 @@ export class ExportDataService {
 
   constructor(
     private router: Router,
-    private spinner: NgxSpinnerService
-  ) { }
+    private spinner: NgxSpinnerService,
+
+  ) { 
+  }
 
   exportToPDF(elementHeaderId: string, elementId: string, fileName: string, element2Id?: string, element3Id?: string) {
     /** spinner starts on init */
@@ -94,6 +106,255 @@ export class ExportDataService {
     });
     // html2pdf(elementTitle, opt);
   }
+
+  
+async ensureArabicFontsLoaded() {
+  // حمّل الخطوط إلى vfs إذا مو محمّلة
+  // if (!(pdfMake as any).vfs || !(pdfMake as any).vfs['Cairo-Regular.ttf']) {
+  //   await this.loadFontToPdfMake('assets/fonts/Cairo-Regular.ttf', 'Cairo-Regular.ttf');
+  // }
+  // if (!(pdfMake as any).vfs['Cairo-Bold.ttf']) {
+  //   // اختياري
+  //   await this.loadFontToPdfMake('assets/fonts/Cairo-Bold.ttf', 'Cairo-Bold.ttf');
+  // }
+    (pdfMake as any).vfs = CairoFonts;
+  // سجّل العائلة
+  (pdfMake as any).fonts = {
+    ...(pdfMake as any).fonts, // لو عندك خطوط ثانية
+    Cairo: {
+      normal: 'Cairo-Regular.ttf',
+      bold: 'Cairo-Regular.ttf',
+      italics: 'Cairo-Regular.ttf',
+      bolditalics: 'Cairo-Regular.ttf'
+    },
+  Roboto: { // ✅ أضف هذا القسم
+    normal: 'Roboto-Regular.ttf',
+    bold: 'Roboto-Medium.ttf',
+    italics: 'Roboto-Italic.ttf',
+    bolditalics: 'Roboto-MediumItalic.ttf'
+  }
+  }
+  };
+  
+
+  async onExportPDFGridAngular(gridApi, fileName: string, gridColumnApi, excludedColumns: string[] = []) {
+   if (!gridApi || !gridColumnApi) return;
+
+  await this.ensureArabicFontsLoaded();
+  
+  const visibleColumns = this.getAllDisplayedColumns(gridColumnApi, excludedColumns);
+
+  const headers = visibleColumns.map(col => col.getColDef().headerName);
+  const filteredNodes = gridApi.getRenderedNodes();
+
+  // ✅ هنا التعديل الأهم
+  const rows = filteredNodes.map(node =>
+    visibleColumns.map(col => {
+      const value = node.data ? node.data[col.getColId()] : '';
+      return value !== undefined && value !== null ? value : '';
+    })
+  );
+
+  const docDefinition: any = {
+    pageOrientation: 'landscape',
+    pageSize: 'A4',
+    defaultStyle: {
+            bold: true,
+    font: 'Cairo', // ✅ أضفها هون كمان
+        alignment: 'right',    // ✅ نص من اليمين لليسار
+      },
+    content: [
+      { text: 'تقرير الأرصدة', style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
+      {
+        table: {
+          headerRows: 1,
+          widths: Array(headers.length).fill('*'),
+          body: [headers, ...rows],
+        },
+      },
+    ],
+    styles: {
+      header: {
+        fontSize: 16,
+        bold: true,
+      },
+    },
+  };
+
+  pdfMake.createPdf(docDefinition).open();
+}
+
+
+private async loadFontToPdfMake(fontPath: string, vfsName: string) {
+  const res = await fetch(fontPath);
+  if (!res.ok) {
+    console.error(`❌ لم يتم العثور على الخط: ${fontPath}`);
+    return;
+  }
+
+  const blob = await res.blob();
+
+  const toBase64 = (b: Blob) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(b);
+    });
+
+  const dataUrl = await toBase64(blob);
+  (pdfMake as any).vfs = (pdfMake as any).vfs || {};
+  (pdfMake as any).vfs[vfsName] = dataUrl;
+}
+
+  onExportExcelGridAngular(gridApi, fileName: string, excludedColumns: string[] = []) {
+  if (!gridApi) return;
+
+  gridApi.exportDataAsExcel({
+    fileName: fileName + '.xlsx',
+    sheetName: fileName,
+    onlyVisibleColumns: true, // ✅ يصدر فقط الأعمدة الظاهرة    
+    processHeaderCallback: (params) => {
+      // 🔹 تجاهل الأعمدة الموجودة في excludedColumns
+      if (excludedColumns.includes(params.column.getColId())) {
+        return null; // null = ما يصدّر العمود
+      }
+      return params.column.getColDef().headerName;
+    },
+    processCellCallback: (params) => {
+      if (excludedColumns.includes(params.column.getColId())) {
+        return null;
+      }
+      return params.value;
+    }
+  });
+}
+
+getAllDisplayedColumns(gridColumnApi: any, excludedColumns) {
+  if (!gridColumnApi) {
+    console.warn('⚠️ gridColumnApi غير موجود');
+    return [];
+  }
+
+  const displayedColumns = gridColumnApi.getAllDisplayedColumns();
+
+
+  // ✅ رجّع فقط الأعمدة اللي ما هي ضمن excludedColumns
+  const visibleColumns = displayedColumns
+    .filter((col: any) => !excludedColumns.includes(col.getColId()))
+    .map((col: any) => ({
+      headerName: col.getColDef().headerName,
+      field: col.getColId(),
+      type: col.getColDef().type,
+      width: col.getActualWidth(),
+      pinned: col.getPinned()
+    }));
+
+  return visibleColumns;
+}
+
+
+printGrid(gridApi: any, title: string = 'تقرير البيانات', columnApi: any, excludedColumns, columnsToSumArr) {
+  if (!gridApi || !columnApi) {
+    alert('ما في بيانات للطباعة!');
+    return;
+  }
+
+  // ✅ اجلب الأعمدة الظاهرة فعليًا
+  const visibleCols = this.getAllDisplayedColumns(columnApi, excludedColumns);
+  const headers = visibleCols.map(col => col.headerName);  // عناوين الأعمدة
+  const fields = visibleCols.map(col => col.field);        // أسماء الحقول
+
+  // ✅ اجلب فقط الصفوف المفلترة والمترتبة حاليًا
+  const filteredData: any[] = [];
+  gridApi.forEachNodeAfterFilterAndSort((node: any) => filteredData.push(node.data));
+
+  // ✅ الأعمدة التي تريد حساب إجماليها
+const columnsToSum = columnsToSumArr; // عدّل حسب الحاجة
+
+const totals: Record<string, number> = {};
+columnsToSum.forEach(field => {
+  totals[field] = filteredData.reduce((sum, row) => sum + (parseFloat(row[field]) || 0), 0);
+});
+
+  // ✅ احسب الإجماليات (للأعمدة الرقمية فقط)
+  // const footerTotals: any = {};
+  // visibleCols.forEach(col => {
+  //   const field = col.field;
+  //   const isNumeric = filteredData.some(r => !isNaN(parseFloat(r[field])) && r[field] !== null);
+  //   if (isNumeric) {
+  //     const total = filteredData.reduce((sum, row) => sum + (parseFloat(row[field]) || 0), 0);
+  //     footerTotals[field] = total.toFixed(2);
+  //   } else {
+  //     footerTotals[field] = '';
+  //   }
+  // });
+
+  // ✅ بناء الصف الإجمالي بالأول
+  const totalsRowHtml = `
+  <tr style="font-weight:bold;background:#f0f0f0;">
+    ${fields.map(field =>
+      `<td style="padding:6px;">${columnsToSum.includes(field) ? totals[field].toFixed(2) : ''}</td>`
+    ).join('')}
+  </tr>
+`;
+
+  // ✅ أنشئ الصفوف من البيانات باستخدام الحقول
+  const rowsHtml  = filteredData.map((row, index) => {
+    const indexValue = row.index ?? (index + 1); // 👈 إذا ما في index فعلي، يولّده
+    return `
+      <tr>
+        ${fields.map(field => {
+          // إذا العمود هو index، استخدم القيمة المحسوبة
+          const cellValue = field === 'index' ? indexValue : (row[field] ?? '');
+          return `<td style="padding:4px;vertical-align:top;">${cellValue}</td>`;
+        }).join('')}
+      </tr>
+    `;
+  }).join('');
+
+  // ✅ بناء الجدول HTML
+  const tableHtml = `
+    <table border="1" style="border-collapse:collapse;width:100%;font-family:'Cairo',sans-serif;text-align:center;font-size:12px;">
+      <thead style="background:#f5f5f5;font-weight:bold;">
+        <tr>${headers.map(h => `<th style="padding:6px;">${h}</th>`).join('')}</tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+              ${totalsRowHtml} <!-- 🔹 إجمالي الإدخال بالبداية -->
+      </tbody>
+    </table>
+  `;
+
+  // ✅ افتح نافذة الطباعة
+  const printWindow = window.open('', '', 'width=1200,height=800');
+  printWindow!.document.open();
+  printWindow!.document.write(`
+    <html lang="ar">
+      <head>
+        <title>${title}</title>
+        <style>
+          body { font-family: 'Cairo', sans-serif; margin: 10mm; }
+          h2 { text-align: center; margin-bottom: 15px; }
+          th, td { border: 1px solid #aaa; white-space: pre-line; }
+          th { background: #f0f0f0; }
+          @media print {
+            body { margin: 5mm; }
+            th, td { font-size: 11px; }
+          }
+        </style>
+      </head>
+      <body>
+        <h2>${title}</h2>
+        ${tableHtml}
+      </body>
+    </html>
+  `);
+  printWindow!.document.close();
+  printWindow!.focus();
+  printWindow!.print();
+  printWindow!.close();
+}
 
   exportToExcel(elementHeaderId: string, elementId: string, fileName: string, element2Id?: string) {
     let timeSpan = new Date().toISOString();
@@ -447,8 +708,6 @@ printDocument.open();
 
 }
 }
-
-
 
 // print(elementHeaderId: string, elementId: string, fileName: string, element2Id?: string, element3Id?: string) {
 //   var elementTitle = document.getElementById("main-page-title")

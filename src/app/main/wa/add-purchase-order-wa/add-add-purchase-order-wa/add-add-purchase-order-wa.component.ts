@@ -51,6 +51,7 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
   yarns: any
   yarnsOrderData: any
   requisitionsOrder: any
+  mappedRequisitionsOrder: any
   suppliers: any = []
   warehouses: any = []
 
@@ -160,6 +161,12 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
 
     this._dyedFabricOrderRequisitionWeService.selectOrdersForAddPurchaseWa('opened').subscribe((response: any) => {
       this.requisitionsOrder = response
+
+      this.mappedRequisitionsOrder = this.requisitionsOrder.map(c => ({
+        ordersRequisitionsId: c.orders_requisitions_id,
+        orderId: c.id,
+        orderName: c.name
+      }));
     })
 
     if (String(this.router.url).split("?")[0] == `/dashboard/${this._constantsService.ROUTING_LINKS[163]}`) {
@@ -236,7 +243,7 @@ export class AddAddPurchaseOrderWaComponent implements OnInit {
       yarnId: new FormControl(data.id, [Validators.required]),
       yarnName: new FormControl(data.name, [Validators.required]),
       yarnCode: new FormControl(data.code),
-      quantity: new FormControl(data.needed_quantity, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
+      quantity: new FormControl((data.needed_quantity).toFixed(3), [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       price: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl("0", [Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       yarnLotCode: new FormControl("1", [Validators.required]),

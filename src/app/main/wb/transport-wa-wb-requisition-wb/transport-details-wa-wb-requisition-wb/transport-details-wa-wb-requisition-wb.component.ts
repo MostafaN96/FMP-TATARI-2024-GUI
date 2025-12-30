@@ -53,6 +53,7 @@ export class TransportDetailsWaWbRequisitionWbComponent implements OnInit {
     'fabric_code',
     'consigment_yarn_number',
     'yarn_order_requisitions',
+    'manufacturing_requisitions',
     'document',
     'statement',
     'update',
@@ -151,6 +152,9 @@ export class TransportDetailsWaWbRequisitionWbComponent implements OnInit {
     }
     else if (typeOfRequisition == 'اذن نقل بين المخازن') {
       return `/dashboard/show-all-transition-between-wh-requisition-wa/details`
+    }
+    else if (typeOfRequisition == 'اذن تصنيع') {
+      return `/dashboard/show-all-manufacturing-requisition-wb/details`
     }
     return
   }

@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -39,7 +39,7 @@
 
                     <!-- Warehouse -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse' [autofill]='autofill'
                             formControlName="warehouseId"
                             (change)="selectWarehouse($event)"
@@ -219,8 +219,8 @@
 
                                         <!-- Consigment Yarn -->
                                         <td class="table-td" style="max-width: 120px;">
-                                            <ejs-autocomplete [dataSource]='consigmentsYarns' [fields]='fieldsConsigmentYarn' 
-                                            (filtering)="onFilteringConsigmentYarn($event)"
+                                            <ejs-autocomplete [dataSource]='consigmentsYarns[index]' [fields]='fieldsConsigmentYarn' 
+                                            (filtering)="onFilteringConsigmentYarn($event, index)"
                                             (change)='selectConsigmentYarn($event, row, index)'
                                                 [placeholder]='textConsigmentYarn' [autofill]='autofill'
                                                 formControlName="consigmentYarnId"

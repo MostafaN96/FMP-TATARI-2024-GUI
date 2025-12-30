@@ -53,6 +53,24 @@
                                         </div>
 
                                         <div class="col">
+                                            <p-columnFilter field="details" matchMode="document-details-filter" [showMenu]="false"
+                                                [showClearButton]="false" [matchModeOptions]="selectedDocumentDetails">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedDocumentDetails" 
+                                                    [options]="_sharedComponentService.uniqueArray(documentDetails, 'document')"
+                                                        (onChange)="onMultiselectedDocumentDetails($event.value)"
+                                                        placeholder="البحث بـ رقم الإيصال" optionLabel="document">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.document}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
+                                        <div class="col">
                                             <p-columnFilter field="note" matchMode="requisition-note-filter"
                                                 [showMenu]="false" [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -149,7 +167,7 @@
                                                             </th>
 
                                                             <th style="width: 80px;">
-                                                                الوثيقة
+                                                                رقم الايصال
                                                             </th>
 
                                                             <th style="width: 80px;">

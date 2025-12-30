@@ -389,7 +389,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     // (1) 17-1-2022
     // let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value)).toFixed(2)) || ''
     // let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) * parseFloat(row.controls['wastRatio'].value)) / 100) + parseFloat(row.controls['quantity'].value)).toFixed(3)) || 0
-    let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) / (1 - (this._sharedComponentService.notZero(parseFloat(row.controls['wastRatio'].value)) / 100)) )) ).toFixed(3)) || 0
+    let quantityWithWaste = parseFloat((((parseFloat(row.controls['quantity'].value) / (1 - (parseFloat(row.controls['wastRatio'].value) / 100)) )) ).toFixed(3)) || 0
     if (quantityWithWaste > parseFloat(row.controls['validQuantity'].value)) {
       row.controls['quantity'].setErrors({ 'incorrect': true });
       row.controls['quantity'].markAsTouched()

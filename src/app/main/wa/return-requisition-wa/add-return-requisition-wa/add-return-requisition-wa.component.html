@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -41,7 +41,7 @@
 
                     <!-- Supplier -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='suppliers' [fields]='fieldsSupplier' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='suppliers' [fields]='fieldsSupplier' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringSupplier($event)" [placeholder]='textSupplier' [autofill]='autofill'
                             formControlName="supplierId" 
                             (change)="selectSupplier($event)"
@@ -59,7 +59,7 @@
 
                     <!-- Warehouse -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse' [autofill]='autofill'
                             formControlName="warehouseId"
                             (change)="selectWarehouse($event)"
@@ -104,7 +104,11 @@
                                         التسلسل
                                     </th>
 
-                                    <th>
+                                    <th style="max-width: 100px;">
+                                        الطلبية
+                                    </th>
+
+                                    <th style="width: 150px;">
                                         اسم الصنف
                                     </th>
 
@@ -160,9 +164,30 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' 
+                                            (filtering)="onFilteringYarnOrder($event)"
+                                            (change)='selectYarnOrder($event, row, index)'
+                                                [placeholder]='textYarnOrder' [autofill]='autofill'
+                                                formControlName="yarnOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('yarnOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('yarnOrderId').hasError('required') && (row.get('yarnOrderId').dirty 
+                                                || row.get('yarnOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                         <td class="table-td">
-                                            <ejs-autocomplete [dataSource]='yarns' [fields]='fieldsYarn'
-                                                 (filtering)="onFilteringYarnName($event)"
+                                            <ejs-autocomplete [dataSource]='yarns[index]' [fields]='fieldsYarn'
+                                                 (filtering)="onFilteringYarnName($event, index)"
                                                 [placeholder]='textYarn' [autofill]='autofill' formControlName="yarnId"
                                                 (change)='selectYarn($event, row, index)'>
                                             </ejs-autocomplete>
@@ -187,8 +212,8 @@
 
                                         <!-- Lot -->
                                         <td class="table-td" style="max-width: 180px;">
-                                            <ejs-autocomplete [dataSource]='lots' [fields]='fieldsLot' 
-                                            (filtering)="onFilteringLot($event)"
+                                            <ejs-autocomplete [dataSource]='lots[index]' [fields]='fieldsLot' 
+                                            (filtering)="onFilteringLot($event, index)"
                                             (change)='selectYarnLot($event, row, index)'
                                                 [placeholder]='textLot' [autofill]='autofill'
                                                 formControlName="yarnLotId"
@@ -208,8 +233,8 @@
 
                                         <!-- Consigment Yarn -->
                                         <td class="table-td" style="max-width: 180px;">
-                                            <ejs-autocomplete [dataSource]='consigmentsYarns' [fields]='fieldsConsigmentYarn' 
-                                            (filtering)="onFilteringConsigmentYarn($event)"
+                                            <ejs-autocomplete [dataSource]='consigmentsYarns[index]' [fields]='fieldsConsigmentYarn' 
+                                            (filtering)="onFilteringConsigmentYarn($event, index)"
                                             (change)='selectConsigmentYarn($event, row, index)'
                                                 [placeholder]='textConsigmentYarn' [autofill]='autofill'
                                                 formControlName="consigmentYarnId"
@@ -367,7 +392,7 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="5"></td>
+                                  <td colspan="8"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(returnRequisitionForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(returnRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(returnRequisitionForm, 'items', 'quantity', 'priceDollar') | number}}</td>

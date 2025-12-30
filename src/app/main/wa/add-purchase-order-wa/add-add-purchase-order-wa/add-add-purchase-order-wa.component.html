@@ -55,7 +55,8 @@
 
                         
                         <!-- (selectionChange)="selectRequisitionsOrderName($event)" -->
-                        <mat-form-field appearance="outline" class="w-100">
+
+                        <!-- <mat-form-field appearance="outline" class="w-100">
                             <mat-label>طلبيات الجاهز</mat-label>
                             <mat-select placeholder="طلبيات الجاهز" formControlName="orderId"
                             
@@ -73,7 +74,17 @@
                                 <label [innerHTML]="_sharedComponentService.required_field">
                                 </label>
                             </mat-error>
-                        </mat-form-field>
+                        </mat-form-field> -->
+
+                        <p-multiSelect 
+                            [options]="mappedRequisitionsOrder" 
+                            formControlName="orderId" 
+                            optionLabel="orderName"
+                            display="chip" 
+                            defaultLabel="طلبيات الجاهز"
+                            [maxSelectedLabels]="2"
+                            styleClass="w-100">
+                            </p-multiSelect>
                     </div>
 
                     <!-- Name -->

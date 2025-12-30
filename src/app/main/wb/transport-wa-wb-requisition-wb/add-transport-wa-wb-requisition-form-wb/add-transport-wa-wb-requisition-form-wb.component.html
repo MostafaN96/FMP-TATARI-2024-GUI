@@ -18,7 +18,11 @@
                                 </th>
 
                                 <th style="min-width: 120px;">
-                                    من طلبية
+                                    الى طلبية
+                                </th>
+
+                                <th style="min-width: 140px;">
+                                    القماش المراد تصنيعه
                                 </th>
 
                                 <th style="min-width: 120px;">
@@ -39,14 +43,6 @@
 
                                 <th style="min-width: 120px;">
                                     المصنع
-                                </th>
-
-                                <th style="min-width: 120px;">
-                                    الى طلبية
-                                </th>
-
-                                <th style="min-width: 140px;">
-                                    القماش المراد تصنيعه
                                 </th>
 
                                 <th style="max-width: 60px;">
@@ -115,7 +111,7 @@
                                     </td>
 
                                         <!-- from order -->
-                                        <td class="table-td" style="min-width: 120px;">
+                                        <!-- <td class="table-td" style="min-width: 120px;">
                                             <ejs-autocomplete [dataSource]='fromYarnOrder' [fields]='fieldsFromYarnOrder' 
                                             (filtering)="onFilteringFromYarnOrder($event)"
                                             (change)='selectFromYarnOrder($event, row, index)'
@@ -131,6 +127,47 @@
                                             <small class="text-danger"
                                                 *ngIf="row.get('fromYarnOrderId').hasError('required') && (row.get('fromYarnOrderId').dirty 
                                                 || row.get('fromYarnOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td> -->
+
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' 
+                                            (filtering)="onFilteringYarnOrder($event)"
+                                            (change)='selectYarnOrder($event, row, index)'
+                                                [placeholder]='textYarnOrder' [autofill]='autofill'
+                                                formControlName="waYarnOrderRequisitionDetailsId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('waYarnOrderRequisitionDetailsId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('waYarnOrderRequisitionDetailsId').hasError('required') && (row.get('waYarnOrderRequisitionDetailsId').dirty 
+                                                || row.get('waYarnOrderRequisitionDetailsId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
+                                        <!-- fabric to be manufactured -->
+                                        <td class="table-td" style="min-width: 140px;">
+                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric' 
+                                            (filtering)="onFilteringFabricName($event, index)"
+                                                [placeholder]='textFabric' [autofill]='autofill'
+                                                formControlName="fabricToBeManufacturedId" (change)='selectFabric($event, row, index)'
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('fabricToBeManufacturedId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('fabricToBeManufacturedId').hasError('required') && (row.get('fabricToBeManufacturedId').dirty 
+                                                || row.get('fabricToBeManufacturedId').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
                                         </td>
@@ -164,8 +201,8 @@
 
                                         <!-- Lot -->
                                         <td class="table-td" style="min-width: 60px;">
-                                            <ejs-autocomplete [dataSource]='lots' [fields]='fieldsLot' 
-                                            (filtering)="onFilteringLot($event)"
+                                            <ejs-autocomplete [dataSource]='lots[index]' [fields]='fieldsLot' 
+                                            (filtering)="onFilteringLot($event, index)"
                                             (change)='selectYarnLot($event, row, index)'
                                                 [placeholder]='textLot' [autofill]='autofill'
                                                 formControlName="yarnLotId"
@@ -220,47 +257,6 @@
                                             <small class="text-danger"
                                                 *ngIf="row.get('industryId').hasError('required') && (row.get('industryId').dirty 
                                                 || row.get('industryId').touched)"
-                                                [innerHTML]="_sharedComponentService.required_field">
-                                            </small>
-                                        </td>
-
-                                        <!-- order -->
-                                        <td class="table-td" style="max-width: 180px;">
-                                            <ejs-autocomplete [dataSource]='yarnOrder[index]' [fields]='fieldsYarnOrder' 
-                                            (filtering)="onFilteringYarnOrder($event, index)"
-                                            (change)='selectYarnOrder($event, row, index)'
-                                                [placeholder]='textYarnOrder' [autofill]='autofill'
-                                                formControlName="waYarnOrderRequisitionDetailsId"
-                                                [errorStateMatcher]="matcher" 
-                                                >
-                                            </ejs-autocomplete>
-                                            <small class="text-danger"
-                                            *ngIf="row.get('waYarnOrderRequisitionDetailsId').hasError('pattern')"
-                                            [innerHTML]="_sharedComponentService.invalid_message">
-                                            </small>
-                                            <small class="text-danger"
-                                                *ngIf="row.get('waYarnOrderRequisitionDetailsId').hasError('required') && (row.get('waYarnOrderRequisitionDetailsId').dirty 
-                                                || row.get('waYarnOrderRequisitionDetailsId').touched)"
-                                                [innerHTML]="_sharedComponentService.required_field">
-                                            </small>
-                                        </td>
-
-                                        <!-- fabric to be manufactured -->
-                                        <td class="table-td" style="min-width: 140px;">
-                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric' 
-                                            (filtering)="onFilteringFabricName($event, index)"
-                                                [placeholder]='textFabric' [autofill]='autofill'
-                                                formControlName="fabricToBeManufacturedId" (change)='selectFabric($event, row, index)'
-                                                [errorStateMatcher]="matcher" 
-                                                >
-                                            </ejs-autocomplete>
-                                            <small class="text-danger"
-                                            *ngIf="row.get('fabricToBeManufacturedId').hasError('pattern')"
-                                            [innerHTML]="_sharedComponentService.invalid_message">
-                                            </small>
-                                            <small class="text-danger"
-                                                *ngIf="row.get('fabricToBeManufacturedId').hasError('required') && (row.get('fabricToBeManufacturedId').dirty 
-                                                || row.get('fabricToBeManufacturedId').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
                                         </td>
@@ -515,7 +511,7 @@
                                 <td>الاجمالي</td>
 
                                 <td colspan="7"></td>
-                                  <td colspan="4"
+                                  <td colspan="3"
                                   *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[3])"></td>
                                   <td colspan="1"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(transportWaWbForm, 'items', 'quantity') | number}}</td>

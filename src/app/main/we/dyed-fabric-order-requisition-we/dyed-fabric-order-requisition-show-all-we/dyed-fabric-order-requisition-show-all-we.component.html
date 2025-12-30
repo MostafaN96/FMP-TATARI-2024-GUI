@@ -57,7 +57,8 @@
                                                 [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                                     <p-multiSelect [ngModel]="selectedOrderNumber"
-                                                        [options]="_sharedComponentService.uniqueArray(fabrics, 'name')"
+                                                        [options]="_sharedComponentService.uniqueArray(dt1.filteredValue == null ?
+                                            fabrics: dt1.filteredValue, 'name')"
                                                         (onChange)="onMultiselectedOrderNumber($event.value)"
                                                         placeholder="البحث بـ رقم الطلبية" optionLabel="name">
                                                         <ng-template let-option pTemplate="item">

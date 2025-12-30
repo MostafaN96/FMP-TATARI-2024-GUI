@@ -29,6 +29,10 @@ export class TransitionBetweenOrdersRequisitionShowAllWcComponent {
     loading: boolean = true;
     selectedFromDyedFabricOrderName: any[] = []
     selectedToDyedFabricOrderName: any[] = []
+    selectedDocumentDetails: any[] = []
+    selectedConsigmentManufacturingNumber: any[] = []
+documentDetails: any[] = []
+consigmentDetails: any[] = []
     startDate: any
     endDate: any
     dateFilters: any
@@ -49,6 +53,8 @@ export class TransitionBetweenOrdersRequisitionShowAllWcComponent {
     
       this.customFilterForFromDyedFabricOrderName();
       this.customFilterForToDyedFabricOrderName();
+  this.customFilterForDocumentDetails();
+      this.customFilterForConsigmentName();
     }
     
     getData() {
@@ -56,12 +62,31 @@ export class TransitionBetweenOrdersRequisitionShowAllWcComponent {
       this._transitionBetweenOrdersRequisitionWcService.selectAll().subscribe((response: any) => {
         this.fabrics = response
     
+                  this.getRequisitionDetails(this.fabrics)
+
         // PrimeNG Table
            this.primengConfig.ripple = true;
            this.loading = false;
       })
     }
     
+ getRequisitionDetails(data) {
+  let filter = [{}]
+    for (let i = 0; i < data.length; i++) {
+      const fabric = data[i];
+      for (let j = 0; j < fabric.details.length; j++) {
+        let element = fabric.details[j];          
+        if (filter.indexOf(element['document']) < 0) {
+          filter.push(element['document'])
+          this.documentDetails.push(element)
+        }
+        if (filter.indexOf(element['consigment_manufacturing_number']) < 0) {
+          filter.push(element['consigment_manufacturing_number'])
+          this.consigmentDetails.push(element)
+        }
+      }
+    }
+}
     ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
     
     customFilterForFromDyedFabricOrderName() {
@@ -135,6 +160,74 @@ export class TransitionBetweenOrdersRequisitionShowAllWcComponent {
       });
     }
     
+    
+customFilterForDocumentDetails() {
+  const customFilterName = "document-details-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedDocumentDetails
+
+    if (this.selectedDocumentDetails[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        let count = 0
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value[i].document == filter[j].document) {
+              count++
+              if (count == filter.length) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
+
+customFilterForConsigmentName() {
+  const customFilterName = "consigment-manufacturing-number-details-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedConsigmentManufacturingNumber
+
+    if (this.selectedConsigmentManufacturingNumber[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        let count = 0
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value[i].consigment_manufacturing_number == filter[j].consigment_manufacturing_number) {
+              count++
+              if (count == filter.length) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
      ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
      selectedDate(event) {
       this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -183,7 +276,19 @@ export class TransitionBetweenOrdersRequisitionShowAllWcComponent {
       table.reset();
       this.selectedFromDyedFabricOrderName = []
       this.selectedToDyedFabricOrderName = []
+      this.selectedDocumentDetails = []
+      this.selectedConsigmentManufacturingNumber = []
       this.dateFilters = []
+    }
+    
+    onMultiselectedDocumentDetails(event) {
+      this.selectedDocumentDetails = event
+      this.dt1?._filter()
+    }
+    
+    onMultiselectedConsigmentManufacturingNumber(event) {
+      this.selectedConsigmentManufacturingNumber = event
+      this.dt1?._filter()
     }
     
     onMultiselectedFromDyedFabricOrderName(event) {

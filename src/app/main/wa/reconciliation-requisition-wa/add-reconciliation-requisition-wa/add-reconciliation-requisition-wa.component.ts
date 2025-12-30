@@ -117,7 +117,7 @@ export class AddReconciliationRequisitionWaComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textConsigmentYarn: string = "رقم الرسالة"
 
-  public onFilteringConsigmentYarn (e: any)
+  public onFilteringConsigmentYarn (e: any, index)
   {
     e.preventDefaultAction=true;
          var predicate = new Predicate('number', 'contains', e.text);
@@ -125,7 +125,7 @@ export class AddReconciliationRequisitionWaComponent implements OnInit {
       //frame the query based on search string with filter type.
         query = (e.text != "") ? query.where(predicate) : query;
       //pass the filter data source, filter query to updateData method.
-        e.updateData(this.consigmentsYarns, query);
+        e.updateData(this.consigmentsYarns[index], query);
   }
 
   // --------------- Requisition nOrder --------------
@@ -208,6 +208,8 @@ export class AddReconciliationRequisitionWaComponent implements OnInit {
     control.removeAt(index);
 
     // Price
+    this.currentQuantity[index] = delete this.currentQuantity[index];
+    this.currentQuantity.splice(index, 1);
     this.listYarnPrices[index] = delete this.listYarnPrices[index];
     this.listYarnPrices.splice(index, 1);
     this.listYarnPricesDollar[index] = delete this.listYarnPricesDollar[index];
@@ -226,6 +228,7 @@ export class AddReconciliationRequisitionWaComponent implements OnInit {
       row.controls['consigmentYarnId'].setValue("")
       row.controls['quantity'].setValue(null)
       this.currentQuantity[index] = 0
+      this.consigmentsYarns[index] = []
     }
     else {
       row.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
@@ -251,7 +254,10 @@ export class AddReconciliationRequisitionWaComponent implements OnInit {
       row.controls['yarnLotId'].setValue("")
       row.controls['consigmentYarnId'].setValue("")
       row.controls['quantity'].setValue("")
+      row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0
+      this.consigmentsYarns[index] = []
+      this.lots[index] = []
     }
     else {
       row.controls['yarnCode'].setValue(event.itemData.code)
@@ -302,7 +308,11 @@ export class AddReconciliationRequisitionWaComponent implements OnInit {
     let indexData = this.lots[index].indexOf(event.itemData)
     if (this.lots[index][indexData] !== event.itemData) {
       row.controls['yarnLotId'].setValue(null)
+      row.controls['consigmentYarnId'].setValue("")
+      row.controls['quantity'].setValue("")
+      row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0
+      this.consigmentsYarns[index] = []
     } else {
       this._waService.selectRemainingByWarehouseByYarnByLotWa(
         this.reconcilitionRequisitionForm.controls['warehouseId'].value!,
@@ -310,7 +320,7 @@ export class AddReconciliationRequisitionWaComponent implements OnInit {
         event.itemData.id,
         row.controls['yarnOrderId'].value!
       ).subscribe((response: any) => {
-          this.consigmentsYarns = response
+          this.consigmentsYarns[index] = response
         })
     }
   }
@@ -319,9 +329,10 @@ export class AddReconciliationRequisitionWaComponent implements OnInit {
   // Start Consigment Yarn Autocomplete Section
   //  Consigment Yarn
   selectConsigmentYarn(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.consigmentsYarns.indexOf(event.itemData)
-    if (this.consigmentsYarns[indexData] !== event.itemData) {
+    let indexData = this.consigmentsYarns[index].indexOf(event.itemData)
+    if (this.consigmentsYarns[index][indexData] !== event.itemData) {
       row.controls['consigmentYarnId'].setValue(null)
+      row.controls['quantity'].setValue("")
       row.controls['validQuantity'].setValue(null)
       this.currentQuantity[index] = 0
     }

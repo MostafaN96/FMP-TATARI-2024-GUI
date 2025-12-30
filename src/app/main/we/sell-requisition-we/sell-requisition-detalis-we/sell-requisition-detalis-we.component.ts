@@ -35,6 +35,7 @@ export class SellRequisitionDetalisWeComponent implements OnInit {
   displayedColumns: string[] = [
     'index',
     'warehouse_name', 
+    'we_dyed_fabric_order_requisition_name', 
     'dyed_fabric_name', 
     'dyed_fabric_code',
     'color_category_name',

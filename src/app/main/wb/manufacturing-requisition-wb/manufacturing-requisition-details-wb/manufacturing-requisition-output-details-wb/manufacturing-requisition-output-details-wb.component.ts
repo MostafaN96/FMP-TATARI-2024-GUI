@@ -40,6 +40,7 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
     'fabric_code',
     'fabric_piece',
     'quantity',
+    'current_quantity',
     'manufacturing_fee',
     'manufacturing_fee_dollar',
     'total_with_wast',
@@ -83,7 +84,7 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
 
           this._wbManufacturingOutputService.selectByRequisitionId(params['id']).subscribe((response: any) => {
             this.manufacturingRequisitionDetails = response
-            console.log("this.manufacturingRequisitionDetails ::: ", this.manufacturingRequisitionDetails);
+            // console.log("this.manufacturingRequisitionDetails ::: ", this.manufacturingRequisitionDetails);
             
             this.dataSourceSearchTabel = new MatTableDataSource(this.manufacturingRequisitionDetails);
   

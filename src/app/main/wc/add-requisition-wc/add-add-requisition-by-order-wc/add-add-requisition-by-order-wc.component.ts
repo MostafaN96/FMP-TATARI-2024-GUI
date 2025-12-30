@@ -48,6 +48,7 @@ export class AddAddRequisitionByOrderWcComponent implements OnInit {
   warehouses:any = []
   consigments: any = []
   requisitionsOrder: any
+  mappedRequisitionsOrder: any
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -182,6 +183,13 @@ export class AddAddRequisitionByOrderWcComponent implements OnInit {
     
     this._fabricOrderRequisitionWcService.selectAll("opened").subscribe((response: any) => {
       this.requisitionsOrder = response
+
+      
+      this.mappedRequisitionsOrder = this.requisitionsOrder.map(c => ({
+        ordersRequisitionsId: c.orders_requisitions_id,
+        orderId: c.id,
+        orderName: c.name
+      }));
     })
   }
 
@@ -278,7 +286,7 @@ export class AddAddRequisitionByOrderWcComponent implements OnInit {
       this._constantsService.spinner.hide();
       if (response.msg === "data inserted") {
          this._constantsService.successAddMessage()
-         this._sharedComponentService.openNewTab(`${this._constantsService.ROUTING_MAIN_LINKS[0]}${this._constantsService.ROUTING_LINKS[34]}/details`, {id: response.id});
+         this._sharedComponentService.openNewTab(`${this._constantsService.ROUTING_MAIN_LINKS[0]}${this._constantsService.ROUTING_LINKS[210]}`, {id: response.id});
          this._sharedComponentService.reloadPage();
        }
        else {

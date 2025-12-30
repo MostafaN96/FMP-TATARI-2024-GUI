@@ -7,3 +7,55 @@ td table tfoot tr {
     color: var(--primary-color-3) !important;
     background-color: var(--primary-color-1) !important;
 }
+
+/* ✅ خلية التفاصيل: خليه يبلّش من فوق */
+:host ::ng-deep .ag-cell.details-cell,
+:host ::ng-deep .ag-cell.details-cell .ag-cell-wrapper,
+:host ::ng-deep .ag-cell.details-cell .ag-cell-value {
+  display: block !important;
+  white-space: normal !important;
+  line-height: 1.6 !important;
+  padding: 6px 8px !important;
+}
+
+/* ✅ جدول التفاصيل داخل الخلية */
+:host ::ng-deep .details-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+/* الهيدر */
+:host ::ng-deep .details-table thead td {
+  font-weight: 700;
+  padding: 6px 6px;
+  border: 1px solid #d0d7de;
+  background: #f3f6fb;
+  text-align: center;
+}
+
+/* جسم الجدول */
+:host ::ng-deep .details-table tbody td {
+  padding: 6px 6px;
+  border: 1px solid #d0d7de;
+  vertical-align: top;
+}
+
+/* خطوط صفوف خفيفة للوضوح */
+:host ::ng-deep .details-table tbody tr:nth-child(even) td {
+  background: #fafbfc;
+}
+
+/* الفوتر (الإجمالي) */
+:host ::ng-deep .details-table tfoot td {
+  padding: 6px 6px;
+  border: 1px solid #d0d7de;
+  font-weight: 800;
+  background: #eef4ff;
+}
+
+/* توسيط أرقام الكمية */
+:host ::ng-deep .details-table .qty {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}

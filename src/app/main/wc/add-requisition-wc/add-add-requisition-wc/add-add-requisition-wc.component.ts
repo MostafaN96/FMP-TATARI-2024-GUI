@@ -11,6 +11,7 @@ import { FabricService } from "src/app/services/main/fabric.service";
 import { BussinessmanService } from "src/app/services/main/bussinessman.service";
 import { AddRequisitionWcService } from "src/app/services/main/wc/add-requisition-wc.service";
 import { ConsigmentManufacturingService } from "src/app/services/main/consigment-manufacturing.service";
+import { FabricOrderRequisitionWcService } from "src/app/services/main/wc/fabric-order-requisition-wc.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -32,6 +33,7 @@ export class AddAddRequisitionWcComponent implements OnInit {
     date: new FormControl(new Date(), [Validators.required]),
     supplierId: new FormControl(null, [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
+        ordersRequisitionsItems: new FormControl('', [Validators.required]),
     items: new FormArray([
       this.initItem(),
     ]),
@@ -45,6 +47,8 @@ export class AddAddRequisitionWcComponent implements OnInit {
   suppliers:any = []
   warehouses:any = []
   consigments: any = []
+   fabricOrders: any = []
+  mappedRequisitionsOrder: any
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -121,6 +125,25 @@ export class AddAddRequisitionWcComponent implements OnInit {
     e.updateData(this.consigments, query);
   }
 
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsDyedFabricOrder: Object = {
+    value: "id",
+    text: "name"
+  };
+  // set the placeholder to the AutoComplete input
+  public textDyedFabricOrder: string = "اسم الطلبية"
+
+  public onFilteringDyedFabricOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this. fabricOrders, query);
+  }
+
   constructor(
     private _warehouseService: WarehouseService,
     private _fabricService: FabricService,
@@ -132,6 +155,7 @@ export class AddAddRequisitionWcComponent implements OnInit {
     private patterns: ValidatorPatternService,
     private _sessionManagerService: SessionManagerService,
     private _consigmentManufacturingService: ConsigmentManufacturingService,
+    private _fabricOrderRequisitionWcService: FabricOrderRequisitionWcService,
 
   ) {
     this._sharedComponentService.configRouterReloadPage()
@@ -143,6 +167,17 @@ export class AddAddRequisitionWcComponent implements OnInit {
   }
 
   getData() {
+    this._fabricOrderRequisitionWcService.selectAll('opened').subscribe((response: any) => {
+          this.fabricOrders = response
+
+          
+      this.mappedRequisitionsOrder = this.fabricOrders.map(c => ({
+        ordersRequisitionsId: c.orders_requisitions_id,
+        orderId: c.id,
+        orderName: c.name
+      }));
+        })
+
     this._fabricService.selectAll().subscribe((response: any) => {
       this.fabrics = response
     })

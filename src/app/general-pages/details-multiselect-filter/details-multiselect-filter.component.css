@@ -1,0 +1,19 @@
+.triple-filter {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 4px;
+  direction: rtl;
+}
+
+.triple-filter ::ng-deep .p-multiselect {
+  min-width: 150px;
+}
+
+.clear-btn {
+  border: 1px solid #ccc;
+  background: transparent;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+}

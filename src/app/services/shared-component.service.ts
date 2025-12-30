@@ -57,6 +57,23 @@ export class SharedComponentService {
   invalid_email = `تنسيق البريد الإلكتروني غير صحيح`
   invalid_pattern_mobile_number = "المسموح كحد اقصى ١٤ رقم بالإنجليزي"
 
+  // AG Grid Table
+  public gridStyle = {
+    width: '100%',
+    height: '500px',
+    enableRtl: true,
+    // direction: 'rtl',      // ✅ أهم نقطة
+    textAlign: 'right',    // ✅ محاذاة النصوص
+  overflow: 'auto',
+  };
+  public localeText: {
+    [key: string]: string;
+  } = {
+    applyFilter: 'موافق',
+    cancelFilter: 'إالغاء',
+    resetFilter: 'مسح الفلتر',
+  };
+
   constructor(
     private router: Router,
     private _constantsService: ConstantsService,
@@ -166,10 +183,18 @@ setTimeout(() => {
 
   // Get Avg Inputes Price
   getTotalAmountQuantityInput(yarns) {
+     // نتحقق أولاً إن البيانات مصفوفة فعلاً
+  if (!Array.isArray(yarns)) {
+    return 0;
+  }
     return yarns?.map(function (a) { return (a.input_output == '1') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
 
   getInputAmount(yarns) {
+    // نتحقق أولاً إن البيانات مصفوفة فعلاً
+  if (!Array.isArray(yarns)) {
+    return 0;
+  }
     return yarns?.map(function (a) { return (a.input_output == '1' && (parseFloat(a['price']) >= 0)) ? (parseFloat(a['quantity']) * parseFloat(a['price'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
 
@@ -180,16 +205,27 @@ setTimeout(() => {
 
   // AVG Price
   getOutputAmount(yarns) {
+    // نتحقق أولاً إن البيانات مصفوفة فعلاً
+  if (!Array.isArray(yarns)) {
+    return 0;
+  }
     return yarns?.map(function (a) { return (a.input_output == '0' && (parseFloat(a['price']) >= 0)) ? (parseFloat(a['quantity']) * parseFloat(a['price'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
 
 
   getTotalInputQuantity(yarns) {
+      if (!Array.isArray(yarns)) return 0;
+
     return yarns?.map(function (a) { return (a.input_output == '1') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
-  getTotalOutputQuantity(yarns) {
-    return yarns?.map(function (a) { return (a.input_output == '0') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
-  }
+  getTotalOutputQuantity(yarns: any): number {
+  if (!Array.isArray(yarns)) return 0;
+ 
+  const total = yarns
+    .map(a => (a.input_output == '0' ? parseFloat(a.quantity) || 0 : 0))
+    .reduce((acc, val) => acc + val, 0);
+    return total
+}
   
   getItemAmount(yarns) {
     return this.getInputAmount(yarns) - this.getOutputAmount(yarns)
@@ -385,7 +421,7 @@ setTimeout(() => {
     for (let index = 0; index < dataSourceSearchTabel?.length; index++) {
       const element = dataSourceSearchTabel[index].details;
         sum = sum + this.getTotalCollectSumWithCondition(element, columnQuantity, columnCondition, condition)
-    }
+    }    
     return sum
   }
 
@@ -674,15 +710,14 @@ setTimeout(() => {
 
 
   uniqueArray(data: any = [], key) {
-    let result: any = [];
-    let filteredArray: any = [];
-    data.forEach(item => {
-      if (filteredArray.indexOf(item[key]) < 0 && item[key] != undefined) {
-        filteredArray.push(item[key]);
-        result.push(item);
-      }
-    });
-    return result
+    const seen = new Set();
+  return data.filter(item => {
+    if (item[key] !== undefined && !seen.has(item[key])) {
+      seen.add(item[key]);
+      return true;
+    }
+    return false;
+  });
   }
 
   calculateRatio(formArray, attrCalc) {
@@ -700,6 +735,17 @@ setTimeout(() => {
       formArray[formArray.length - 1].controls[attrCalc].setErrors({ 'incorrect': null });
       formArray[formArray.length - 1].controls[attrCalc].updateValueAndValidity()
     }
+  }
+
+  calcOverCurrentQuantityRatio(data) {
+    let ratio = 0;
+    let currentQuantity = data.over_current_quantity
+    if (currentQuantity > 0) {
+      ratio = (currentQuantity / (data.needed_quantity)) * 100 
+    } else {
+      ratio = 0
+    }
+    return ratio
   }
 
   calculateMaxQuantity(formArray, attrCalc, quantity) {
@@ -766,4 +812,23 @@ setTimeout(() => {
   calcEgpToDollar2(egp, dollarPrice) {
     return parseFloat((egp / dollarPrice).toFixed(3))
   }
+
+  
+  format2(params: any): string {
+    const v = Number(params?.value ?? 0);
+    return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  
+  formatDateArabic(value: any): string {
+    if (!value) return '';
+    // إذا عندك date جاهز كـ string من API خليها مثل ما هي
+    // أو استخدم Date pipe بنفس منطقك:
+    try {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? String(value) : d.toLocaleDateString('en-US');
+    } catch {
+      return String(value);
+    }
+  }
+  
 }

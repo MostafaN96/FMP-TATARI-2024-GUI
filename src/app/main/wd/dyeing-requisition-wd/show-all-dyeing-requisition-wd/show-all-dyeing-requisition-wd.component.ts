@@ -33,6 +33,8 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
   startDate: any
   endDate: any
   dateFilters: any
+  dyeingDetails: any[] = []
+  selectedWorkOrderNumberDetails: any[] = []
 
 
   constructor(
@@ -51,12 +53,15 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
     this.customFilterForDyeingName();
     this.customFilterForWarehouseName();
     this.customFilterForReleaseProcess();
+    this.customFilterForWorkOrderNumberDetails();
   }
 
   getData() {
     this.loading = true;
     this._dyeingRequisitionWdService.selectAll().subscribe((response: any) => {
       this.fabrics = response
+
+      this.getDyeingDetails(this.fabrics)
 
       // PrimeNG Table
       this.primengConfig.ripple = true;
@@ -65,6 +70,19 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
   }
 
 
+  getDyeingDetails(data) {
+    let filter = [{}]
+    for (let i = 0; i < data.length; i++) {
+      const fabric = data[i];
+      for (let j = 0; j < fabric.details.length; j++) {
+        let element = fabric.details[j];
+        if (filter.indexOf(element['work_order_number']) < 0) {
+          filter.push(element['work_order_number'])
+          this.dyeingDetails.push(element)
+        }
+      }
+    }
+  }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   customFilterForDyeingName() {
@@ -170,6 +188,39 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
       }
     });
   }
+  customFilterForWorkOrderNumberDetails() {
+    const customFilterName = "work-order-number-details-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedWorkOrderNumberDetails
+
+      if (this.selectedWorkOrderNumberDetails[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          let count = 0
+          for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value[i].work_order_number == filter[j].work_order_number) {
+                count++
+                if (count == filter.length) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   selectedDate(event) {
@@ -220,6 +271,7 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
     this.selectedDyeingName = []
     this.selectedWarehouseName = []
     this.selectedReleaseProcess = []
+    this.selectedWorkOrderNumberDetails = []
     this.dateFilters = []
   }
 
@@ -238,5 +290,9 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
     this.dt1?._filter()
   }
 
+  onMultiselectedWorkOrderNumberDetails(event) {
+    this.selectedWorkOrderNumberDetails = event
+    this.dt1?._filter()
+  }
 
 }

@@ -14,10 +14,9 @@
             <div [class]="_sharedComponentService.gridForm2Class">
                 <div class="col">
                     <div [class]="_sharedComponentService.tableSectionClass">
-                       
+
                         <div id="table-header-data-report">
-                            <p-table #dt1 [value]="fabrics" dataKey="id"
-                                columnResizeMode="expand"
+                            <p-table #dt1 [value]="fabrics" dataKey="id" columnResizeMode="expand"
                                 styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
                                 [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
                                 scrollHeight="600px" [filterDelay]="0" sortField="number" [responsive]="true"
@@ -28,21 +27,16 @@
                                     <div class="row row-cols-md-5 align-items-center">
 
                                         <div class="col">
-                                            <p-calendar class="w-100"
-                                            placeholder="البحث بـ التاريخ"
-                                            [(ngModel)]="dateFilters"
-                                                    appendTo="body"
-                                                    selectionMode="range"
-                                                    [readonlyInput]="true"
-                                                    [showIcon]="true"
-                                                    dateFormat="dd/mm/yy"
-                                                    (onClickOutside)="selectedDate($event)">
-                                                    </p-calendar>
+                                            <p-calendar class="w-100" placeholder="البحث بـ التاريخ"
+                                                [(ngModel)]="dateFilters" appendTo="body" selectionMode="range"
+                                                [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy"
+                                                (onClickOutside)="selectedDate($event)">
+                                            </p-calendar>
                                         </div>
 
                                         <div class="col">
-                                            <p-columnFilter field="warehouse_name" matchMode="warehouse-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
+                                            <p-columnFilter field="warehouse_name" matchMode="warehouse-name-filter"
+                                                [showMenu]="false" [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                                     <p-multiSelect [ngModel]="selectedWarehouseName"
                                                         [options]="_sharedComponentService.uniqueArray(fabrics, 'warehouse_name')"
@@ -57,7 +51,26 @@
                                                 </ng-template>
                                             </p-columnFilter>
                                         </div>
-                                        
+
+                                        <div class="col">
+                                            <p-columnFilter field="details" matchMode="document-details-filter"
+                                                [showMenu]="false" [showClearButton]="false"
+                                                [matchModeOptions]="selectedDocumentDetails">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedDocumentDetails"
+                                                        [options]="_sharedComponentService.uniqueArray(documentDetails, 'document')"
+                                                        (onChange)="onMultiselectedDocumentDetails($event.value)"
+                                                        placeholder="البحث بـ رقم الإيصال" optionLabel="document">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.document}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
                                         <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
                                                 <button data-html2canvas-ignore="true" pButton label="اعادة"
@@ -74,13 +87,13 @@
                                     <tr>
 
                                         <!-- Number Column -->
-                                        <th>
+                                        <th style="max-width: 20px;">
                                             رقم الإذن
                                             <p-sortIcon data-html2canvas-ignore="true" field="number"></p-sortIcon>
                                         </th>
 
                                         <!-- Date Column -->
-                                        <th pResizableColumn pSortableColumn="date">
+                                        <th pResizableColumn pSortableColumn="date" style="max-width: 60px;">
                                             <div class="flex justify-content-between align-items-center">
                                                 تاريخ الإذن
                                                 <p-sortIcon data-html2canvas-ignore="true" field="date">
@@ -89,25 +102,32 @@
                                         </th>
 
                                         <!-- warehouse_name Column -->
-                                        <th pResizableColumn pSortableColumn="warehouse_name">
+                                        <th pResizableColumn pSortableColumn="warehouse_name" style="max-width: 60px;">
                                             <div class="flex justify-content-between align-items-center">
                                                 اسم المخزن
                                                 <p-sortIcon data-html2canvas-ignore="true" field="warehouse_name">
                                                 </p-sortIcon>
                                             </div>
-                                        </th>                                    
-                                        
-                                      
+                                        </th>
+
+
+                                        <!-- details Column -->
+                                        <th>
+                                            <div class="flex justify-content-between align-items-center">
+                                                تفاصيل الإذن
+                                            </div>
+                                        </th>
+
                                         <!-- note Column -->
                                         <th>
                                             <div class="flex justify-content-between align-items-center">
                                                 الملاحظات
-                                               
+
                                             </div>
-                                        </th>                           
+                                        </th>
 
                                         <!-- Details Column -->
-                                        <th data-html2canvas-ignore="true">
+                                        <th data-html2canvas-ignore="true" style="max-width: 20px;">
                                             <div class="flex justify-content-between align-items-center">
                                                 تفاصيل الإذن
                                             </div>
@@ -116,22 +136,114 @@
 
                                 </ng-template>
                                 <ng-template pTemplate="body" let-element let-index="rowIndex">
-                                    <tr class="p-selectable-row"  [ngClass]="{'warning_background': element.is_active == '0'}">
+                                    <tr class="p-selectable-row"
+                                        [ngClass]="{'warning_background': element.is_active == '0'}">
 
                                         <!-- Index Column -->
-                                        <td>
+                                        <td style="max-width: 20px;">
                                             {{element.number}}
                                         </td>
 
                                         <!-- Date Column -->
-                                        <td>
+                                        <td style="max-width: 60px;">
                                             {{element.date | date:'EEEE, d/M/y' }}
                                         </td>
-                                        
+
                                         <!-- warehouse_name Column -->
-                                        <td>
+                                        <td style="max-width: 60px;">
                                             {{ element.warehouse_name }}
                                         </td>
+
+                                        <!-- details Column -->
+                                        <td style="max-width: 220px;">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+
+                                                        <th style="max-width: 60px;">
+                                                            طلبية
+                                                        </th>
+
+                                                        <th style="max-width: 60px;">
+                                                            اسم القماش
+                                                        </th>
+
+                                                        <th style="max-width: 60px;">
+                                                            رقم الرسالة
+                                                        </th>
+
+                                                        <th style="max-width: 60px;">
+                                                            المصبغة
+                                                        </th>
+
+                                                        <th style="max-width: 60px;">
+                                                            الكمية
+                                                        </th>
+
+                                                        <th style="max-width: 60px;">
+                                                            عدد الأثواب
+                                                        </th>
+
+                                                        <th style="max-width: 60px;">
+                                                            الوثيقة
+                                                        </th>
+
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <tr *ngFor="let item of element.details">
+
+                                                        <td style="max-width: 60px;">
+                                                            {{item.wc_fabric_order_requisition_name}}
+                                                        </td>
+
+                                                        <td style="max-width: 60px;">
+                                                            {{item.fabric_name}}
+                                                        </td>
+
+                                                        <td style="max-width: 60px;">
+                                                            {{item.consigment_manufacturing_number}}
+                                                        </td>
+
+                                                        <td style="max-width: 60px;">
+                                                            {{item.dyer_name}}
+                                                        </td>
+
+                                                        <td style="max-width: 60px;">
+                                                            {{item.quantity}}
+                                                        </td>
+
+                                                        <td style="max-width: 60px;">
+                                                            {{item.fabric_piece}}
+                                                        </td>
+
+                                                        <td style="max-width: 60px;">
+                                                            {{item.document}}
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td style="max-width: 60px;">الإجمالي</td>
+                                                        <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;">
+                                                            {{_sharedComponentService.getTotalQuantity(element.details,
+                                                            'quantity') | number}}
+                                                        </td>
+                                                        <td style="max-width: 60px;">
+                                                            {{_sharedComponentService.getTotalQuantity(element.details,
+                                                            'fabric_piece') | number}}
+                                                        </td>
+                                                        <td style="max-width: 60px;"></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </td>
+
 
                                         <!-- note Column -->
                                         <td>
@@ -139,16 +251,71 @@
                                         </td>
 
                                         <!-- Details Column -->
-                                        <td data-html2canvas-ignore="true">
-                                            <a
-                                    [routerLink]="['details']"
-                                    [queryParams]="{ id: element.id, warehouseId: element.warehouse_id }">
-                                        <i class="fas fa-angle-double-right update-symbol"></i>
-                                    </a>
+                                        <td data-html2canvas-ignore="true" style="max-width: 20px;">
+                                            <a [routerLink]="['details']"
+                                                [queryParams]="{ id: element.id, warehouseId: element.warehouse_id }">
+                                                <i class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
                                         </td>
 
                                     </tr>
                                 </ng-template>
+
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <!-- Index Column -->
+                                        <td style="max-width: 20px;"></td>
+
+                                        <!-- Date Column -->
+                                        <td style="max-width: 60px;">الإجمالي</td>
+
+                                        <!-- warehouse_name Column -->
+                                        <td style="max-width: 60px;"></td>
+
+                                        <!-- details Column -->
+                                        <td style="max-width: 220px;">
+                                            <table>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td style="max-width: 60px;"></td>
+
+                                                        <td style="max-width: 60px;"></td>
+
+                                                        <td style="max-width: 60px;"></td>
+
+                                                        <td style="max-width: 60px;"></td>
+
+                                                        <td style="max-width: 60px;">
+                                                            {{_sharedComponentService.getTotalCollectTotalSum(dt1.filteredValue
+                                                            ==
+                                                            null ? fabrics: dt1.filteredValue, 'quantity') |
+                                                            number}}
+                                                        </td>
+
+                                                        <td style="max-width: 60px;">
+                                                            {{_sharedComponentService.getTotalCollectTotalSum(dt1.filteredValue
+                                                            ==
+                                                            null ? fabrics: dt1.filteredValue, 'fabric_piece') |
+                                                            number}}
+                                                        </td>
+
+
+                                                        <td style="max-width: 60px;"></td>
+
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </td>
+
+                                        <!-- note Column -->
+                                        <td></td>
+
+                                        <!-- details Column -->
+                                        <td style="max-width: 20px;"></td>
+                                    </tr>
+                                </ng-template>
+
+
                                 <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                     <tr>
                                         <td colspan="5">لا يوجد بيانات</td>

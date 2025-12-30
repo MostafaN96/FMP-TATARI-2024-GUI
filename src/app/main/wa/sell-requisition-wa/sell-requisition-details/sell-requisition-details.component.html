@@ -37,6 +37,17 @@
                             </tr>
 
                             <tr>
+                                <th>الطلبية:</th>
+                                <td>
+                                    <ul>
+                                            <li *ngFor="let order of sellRequisitionDetails[0]?.orders">
+                                                {{order.order_name}}
+                                            </li>
+                                        </ul>
+                                </td>
+                            </tr>
+
+                            <tr>
                                 <th>الملاحظات:</th>
                                 <td>{{sellRequisitionDetails[0]?.note}}</td>
                             </tr>

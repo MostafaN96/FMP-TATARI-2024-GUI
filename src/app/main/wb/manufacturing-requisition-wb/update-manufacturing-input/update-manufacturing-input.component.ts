@@ -89,7 +89,7 @@ export class UpdateManufacturingInputComponent implements OnInit {
 
   getQuantity() {
     this.inputManufacturedWbForm.controls['quantityWithWaste'].setValue(
-      String(((parseFloat(this.inputManufacturedWbForm.controls['quantity'].value) / (1 - (this._sharedComponentService.notZero(parseFloat(this.inputManufacturedWbForm.controls['wastRatio'].value)) / 100 )))) )
+      String(((parseFloat(this.inputManufacturedWbForm.controls['quantity'].value) / (1 - (parseFloat(this.inputManufacturedWbForm.controls['wastRatio'].value) / 100 )))) )
       )
   }
 

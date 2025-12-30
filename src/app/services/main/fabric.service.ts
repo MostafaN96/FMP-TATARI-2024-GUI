@@ -57,6 +57,20 @@ export class FabricService {
         })
       });
   }
+
+  selectDyedFabricsByOrder(orderRequisitionId: string, urlService?:string): Observable<any> {
+    if(urlService == "dyed") {
+      this.urlService = this.urlServiceDyed
+    }
+    const url = `${this._constantsService.BASE_URL}${this.urlService}dyed-fabric-by-order/${orderRequisitionId}`;
+    this.urlService = "fabric/"
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
   
   selectMaxCode(urlService?:string): Observable<any> {
     if(urlService == "dyed") {
@@ -103,6 +117,17 @@ export class FabricService {
   selectByWarehouseWc(warehouseId: string, fabricOrderId?: string): Observable<any> {
     this.urlService = "fabric/"
     const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wc/${warehouseId}/${fabricOrderId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
+  selectByWarehouseWcForTransitionBetweenOrder(warehouseId: string, fabricOrderId?: string, toFabricOrderId?: string): Observable<any> {
+    this.urlService = "fabric/"
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-wc-for-transition-between-order/${warehouseId}/${fabricOrderId}/${toFabricOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

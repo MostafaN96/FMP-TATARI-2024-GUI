@@ -94,6 +94,17 @@
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
 
+                                <!-- we_dyed_fabric_order_requisition_name Column -->
+                                <ng-container matColumnDef="we_dyed_fabric_order_requisition_name">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>الطلبية</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.we_dyed_fabric_order_requisition_name }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
                                 <!-- dyed_fabric_name Column -->
                                 <ng-container matColumnDef="dyed_fabric_name">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>

@@ -288,7 +288,7 @@ export class ConstantsService {
   }
 
   get DEFAULT_WA_WAREHOUSE_ID(): string {
-    return '20229917115148716';
+    return '202411121483952071';
   }
 
   get DEFAULT_WA_WAREHOUSE_NOT_ARRIVED_ID(): string {

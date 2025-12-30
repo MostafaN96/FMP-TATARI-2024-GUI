@@ -44,7 +44,7 @@
                             </tr>
 
                             <tr>
-                                <th>رقم الرسالة:</th>
+                                <th>رقم طلب الغزل:</th>
                                 <td>{{reportByYranWaDetails[0]?.consigment_yarn_number}} </td>
                             </tr>
 
@@ -121,7 +121,7 @@
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                                     <p-multiSelect [ngModel]="selectedToConsigmentYarn" [options]="_sharedComponentService.uniqueArray(reportByYranWaDetails, 'to_consigment_yarn_number')"
                                                         (onChange)="onMultiselectedToConsigmentYarn($event.value)"
-                                                        placeholder="البحث بـ الى رقم الرسالة" optionLabel="to_consigment_yarn_number">
+                                                        placeholder="البحث بـ الى رقم طلب الغزل" optionLabel="to_consigment_yarn_number">
                                                         <ng-template let-option pTemplate="item">
                                                             <div class="p-multiselect-representative-option">
                                                                 <span class="ml-1">{{option.to_consigment_yarn_number}}</span>
@@ -262,7 +262,7 @@
                                         <!-- to_consigment_yarn_number Column -->
                                         <th pResizableColumn>
                                             <div class="flex justify-content-between align-items-center">
-                                                الى رقم الرسالة
+                                                الى رقم طلب الغزل
                                             </div>
                                         </th>
 
@@ -433,7 +433,7 @@
 
                                         <!-- input Column -->
                                         <td>
-                                            {{ _sharedComponentService.getTotalAmountQuantityInput(dt1.filteredValue ==
+                                            {{ _sharedComponentService.getTotalInputQuantity(dt1.filteredValue ==
                                             null ? reportByYranWaDetails: dt1.filteredValue) | number}}
                                         </td>
 

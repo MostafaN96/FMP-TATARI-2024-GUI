@@ -94,6 +94,25 @@
                                             </p-columnFilter>
                                         </div>
                                         
+                                        
+                                        <div class="col">
+                                            <p-columnFilter field="details" matchMode="work-order-number-details-filter" [showMenu]="false"
+                                                [showClearButton]="false" [matchModeOptions]="selectedWorkOrderNumberDetails">
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                    <p-multiSelect [ngModel]="selectedWorkOrderNumberDetails" 
+                                                    [options]="_sharedComponentService.uniqueArray(dyeingDetails, 'work_order_number')"
+                                                        (onChange)="onMultiselectedWorkOrderNumberDetails($event.value)"
+                                                        placeholder="البحث بـ أمر الشغل" optionLabel="work_order_number">
+                                                        <ng-template let-option pTemplate="item">
+                                                            <div class="p-multiselect-representative-option">
+                                                                <span class="ml-1">{{option.work_order_number}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </div>
+
                                         <div class="col">
                                             <div data-html2canvas-ignore="true" class="flex">
                                                 <button data-html2canvas-ignore="true" pButton label="اعادة"
@@ -167,6 +186,10 @@
                                                             اجرة الصباغة
                                                             </th>
 
+                                                            <th style="width: 80px;">
+                                                            امر الشغل
+                                                            </th>
+
                                                         </tr>
                                                     </thead>
                                                 </table>
@@ -230,6 +253,10 @@
 
                                                         <td style="width: 80px;">
                                                             {{item.dyeing_fee}}
+                                                        </td>
+
+                                                        <td style="width: 80px;">
+                                                            {{item.work_order_number}}
                                                         </td>
 
                                                     </tr>

@@ -201,7 +201,7 @@ export class UpdateDyeingRequisitionWdComponent implements OnInit {
       element.dyeing_fee, 
       element.fabric_piece,
       element.added_cost
-    ) / element.dyeing_quantity
+    ) / this._sharedComponentService.notZero(element.dyeing_quantity) 
     console.log("sum ========getSumTotalCost======= ", sum);
     
     return parseFloat((sum).toFixed(3))

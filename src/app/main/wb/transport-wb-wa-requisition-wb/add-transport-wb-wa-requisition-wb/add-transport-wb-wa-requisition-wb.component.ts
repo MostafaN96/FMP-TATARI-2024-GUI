@@ -201,7 +201,7 @@ export class AddTransportWbWaRequisitionWbComponent implements OnInit {
   initItem() {
     return new FormGroup({
       ordersRequisitionsId: new FormControl("", [Validators.required]),
-      yarnOrderId: new FormControl("", [Validators.required]),
+      yarnOrderId: new FormControl("", [Validators.required]),      
       yarnId: new FormControl("", [Validators.required]),
       yarnCode: new FormControl(""),
       yarnName: new FormControl(""),

@@ -392,6 +392,7 @@
                                                 <mat-label>رقم رسالة المصبغة</mat-label>
                                                 <input autocomplete="off" type="text" matInput formControlName="consigmentDyeingNumber" placeholder="مثال: 10214"
                                                     [errorStateMatcher]="matcher" 
+                                                    [readonly]="true"
                                                     />
                                                     <mat-error *ngIf="row.get('consigmentDyeingNumber').hasError('required') && (row.get('consigmentDyeingNumber').dirty 
                                                     || row.get('consigmentDyeingNumber').touched)">

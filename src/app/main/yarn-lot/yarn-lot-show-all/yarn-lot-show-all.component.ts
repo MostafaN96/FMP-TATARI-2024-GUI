@@ -1,10 +1,9 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 
-
-// Angular Material Table
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortable } from '@angular/material/sort';
-import { SelectionModel } from '@angular/cdk/collections';
+// PrimeNG Table
+import { PrimeNGConfig } from 'primeng/api';
+import { Table } from 'primeng/table';
+import { FilterService } from 'primeng/api';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -27,74 +26,128 @@ export class YarnLotShowAllComponent implements OnInit {
   selectedDataToUpdate: any
   selectArrayValues: any[] = [];
 
-  //////////////////////////////////// Tabel Angular Material /////////////////////////////////
-  @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
-  displayedColumns: string[] = ['select', 'index','yarn_name', 'code', 'update'];
-  selection = new SelectionModel(true);
-  filter = "";
-  dataSourceSearchTabel: any;
+ //////////////////////////////////// PrimeNG /////////////////////////////////
+  @ViewChild('dt1') dt1: Table | undefined;
+  loading: boolean = true;
+  selectedYarns: any[] = []
+  selectedCodes: any[] = []
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
     private _yarnLotService: YarnLotService,
     public _exportDataService: ExportDataService,
+    private primengConfig: PrimeNGConfig,
+    private filterService: FilterService,
 
   ) {
     this._sharedComponentService.angularMaterialTableConfig()
   }
 
   ngOnInit(): void {
-    this.sortColumns.sort(({ id: 'code', start: 'asc' }) as MatSortable);
+    this.customFilterForYarns();
+    this.customFilterForCodes();
     this.getData();
   }
 
   getData() {
+        this.loading = true;
+
     this._yarnLotService.selectAll().subscribe((response: any) => {
       this.lot = response
-      this.dataSourceSearchTabel = new MatTableDataSource(this.lot);
-      this.dataSourceSearchTabel.sort = this.sortColumns;
+
+      
+      // PrimeNG Table
+      this.primengConfig.ripple = true;
+      this.loading = false;
+
     })
   }
 
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  applyFilter(filterValue: string) {
-    this.dataSourceSearchTabel.filter = filterValue.trim().toLowerCase();
-  }
+ ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  customFilterForYarns() {
+    const customFilterName = "yarn-name-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedYarns
 
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSourceSearchTabel.data.length;
-    return numSelected === numRows;
-  }
+      if (this.selectedYarns[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
 
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSourceSearchTabel.data.forEach((row: any) => this.selection.select(row));
-  }
-
-
-  getSelectedIndex(objectData: any) {
-    this.selectedData = []
-    if (this.selectArrayValues.includes(objectData)) {
-      let index = this.selectArrayValues.indexOf(objectData);
-      this.selectArrayValues[index] = delete this.selectArrayValues[index];
-    }
-    else {
-      this.selectArrayValues.push(objectData);
-    }
-    this.selectArrayValues.forEach((element) => {
-      if (element !== true)
-        this.selectedData.push(element)
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].yarn_name) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
     });
+  }
+  customFilterForCodes() {
+    const customFilterName = "code-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedCodes
 
+      if (this.selectedCodes[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          // let count = 0
+
+          // for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value == filter[j].code) {
+              // count++
+              // if (count == filter.length) {
+              return true;
+              // }
+            }
+          }
+          // }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
   }
 
-  selectAll() {
-    this.lot.forEach(lot => {
-      this.getSelectedIndex(lot)
-    })
+// Reset table filters
+  clear(table: Table) {
+    table.clear();
+    table.reset();
+    this.selectedYarns = []
+    this.selectedCodes = []
+  }
+
+  onMultiselectedYarns(event) {
+    this.selectedYarns = event
+    this.dt1?._filter()
+  }
+
+  onMultiselectedCodes(event) {
+    this.selectedCodes = event
+    this.dt1?._filter()
   }
 
   getSelectedData(selectedData: any) {

@@ -107,6 +107,10 @@
                                         التسلسل
                                     </th>
 
+                                    <th style="min-width: 180px;">
+                                        الطلبية
+                                    </th>
+
                                     <th style="width: 150px;">
                                         نوع البضاعة
                                     </th>
@@ -167,11 +171,33 @@
                                             <label style="width: 5px;">{{index+1}}</label>
                                         </td>
 
+                                        <!-- order -->
+                                        <td class="table-td" style="max-width: 180px;">
+                                            <ejs-autocomplete [dataSource]='fabricOrder' [fields]='fieldsFabricOrder' 
+                                            (filtering)="onFilteringFabricOrder($event)"
+                                            (change)='selectFabricOrder($event, row, index)'
+                                                [placeholder]='textFabricOrder' [autofill]='autofill'
+                                                formControlName="fabricOrderId"
+                                                [errorStateMatcher]="matcher" 
+                                                >
+                                            </ejs-autocomplete>
+                                            <small class="text-danger"
+                                            *ngIf="row.get('fabricOrderId').hasError('pattern')"
+                                            [innerHTML]="_sharedComponentService.invalid_message">
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="row.get('fabricOrderId').hasError('required') && (row.get('fabricOrderId').dirty 
+                                                || row.get('fabricOrderId').touched)"
+                                                [innerHTML]="_sharedComponentService.required_field">
+                                            </small>
+                                        </td>
+
                                         <td class="table-td">
-                                            <ejs-autocomplete [dataSource]='fabrics' [fields]='fieldsFabric' 
-                                            (filtering)="onFilteringFabricName($event)"
+                                            <ejs-autocomplete [dataSource]='fabrics[index]' [fields]='fieldsFabric' 
+                                            (filtering)="onFilteringFabricName($event, index)"
                                                 [placeholder]='textFabric' [autofill]='autofill'
-                                                formControlName="fabricId" (change)='selectFabric($event, row, index)'
+                                                formControlName="fabricId" 
+                                                (change)='selectFabric($event, row, index)'
                                                 [errorStateMatcher]="matcher" 
                                                 >
                                             </ejs-autocomplete>
@@ -413,7 +439,7 @@
                             <tfoot>
                                 <tr>
                                   <td>الاجمالي</td>
-                                  <td colspan="3"></td>
+                                  <td colspan="4"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(sellRequisitionWCForm, 'items', 'numberFabricPieces') | number}}</td>
                                   <td colspan="3"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(sellRequisitionWCForm, 'items', 'quantity') | number}}</td>

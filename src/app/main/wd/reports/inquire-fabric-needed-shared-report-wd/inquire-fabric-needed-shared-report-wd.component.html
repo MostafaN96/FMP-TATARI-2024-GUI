@@ -1,0 +1,185 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+
+    <!-- Form Builder Section -->
+    <div class="row">
+
+        <!-- weFabrics -->
+        <div class="col-md-4" *ngIf="dataReport?.weFabrics.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="5">
+                            <h4>
+                                مخزن الجاهز
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            نوع القماش
+                        </th>
+                        <th>
+                            اللون
+                        </th>
+                        <th>
+                            الكمية المطلوبة
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let weFabric of dataReport.weFabrics">
+                        <td>
+                            {{ weFabric.dyed_fabric_name }} ({{ weFabric.dyed_fabric_code }})
+                        </td>
+                        <td>
+                            {{ weFabric.color_name }} ({{ weFabric.color_code }})
+                        </td>
+                        <td>
+                            {{weFabric.ordered_quantity | number}}
+                        </td>
+
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+
+                        <td>
+                            
+                        </td>
+
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.weFabrics, 'ordered_quantity') |
+                            number}}
+                        </td>
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- wcFabrics -->
+        <div class="col-md-4" *ngIf="dataReport?.wcFabrics.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="4">
+                            <h4>
+                                مخزن الخام
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            نوع القماش
+                        </th>
+                        <th>
+                            الكمية المطلوبة
+                        </th>
+
+                        <th>
+                             الغزول
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let wcFabric of dataReport.wcFabrics">
+                        <td>
+                            {{wcFabric.name }} ({{wcFabric.code }})
+                        </td>
+                        <td>
+                            {{wcFabric.ordered_quantity | number}}
+                        </td>
+
+                        <td>
+                            <ul *ngFor="let yarn of wcFabric.yarnsDetails">
+                                <li>
+                                    {{yarn.yarn_name}} --- ({{yarn.ratio | number}}%)
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.wcFabrics, 'ordered_quantity') |
+                            number}}
+                        </td>
+
+                        <td>
+
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+       
+        <!-- waYarns -->
+        <div class="col-md-4" *ngIf="dataReport?.waYarns.length > 0">
+            <table class="table table-style">
+                <thead>
+                    <tr class="table-header-title">
+                        <th [colSpan]="5">
+                            <h4>
+                                مخزن الخيوط
+                            </h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            نوع الخيط
+                        </th>
+                        <th>
+                            كود الخيط
+                        </th>
+                        <th>
+                            الكمية المطلوبة
+                        </th>
+                
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let waYarn of dataReport.waYarns">
+
+                        <td>
+                            {{waYarn.name}}
+                        </td>
+                        <td>
+                            {{waYarn.code}}
+                        </td>
+                        <td>
+                            {{waYarn.ordered_quantity | number}}
+                        </td>
+
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            الإجمالي
+                        </td>
+                        <td [colSpan]="1">
+
+                        </td>
+                        <td>
+                            {{ _sharedComponentService.getTotalQuantity(dataReport.waYarns, 'ordered_quantity') |
+                            number}}
+                        </td>
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+
+</section>

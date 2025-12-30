@@ -192,7 +192,7 @@ this.route.queryParams.subscribe(params => {
       dyedFabricCode: new FormControl(null),
       colorCategoryId: new FormControl(null, [Validators.required]),
       colorId: new FormControl(null, [Validators.required]),
-      colorCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
+      colorCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       gradeItemId: new FormControl("", [Validators.required]),
       consigmentDyeingNumber: new FormControl("", [Validators.required]),
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),

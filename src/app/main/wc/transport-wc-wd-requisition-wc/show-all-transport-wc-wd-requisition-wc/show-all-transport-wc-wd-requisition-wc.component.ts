@@ -23,13 +23,17 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
   /////////////////// Variables ///////////////////
   fabrics: any[] = []
 
-    //////////////////////////////////// PrimeNG /////////////////////////////////
-    @ViewChild('dt1') dt1: Table | undefined;
-    loading: boolean = true;
-    selectedWarehouseName: any[] = []
-    startDate: any
-    endDate: any
-    dateFilters: any
+  //////////////////////////////////// PrimeNG /////////////////////////////////
+  @ViewChild('dt1') dt1: Table | undefined;
+  loading: boolean = true;
+  selectedWarehouseName: any[] = []
+  startDate: any
+  endDate: any
+  dateFilters: any
+
+  selectedDocumentDetails: any[] = []
+  documentDetails: any[] = []
+
 
   constructor(
     public _sharedComponentService: SharedComponentService,
@@ -42,6 +46,7 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.customFilterForWarehouseName();
+    this.customFilterForDocumentDetails();
   }
 
   getData() {
@@ -49,12 +54,27 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
     this._transportWcWdService.selectAll().subscribe((response: any) => {
       this.fabrics = response
 
-       // PrimeNG Table
-       this.primengConfig.ripple = true;
-       this.loading = false;
+      this.getRequisitionDetails(this.fabrics)
+
+      // PrimeNG Table
+      this.primengConfig.ripple = true;
+      this.loading = false;
     })
   }
 
+  getRequisitionDetails(data) {
+    let filter = [{}]
+    for (let i = 0; i < data.length; i++) {
+      const fabric = data[i];
+      for (let j = 0; j < fabric.details.length; j++) {
+        let element = fabric.details[j];
+        if (filter.indexOf(element['document']) < 0) {
+          filter.push(element['document'])
+          this.documentDetails.push(element)
+        }
+      }
+    }
+  }
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
   customFilterForWarehouseName() {
     const customFilterName = "warehouse-name-filter";
@@ -89,12 +109,48 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
       }
     });
   }
-  
-   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-   selectedDate(event) {
+
+
+  customFilterForDocumentDetails() {
+    const customFilterName = "document-details-filter";
+    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+      filter = this.selectedDocumentDetails
+
+      if (this.selectedDocumentDetails[0] != null) {
+        if (filter === undefined || filter === null || !filter.length) {
+          return true;
+        }
+        if (value === undefined || value === null || value.length == 0) {
+          return false;
+        }
+        if (filter.length > 0) {
+          let count = 0
+          for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < filter.length; j++) {
+              if (value[i].document == filter[j].document) {
+                count++
+                if (count == filter.length) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+        return false;
+      }
+      else {
+        return true;
+      }
+    });
+  }
+
+
+
+  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
+  selectedDate(event) {
     this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
       filter = this.dateFilters
-      
+
       if (event != null) {
         if (filter === undefined || filter === null || !filter.length) {
           return true;
@@ -104,22 +160,22 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
         }
         if (filter.length > 0) {
           // let count = 0
-          if(filter[0] != null && filter[1] != null) {
-            
-            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&  
-            moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
+          if (filter[0] != null && filter[1] != null) {
+
+            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&
+              moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
               return true;
-              }
-            
+            }
+
           } else if (filter[0] != null && filter[1] == null) {
-            
+
             if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
               return false;
-              } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
-                return false;
-              } else {
-                return true;
-              }
+            } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
+              return false;
+            } else {
+              return true;
+            }
           }
 
         }
@@ -137,6 +193,7 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
     table.clear();
     table.reset();
     this.selectedWarehouseName = []
+    this.selectedDocumentDetails = []
     this.dateFilters = []
   }
 
@@ -146,4 +203,8 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
     this.dt1?._filter()
   }
 
+  onMultiselectedDocumentDetails(event) {
+    this.selectedDocumentDetails = event
+    this.dt1?._filter()
+  }
 }

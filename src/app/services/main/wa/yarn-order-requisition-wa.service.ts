@@ -105,6 +105,16 @@ export class YarnOrderRequisitionWaService {
       });
   }
   
+  selectByWarehouseBySupplierWa(warehouseId: string, supplierId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}by-warehouse-by-supplier-wa/${warehouseId}/${supplierId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+  
   selectByIndustryWb(id: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}by-industry-wb/${id}`;
     return this._http.get(url,

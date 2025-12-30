@@ -15,7 +15,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -41,11 +41,11 @@
 
                     <!-- Seller -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='sellers' [fields]='fieldsSeller' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='sellers' [fields]='fieldsSeller' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringSeller($event)" [placeholder]='textSeller' [autofill]='autofill'
                             formControlName="sellerId"
                             (change)="selectSeller($event)"
-                            style="width: 260px;">
+                            >
                         </ejs-autocomplete>
                             <small class="text-danger"
                             *ngIf="sellRequisitionForm.controls.sellerId.hasError('pattern')"
@@ -60,11 +60,11 @@
 
                     <!-- Warehouse -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse' [autofill]='autofill'
                             formControlName="warehouseId"
                             (change)="selectWarehouse($event)"
-                            style="width: 260px;">
+                            >
                         </ejs-autocomplete>
                             <small class="text-danger"
                             *ngIf="sellRequisitionForm.controls.warehouseId.hasError('pattern')"
@@ -73,6 +73,26 @@
                             <small class="text-danger"
                                 *ngIf="sellRequisitionForm.controls.warehouseId.hasError('required') && (sellRequisitionForm.controls.warehouseId.dirty 
                                 || sellRequisitionForm.controls.warehouseId.touched)"
+                                [innerHTML]="_sharedComponentService.required_field">
+                            </small>
+                    </div>
+
+                    <!-- from order -->
+                    <div class="col">
+                        <ejs-autocomplete 
+                        [dataSource]='yarnOrder' [fields]='fieldsYarnOrder' class="ejs-autocomplete w-100"
+                            (filtering)="onFilteringYarnOrder($event)" [placeholder]='textYarnOrder' [autofill]='autofill'
+                            formControlName="yarnOrderId"
+                            (change)="selectYarnOrder($event)"
+                            style="width: 260px;">
+                        </ejs-autocomplete>
+                            <small class="text-danger"
+                            *ngIf="sellRequisitionForm.controls.yarnOrderId.hasError('pattern')"
+                            [innerHTML]="_sharedComponentService.invalid_message">
+                            </small>
+                            <small class="text-danger"
+                                *ngIf="sellRequisitionForm.controls.warehouseId.hasError('required') && (sellRequisitionForm.controls.yarnOrderId.dirty 
+                                || sellRequisitionForm.controls.yarnOrderId.touched)"
                                 [innerHTML]="_sharedComponentService.required_field">
                             </small>
                     </div>
@@ -198,8 +218,8 @@
 
                                         <!-- Lot -->
                                         <td class="table-td" style="max-width: 180px;">
-                                            <ejs-autocomplete [dataSource]='lots' [fields]='fieldsLot' 
-                                            (filtering)="onFilteringLot($event)"
+                                            <ejs-autocomplete [dataSource]='lots[index]' [fields]='fieldsLot' 
+                                            (filtering)="onFilteringLot($event, index)"
                                             (change)='selectYarnLot($event, row, index)'
                                                 [placeholder]='textLot' [autofill]='autofill'
                                                 formControlName="yarnLotId"
@@ -402,7 +422,7 @@
                                 <tr>
                                   <td>الاجمالي</td>
                                 
-                                  <td colspan="8"></td>
+                                  <td colspan="7"></td>
                                   <td>{{_sharedComponentService.getTotalQuantityForm(sellRequisitionForm, 'items', 'quantity') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(sellRequisitionForm, 'items', 'quantity', 'price') | number}}</td>
                                   <td class="text-center">{{_sharedComponentService.getTotalPriceXQuantityForm(sellRequisitionForm, 'items', 'quantity', 'priceDollar') | number}}</td>

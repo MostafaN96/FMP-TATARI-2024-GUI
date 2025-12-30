@@ -59,7 +59,17 @@
 
                     <!-- requisitionsOrder -->
                     <div class="col">
-                        <mat-form-field appearance="outline" class="w-100">
+                        <p-multiSelect 
+                            [options]="mappedRequisitionsOrder" 
+                            formControlName="ordersRequisitionsItems" 
+                            optionLabel="orderName"
+                            display="chip" 
+                            defaultLabel="طلبيات الخام"
+                            [maxSelectedLabels]="2"
+                            styleClass="w-100">
+                            </p-multiSelect>
+                            
+                        <!-- <mat-form-field appearance="outline" class="w-100">
                             <mat-label>طلبيات الخام</mat-label>
                             <mat-select placeholder="طلبيات الخام" formControlName="ordersRequisitionsItems"
                             
@@ -77,7 +87,7 @@
                                 <label [innerHTML]="_sharedComponentService.required_field">
                                 </label>
                             </mat-error>
-                        </mat-form-field>
+                        </mat-form-field> -->
                     </div>
 
                       <!-- Note -->

@@ -33,17 +33,17 @@
                                             </p-calendar>
                                         </div>
 
-                                        <div class="col">
-                                            <p-columnFilter field="from_we_dyed_fabric_order_requisition_name" matchMode="from-dyed-fabric-order-name-filter"
-                                                [showMenu]="false" [showClearButton]="false">
+<div class="col">
+                                            <p-columnFilter field="details" matchMode="document-details-filter" [showMenu]="false"
+                                                [showClearButton]="false" [matchModeOptions]="selectedDocumentDetails">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedFromWarehouseName"
-                                                        [options]="_sharedComponentService.uniqueArray(fabrics, 'from_we_dyed_fabric_order_requisition_name')"
-                                                        (onChange)="onMultiselectedFromDyedFabricOrderName($event.value)"
-                                                        placeholder="البحث بـ من طلبية" optionLabel="from_we_dyed_fabric_order_requisition_name">
+                                                    <p-multiSelect [ngModel]="selectedDocumentDetails" 
+                                                    [options]="_sharedComponentService.uniqueArray(documentDetails, 'document')"
+                                                        (onChange)="onMultiselectedDocumentDetails($event.value)"
+                                                        placeholder="البحث بـ رقم الإيصال" optionLabel="document">
                                                         <ng-template let-option pTemplate="item">
                                                             <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.from_we_dyed_fabric_order_requisition_name}}</span>
+                                                                <span class="ml-1">{{option.document}}</span>
                                                             </div>
                                                         </ng-template>
                                                     </p-multiSelect>
@@ -52,16 +52,16 @@
                                         </div>
 
                                         <div class="col">
-                                            <p-columnFilter field="to_we_dyed_fabric_order_requisition_name" matchMode="to-dyed-fabric-order-name-filter"
+                                            <p-columnFilter field="details" matchMode="consigment-manufacturing-number-details-filter"
                                                 [showMenu]="false" [showClearButton]="false">
                                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedToWarehouseName"
-                                                        [options]="_sharedComponentService.uniqueArray(fabrics, 'to_we_dyed_fabric_order_requisition_name')"
-                                                        (onChange)="onMultiselectedToDyedFabricOrderName($event.value)"
-                                                        placeholder="البحث بـ الى طلبية" optionLabel="to_we_dyed_fabric_order_requisition_name">
+                                                    <p-multiSelect [ngModel]="selectedConsigmentManufacturingNumber"
+                                                        [options]="_sharedComponentService.uniqueArray(consigmentDetails, 'consigment_manufacturing_number')"
+                                                        (onChange)="onMultiselectedConsigmentManufacturingNumber($event.value)"
+                                                        placeholder="البحث بـ رقم الرسالة" optionLabel="consigment_manufacturing_number">
                                                         <ng-template let-option pTemplate="item">
                                                             <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.to_we_dyed_fabric_order_requisition_name}}</span>
+                                                                <span class="ml-1">{{option.consigment_manufacturing_number}}</span>
                                                             </div>
                                                         </ng-template>
                                                     </p-multiSelect>
@@ -106,56 +106,36 @@
                                                     <thead>
                                                         <tr>
 
-                                                            <th style="width: 80px;">
+                                                            <th style="max-width: 60px;">
                                                                 المخزن
                                                             </th>
 
-                                                            <th style="width: 80px;">
+                                                            <th style="max-width: 60px;">
                                                                 من طلبية
                                                             </th>
 
-                                                            <th style="width: 80px;">
+                                                            <th style="max-width: 60px;">
                                                                 الى طلبية
                                                             </th>
 
-                                                            <th style="width: 80px;">
+                                                            <th style="max-width: 60px;">
                                                                 اسم القماش
                                                             </th>
-
-                                                            <th style="width: 80px;">
-                                                                كود القماش
-                                                            </th>
-
-                                                            <th style="width: 80px;">
-                                                                اللون
-                                                            </th>
-
-                                                            <th style="width: 80px;">
-                                                                كود اللون
-                                                            </th>
                                                             
-                                                            <th style="width: 80px;">
+                                                            <th style="max-width: 60px;">
                                                                 رقم الرسالة
                                                             </th>
                                                             
-                                                            <th style="width: 80px;">
+                                                            <th style="max-width: 60px;">
                                                                 الكمية
                                                             </th>
 
-                                                            <th style="width: 80px;">
+                                                            <th style="max-width: 60px;">
                                                                 عدد الأثواب
                                                             </th>
 
-                                                            <th style="width: 80px;">
-                                                                أمر الشغل
-                                                            </th>
-
-                                                            <th style="width: 80px;">
+                                                            <th style="max-width: 60px;">
                                                                 الوثيقة
-                                                            </th>
-
-                                                            <th style="width: 80px;">
-                                                                البيان
                                                             </th>
 
                                                         </tr>
@@ -201,80 +181,59 @@
                                                 <tbody>
                                                     <tr *ngFor="let item of element.details">
 
-                                                        <td style="width: 80px;">
+                                                        <td style="max-width: 60px;">
                                                             {{item.warehouse_name}}
                                                         </td>
 
-                                                        <td style="width: 80px;">
-                                                            {{item.from_we_dyed_fabric_order_requisition_name}}
+                                                        <td style="max-width: 60px;">
+                                                            {{item.from_wc_fabric_order_name}}
                                                         </td>
 
-                                                        <td style="width: 80px;">
-                                                            {{item.to_we_dyed_fabric_order_requisition_name}}
+                                                        <td style="max-width: 60px;">
+                                                            {{item.to_wc_fabric_order_name}}
                                                         </td>
 
-                                                        <td style="width: 80px;">
-                                                            {{item.dyed_fabric_name}}
+                                                        <td style="max-width: 60px;">
+                                                            {{item.fabric_name}}
                                                         </td>
 
-                                                        <td style="width: 80px;">
-                                                            {{item.dyed_fabric_code}}
+
+                                                        <td style="max-width: 60px;">
+                                                            {{item.consigment_manufacturing_number}}
                                                         </td>
 
-                                                        <td style="width: 80px;">
-                                                            {{item.color_name}}
-                                                        </td>
-
-                                                        <td style="width: 80px;">
-                                                            {{item.color_code}}
-                                                        </td>
-
-                                                        <td style="width: 80px;">
-                                                            {{item.consigment_dyeing_number}}
-                                                        </td>
-
-                                                        <td style="width: 80px;">
+                                                        <td style="max-width: 60px;">
                                                             {{item.quantity}}
                                                         </td>
 
-                                                        <td style="width: 80px;">
+                                                        <td style="max-width: 60px;">
                                                             {{item.fabric_piece}}
                                                         </td>
 
-                                                        <td style="width: 80px;">
-                                                            {{item.work_order_number}}
-                                                        </td>
 
-                                                        <td style="width: 80px;">
+                                                        <td style="max-width: 60px;">
                                                             {{item.document}}
                                                         </td>
 
-                                                        <td style="width: 80px;">
-                                                            {{item.statement}}
-                                                        </td>
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td style="width: 80px;">الإجمالي</td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;">
+                                                        <td style="max-width: 60px;">الإجمالي</td>
+                                                        <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;">
                                                             {{_sharedComponentService.getTotalQuantity(element.details,
                                                             'quantity') | number}}
                                                         </td>
-                                                        <td style="width: 80px;">
+                                                        <td style="max-width: 60px;">
                                                             {{_sharedComponentService.getTotalQuantity(element.details,
                                                             'fabric_piece') | number}}
                                                         </td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;"></td>
-                                                        <td style="width: 80px;"></td>
+                                                        <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;"></td>
                                                     </tr>
                                                 </tfoot>
                                             </table>

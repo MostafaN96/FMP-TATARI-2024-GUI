@@ -474,7 +474,7 @@
                                         +element.dyeing_fee, 
                                         element.fabric_piece,
                                         element.added_cost
-                                        ) / element.dyeing_quantity) | number}}
+                                        ) / this._sharedComponentService.notZero(element.dyeing_quantity) ) | number}}
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef></td>
                                 </ng-container>

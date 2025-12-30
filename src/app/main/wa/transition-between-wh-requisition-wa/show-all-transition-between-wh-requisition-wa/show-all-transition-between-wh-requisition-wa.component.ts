@@ -31,6 +31,8 @@ selectedRequisitionNum: any[] = []
 selectedFromWarehouseName: any[] = []
 selectedToWarehouseName: any[] = []
 selectedRequisitionNote: any[] = []
+selectedDocumentDetails: any[] = []
+requisitionDetails: any[] = []
 startDate: any
 endDate: any
 dateFilters: any
@@ -52,6 +54,7 @@ ngOnInit(): void {
   this.customFilterForFromWarehouseName();
   this.customFilterForToWarehouseName();
   this.customFilterForRequisitionNote();
+  this.customFilterForDocumentDetails();
 }
 
 getData() {
@@ -59,10 +62,26 @@ this.loading = true;
   this._transitionBetweenWhRequisitionWaService.selectAll().subscribe((response: any) => {
     this.yarns = response
 
+          this.getRequisitionDetails(this.yarns)
+
     // PrimeNG Table
        this.primengConfig.ripple = true;
        this.loading = false;
   })
+}
+
+ getRequisitionDetails(data) {
+  let filter = [{}]
+    for (let i = 0; i < data.length; i++) {
+      const fabric = data[i];
+      for (let j = 0; j < fabric.details.length; j++) {
+        let element = fabric.details[j];          
+        if (filter.indexOf(element['document']) < 0) {
+          filter.push(element['document'])
+          this.requisitionDetails.push(element)
+        }
+      }
+    }
 }
 
 ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
@@ -172,6 +191,40 @@ customFilterForRequisitionNote() {
   });
 }
 
+customFilterForDocumentDetails() {
+  const customFilterName = "document-details-filter";
+  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
+    filter = this.selectedDocumentDetails
+
+    if (this.selectedDocumentDetails[0] != null) {
+      if (filter === undefined || filter === null || !filter.length) {
+        return true;
+      }
+      if (value === undefined || value === null || value.length == 0) {
+        return false;
+      }
+      if (filter.length > 0) {
+        let count = 0
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < filter.length; j++) {
+            if (value[i].document == filter[j].document) {
+              count++
+              if (count == filter.length) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+    else {
+      return true;
+    }
+  });
+}
+
+
  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
  selectedDate(event) {
   this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
@@ -221,7 +274,13 @@ clear(table: Table) {
   this.selectedFromWarehouseName = []
   this.selectedToWarehouseName = []
   this.selectedRequisitionNote = []
+  this.selectedDocumentDetails = []
   this.dateFilters = []
+}
+
+onMultiselectedDocumentDetails(event) {
+  this.selectedDocumentDetails = event
+  this.dt1?._filter()
 }
 
 onMultiselectedFromWarehouseName(event) {

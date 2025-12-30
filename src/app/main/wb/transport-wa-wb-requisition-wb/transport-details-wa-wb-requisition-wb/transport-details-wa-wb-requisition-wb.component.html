@@ -319,6 +319,31 @@
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
 
+                                <!-- manufacturingRequisitions Column -->
+                                <ng-container matColumnDef="manufacturing_requisitions">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>اذونات التصنيع</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <table class="w-100">
+                                            <tbody>
+                                                <tr
+                                                    *ngFor="let manufacturingRequisition of element.manufacturingRequisitions">
+                                                    <a [routerLink]="[goToRequisitionPage(manufacturingRequisition?.type_of_requisition, manufacturingRequisition)]"
+                                                        [queryParams]="{id: manufacturingRequisition?.requisition_id}">
+                                                        <td>{{manufacturingRequisition.type_of_requisition}}</td>
+                                                        <td>
+
+                                                            ({{ manufacturingRequisition.number}})
+                                                        </td>
+                                                    </a>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
                                         <!-- document Column -->
                                         <ng-container matColumnDef="document">
                                             <th mat-header-cell mat-sort-header *matHeaderCellDef>

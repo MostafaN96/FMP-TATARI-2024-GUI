@@ -9,588 +9,81 @@
 
     <mat-tab-group animationDuration="0ms">
         <mat-tab label="إجمالي">
-            <app-item-history-by-fabric-total-wc>
-            </app-item-history-by-fabric-total-wc>
+            <ng-template matTabContent>
+                <app-item-history-by-fabric-total-wc>
+                </app-item-history-by-fabric-total-wc>
+            </ng-template>
         </mat-tab>
         <mat-tab label="تفصيلي">
-    <!-- Form Section -->
+            <ng-template matTabContent>
+                <!-- Form Section -->
 
-    <div class="container-fluid mt-2">
-        <div class="row row-cols-3">
-            <div class="col">
-                <div class="btn-export-section">
-                    <a (click)="_exportDataService.exportToPDF('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير جرد الخام')">
+                <div class="container-fluid mt-2">
+                    <div class="row row-cols-3">
+                        <div class="col">
+                            <div class="btn-export-section">
+                                <a (click)="_exportDataService.onExportPDFGridAngular(gridApi, 'تقرير جرد القماش الخام', gridColumnApi, ['details'])">
                         <i title="PDF" class="far fa-file-pdf"></i>
                     </a>
 
-                    <a (click)="_exportDataService.exportToExcel('table-header-data', 'pr_id_1-table', 'تقرير جرد الخام')">
+                    <a (click)="_exportDataService.onExportExcelGridAngular(gridApi, 'تقرير جرد القماش الخام', ['details'])">
                         <i title="Excel" class="far fa-file-excel px-2"></i>
                     </a>
-
+                    
                     <a
-                        (click)="_exportDataService.print('table-header-data', dt1?.tableViewChild?.nativeElement?.id, 'تقرير جرد الخام', 'table-data-2')">
-                        <i title="Print" class="fas fa-print pe-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Page Form -->
-<div [class]="_sharedComponentService.mainPageFormClass">
-    <div [class]="_sharedComponentService.subMainPageFormClass">
-        <!-- Form Body -->
-        <div [class]="_sharedComponentService.gridForm2Class">
-            <div class="col">
-                <div [class]="_sharedComponentService.tableSectionClass">
-
-                    <div class="mb-4">
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowTotalInput">إجمالي الإدخال
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalOutput">إجمالي الإخراج
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalBalance">الرصيد
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowTotalAmountInput"
-                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">قيمة المدخلات
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowTotalAmountOutput"
-                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">قيمة المخرجات
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="iShowItemValue"
-                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">قيمة الصنف
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowAvgPrice"
-                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">وسطي السعر
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowAvgInputes"
-                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">وسطي سعر المدخلات
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestManufacturingPrice"
-                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">آخر
-                            سعر تصنيع</mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestPrice"
-                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">آخر سعر
-                        </mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowLatestPriceDollar"
-                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">آخر سعر دولار</mat-checkbox>
-                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowClosedBalances"
-                            (change)="getClosedBalances()">اظهار الارصدة المغلقة</mat-checkbox>
+                    (click)="_exportDataService.printGrid(gridApi, 'تقرير جرد القماش الخام', gridColumnApi, ['details'], ['input_quantity', 'output_quantity', 'current_quantity'])">
+                    <i title="Print" class="fas fa-print pe-2"></i>
+                </a>
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <div id="table-header-data-report">
+                <!-- Main Page Form -->
+                <div [class]="_sharedComponentService.mainPageFormClass">
+                    <div [class]="_sharedComponentService.subMainPageFormClass">
+                        <!-- Form Body -->
+                        <div [class]="_sharedComponentService.gridForm2Class">
+                            <div class="col">
+                                <div [class]="_sharedComponentService.tableSectionClass">
 
-                        <p-table #dt1 [value]="fabrics" dataKey="id" columnResizeMode="expand"
-                            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
-                            [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
-                            scrollHeight="600px" [filterDelay]="0" sortField="code" sortOrder="1"
-                            [responsive]="true" appendTo="body" [autoLayout]="true">
-                            <ng-template data-html2canvas-ignore="true" pTemplate="caption">
-                                <div data-html2canvas-ignore="true" class="flex">
-                                    <button data-html2canvas-ignore="true" pButton label="اعادة"
-                                        class="p-button-outlined" icon="pi pi-filter-slash"
-                                        (click)="clear(dt1)"></button>
-                                </div>
-
-                                <!-- Start Filter Section -->
-                                <div class="row row-cols-5">
-
-                                    <div class="col">
-                                        <p-columnFilter field="warehouse_name" matchMode="warehouse-filter" [showMenu]="false"
-                                            [showClearButton]="false">
-                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                <p-multiSelect [ngModel]="value" [options]="_sharedComponentService.uniqueArray(fabrics, 'warehouse_name')"
-                                                    (onChange)="onMultiselectedWarehouses($event.value)"
-                                                    placeholder="البحث بـ المخزن" optionLabel="warehouse_name">
-                                                    <ng-template let-option pTemplate="item">
-                                                        <div class="p-multiselect-representative-option">
-                                                            <span class="ml-1">{{option.warehouse_name}}</span>
-                                                        </div>
-                                                    </ng-template>
-                                                </p-multiSelect>
-                                            </ng-template>
-                                        </p-columnFilter>
+                                    <div class="mb-4">
+                                        <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowClosedBalances"
+                                (change)="onToggleBalanceType($event)">اظهار الارصدة المغلقة</mat-checkbox>
                                     </div>
 
-                                    <div class="col">
-                                        <p-columnFilter field="fabric_code" matchMode="code-filter" [showMenu]="false"
-                                            [showClearButton]="false">
-                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                <p-multiSelect [ngModel]="value" [options]="_sharedComponentService.uniqueArray(fabrics, 'fabric_code')"
-                                                    (onChange)="onMultiselectedCodes($event.value)"
-                                                    placeholder="البحث بـ كود المادة" optionLabel="fabric_code">
-                                                    <ng-template let-option pTemplate="item">
-                                                        <div class="p-multiselect-representative-option">
-                                                            <span class="ml-1">{{option.fabric_code}}</span>
-                                                        </div>
-                                                    </ng-template>
-                                                </p-multiSelect>
-                                            </ng-template>
-                                        </p-columnFilter>
-                                    </div>
+                                    <div id="table-header-data-report"
+                        dir="rtl"
+                        class="ag-theme-alpine ag-rtl">
 
-                                    <div class="col">
-                                        <p-columnFilter field="dyeing_code" matchMode="dyeing-code-filter" [showMenu]="false"
-                                            [showClearButton]="false">
-                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                <p-multiSelect [ngModel]="value" [options]="_sharedComponentService.uniqueArray(fabrics, 'dyeing_code')"
-                                                    (onChange)="onMultiselectedDetailsDyeingCodes($event.value)"
-                                                    placeholder="البحث بـ كود المصبغة" optionLabel="dyeing_code">
-                                                    <ng-template let-option pTemplate="item">
-                                                        <div class="p-multiselect-representative-option">
-                                                            <span class="ml-1">{{option.dyeing_code}}</span>
-                                                        </div>
-                                                    </ng-template>
-                                                </p-multiSelect>
-                                            </ng-template>
-                                        </p-columnFilter>
-                                    </div>
+                            <ag-grid-angular 
+                            #agGrid
+                            class="ag-theme-alpine ag-rtl" 
+                            [ngStyle]="_sharedComponentService.gridStyle"
+                                [loadingCellRenderer]="loadingCellRenderer" 
+                                [loadingCellRendererParams]="loadingCellRendererParams"
+                                (gridReady)="onGridReady($event)"
+                                [columnDefs]="columnDefs" 
+                                [defaultColDef]="defaultColDef"
+                                [enableRangeSelection]="true" 
+                                [enableFillHandle]="true" 
+                                [undoRedoCellEditing]="true"
+                                [enableCellChangeFlash]="true"
+                                [rowData]="fabrics" 
+                                [localeText]="_sharedComponentService.localeText" 
+                                [pinnedBottomRowData]="pinnedBottomRowData"
+                                (modelUpdated)="onModelUpdated()">
+                            </ag-grid-angular>
 
-                                    <div class="col">
-                                        <p-columnFilter field="fabric_name" matchMode="name-filter" [showMenu]="false"
-                                            [showClearButton]="false">
-                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                <p-multiSelect [ngModel]="selectedNames" [options]="_sharedComponentService.uniqueArray(fabrics, 'fabric_name')"
-                                                    (onChange)="onMultiselectedNames($event.value)"
-                                                    placeholder="البحث بـ اسم المادة" optionLabel="fabric_name">
-                                                    <ng-template let-option pTemplate="item">
-                                                        <div class="p-multiselect-representative-option">
-                                                            <span class="ml-1">{{option.fabric_name}}</span>
-                                                        </div>
-                                                    </ng-template>
-                                                </p-multiSelect>
-                                            </ng-template>
-                                        </p-columnFilter>
-                                    </div>
-
-                                    <!-- consigment_manufacturing_number Lot -->
-                                    <div class="col">
-                                        <p-columnFilter field="consigment_manufacturing_number" matchMode="consigment-number-filter"
-                                            [showMenu]="false" [showClearButton]="false">
-                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                <p-multiSelect [ngModel]="value"
-                                                    [options]="_sharedComponentService.uniqueArray(fabrics, 'consigment_manufacturing_number')"
-                                                    (onChange)="onMultiselectedConsigmentNumber($event.value)"
-                                                    placeholder="البحث بـ رقم الرسالة" optionLabel="consigment_manufacturing_number">
-                                                    <ng-template let-option pTemplate="item">
-                                                        <div class="p-multiselect-representative-option">
-                                                            <span class="ml-1">{{option.consigment_manufacturing_number}}</span>
-                                                        </div>
-                                                    </ng-template>
-                                                </p-multiSelect>
-                                            </ng-template>
-                                        </p-columnFilter>
-                                    </div>
-
-                                        <!-- wc_fabric_order_requisition_name -->
-                                        <div class="col">
-                                            <p-columnFilter field="wc_fabric_order_requisition_name" matchMode="fabric-order-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedFabricOrder" [options]="_sharedComponentService.uniqueArray(fabrics, 'wc_fabric_order_requisition_name')"
-                                                        (onChange)="onMultiselectedFabricOrder($event.value)"
-                                                        placeholder="البحث بـ الطلبية" optionLabel="wc_fabric_order_requisition_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.wc_fabric_order_requisition_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
+                        </div>
 
                                 </div>
-                                <!-- End Filter Section -->
-
-                            </ng-template>
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <!-- Index Column -->
-                                    <th data-html2canvas-ignore="true">
-                                        التسلسل
-                                    </th>
-
-                                    <!-- warehouse_name Column -->
-                                    <th pResizableColumn pSortableColumn="warehouse_name">
-                                        <div class="flex justify-content-between align-items-center">
-                                            المخزن<p-sortIcon data-html2canvas-ignore="true" field="warehouse_name">
-                                            </p-sortIcon>
-                                        </div>
-                                    </th>
-
-                                    <!-- fabric_code Column -->
-                                    <th pResizableColumn pSortableColumn="fabric_code">
-                                        <div class="flex justify-content-between align-items-center">
-                                            رقم المادة<p-sortIcon data-html2canvas-ignore="true" field="fabric_code">
-                                            </p-sortIcon>
-                                        </div>
-                                    </th>
-
-                                    <!-- dyeing_code Column -->
-                                    <th pResizableColumn pSortableColumn="dyeing_code">
-                                        <div class="flex justify-content-between align-items-center">
-                                            كود المصبغة<p-sortIcon data-html2canvas-ignore="true"
-                                                field="dyeing_code">
-                                            </p-sortIcon>
-                                        </div>
-                                    </th>
-
-                                    <!-- fabric_name Column -->
-                                    <th pResizableColumn pSortableColumn="fabric_name">
-                                        <div class="flex justify-content-between align-items-center">
-                                            اسم المادة<p-sortIcon data-html2canvas-ignore="true" field="fabric_name">
-                                            </p-sortIcon>
-                                        </div>
-                                    </th>
-
-                                    <!-- consigment_manufacturing_number Column -->
-                                    <th pResizableColumn pSortableColumn="consigment_manufacturing_number">
-                                        <div class="flex justify-content-between align-items-center">
-                                            رقم الرسالة<p-sortIcon data-html2canvas-ignore="true" field="consigment_manufacturing_number">
-                                            </p-sortIcon>
-                                        </div>
-                                    </th>
-
-                                                <!-- wc_fabric_order_requisition_name Column -->
-                                                <th pResizableColumn pSortableColumn="wc_fabric_order_requisition_name">
-                                                    <div class="flex justify-content-between align-items-center">
-                                                        الطلبية
-                                                        <p-sortIcon data-html2canvas-ignore="true" field="wc_fabric_order_requisition_name">
-                                                        </p-sortIcon>
-                                                    </div>
-                                                </th>
-
-                                    <!-- total_amount_quantity_input Column -->
-                                    <th pResizableColumn pSortableColumn="total_amount_quantity_input"
-                                        [hidden]="!isShowTotalInput">
-                                        <div class="flex justify-content-between align-items-center">
-                                            إجمالي الإدخال
-                                        </div>
-                                    </th>
-
-                                    <!-- total_amount_quantity_output Column -->
-                                    <th pResizableColumn pSortableColumn="total_amount_quantity_output"
-                                        [hidden]="!iShowTotalOutput">
-                                        <div class="flex justify-content-between align-items-center">
-                                            إجمالي الإخراج
-                                        </div>
-                                    </th>
-
-                                    <!-- current_quantity Column -->
-                                    <th pResizableColumn pSortableColumn="current_quantity"
-                                        [hidden]="!iShowTotalBalance">
-                                        <div class="flex justify-content-between align-items-center">
-                                            الرصيد<p-sortIcon data-html2canvas-ignore="true"
-                                                field="current_quantity">
-                                            </p-sortIcon>
-                                        </div>
-                                    </th>
-
-                                    <!-- total_amount_input Column -->
-                                    <th pResizableColumn pSortableColumn="total_amount_input"
-                                        [hidden]="!isShowTotalAmountInput"
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        <div class="flex justify-content-between align-items-center">
-                                            قيمة المدخلات
-                                        </div>
-                                    </th>
-
-                                    <!-- total_amount_output Column -->
-                                    <th pResizableColumn pSortableColumn="total_amount_output"
-                                        [hidden]="!iShowTotalAmountOutput"
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        <div class="flex justify-content-between align-items-center">
-                                            قيمة المخرجات
-                                        </div>
-                                    </th>
-
-                                    <!-- item_amount Column -->
-                                    <th pResizableColumn pSortableColumn="item_amount" 
-                                    [hidden]="!iShowItemValue"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        <div class="flex justify-content-between align-items-center">
-                                            قيمة الصنف
-                                        </div>
-                                    </th>
-
-                                    <!-- avg_price Column -->
-                                    <th pResizableColumn pSortableColumn="avg_price" 
-                                    [hidden]="!isShowAvgPrice"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        <div class="flex justify-content-between align-items-center">
-                                            وسطي السعر
-                                        </div>
-                                    </th>
-
-                                    <!-- avg_inputes Column -->
-                                    <th pResizableColumn pSortableColumn="avg_inputes" 
-                                    [hidden]="!isShowAvgInputes"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        <div class="flex justify-content-between align-items-center">
-                                            وسطي سعر المدخلات
-                                        </div>
-                                    </th>
-
-                                    <!-- latest_manufacturing_price Column -->
-                                    <th pResizableColumn pSortableColumn="latest_manufacturing_price"
-                                        [hidden]="!isShowLatestManufacturingPrice"
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        <div class="flex justify-content-between align-items-center">
-                                            آخر سعر تصنيع
-                                        </div>
-                                    </th>
-
-                                    <!-- latest_price Column -->
-                                    <th pResizableColumn pSortableColumn="latest_price"
-                                        [hidden]="!isShowLatestPrice"
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        <div class="flex justify-content-between align-items-center">
-                                            آخر سعر
-                                        </div>
-                                    </th>
-
-                                    <!-- latest_price_dollar Column -->
-                                    <th pResizableColumn pSortableColumn="latest_price_dollar"
-                                        [hidden]="!isShowLatestPriceDollar"
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        <div class="flex justify-content-between align-items-center">
-                                            آخر سعر دولار
-                                        </div>
-                                    </th>
-
-                                    <!-- Details Column -->
-                                    <th pResizableColumn pSortableColumn="details" data-html2canvas-ignore="true">
-                                        <div class="flex justify-content-between align-items-center">
-                                            حركة المادة
-                                        </div>
-                                    </th>
-
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-element let-index="rowIndex">
-                                <tr class="p-selectable-row">
-
-                                    <!-- Index Column -->
-                                    <td data-html2canvas-ignore="true">
-                                        {{index + 1}}
-                                    </td>
-
-                                    <!-- warehouse_name Column -->
-                                    <td>
-                                        {{ element.warehouse_name}}
-                                    </td>
-
-                                    <!-- fabric_code Column -->
-                                    <td>
-                                        {{ element.fabric_code }}
-                                    </td>
-
-                                    <!-- dyeing_code Column -->
-                                    <td>
-                                        {{element.dyeing_code}}
-                                    </td>
-
-
-                                    <!-- fabric_name Column -->
-                                    <td>
-                                        {{ element.fabric_name }}
-                                    </td>
-
-                                    <!-- consigment_manufacturing_number Column -->
-                                    <td>
-                                        {{ element.consigment_manufacturing_number}}
-                                    </td>
-
-                                    <!-- wc_fabric_order_requisition_name Column -->
-                                    <td>
-                                        {{ element.wc_fabric_order_requisition_name}}
-                                    </td>
-
-                                    <!-- total_amount_quantity_input Column -->
-                                    <td [hidden]="!isShowTotalInput">
-                                        {{ _sharedComponentService.getTotalAmountQuantityInput(element.details) |
-                                        number}}
-                                    </td>
-
-                                    <!-- total_amount_quantity_output Column -->
-                                    <td [hidden]="!iShowTotalOutput">
-                                        {{_sharedComponentService.getTotalOutputQuantity(element.details) | number}}
-                                    </td>
-
-                                    <!-- current_quantity Column -->
-                                    <td [hidden]="!iShowTotalBalance">
-                                        {{ element.current_quantity | number}}
-                                    </td>
-
-                                    <!-- total_amount_input Column -->
-                                    <td [hidden]="!isShowTotalAmountInput"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ _sharedComponentService.getInputAmount(element.details) | number}}
-                                    </td>
-
-                                    <!-- total_amount_output Column -->
-                                    <td [hidden]="!iShowTotalAmountOutput"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ _sharedComponentService.getOutputAmount(element.details) | number}}
-                                    </td>
-
-                                    <!-- item_amount Column -->
-                                    <td [hidden]="!iShowItemValue"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ _sharedComponentService.getItemAmount(element.details) | number}}
-                                    </td>
-
-                                    <!-- avg_price Column -->
-                                    <td [hidden]="!isShowAvgPrice"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ _sharedComponentService.getAvgPrice(element.details) | number}}
-                                    </td>
-
-                                    <!-- avg_inputes Column -->
-                                    <td [hidden]="!isShowAvgInputes"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ _sharedComponentService.getAvgInputesPrice(element.details) | number}}
-                                    </td>
-
-                                    <!-- latest_manufacturing_price Column -->
-                                    <td [hidden]="!isShowLatestManufacturingPrice"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ element.latest_manufacturing_price | number}}
-                                    </td>
-
-                                    <!-- latest_price Column -->
-                                    <td [hidden]="!isShowLatestPrice"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ element.latest_price | number}}
-                                    </td>
-
-                                    <!-- latest_price_dollar Column -->
-                                    <td [hidden]="!isShowLatestPriceDollar"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ element.latest_price_dollar | number}}
-                                    </td>
-
-                                    <!-- Details Column -->
-                                    <td data-html2canvas-ignore="true">
-                                        <a [routerLink]="['details']"
-                                            [queryParams]="{ id: element.fabric_id, code: element.fabric_code, name: element.fabric_name,
-                                                warehouseId: element.warehouse_id,  warehouseName: element.warehouse_name,
-                                                consigmentManufacturingId: element.consigment_manufacturing_id,  consigmentNumber: element.consigment_manufacturing_number,
-                                                fabricOrderId: element.wc_fabric_order_requisition_id
-                                                }">
-                                            <i class="fas fa-angle-double-right update-symbol"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                            <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
-                                <tr>
-                                    <td colspan="19">لا يوجد بيانات</td>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="footer">
-                                <tr>
-                                    <!-- Index Column -->
-                                    <td data-html2canvas-ignore="true"></td>
-
-                                    <!-- warehouse_name Column -->
-                                    <td>الإجمالي</td>
-
-                                    <!-- dyeing_code Column -->
-                                    <td></td>
-
-                                    <!-- fabric_code Column -->
-                                    <td></td>
-
-                                    <!-- fabric_name Column -->
-                                    <td></td>
-
-                                    <!-- consigment_manufacturing_number Column -->
-                                    <td></td>
-
-                                    <!-- wc_fabric_order_requisition_name Column -->
-                                    <td></td>
-                                    
-                                    <!-- total_amount_quantity_input Column -->
-                                    <td [hidden]="!isShowTotalInput">
-                                        {{ getTotalTotalAmountQuantityInput() | number}}
-                                    </td>
-
-                                    <!-- total_amount_quantity_output Column -->
-                                    <td [hidden]="!iShowTotalOutput">
-                                       {{ getTotalTotalAmountQuantityOutput() | number}}
-                                    </td>
-
-                                    <!-- current_quantity Column -->
-                                    <td [hidden]="!iShowTotalBalance">
-                                        {{ _sharedComponentService.getTotalQuantity(dt1.filteredValue ==
-                                            null ? fabrics: dt1.filteredValue, "current_quantity") | number}}
-                                    </td>
-
-                                    <!-- total_amount_input Column -->
-                                    <td [hidden]="!isShowTotalAmountInput"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{_sharedComponentService.getTotalTotalAmountQuantity(dt1.filteredValue ==
-                                        null ? fabrics: dt1.filteredValue,
-                                        "input_output", "1") | number}}
-                                    </td>
-
-                                    <!-- total_amount_output Column -->
-                                    <td [hidden]="!iShowTotalAmountOutput"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{_sharedComponentService.getTotalTotalAmountQuantity(dt1.filteredValue ==
-                                        null ? fabrics: dt1.filteredValue,
-                                        "input_output", "0") | number}}
-                                    </td>
-
-                                    <!-- item_amount Column -->
-                                    <td [hidden]="!iShowItemValue"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{getTotalItemAmount() | number}}
-                                    </td>
-
-                                    <!-- avg_price Column -->
-                                    <td [hidden]="!isShowAvgPrice"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                        {{ getTotalAvgPrice() | number}}
-                                    </td>
-
-                                    <!-- avg_inputes Column -->
-                                    <td [hidden]="!isShowAvgInputes"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                    </td>
-
-                                    <!-- latest_manufacturing_price Column -->
-                                    <td [hidden]="!isShowLatestManufacturingPrice"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                    </td>
-
-                                    <!-- latest_price Column -->
-                                    <td [hidden]="!isShowLatestPrice"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                    </td>
-
-                                    <!-- latest_price_dollar Column -->
-                                    <td [hidden]="!isShowLatestPriceDollar"
-                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[11])">
-                                    </td>
-
-                                    <!-- Details Column -->
-                                    <td data-html2canvas-ignore="true"></td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-
+                            </div>
+                        </div>
 
                     </div>
-
                 </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-</mat-tab>
-</mat-tab-group>
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
 </section>

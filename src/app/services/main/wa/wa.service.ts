@@ -24,8 +24,8 @@ export class WaService {
   }
   
   
-  selectRemainingBySupplierByWarehouseByYarnByLotForReturn(id: string, warehouseId: string, yarnId: string, yarnLotId: string): Observable<any> {
-    const url = `${this._constantsService.BASE_URL}${this.urlService}remaining-by-warehouse-by-yarn-by-lot-by-supplier-for-return-wa/${id}/${warehouseId}/${yarnId}/${yarnLotId}`;
+  selectRemainingBySupplierByWarehouseByYarnByLotForReturn(id: string, warehouseId: string, yarnId: string, yarnLotId: string, yarnOrderId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}remaining-by-warehouse-by-yarn-by-lot-by-supplier-for-return-wa/${id}/${warehouseId}/${yarnId}/${yarnLotId}/${yarnOrderId}`;
     return this._http.get(url,
       {
         headers: new HttpHeaders({

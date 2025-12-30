@@ -187,7 +187,7 @@ export class DyedFabricOrderRequisitionUpdateWeComponent implements OnInit {
     this.manufacturingOrderWdForm.controls['fabricQuantityM2'].setValue(this.selectedData?.fabric_quantity_m2)
     this.manufacturingOrderWdForm.controls['price'].setValue(this.selectedData?.price)
     this.manufacturingOrderWdForm.controls['priceDollar'].setValue(this.selectedData?.price_dollar)
-    this.manufacturingOrderWdForm.controls['note2'].setValue(this.selectedData?.note2)
+    this.manufacturingOrderWdForm.controls['note2'].setValue(this.selectedData?.details_note)
         
     if(this.selectedData.current_quantity != this.selectedData.quantity || 
       this.selectedData.yarnOrders?.length > 0 ||

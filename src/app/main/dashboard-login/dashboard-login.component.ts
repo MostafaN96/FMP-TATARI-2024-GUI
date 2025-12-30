@@ -64,4 +64,14 @@ export class DashboardLoginComponent implements OnInit {
         })
   }
 
+ngAfterViewInit() {
+  setTimeout(() => {
+    const passInput = document.querySelector('input[formControlName="password"]') as HTMLInputElement;
+    if (passInput) {
+      passInput.name = 'password';
+      passInput.autocomplete = 'current-password';
+    }
+  }, 0);
+}
+
 }

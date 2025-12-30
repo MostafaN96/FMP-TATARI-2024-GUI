@@ -12,6 +12,7 @@ import { ExportDataService } from 'src/app/services/export-data.service';
 // Child Components
 import { InquireFabricAvilabilitySharedDetailsReportWdComponent } from "src/app/main/wd/reports/inquire-fabric-avilability-shared-details-report-wd/inquire-fabric-avilability-shared-details-report-wd.component";
 import { InquireFabricAvilabilitySharedTotalReportWdComponent } from "src/app/main/wd/reports/inquire-fabric-avilability-shared-total-report-wd/inquire-fabric-avilability-shared-total-report-wd.component";
+import { InquireFabricNeededSharedReportWdComponent } from "src/app/main/wd/reports/inquire-fabric-needed-shared-report-wd/inquire-fabric-needed-shared-report-wd.component";
 
 @Component({
   selector: 'app-inquire-fabric-avilability-by-dyeing-order-report-wd',
@@ -24,7 +25,7 @@ export class InquireFabricAvilabilityByDyeingOrderReportWdComponent implements O
   // Child Components
   @ViewChild(InquireFabricAvilabilitySharedDetailsReportWdComponent, { static: true }) inquireFabricAvilabilitySharedDetailsReportWd!: InquireFabricAvilabilitySharedDetailsReportWdComponent;
   @ViewChild(InquireFabricAvilabilitySharedTotalReportWdComponent, { static: true }) inquireFabricAvilabilitySharedTotalReportWd!: InquireFabricAvilabilitySharedTotalReportWdComponent;
-
+  @ViewChild(InquireFabricNeededSharedReportWdComponent, { static: true }) inquireFabricNeededSharedReportWdComponent!: InquireFabricNeededSharedReportWdComponent;
 
   ///////////////////////////////// General ////////////////////////////////////////////////
   dyeingOrderRequisitionIds: any = []
@@ -49,6 +50,7 @@ export class InquireFabricAvilabilityByDyeingOrderReportWdComponent implements O
     this.dyeingOrderRequisitionIds = JSON.parse(localStorage.getItem("dyeingOrderRequisitionIds") || ""); 
     this.inquireFabricAvilabilitySharedDetailsReportWd.getDataByDyeingRequisition(this.dyeingOrderRequisitionIds)
     this.inquireFabricAvilabilitySharedTotalReportWd.getDataByDyeingRequisitionTotal(this.dyeingOrderRequisitionIds)
+    this.inquireFabricNeededSharedReportWdComponent.getDataByDyeingRequisition(this.dyeingOrderRequisitionIds)
   }
 
 

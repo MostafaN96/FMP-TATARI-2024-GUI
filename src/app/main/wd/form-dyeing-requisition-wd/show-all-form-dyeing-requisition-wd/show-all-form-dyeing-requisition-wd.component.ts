@@ -1,14 +1,10 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 
-// PrimeNG Table
-import { PrimeNGConfig } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { FilterService } from 'primeng/api';
-import * as moment from 'moment';
+// grid angular Table
+import { ColDef, GridApi, GridReadyEvent, SideBarDef } from 'ag-grid-community';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
-import { ConstantsService } from "src/app/services/constants.service";
 
 // Call Service
 import { FormDyeingRequisitionWdService } from "src/app/services/main/wd/form-dyeing-requisition-wd.service";
@@ -20,448 +16,410 @@ import { FormDyeingRequisitionWdService } from "src/app/services/main/wd/form-dy
 })
 export class ShowAllFormDyeingRequisitionWdComponent implements OnInit {
 
-  /////////////////// Variables ///////////////////
-  fabrics: any[] = []
-  formDetails: any[] = []
+  rowData: any[] = [];   // = fabrics
+  results: any[] = []
+  private gridApi!: GridApi;
+  sideBar = {
+    toolPanels: ['filters'],
+    defaultToolPanel: null   // ✅ مقفول عند البداية
+  };
 
-//////////////////////////////////// PrimeNG /////////////////////////////////
-@ViewChild('dt1') dt1: Table | undefined;
-loading: boolean = true;
-selectedDyeingName: any[] = []
-selectedWorkOrderNumber: any[] = []
-selectedWorkOrderNumberDetails: any[] = []
-selectedFabricName: any[] = []
-selectedSellerName: any[] = []
-selectedQuantity: any[] = []
-selectedFormCurrentQuantity: any[] = []
-selectedOrderNumber: any[] = []
-startDate: any
-endDate: any
-dateFilters: any
+  public defaultColDef: ColDef = {
+    flex: 1,
+    minWidth: 200,
+    resizable: true,
+    sortable: true,
+    filter: true,
+  };
+
+  @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
+  public columnDefs: ColDef[] = [
+    {
+      headerName: 'رقم الإذن',
+      field: 'number',
+      width: 80,
+      cellClass: 'text-center',
+      excludeFromFooter: true,
+    },
+    {
+      headerName: 'تاريخ الإذن',
+      field: 'date',
+      width: 80,
+      cellClass: 'text-center',
+      filter: 'agDateColumnFilter',
+      excludeFromFooter: true,
+    },
+
+    {
+      headerName: 'المصبغة',
+      field: 'dyeing_name',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        excelMode: 'windows',
+      },
+      excludeFromFooter: true,
+    },
+
+    {
+      headerName: 'رقم الطلب',
+      field: 'work_order_number',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        excelMode: 'windows',
+      },
+      excludeFromFooter: true,
+    },
+
+    {
+      headerName: 'طلبية',
+      field: 'wc_fabric_order_requisition_name',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        excelMode: 'windows',
+      },
+      excludeFromFooter: true,
+    },
+
+    {
+      headerName: 'التفاصيل',
+      field: 'details',
+      filter: false,
+      minWidth: 500,
+      flex: 4,
+      sortable: false,
+      cellClass: 'details-cell',         // ✅ مهم
+      cellRenderer: (p: any) => {
+
+        // ✅ إذا كان الصف فوتر (Pinned Bottom Row)
+        if (p.node.rowPinned) {
+
+          const total = Number(p.data?.details_total_qty || 0);
+
+          return `
+      <div style="font-weight:700; text-align:center;">
+        إجمالي الكمية: ${total.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}
+      </div>
+    `;
+        }
+
+        // ✅ الصفوف العادية
+        return this.detailsRenderer(p.data);
+      },
+      autoHeight: true,
+    },
+
+    { headerName: 'الملاحظات', field: 'note', minWidth: 200, filter: 'agTextColumnFilter' },
+
+    {
+      headerName: 'تفاصيل الإذن',
+      field: 'id',
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellRenderer: (element) => {
+        const link = document.createElement('a');
+        link.innerHTML = `<i class="fas fa-angle-double-right update-symbol"></i>`;
+        link.style.cursor = 'pointer';
+        link.style.color = '#007bff';
+
+        link.addEventListener('click', (event) => {
+          const queryParams = new URLSearchParams({
+            id: element.data.id,
+          }).toString();
+
+          const currentUrl = window.location.origin + window.location.pathname;
+          const fullUrl = `${currentUrl}/details?${queryParams}`;
+
+          if (event.ctrlKey || event.button === 1) {
+            // Ctrl + Click أو Middle Click → تبويب جديد
+            window.open(fullUrl, '_blank');
+          } else {
+            // Click عادي → بنفس الصفحة
+            window.location.href = fullUrl;
+          }
+        });
+
+        return link;
+      }
+    },
+
+    {
+      headerName: 'أمر الشغل',
+      colId: 'details_work_order',
+      hide: true,
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        suppressMiniFilter: false,
+        excelMode: 'windows',
+      },
+      valueGetter: (p) =>
+        (p.data?.details || [])
+          .map((d: any) => d.work_order_number_details)
+          .filter(Boolean),
+    },
+
+    {
+      headerName: 'الكمية',
+      colId: 'details_quantity',
+      hide: true,
+      filter: 'agTextColumnFilter',
+      valueGetter: (p) =>
+        (p.data?.details || [])
+          .map((d: any) => d.quantity)
+          .filter(Boolean),
+    },
+
+    {
+      headerName: 'نوع القماش',
+      colId: 'details_fabric',
+      hide: true,
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        suppressMiniFilter: false,
+        excelMode: 'windows',
+      },
+      valueGetter: (p) =>
+        (p.data?.details || [])
+          .map((d: any) => d.dyed_fabric_name)
+          .filter(Boolean),
+    },
+
+    {
+      headerName: 'اللون',
+      colId: 'details_color',
+      hide: true,
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        suppressMiniFilter: false,
+        excelMode: 'windows',
+      },
+      valueGetter: (p) =>
+        (p.data?.details || [])
+          .map((d: any) => d.color_name)
+          .filter(Boolean),
+    },
+
+  ].reverse(); gridColumnApi: any;;
+  pinnedBottomRowData: any
+  totalFooterValues = {}
+  gridParams!: GridReadyEvent;
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _formDyeingRequisitionWdService: FormDyeingRequisitionWdService,
-    private _constantsService: ConstantsService,
-    private primengConfig: PrimeNGConfig,
-    private filterService: FilterService,
   ) {
 
   }
   ngOnInit(): void {
-    this.getData();
-    this.customFilterForDyeingName();
-    this.customFilterForWorkOrderNumber();
-    this.customFilterForWorkOrderNumberDetails();
-    this.customFilterForSellerName();
-    this.customFilterForQuantity();
-    this.customFilterForFormCurrentQuantity();
-    this.customFilterForOrderNumber();
-    this.customFilterForWorkOrderNumberDetails();
-    this.customFilterForFabricName();
   }
 
-  getData() {
-    this.loading = true;
+  getRowHeight = (params: any) => {
+    if (params.node.rowPinned) return 45;
 
-    this._formDyeingRequisitionWdService.selectAll().subscribe((response: any) => {
-      this.fabrics = response
+    const count = params.data?.details?.length || 1;
 
-      this.getFormDetails(this.fabrics)
+    // هيدر + صفوف التفاصيل + فوتر
+    return 35 + (count * 28) + 35;
+  };
 
-      // PrimeNG Table
-      this.primengConfig.ripple = true;
-      this.loading = false;
-    })
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridParams = params;
+    this.getData(this.gridParams); // أول تحميل يكون العادية
   }
 
-  
- getFormDetails(data) {
-  let filter = [{}]
-    for (let i = 0; i < data.length; i++) {
-      const fabric = data[i];
-      for (let j = 0; j < fabric.details.length; j++) {
-        let element = fabric.details[j];          
-        if (filter.indexOf(element['work_order_number_details']) < 0) {
-          filter.push(element['work_order_number_details'])
-          this.formDetails.push(element)
-        }
-      }
-    }
-}
+  getData(params: GridReadyEvent) {
+    this._formDyeingRequisitionWdService
+      .selectAll()
+      .subscribe((response: any) => {
+        this.applyGridData(params, response);
+      });
+  }
 
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForDyeingName() {
-  const customFilterName = "dyeing-name-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedDyeingName
+  applyGridData(params: GridReadyEvent, data: any) {
+    this.results = data;
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+    this.gridApi.setRowData(this.results);
 
-    if (this.selectedDyeingName[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
+    requestAnimationFrame(() => setTimeout(() => this.updatePinnedFooter(), 100));
 
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].dyeing_name) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
+    setTimeout(() => {
+      const viewport = this.agGridElement.nativeElement.querySelector('.ag-center-cols-viewport');
+      if (viewport) viewport.scrollLeft = viewport.scrollWidth;
+    }, 100);
+  }
+
+
+  // نفس total بتاعك لكن على details[]
+  getRowDetailsTotal(details: any[]): number {
+    return (details || []).reduce((sum, x) => sum + Number(x.quantity || 0), 0);
+  }
+
+  detailsRenderer(row: any) {
+    const details = Array.isArray(row?.details) ? row.details : [];
+    const total = this.getRowDetailsTotal(details);
+
+    const rowsHtml = details.map((d: any) => `
+      <tr>
+<td style="width:80px;">${d.work_order_number_details}</td>
+<td style="width:80px;">${d.dyed_fabric_name}</td>
+<td style="width:80px;">${d.color_name}</td>        
+<td style="width:80px; text-align:center;">${Number(d.quantity || 0)}</td>
+        <td style="width:80px; text-align:center;">
+          <input type="checkbox" ${Number(d.is_prepare_dyeing) === 1 ? 'checked' : ''} disabled />
+        </td>
+      </tr>
+    `).join('');
+
+    return `
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="font-weight:600;">
+            <td style="width:80px;">امر الشغل</td>
+            <td style="width:80px;">نوع القماش</td>
+            <td style="width:80px;">اللون</td>
+            <td style="width:80px; text-align:center;">الكمية</td>
+            <td style="width:80px; text-align:center;">نزل المصبغة</td>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot>
+          <tr style="font-weight:700;">
+            <td style="width:80px;">الإجمالي</td>
+            <td></td><td></td>
+            <td style="text-align:center;">${total}</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    `;
+  }
+
+  // إجمالي كل الجدول (مع احترام الفلاتر الحالية)
+  updatePinnedFooter() {
+    if (!this.gridApi) return;
+
+    requestAnimationFrame(() => {
+      const summary: any = {};
+      const columns = (this.gridApi.getColumnDefs() || []).filter((c: any) => 'field' in c);
+
+      // 🧹 تفريغ القيم القديمة
+      this.totalFooterValues = {};
+      let grandTotalQty = 0;
+
+      this.gridApi.forEachNodeAfterFilterAndSort((node) => {
+        if (!node.data) return;
+
+        columns.forEach((col: any) => {
+          const field = col.field;
+          if (!field) return;
+
+          // تجاهل الأعمدة غير الرقمية
+          if (col.excludeFromFooter) return;
+
+
+          // ✅ اجمع من الصفوف بعد الفلتر والـ sort (يعني مثل اللي شايفه المستخدم)
+          this.gridApi.forEachNodeAfterFilterAndSort((node) => {
+            const details = node.data?.details || [];
+            for (const d of details) {
+              grandTotalQty += Number(d.quantity || 0);
+            }
+          });
+
+          let val = 0;
+
+          // 🔹 لو عنده valueGetter
+          if (typeof col.valueGetter === 'function') {
+            try {
+              const params = {
+                data: node.data,
+                node,
+                colDef: col,
+                api: this.gridApi,
+                columnApi: this.gridColumnApi,
+              };
+              val = Number(col.valueGetter(params)) || 0;
+            } catch {
+              val = 0;
+            }
+          } else if (node.data[field] != null) {
+            val = Number(String(node.data[field]).replace(/[^\d.-]/g, '')) || 0;
           }
-        }
-        // }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
 
-///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-customFilterForWorkOrderNumber() {
-  const customFilterName = "work-order-number-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedWorkOrderNumber
-
-    if (this.selectedWorkOrderNumber[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
-
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].work_order_number) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
+          if (!this.totalFooterValues[field]) {
+            this.totalFooterValues[field] = 0;
           }
-        }
-        // }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
 
-customFilterForWorkOrderNumberDetails() {
-  const customFilterName = "work-order-number-details-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedWorkOrderNumberDetails
+          this.totalFooterValues[field] += val;
+        });
+      });
 
-    if (this.selectedWorkOrderNumberDetails[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        let count = 0
-        for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value[i].work_order_number_details == filter[j].work_order_number_details) {
-              count++
-              if (count == filter.length) {
-                return true;
+      // 🔢 صياغة الأرقام بالفوتر
+      columns
+        .filter(col => col['type'] === 'numericColumn' && !col['excludeFromFooter'])
+        .forEach((col: any) => {
+          const field = col.field;
+          if (!field) return;
+
+          if (col.type === 'numericColumn' && !col.excludeFromFooter) {
+            // console.log("field :::::::::: ", field);
+
+            summary[field] = Number(this.totalFooterValues[field] || 0).toLocaleString(
+              'en-US',
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
               }
+            );
+          } else {
+            summary[field] = '';
+          }
+          // console.log("summary[field] :::: ", summary[field]);
+
+          // أولاً: انتظر شوي لتتأكد أن الجدول رسم حاله
+          setTimeout(() => {
+            // اختار خلية الـ footer (pinned bottom row)
+            const inputQuantityFooterCell = document.querySelector(`.ag-floating-bottom-viewport .ag-cell-value[col-id="${field}"]`);
+
+            if (inputQuantityFooterCell) {
+
+              (inputQuantityFooterCell as HTMLElement).innerText = summary[field]; // 👈 الرقم اللي بدك تحطه
             }
-          }
-        }
+
+          }, 500);
+
+        });
+
+
+
+      // 🏷️ ضع كلمة "الإجمالي" في أول عمود نصي
+      const firstTextCol = columns.find(
+        (c: any) => !c.type || c.type !== 'numericColumn'
+      );
+      if (firstTextCol && firstTextCol['field']) {
+        summary[firstTextCol['field']] = 'الإجمالي';
       }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
 
-customFilterForFabricName() {
-  const customFilterName = "fabric-name-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedFabricName
 
-    if (this.selectedFabricName[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        let count = 0
-        for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value[i].dyed_fabric_name == filter[j].dyed_fabric_name) {
-              count++
-              if (count == filter.length) {
-                return true;
-              }
-            }
-          }
-        }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
+      //     console.log('📊 Final footer summary:', summary);
+      this.pinnedBottomRowData = [
+        ...summary,
+        { details_total_qty: grandTotalQty },   // 👈 هذا الرقم النهائي
+      ];
+      this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
+      console.log('✅ pinned row set in grid:', this.gridApi.getPinnedBottomRowCount());
+      this.gridApi.refreshCells({ force: true });
 
-///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-customFilterForSellerName() {
-  const customFilterName = "seller-name-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedSellerName
 
-    if (this.selectedSellerName[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
+    });
+  }
 
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].seller_name) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
-          }
-        }
-        // }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
-
-///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-customFilterForQuantity() {
-  const customFilterName = "quantity-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedQuantity
-
-    if (this.selectedQuantity[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
-
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].quantity) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
-          }
-        }
-        // }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
-
-///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-customFilterForFormCurrentQuantity() {
-  const customFilterName = "form-current-quantity-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedFormCurrentQuantity
-
-    if (this.selectedFormCurrentQuantity[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
-
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].form_current_quantity) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
-          }
-        }
-        // }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
-
-///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-
-customFilterForOrderNumber() {
-  const customFilterName = "order-number-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedOrderNumber
-
-    if (this.selectedOrderNumber[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
-
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].wc_fabric_order_requisition_name) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
-          }
-        }
-        // }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
-
- ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
- selectedDate(event) {
-  this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
-    filter = this.dateFilters
-    
-    if (event != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
-        if(filter[0] != null && filter[1] != null) {
-          
-          if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&  
-          moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
-            return true;
-            }
-          
-        } else if (filter[0] != null && filter[1] == null) {
-          
-          if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
-            return false;
-            } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
-              return false;
-            } else {
-              return true;
-            }
-        }
-
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  })
-  this.dt1?.filter(event, "date", "date-filter")
-}
-
-// Reset table filters
-clear(table: Table) {
-  table.clear();
-  table.reset();
-  this.selectedDyeingName = []
-  this.selectedWorkOrderNumber = []
-  this.selectedWorkOrderNumberDetails = []
-  this.selectedFabricName = []
-  this.selectedSellerName = []
-  this.selectedQuantity = []
-  this.selectedFormCurrentQuantity = []
-  this.selectedOrderNumber = []
-  this.dateFilters = []
-}
-
-onMultiselectedDyeingName(event) {
-  this.selectedDyeingName = event
-  this.dt1?._filter()
-}
-
-onMultiselectedWorkOrderNumber(event) {
-  this.selectedWorkOrderNumber = event
-  this.dt1?._filter()
-}
-
-onMultiselectedWorkOrderNumberDetails(event) {
-  this.selectedWorkOrderNumberDetails = event
-  this.dt1?._filter()
-}
-
-onMultiselectedFabricName(event) {
-  this.selectedFabricName = event
-  this.dt1?._filter()
-}
-
-onMultiselectedSellerName(event) {
-  this.selectedSellerName = event
-  this.dt1?._filter()
-}
-
-onMultiselectedQuantity(event) {
-  this.selectedQuantity = event
-  this.dt1?._filter()
-}
-
-onMultiselectedFormCurrentQuantity(event) {
-  this.selectedFormCurrentQuantity = event
-  this.dt1?._filter()
-}
-
-onMultiselectedOrderNumber(event) {
-  this.selectedOrderNumber = event
-  this.dt1?._filter()
-}
+  onFilterChanged() {
+    this.updatePinnedFooter();
+  }
 
 }

@@ -270,21 +270,21 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
           )
           }
 
-      for (let i = 0; i < this.addtransitionOrdersRequisitionForm.controls.items['controls'].length; i++) {
-        if(this.addtransitionOrdersRequisitionForm.controls.items['controls'][i].value.fabricId?.includes(event.itemData.id)) {
-          row.controls['fabricId'].setValue("")
-          row.controls['fabricCode'].setValue("")
-          row.controls['fabricName'].setValue("")
-          row.controls['quantity'].setValue("")
-          this.currentQuantity[index] = 0
-          flag = false
-        }
-      }
-      if(flag) {
-        row.controls['fabricId'].setValue(event.itemData.id)
-        row.controls['fabricCode'].setValue(event.itemData.code)
-        row.controls['fabricName'].setValue(event.itemData.name)
-      }
+      // for (let i = 0; i < this.addtransitionOrdersRequisitionForm.controls.items['controls'].length; i++) {
+      //   if(this.addtransitionOrdersRequisitionForm.controls.items['controls'][i].value.fabricId?.includes(event.itemData.id)) {
+      //     row.controls['fabricId'].setValue("")
+      //     row.controls['fabricCode'].setValue("")
+      //     row.controls['fabricName'].setValue("")
+      //     row.controls['quantity'].setValue("")
+      //     this.currentQuantity[index] = 0
+      //     flag = false
+      //   }
+      // }
+      // if(flag) {
+      //   row.controls['fabricId'].setValue(event.itemData.id)
+      //   row.controls['fabricCode'].setValue(event.itemData.code)
+      //   row.controls['fabricName'].setValue(event.itemData.name)
+      // }
     }
     this.validate(row, index)    
   }
@@ -321,6 +321,8 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
     else {
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
+      row.controls['consigmentManufacturingId'].setValue(event.itemData.id)
+      row.controls['newConsigmentManufacturingNumber'].setValue(event.itemData.number)
 
        // Get Prices
        this._reportWcService.selectPriceByFabricByConsigmentManufacturingInWc(row.controls['fabricId'].value!, event.itemData.id ).subscribe((response: any) => {
@@ -328,8 +330,8 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
         
         this.listFabricPrices[index] = [this._sharedComponentService.getAvgPrice(this.fabricsDetails) ?? 0, this._sharedComponentService.getAvgInputesPrice(this.fabricsDetails) ?? 0, this.fabricsDetails[0].latest_manufacturing_price, this.fabricsDetails[0].latest_price ?? 0]
         this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.fabricsDetails, 'quantity', 'price_dollar'), this.fabricsDetails[0].latest_manufacturing_price_dollar, this.fabricsDetails[0].latest_price_dollar]
-        row.controls['price'].setValue(this.fabricsDetails[0].latest_price)
-        row.controls['priceDollar'].setValue(this.fabricsDetails[0].latest_price_dollar)
+        row.controls['price'].setValue(this.fabricsDetails[0].latest_manufacturing_price)
+        row.controls['priceDollar'].setValue((parseFloat(this.fabricsDetails[0].latest_manufacturing_price_dollar)).toFixed(3))
       })
     }    
   }
@@ -352,7 +354,11 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
     else {
       row.controls['fromOrdersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
 
-      this._fabricService.selectByWarehouseWc(row.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+      this._fabricService.selectByWarehouseWcForTransitionBetweenOrder(
+        row.controls['warehouseId'].value!, 
+        event.itemData.id,
+        this.addtransitionOrdersRequisitionForm.controls['fabricOrderId'].value!
+      ).subscribe((response: any) => {
         this.fabrics[index] = response
       })
 
@@ -415,8 +421,9 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
   async onAddTransitionOrdersRequisition() {
     this.addtransitionOrdersRequisitionForm.markAllAsTouched();
     if (this.addtransitionOrdersRequisitionForm.valid) {
-      if (this._quantityOccurrencesValidationService.validateCurrentQuantityTwoItems(
+      if (this._quantityOccurrencesValidationService.validateCurrentQuantity(
         this.addtransitionOrdersRequisitionForm.controls.items.value, this.addtransitionOrdersRequisitionForm.controls.items.value, 
+        'fromFabricOrderId', 'fromFabricOrderId', 
         'fromConsigmentManufacturingId', 'fromConsigmentManufacturingId', 
         'fabricId', 'fabricId', 
         'quantity', 'fabricName', 'validQuantity')) {

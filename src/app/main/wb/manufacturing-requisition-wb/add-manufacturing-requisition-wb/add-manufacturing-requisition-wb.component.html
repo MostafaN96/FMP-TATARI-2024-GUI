@@ -868,7 +868,7 @@
                         <ejs-autocomplete [dataSource]='warehouses' [fields]='fieldsWarehouse' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringWarehouse($event)" [placeholder]='textWarehouse' [autofill]='autofill'
                             formControlName="warehouseId"
-                            (change)="selectWarehouse($event)">
+                            (change)="selectWarehouse($event)" [enabled]="false">
                         </ejs-autocomplete>
                             <small class="text-danger"
                             *ngIf="addManufacturingRequisitionForm.controls.warehouseId.hasError('pattern')"

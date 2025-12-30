@@ -1,0 +1,39 @@
+<div class="triple-filter">
+
+  <p-multiSelect
+    class="w-100"
+    [options]="workOrderOptions"
+    [ngModel]="workOrderSelected"
+    (onChange)="onWorkOrderChange($event.value)"
+    optionLabel="label"
+    optionValue="value"
+    [placeholder]="workOrderPlaceholder"
+    appendTo="body">
+  </p-multiSelect>
+
+  <p-multiSelect
+    class="w-100"
+    [options]="fabricOptions"
+    [ngModel]="fabricSelected"
+    (onChange)="onFabricChange($event.value)"
+    optionLabel="label"
+    optionValue="value"
+    [placeholder]="fabricPlaceholder"
+    appendTo="body">
+  </p-multiSelect>
+
+  <p-multiSelect
+    class="w-100"
+    [options]="colorOptions"
+    [ngModel]="colorSelected"
+    (onChange)="onColorChange($event.value)"
+    optionLabel="label"
+    optionValue="value"
+    [placeholder]="colorPlaceholder"
+    appendTo="body">
+  </p-multiSelect>
+
+  <!-- اختياري -->
+  <button type="button" class="clear-btn" (click)="clearAll()">مسح</button>
+
+</div>

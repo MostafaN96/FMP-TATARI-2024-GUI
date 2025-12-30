@@ -46,6 +46,7 @@ export class TransitionBetweenWhRequisitionDetailsWaComponent implements OnInit 
     'total',
     'total_dollar',
     'from_consigment_yarn_number',
+    'from_yarn_lot_code',
     'yarn_order_requisitions',
     'document',
     'statement',

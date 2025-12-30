@@ -23,6 +23,7 @@ import { QuantityOccurrencesValidationService } from "src/app/services/main/quan
 
 // Auto Complete
 import { Query, Predicate } from '@syncfusion/ej2-data';
+import { YarnOrderRequisitionWaService } from 'src/app/services/main/wa/yarn-order-requisition-wa.service';
 
 @Component({
   selector: 'app-add-sell-requisition-wa',
@@ -36,6 +37,8 @@ export class AddSellRequisitionWaComponent implements OnInit {
     date: new FormControl(new Date(), [Validators.required]),
     warehouseId: new FormControl(this._constantsService.DEFAULT_WA_WAREHOUSE_ID, [Validators.required]),
     sellerId: new FormControl('', [Validators.required]),
+    yarnOrderId: new FormControl("", [Validators.required]),
+    ordersRequisitionsId: new FormControl("", [Validators.required]),
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     items: new FormArray([
       this.initItem(),
@@ -50,11 +53,12 @@ export class AddSellRequisitionWaComponent implements OnInit {
   lots: any = []
   consigmentsYarns: any = []
   sellers: any = []
+  yarnOrder: any = []
   currentQuantity: any = []
   yarnsDetails: any
   listYarnPrices: any = []
   listYarnPricesDollar: any = []
-  groupPrices:any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر", "آخر سعر الرسالة"]
+  groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر", "آخر سعر الرسالة"]
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -112,41 +116,57 @@ export class AddSellRequisitionWaComponent implements OnInit {
 
   // --------------- Lot --------------
   // maps the appropriate column to fields property
-  public fieldsLot: Object = { value: "id", text:"code"};
+  public fieldsLot: Object = { value: "id", text: "code" };
   // set the placeholder to the AutoComplete input
   public textLot: string = "اللوط"
 
-  public onFilteringLot (e: any)
-  {
-    e.preventDefaultAction=true;
-         var predicate = new Predicate('code', 'contains', e.text);
-          var query = new Query();
-      //frame the query based on search string with filter type.
-        query = (e.text != "") ? query.where(predicate) : query;
-      //pass the filter data source, filter query to updateData method.
-        e.updateData(this.lots, query);
+  public onFilteringLot(e: any, index) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('code', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.lots[index], query);
   }
 
   // --------------- consigment Yarn --------------
   // maps the appropriate column to fields property
-  public fieldsConsigmentYarn: Object = { value: "id", text:"number"};
+  public fieldsConsigmentYarn: Object = { value: "id", text: "number" };
   // set the placeholder to the AutoComplete input
   public textConsigmentYarn: string = "رقم الرسالة"
 
-  public onFilteringConsigmentYarn (e: any, index)
-  {
-    e.preventDefaultAction=true;
-         var predicate = new Predicate('number', 'contains', e.text);
-          var query = new Query();
-      //frame the query based on search string with filter type.
-        query = (e.text != "") ? query.where(predicate) : query;
-      //pass the filter data source, filter query to updateData method.
-        e.updateData(this.consigmentsYarns[index], query);
+  public onFilteringConsigmentYarn(e: any, index) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('number', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.consigmentsYarns[index], query);
+  }
+
+  // --------------- Requisition nOrder --------------
+  // maps the appropriate column to fields property
+  public fieldsYarnOrder: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textYarnOrder: string = "طلبية"
+
+
+  public onFilteringYarnOrder(e: any) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.yarnOrder, query);
   }
 
   constructor(
     private _warehouseService: WarehouseService,
     private _yarnService: YarnService,
+    private _yarnOrderRequisitionWaService: YarnOrderRequisitionWaService,
     private _yarnLotService: YarnLotService,
     private _waService: WaService,
     private _sellerService: BussinessmanService,
@@ -235,15 +255,19 @@ export class AddSellRequisitionWaComponent implements OnInit {
       row.controls['yarnCode'].setValue(event.itemData.code)
       row.controls['yarnName'].setValue(event.itemData.name)
 
-      this._yarnLotService.selectByWarehouseByYarnWa(this.sellRequisitionForm.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
-        this.lots = response
-
-        if(this.lots[0] != null) {
-          row.controls['yarnLotId'].setValue(this.lots[0].id)
+      this._yarnLotService.selectByWarehouseByYarnWa(
+        this.sellRequisitionForm.controls['warehouseId'].value!,
+        event.itemData.id,
+        this.sellRequisitionForm.controls['yarnOrderId'].value!
+      ).subscribe((response: any) => {
+        this.lots[index] = response
+        if (this.lots[index][0] != null) {
+          row.controls['yarnLotId'].setValue(this.lots[index][0].id)
           this.getRemainingByWarehouseByYarnByLotWa(
             this.sellRequisitionForm.controls['warehouseId'].value!,
             event.itemData.id,
-            this.lots[0].id,
+            this.lots[index][0].id,
+            this.sellRequisitionForm.controls['yarnOrderId'].value!,
             index
           )
         }
@@ -282,33 +306,68 @@ export class AddSellRequisitionWaComponent implements OnInit {
     }
   }
 
-  selectByWarehouseWa(id = this._constantsService.DEFAULT_WA_WAREHOUSE_ID) {
-    this._yarnService.selectByWarehouseWa(id).subscribe((response: any) => {
-      this.yarns = response
+  selectByWarehouseWa(warehouseId = this._constantsService.DEFAULT_WA_WAREHOUSE_ID) {
+
+    this._yarnOrderRequisitionWaService.selectByWarehouseWa(warehouseId).subscribe((response: any) => {
+      this.yarnOrder = response
+
+      if (Array.isArray(this.yarnOrder) && this.yarnOrder.length < 1) {
+        this.sellRequisitionForm.controls['warehouseId'].setValue(null)
+      }
     })
+  }
+
+  // Yarn Order
+  selectYarnOrder(event: { itemData: any; }) {
+    let indexData = this.yarnOrder.indexOf(event.itemData)
+
+    if (this.yarnOrder[indexData] !== event.itemData) {
+      this.sellRequisitionForm.controls['ordersRequisitionsId'].setValue("")
+      this.sellRequisitionForm.controls['yarnOrderId'].setValue("")
+    }
+    else {
+      this.sellRequisitionForm.controls['ordersRequisitionsId'].setValue(event.itemData.orders_requisitions_id)
+
+      this._yarnService.selectByWarehouseWa(this.sellRequisitionForm.controls['warehouseId'].value!, event.itemData.id).subscribe((response: any) => {
+        this.yarns = response
+      })
+
+    }
   }
 
   // Start Yarn Lot Autocomplete Section
   //  Yarn Lot
   selectYarnLot(event: { itemData: any; }, row: FormGroup, index: number) {
-    let indexData = this.lots.indexOf(event.itemData)
-    if (this.lots[indexData] !== event.itemData) {
+    let indexData = this.lots[index].indexOf(event.itemData)
+    if (this.lots[index][indexData] !== event.itemData) {
       row.controls['yarnLotId'].setValue(null)
+      row.controls['consigmentYarnId'].setValue(null)
+      this.consigmentsYarns[index] = []
       this.currentQuantity[index] = 0
     } else {
-        this.getRemainingByWarehouseByYarnByLotWa(this.sellRequisitionForm.controls['warehouseId'].value!,
-      row.controls['yarnId'].value!,
-      event.itemData.id, index)
+      this.getRemainingByWarehouseByYarnByLotWa(
+        this.sellRequisitionForm.controls['warehouseId'].value!,
+        row.controls['yarnId'].value!,
+        event.itemData.id,
+        this.sellRequisitionForm.controls['yarnOrderId'].value!,
+        index)
     }
   }
 
-  getRemainingByWarehouseByYarnByLotWa(warehouseId: string, yarnId: string, lotId:string, index) {
+  getRemainingByWarehouseByYarnByLotWa(
+    warehouseId: string,
+    yarnId: string,
+    lotId: string,
+    yarnOrderId: string,
+    index) {
     this._waService.selectRemainingByWarehouseByYarnByLotWa(
       warehouseId,
       yarnId,
-      lotId).subscribe((response: any) => {
-        this.consigmentsYarns[index] = response
-      })
+      lotId,
+      yarnOrderId
+    ).subscribe((response: any) => {
+      this.consigmentsYarns[index] = response
+    })
   }
   // End Yarn Lot Autocomplete Section
 
@@ -331,27 +390,27 @@ export class AddSellRequisitionWaComponent implements OnInit {
         this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price, this.yarnsDetails[0].latest_consigment_price]
         this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar, this.yarnsDetails[0].latest_consigment_price_dollar]
       })
-    }    
+    }
   }
   // End Consigment Yarn Autocomplete Section
-  
+
   // price
   changePrice(type, row: FormGroup) {
-    if(type == "priceEG") {
+    if (type == "priceEG") {
       row.controls['priceDollar'].setValue(this._sharedComponentService.calcEgpToDollar(row.controls['price'].value))
     } else if (type == "priceDollar") {
       row.controls['price'].setValue(this._sharedComponentService.calcDollarToEgp(row.controls['priceDollar'].value))
     }
   }
-  
+
   async onSellRequisition() {
     this.sellRequisitionForm.markAllAsTouched();
     if (this.sellRequisitionForm.valid) {
       if (this._quantityOccurrencesValidationService.validateCurrentQuantity(
-        this.sellRequisitionForm.controls.items.value, this.sellRequisitionForm.controls.items.value, 
-        'consigmentYarnId', 'consigmentYarnId', 
-        'yarnLotId', 'yarnLotId', 
-        'yarnId', 'yarnId', 
+        this.sellRequisitionForm.controls.items.value, this.sellRequisitionForm.controls.items.value,
+        'consigmentYarnId', 'consigmentYarnId',
+        'yarnLotId', 'yarnLotId',
+        'yarnId', 'yarnId',
         'quantity', 'yarnName', 'validQuantity')) {
         const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.sellRequisitionForm, 'items',
           ['yarnName', 'yarnCode', 'validQuantity'])

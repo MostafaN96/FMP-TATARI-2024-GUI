@@ -40,6 +40,7 @@ export class UpdateAddRequisitionWeComponent implements OnInit {
     numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
     dyeingCode: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
     colorId: new FormControl("", [Validators.required]),
+    colorName: new FormControl(""),
     colorCode: new FormControl(""),
     colorCategoryId: new FormControl("", [Validators.required]),
     storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
@@ -125,6 +126,7 @@ export class UpdateAddRequisitionWeComponent implements OnInit {
     this.addRequisitionWeForm.controls['storagePlace'].setValue(this.selectedData?.storage_place)
     this.addRequisitionWeForm.controls['statement'].setValue(this.selectedData?.statement)
     this.addRequisitionWeForm.controls['colorCategoryId'].setValue(this.selectedData?.color_category_id)
+    this.addRequisitionWeForm.controls['colorName'].setValue(this.selectedData?.color_name)
     this.addRequisitionWeForm.controls['colorCode'].setValue(this.selectedData?.color_code)
     this.addRequisitionWeForm.controls['colorId'].setValue(this.selectedData?.color_id)
   }
@@ -142,7 +144,10 @@ export class UpdateAddRequisitionWeComponent implements OnInit {
   selectColor(event: { itemData: any; }) {
     if (!this.colors.includes(event.itemData)) {
       this.addRequisitionWeForm.controls['colorId'].setValue(null)
+      this.addRequisitionWeForm.controls['colorName'].setValue(null)
       this.addRequisitionWeForm.controls['colorCode'].setValue(null)
+    } else {
+      this.addRequisitionWeForm.controls['colorId'].setValue(event.itemData.id)
     }
   }
 

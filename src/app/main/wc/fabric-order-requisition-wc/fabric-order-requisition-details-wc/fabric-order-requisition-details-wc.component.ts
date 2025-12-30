@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild,} from '@angular/core';
+import { Component, Input, OnInit, ViewChild, } from '@angular/core';
 
 // Angular Material Table
 import { MatTableDataSource } from '@angular/material/table';
@@ -47,6 +47,8 @@ export class FabricOrderRequisitionDetailsWcComponent implements OnInit {
     'current_quantity',
     'over_current_quantity',
     'over_current_quantity_ratio',
+    'quantity_of_dyeing',
+    'remaining_quantity_ratio',
     'fabric_width',
     'fabric_quantity_m2',
     'note2',
@@ -65,8 +67,8 @@ export class FabricOrderRequisitionDetailsWcComponent implements OnInit {
     private router: Router
 
   ) {
-    if(this.router.url.split('/')[2] + '/' + this.router.url.split('/')[3].split('?')[0] 
-    === this._constantsService.ROUTING_LINKS[181]) {
+    if (this.router.url.split('/')[2] + '/' + this.router.url.split('/')[3].split('?')[0]
+      === this._constantsService.ROUTING_LINKS[181]) {
       this.getData("closed")
     }
     else {
@@ -78,12 +80,12 @@ export class FabricOrderRequisitionDetailsWcComponent implements OnInit {
 
   }
 
-  getData(isClosed?:string) {
+  getData(isClosed?: string) {
     this.route.queryParams
       .subscribe(params => {
         this._fabricOrderRequisitionDetailsWcService.select(params['id'], isClosed).subscribe((response: any) => {
           this.fabricOrderDetails = response
-          
+
           this.dataSourceSearchTabel = new MatTableDataSource(this.fabricOrderDetails);
           // this.sortColumns.sort(({ id: 'number', start: 'asc' }) as MatSortable);
           this.dataSourceSearchTabel.sort = this.sortColumns;

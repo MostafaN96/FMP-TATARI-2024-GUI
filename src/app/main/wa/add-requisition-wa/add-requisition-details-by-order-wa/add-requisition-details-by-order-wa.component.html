@@ -31,6 +31,16 @@
                                 <td>{{addRequisitionDetails[0]?.supplier_name}}</td>
                             </tr>
                             <tr>
+                                <th>الطلبية:</th>
+                                <td>
+                                    <ul>
+                                            <li *ngFor="let order of addRequisitionDetails[0]?.orders">
+                                                {{order.order_name}}
+                                            </li>
+                                        </ul>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th>الملاحظات:</th>
                                 <td>{{addRequisitionDetails[0]?.note}}</td>
                             </tr>
@@ -280,14 +290,14 @@
         </div>
 
         <!-- Buttons Section -->
-        <div *ngIf="!showAddDetails" [class]="_sharedComponentService.btnSectionClass">
+        <!-- <div *ngIf="!showAddDetails" [class]="_sharedComponentService.btnSectionClass">
             <div class="row row-cols-auto">
                 <div class="col">
                     <button (click)="showAddDetailsFunc()" type="button" class="btn-style submit-btn">اضافة
                         بيانات</button>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </section>
 

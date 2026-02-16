@@ -96,7 +96,7 @@ export class AddInternalTransportWbComponent implements OnInit {
   }
 
   ngOnChanges() {
-    console.log("this.internalSelectedData :::: ", this.internalSelectedData);
+    // console.log("this.internalSelectedData :::: ", this.internalSelectedData);
     
     this.yarnName = this.internalSelectedData.name || this.internalSelectedData.yarn_name
 

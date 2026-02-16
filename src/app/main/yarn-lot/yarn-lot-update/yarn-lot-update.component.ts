@@ -22,6 +22,7 @@ export class YarnLotUpdateComponent implements OnInit {
 
   @Input() selectedData: any
   yarnLotForm:FormGroup = new FormGroup({
+    yarnId: new FormControl("", [Validators.required]),    
     code: new FormControl('',[Validators.required,Validators.maxLength(90), Validators.minLength(1) , Validators.pattern(this.patterns.validator_pattern.shortText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
@@ -40,6 +41,7 @@ export class YarnLotUpdateComponent implements OnInit {
   }
 
   ngOnChanges() {
+    this.yarnLotForm.controls['yarnId'].setValue(this.selectedData?.yarn_id)
     this.yarnLotForm.controls['code'].setValue(this.selectedData?.code)
   }
 

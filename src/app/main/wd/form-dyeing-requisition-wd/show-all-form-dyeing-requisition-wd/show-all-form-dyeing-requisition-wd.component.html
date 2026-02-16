@@ -15,26 +15,20 @@
                 <div class="col">
                     <div [class]="_sharedComponentService.tableSectionClass">
 
-                        <div id="table-header-data-report" dir="rtl" class="ag-theme-alpine ag-rtl">
+                        <div id="table-header-data-report" 
+                        dir="rtl" 
+                        class="ag-theme-alpine ag-rtl ag-details">
 
                             <ag-grid-angular 
                             #agGrid
                             class="ag-theme-alpine ag-rtl" 
                             [ngStyle]="_sharedComponentService.gridStyle"
-                            [getRowHeight]="getRowHeight"
-                            (gridReady)="onGridReady($event)"            
-                            [columnDefs]="columnDefs" 
-                            [defaultColDef]="defaultColDef"
-                            [enableRangeSelection]="true" 
-                            [enableFillHandle]="true" 
-                            [undoRedoCellEditing]="true"
-                            [enableCellChangeFlash]="true"
-                            [rowData]="results" 
-                            [localeText]="_sharedComponentService.localeText" 
-                            [pinnedBottomRowData]="pinnedBottomRowData"
-                            [sideBar]="sideBar"
-                            (filterChanged)="onFilterChanged()"
-                            (sortChanged)="onFilterChanged()"
+                            [gridOptions]="gridOptions"
+  [columnDefs]="columnDefs"
+  [defaultColDef]="defaultColDef"
+  [sideBar]="sideBar"
+  (gridReady)="onGridReady($event)"
+  (filterChanged)="onFilterChanged()"
                             >
                             </ag-grid-angular>
 

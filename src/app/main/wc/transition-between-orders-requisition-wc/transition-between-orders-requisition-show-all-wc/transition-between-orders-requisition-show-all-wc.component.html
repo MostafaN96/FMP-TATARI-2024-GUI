@@ -102,7 +102,18 @@
                                         <!-- details Column -->
                                         <th>
                                             <div class="flex justify-content-between align-items-center">
-                                                <table>
+                                                <table class="details-table">
+                                                    <colgroup>
+                                                        <col class="col-warehouse" />
+                                                        <col class="col-from-order" />
+                                                        <col class="col-to-order" />
+                                                        <col class="col-fabric" />
+                                                        <col class="col-from-msg" />
+                                                        <col class="col-to-msg" />
+                                                        <col class="col-qty" />
+                                                        <col class="col-pieces" />
+                                                        <col class="col-document" />
+                                                    </colgroup>
                                                     <thead>
                                                         <tr>
 
@@ -123,7 +134,11 @@
                                                             </th>
                                                             
                                                             <th style="max-width: 60px;">
-                                                                رقم الرسالة
+                                                                من رقم الرسالة
+                                                            </th>
+                                                            
+                                                            <th style="max-width: 60px;">
+                                                                الى رقم الرسالة
                                                             </th>
                                                             
                                                             <th style="max-width: 60px;">
@@ -177,7 +192,18 @@
 
                                         <!-- details Column -->
                                         <td>
-                                            <table>
+                                            <table class="details-table">
+                                                <colgroup>
+                                                    <col class="col-warehouse" />
+                                                    <col class="col-from-order" />
+                                                    <col class="col-to-order" />
+                                                    <col class="col-fabric" />
+                                                    <col class="col-from-msg" />
+                                                    <col class="col-to-msg" />
+                                                    <col class="col-qty" />
+                                                    <col class="col-pieces" />
+                                                    <col class="col-document" />
+                                                </colgroup>
                                                 <tbody>
                                                     <tr *ngFor="let item of element.details">
 
@@ -197,6 +223,9 @@
                                                             {{item.fabric_name}}
                                                         </td>
 
+                                                        <td style="max-width: 60px;">
+                                                            {{item.from_consigment_manufacturing_number}}
+                                                        </td>
 
                                                         <td style="max-width: 60px;">
                                                             {{item.consigment_manufacturing_number}}
@@ -224,6 +253,7 @@
                                                         <td style="max-width: 60px;"></td>
                                                         <td style="max-width: 60px;"></td>
                                                         <td style="max-width: 60px;"></td>
+                                                        <td style="max-width: 60px;"></td>
                                                         <td style="max-width: 60px;">
                                                             {{_sharedComponentService.getTotalQuantity(element.details,
                                                             'quantity') | number}}
@@ -232,7 +262,6 @@
                                                             {{_sharedComponentService.getTotalQuantity(element.details,
                                                             'fabric_piece') | number}}
                                                         </td>
-                                                        <td style="max-width: 60px;"></td>
                                                         <td style="max-width: 60px;"></td>
                                                     </tr>
                                                 </tfoot>

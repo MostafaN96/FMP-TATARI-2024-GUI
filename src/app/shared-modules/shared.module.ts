@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 
 import { DetailsMultiselectFilterComponent } from 'src/app/general-pages/details-multiselect-filter/details-multiselect-filter.component';
+import { UpdateReportWcComponent } from 'src/app/main/wc/reports/update-report-wc/update-report-wc.component';
 
 // Forms //
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
@@ -65,10 +66,16 @@ import 'ag-grid-enterprise';
 
 @NgModule({
   declarations: [
-    DetailsMultiselectFilterComponent
+    DetailsMultiselectFilterComponent,
+    UpdateReportWcComponent
   ],
   imports: [
-CommonModule, FormsModule, MultiSelectModule
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MultiSelectModule
   ],
   exports: [
     CommonModule,
@@ -134,6 +141,7 @@ CommonModule, FormsModule, MultiSelectModule
     AgGridModule,
 
     DetailsMultiselectFilterComponent,
+    UpdateReportWcComponent,
 
   ],
   providers: [

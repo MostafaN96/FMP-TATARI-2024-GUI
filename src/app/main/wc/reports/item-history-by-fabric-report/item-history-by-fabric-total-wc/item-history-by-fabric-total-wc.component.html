@@ -4,16 +4,16 @@
     <div class="row row-cols-3">
         <div class="col">
             <div class="btn-export-section">
-                    <a (click)="_exportDataService.onExportPDFGridAngular(gridApi, 'تقرير جرد القماش الخام', gridColumnApi, ['details'])">
+                    <a (click)="_exportDataService.onExportPDFGridAngular(gridApi, 'تقرير جرد القماش الخام', gridColumnApi, ['details', 'details_yarns'])">
                         <i title="PDF" class="far fa-file-pdf"></i>
                     </a>
 
-                    <a (click)="_exportDataService.onExportExcelGridAngular(gridApi, 'تقرير جرد القماش الخام', ['details'])">
+                    <a (click)="_exportDataService.onExportExcelGridAngular(gridApi, 'تقرير جرد القماش الخام', ['details', 'details_yarns'])">
                         <i title="Excel" class="far fa-file-excel px-2"></i>
                     </a>
                     
                     <a
-                    (click)="_exportDataService.printGrid(gridApi, 'تقرير جرد القماش الخام', gridColumnApi, ['details'], ['input_quantity', 'output_quantity', 'current_quantity'])">
+                    (click)="_exportDataService.printGrid(gridApi, 'تقرير جرد القماش الخام', gridColumnApi, ['details', 'details_yarns'], ['input_quantity', 'output_quantity', 'current_quantity'])">
                     <i title="Print" class="fas fa-print pe-2"></i>
                 </a>
                 </div>
@@ -54,6 +54,7 @@
                                 [rowData]="fabrics" 
                                 [localeText]="_sharedComponentService.localeText" 
                                 [pinnedBottomRowData]="pinnedBottomRowData"
+                                [sideBar]="sideBar"
                                 (modelUpdated)="onModelUpdated()">
                             </ag-grid-angular>
 

@@ -31,9 +31,9 @@ export class ItemHistoryByFabricComponent implements OnInit {
   iShowItemValue = false
   isShowAvgPrice = false
   isShowAvgInputes = false
-  isShowLatestPrice = true
-  isShowLatestPriceDollar = true
-  isShowLatestManufacturingPrice = true
+  isShowLatestPrice = false
+  isShowLatestPriceDollar = false
+  isShowLatestManufacturingPrice = false
   isShowClosedBalances = false
 
    @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
@@ -209,6 +209,153 @@ export class ItemHistoryByFabricComponent implements OnInit {
           hide: !this.isShowLatestManufacturingPrice || !this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[11]),
           excludeFromFooter: true,
         },
+
+        {
+      headerName: 'ايصال التصنيع',
+      field: 'documents',
+      filter: false,
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'document-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        host.innerHTML = arr.map((v: string) => `<div class="document-line">${v}</div>`).join('');
+        return host;
+      },
+    },
+
+        {
+      headerName: 'رقم الا ستاند',
+      field: 'storage_place',
+      filter: false,
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'storage-place-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        host.innerHTML = arr.map((v: string) => `<div class="storage-place-line">${v}</div>`).join('');
+        return host;
+      },
+    },
+
+        {
+      headerName: 'اجمالي الايصال',
+      field: 'manufacturing_quantity',
+      filter: false,
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'manufacturing-quantity-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        host.innerHTML = arr.map((v: string) => `<div class="manufacturing-quantity-line">${v}</div>`).join('');
+        return host;
+      },
+    },
+
+        {
+      headerName: 'اجمالي الاخراج',
+      field: 'output_current_quantity',
+      filter: false,
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'manufacturing-current-quantity-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        host.innerHTML = arr.map((v: string) => `<div class="manufacturing-current-quantity-line">${v}</div>`).join('');
+        return host;
+      },
+    },
+
+        {
+      headerName: 'الرصيد المتبقي',
+      field: 'manufacturing_current_quantity',
+      filter: false,
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'current-quantity-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        host.innerHTML = arr.map((v: string) => `<div class="current-quantity-line">${v}</div>`).join('');
+        return host;
+      },
+    },
+
+        {
+      headerName: 'حالة الجودة',
+      field: 'status_grade',
+      filter: false,
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'status-grade-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        host.innerHTML = arr.map((v: string) => `<div class="status-grade-line">${v}</div>`).join('');
+        return host;
+      },
+    },
+        {
+      headerName: 'ملاحظات الجودة',
+      field: 'statement',
+      filter: false,
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'statement-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        host.innerHTML = arr.map((v: string) => `<div class="statement-line">${v}</div>`).join('');
+        return host;
+      },
+    },
+
       {
         headerName: 'حركة الصنف',
         field: 'details',
@@ -245,9 +392,206 @@ export class ItemHistoryByFabricComponent implements OnInit {
           return link;
         },
         excludeFromFooter: true,
-      }
-    ].reverse(); gridColumnApi: any;
-    ;
+      },
+      
+    {
+      headerName: 'ايصال التصنيع',
+      colId: 'documents',
+      hide: true,
+      filter: 'agSetColumnFilter',
+
+      // ✅ هاي أهم سطر: هي اللي بتخلي الفلتر "يشوف" كل عناصر المصفوفة
+      filterValueGetter: (p: any) => (p.data?.documents || []),
+
+      filterParams: {
+        
+      refreshValuesOnOpen: true,
+
+      // ✅ هون السحر
+      buttons: ['apply', 'reset'],   // أو ['apply'] فقط
+      
+        values: (params: any) => {
+          const set = new Set<string>();
+
+          params.api.forEachNodeAfterFilterAndSort((node: any) => {
+            (node.data?.documents || []).forEach((v: string) => v && set.add(v));
+          });
+
+          params.success([...set].sort());
+        },
+      },
+    },
+      
+    {
+      headerName: 'رقم الاستند',
+      colId: 'storage_place',
+      hide: true,
+      filter: 'agSetColumnFilter',
+
+      // ✅ هاي أهم سطر: هي اللي بتخلي الفلتر "يشوف" كل عناصر المصفوفة
+      filterValueGetter: (p: any) => (p.data?.storage_place || []),
+
+      filterParams: {
+        
+      refreshValuesOnOpen: true,
+
+      // ✅ هون السحر
+      buttons: ['apply', 'reset'],   // أو ['apply'] فقط
+      
+        values: (params: any) => {
+          const set = new Set<string>();
+
+          params.api.forEachNodeAfterFilterAndSort((node: any) => {
+            (node.data?.storage_place || []).forEach((v: string) => v && set.add(v));
+          });
+
+          params.success([...set].sort());
+        },
+      },
+    },
+      
+    {
+      headerName: 'حالة الجودة',
+      colId: 'status_grade',
+      hide: true,
+      filter: 'agSetColumnFilter',
+
+      // ✅ هاي أهم سطر: هي اللي بتخلي الفلتر "يشوف" كل عناصر المصفوفة
+      filterValueGetter: (p: any) => (p.data?.status_grade || []),
+
+      filterParams: {
+        
+      refreshValuesOnOpen: true,
+
+      // ✅ هون السحر
+      buttons: ['apply', 'reset'],   // أو ['apply'] فقط
+      
+        values: (params: any) => {
+          const set = new Set<string>();
+
+          params.api.forEachNodeAfterFilterAndSort((node: any) => {
+            (node.data?.status_grade || []).forEach((v: string) => v && set.add(v));
+          });
+
+          params.success([...set].sort());
+        },
+      },
+    },
+      
+    {
+      headerName: 'ملاحظات الجودة',
+      colId: 'statement',
+      hide: true,
+      filter: 'agSetColumnFilter',
+
+      // ✅ هاي أهم سطر: هي اللي بتخلي الفلتر "يشوف" كل عناصر المصفوفة
+      filterValueGetter: (p: any) => (p.data?.statement || []),
+
+      filterParams: {
+        
+      refreshValuesOnOpen: true,
+
+      // ✅ هون السحر
+      buttons: ['apply', 'reset'],   // أو ['apply'] فقط
+      
+        values: (params: any) => {
+          const set = new Set<string>();
+
+          params.api.forEachNodeAfterFilterAndSort((node: any) => {
+            (node.data?.statement || []).forEach((v: string) => v && set.add(v));
+          });
+
+          params.success([...set].sort());
+        },
+      },
+    },
+      
+    {
+      headerName: 'اجمالي الايصال',
+      colId: 'manufacturing_quantity',
+      hide: true,
+      filter: 'agSetColumnFilter',
+
+      // ✅ هاي أهم سطر: هي اللي بتخلي الفلتر "يشوف" كل عناصر المصفوفة
+      filterValueGetter: (p: any) => (p.data?.manufacturing_quantity || []),
+
+      filterParams: {
+        
+      refreshValuesOnOpen: true,
+
+      // ✅ هون السحر
+      buttons: ['apply', 'reset'],   // أو ['apply'] فقط
+      
+        values: (params: any) => {
+          const set = new Set<string>();
+
+          params.api.forEachNodeAfterFilterAndSort((node: any) => {
+            (node.data?.manufacturing_quantity || []).forEach((v: string) => v && set.add(v));
+          });
+
+          params.success([...set].sort());
+        },
+      },
+    },
+      
+    {
+      headerName: 'اجمالي الاخراج',
+      colId: 'output_current_quantity',
+      hide: true,
+      filter: 'agSetColumnFilter',
+
+      // ✅ هاي أهم سطر: هي اللي بتخلي الفلتر "يشوف" كل عناصر المصفوفة
+      filterValueGetter: (p: any) => (p.data?.output_current_quantity || []),
+
+      filterParams: {
+        
+      refreshValuesOnOpen: true,
+
+      // ✅ هون السحر
+      buttons: ['apply', 'reset'],   // أو ['apply'] فقط
+      
+        values: (params: any) => {
+          const set = new Set<string>();
+
+          params.api.forEachNodeAfterFilterAndSort((node: any) => {
+            (node.data?.output_current_quantity || []).forEach((v: string) => v && set.add(v));
+          });
+
+          params.success([...set].sort());
+        },
+      },
+    },
+      
+    {
+      headerName: 'الرصيد المتبقي',
+      colId: 'manufacturing_current_quantity',
+      hide: true,
+      filter: 'agSetColumnFilter',
+
+      // ✅ هاي أهم سطر: هي اللي بتخلي الفلتر "يشوف" كل عناصر المصفوفة
+      filterValueGetter: (p: any) => (p.data?.manufacturing_current_quantity || []),
+
+      filterParams: {
+        
+      refreshValuesOnOpen: true,
+
+      // ✅ هون السحر
+      buttons: ['apply', 'reset'],   // أو ['apply'] فقط
+      
+        values: (params: any) => {
+          const set = new Set<string>();
+
+          params.api.forEachNodeAfterFilterAndSort((node: any) => {
+            (node.data?.manufacturing_current_quantity || []).forEach((v: string) => v && set.add(v));
+          });
+
+          params.success([...set].sort());
+        },
+      },
+    },
+    
+    ].reverse(); 
+    gridColumnApi: any;
     totalFooterValues = {}
     public defaultColDef: ColDef = {
       flex: 1,
@@ -255,7 +599,10 @@ export class ItemHistoryByFabricComponent implements OnInit {
       resizable: true,
     sortable: true,
     };
-    public sideBar: SideBarDef | string | string[] | boolean | null = 'filters';
+    sideBar: SideBarDef = {
+    toolPanels: ['filters'],
+    defaultToolPanel: undefined
+  };
     public loadingCellRenderer: any = CustomLoadingCellRendererComponent;
     public loadingCellRendererParams: any = {
       loadingMessage: 'One moment please...',

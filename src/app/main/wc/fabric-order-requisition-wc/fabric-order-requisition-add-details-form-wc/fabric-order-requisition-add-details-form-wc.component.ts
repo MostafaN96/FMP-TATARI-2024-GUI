@@ -129,6 +129,7 @@ export class FabricOrderRequisitionAddDetailsFormWcComponent implements OnInit {
     }
     else {
       row.controls['fabricCode'].setValue(element.itemData.code)
+      row.controls['fabricQuantityM2'].setValue(element.itemData.fabric_quantity_m2)
 
     }
   }

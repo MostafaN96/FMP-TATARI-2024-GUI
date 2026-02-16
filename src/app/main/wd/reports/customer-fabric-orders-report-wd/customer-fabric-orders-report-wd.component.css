@@ -1,0 +1,15 @@
+:host ::ng-deep .ag-header-cell-label {
+    white-space: normal;
+    line-height: 1.2;
+}
+
+:host ::ng-deep .ag-header-cell-text {
+    white-space: normal;
+    text-overflow: unset;
+    overflow: visible;
+}
+
+:host ::ng-deep .ag-cell {
+    white-space: normal;
+    line-height: 1.2;
+}

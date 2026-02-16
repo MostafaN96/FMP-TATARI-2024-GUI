@@ -66,6 +66,10 @@
                     <i title="Print" class="fas fa-print pe-2"></i>
                 </a>
 
+                <a (click)="openUpdatePanel()">
+                    <i title="تعديل مكان التخزين" class="fas fa-edit pe-2"></i>
+                </a>
+
                         <!-- <a
                             (click)="_exportDataService.exportToPDF('table-header-data', 'table-data', 'حركة مادة  C ', 'table-data-2')">
                             <i title="PDF" class="far fa-file-pdf"></i>
@@ -154,3 +158,11 @@
         </div>
     </div>
 </section>
+
+<app-update-report-wc
+    *ngIf="showUpdatePanel"
+    [showGrid]="false"
+    [showHeader]="false"
+    [selectedWcIds]="selectedWcIds"
+    (updated)="getData(gridParams, reportParams)">
+</app-update-report-wc>

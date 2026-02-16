@@ -1,10 +1,14 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
+// AG Grid Table
+import { ColDef, ColGroupDef, GridApi, GridReadyEvent, SideBarDef } from 'ag-grid-community';
+import { CustomLoadingCellRendererComponent } from 'src/app/general-pages/custom-loading-cell-renderer/custom-loading-cell-renderer.component';
 
-// PrimeNG Table
-import { PrimeNGConfig } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { FilterService } from 'primeng/api';
+type MyColDef<T = any> = ColDef<T> & { excludeFromFooter?: boolean };
+
+function isMyColDef<T>(c: MyColDef<T> | ColGroupDef<T>): c is MyColDef<T> {
+  return (c as MyColDef<T>).field != null;
+}
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -21,460 +25,558 @@ import { ReportWdService } from "src/app/services/main/wd/report-wd.service";
 
 export class ItemHistoryReportWdComponent implements OnInit {
 
-  /////////////////// Variables ///////////////////
-  fabrics: any[] = []
-  isShowTotalInput = true
-  iShowTotalOutput = true
-  iShowTotalBalance = true
-  iShowTotalBalanceWithForm = true
-  iShowTotalBalanceForm = true
-  iShowTotalBalanceFormPreparedDyeing = true
-  isShowTotalAmountInput = false
-  iShowTotalAmountOutput = false
-  iShowItemValue = false
-  isShowAvgPrice = false
-  isShowAvgInputes = false
-  isShowAvgWast = true
-  isShowLatestPrice = true
-  isShowLatestPriceDollar = true
-  isShowClosedBalances  = false
+  fabrics: any[] = [];
+  loading = true;
 
-  //////////////////////////////////// PrimeNG /////////////////////////////////
-  @ViewChild('dt1') dt1: Table | undefined;
-  loading: boolean = true;
-  selectedDyers: any[] = []
-  selectedNames: any[] = []
-  selectedCodes: any[] = []
-  selectedDyeingCodes: any[] = []
-  selectedConsigmentNumber: any[] = []
-  selectedFabricOrder: any[] = []
-  startDate:any
-  endDate:any
+  // نفس المتغيرات
+  isShowTotalInput = true;
+  iShowTotalOutput = true;
+  iShowTotalBalance = true;
+  iShowTotalBalanceWithForm = true;
+  iShowTotalBalanceForm = true;
+  iShowTotalBalanceFormPreparedDyeing = true;
+  isShowTotalAmountInput = false;
+  iShowTotalAmountOutput = false;
+  iShowItemValue = false;
+  isShowAvgPrice = false;
+  isShowAvgInputes = false;
+  isShowAvgWast = true;
+  isShowLatestPrice = true;
+  isShowLatestPriceDollar = true;
+  isShowClosedBalances  = false;
+
+  startDate: any;
+  endDate: any;
+
+  @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
+  gridApi!: GridApi;
+  gridColumnApi: any;
+
+  pinnedBottomRowData: any[] = [];
+
+  public loadingCellRenderer: any = CustomLoadingCellRendererComponent;
+  public loadingCellRendererParams: any = { loadingMessage: 'One moment please...' };
+
+  public defaultColDef: ColDef = {
+    flex: 1,
+    minWidth: 180,
+    resizable: true,
+    sortable: true,
+    filter: true,
+    // floatingFilter: true,
+      // ✅ المهم
+  wrapText: true,
+  autoHeight: true,
+  };
+
+  public sideBar: SideBarDef = {
+    toolPanels: ['filters'],
+    defaultToolPanel: undefined
+  };
+
+  public columnDefs: ColDef[] = [
+    {
+      headerName: 'التسلسل',
+      field: 'index',
+      valueGetter: 'node.rowIndex + 1',
+      width: 80,
+      cellClass: 'text-center',
+      excludeFromFooter: true,
+      filter: false,
+      sortable: false,
+    },
+
+    // ✅ فلاتر set مثل PrimeNG multiSelect
+    { headerName: 'المصبغة', field: 'dyeing_name', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
+    { headerName: 'رقم المادة', field: 'fabric_code', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
+    // { headerName: 'كود المصبغة', field: 'fabric_dyeing_code', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
+    { headerName: 'اسم المادة', field: 'fabric_name', cellClass: 'details-cell', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
+    { headerName: 'رقم الرسالة', field: 'consigment_dyeing_number', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
+    { headerName: 'الطلبية', field: 'wc_fabric_order_requisition_name', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
+
+    // ✅ أعمدة أرقام محسوبة من details
+    {
+      headerName: 'إجمالي الإدخال',
+      field: 'total_amount_quantity_input',
+      valueGetter: p => Number(this._sharedComponentService.getTotalAmountQuantityInput(p.data?.details || [])) || 0,
+      valueFormatter: this.num2,
+      hide: !this.isShowTotalInput,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'إجمالي الإخراج',
+      field: 'total_amount_quantity_output',
+      valueGetter: p => Number(this._sharedComponentService.getTotalOutputQuantity(p.data?.details || [])) || 0,
+      valueFormatter: this.num2,
+      hide: !this.iShowTotalOutput,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'الرصيد',
+      field: 'current_quantity',
+      valueGetter: p => Number(this.getCurrentQuantity(p.data)) || 0,
+      valueFormatter: this.num2,
+      hide: !this.iShowTotalBalance,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'رصيد القابل للتشكيل',
+      field: 'current_quantity_with_form',
+      valueGetter: p => Number((p.data?.current_quantity >= 0) ? p.data.current_quantity : 0) || 0,
+      valueFormatter: this.num2,
+      hide: !this.iShowTotalBalanceWithForm,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'المشكل',
+      field: 'diff_current_quantity_with_form',
+      valueGetter: p =>
+        Number(this._sharedComponentService.getTotalQuantityWithCondition(
+          p.data?.details || [],
+          "form_current_quantity",
+          "type_of_requisition",
+          "اذن تشكيل"
+        )) || 0,
+      valueFormatter: this.num2,
+      hide: !this.iShowTotalBalanceForm,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'المشكل نزل المصبغة',
+      field: 'form_prepare_dyeing_current_quantity',
+      valueGetter: p =>
+        Number(this._sharedComponentService.getTotalQuantityWithCondition(
+          p.data?.details || [],
+          "form_prepare_dyeing_current_quantity",
+          "type_of_requisition",
+          "اذن تشكيل"
+        )) || 0,
+      valueFormatter: this.num2,
+      hide: !this.iShowTotalBalanceFormPreparedDyeing,
+      type: 'numericColumn',
+    },
+
+    // ✅ أعمدة نصية multi-line من details مثل جدول داخل خلية
+    {
+  headerName: 'اللون',
+  colId: 'color_name',
+  field: 'color_name',
+  hide: !this.iShowTotalBalanceFormPreparedDyeing,
+  excludeFromFooter: true,
+  autoHeight: true,
+
+  valueGetter: (p: any) => this.getColorList(p.data),
+  cellRenderer: (p: any) => (p.value || []).join('<br/>'),
+
+  filter: 'agSetColumnFilter',
+  filterParams: {
+    excelMode: 'windows',
+    values: (params: any) => {
+      const set = new Set<string>();
+      params.api.forEachNode((node: any) => {
+        this.getColorList(node.data).forEach((x: string) => set.add(x));
+      });
+      params.success(Array.from(set));
+    },
+    keyCreator: (p: any) => String(p.value),
+  },
+},
+
+    {
+  headerName: 'امر الشغل',
+  colId: 'work_order_number',
+  field: 'work_order_number',
+  hide: !this.iShowTotalBalanceFormPreparedDyeing,
+  excludeFromFooter: true,
+  autoHeight: true,
+
+  // ✅ القيمة الحقيقية للعمود: Array (كل بند لوحده)
+  valueGetter: (p: any) => this.getWorkOrderList(p.data),
+
+  // ✅ العرض فقط (متعدد الأسطر)
+  cellRenderer: (p: any) => (p.value || []).join('<br/>'),
+
+  // ✅ فلتر Set
+  filter: 'agSetColumnFilter',
+  filterParams: {
+    excelMode: 'windows',
+
+    // ✅ أهم شي: قيم الفلتر تكون مفصّلة (مش مجمّعة)
+    values: (params: any) => {
+      const set = new Set<string>();
+      params.api.forEachNode((node: any) => {
+        this.getWorkOrderList(node.data).forEach((x: string) => set.add(x));
+      });
+      params.success(Array.from(set));
+    },
+
+    // حتى ما يصير في مشاكل تحويل
+    keyCreator: (p: any) => String(p.value),
+  },
+    },
+
+    {
+      headerName: 'قيمة المدخلات',
+      field: 'total_amount_input',
+      valueGetter: p => Number(this._sharedComponentService.getInputAmount(p.data?.details || [])) || 0,
+      valueFormatter: this.num2,
+      hide: !this.isShowTotalAmountInput,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'قيمة المخرجات',
+      field: 'total_amount_output',
+      valueGetter: p => Number(this._sharedComponentService.getOutputAmount(p.data?.details || [])) || 0,
+      valueFormatter: this.num2,
+      hide: !this.iShowTotalAmountOutput,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'قيمة الصنف',
+      field: 'item_amount',
+      valueGetter: p => Number(this._sharedComponentService.getItemAmount(p.data?.details || [])) || 0,
+      valueFormatter: this.num2,
+      hide: !this.iShowItemValue,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'وسطي السعر',
+      field: 'avg_price',
+      valueGetter: p => Number(this._sharedComponentService.getAvgPrice(p.data?.details || [])) || 0,
+      valueFormatter: this.num2,
+      hide: !this.isShowAvgPrice,
+      excludeFromFooter: true,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'وسطي سعر المدخلات',
+      field: 'avg_inputes',
+      valueGetter: p => Number(this.getAvgInputesPrice(p.data)) || 0,
+      valueFormatter: this.num2,
+      hide: !this.isShowAvgInputes,
+      excludeFromFooter: true,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'وسطي الهالك',
+      field: 'avg_wast',
+      valueGetter: p => Number(this._sharedComponentService.getAvgWast(p.data?.details || [], 'quantity', 'dyeing_quantity')) || 0,
+      valueFormatter: (p: any) => `${this.num2(p)}%`,
+      hide: !this.isShowAvgWast,
+      excludeFromFooter: true,
+      type: 'numericColumn',
+    },
+    { headerName: 'آخر سعر', field: 'latest_price', valueFormatter: this.num2, hide: !this.isShowLatestPrice, excludeFromFooter: true, type: 'numericColumn' },
+    { headerName: 'آخر سعر دولار', field: 'latest_price_dollar', valueFormatter: this.num2, hide: !this.isShowLatestPriceDollar, excludeFromFooter: true, type: 'numericColumn' },
+
+    // ✅ رابط التفاصيل
+    {
+      headerName: 'حركة المادة',
+      field: 'details_link',
+      excludeFromFooter: true,
+      filter: false,
+      sortable: false,
+      cellRenderer: (p: any) => {
+        const link = document.createElement('a');
+        link.innerHTML = `<i class="fas fa-angle-double-right update-symbol"></i>`;
+        link.style.cursor = 'pointer';
+        link.style.color = '#007bff';
+
+        link.addEventListener('click', (event: any) => {
+          const queryParams = new URLSearchParams({
+            id: p.data.fabric_id,
+            code: p.data.fabric_code,
+            name: p.data.fabric_name,
+            dyerId: p.data.dyeing_id,
+            dyerName: p.data.dyeing_name,
+            consigmentDyeingId: p.data.consigment_dyeing_id,
+            consigmentNumber: p.data.consigment_dyeing_number,
+            fabricOrderId: p.data.wc_fabric_order_requisition_id
+          }).toString();
+
+          const currentUrl = window.location.origin + window.location.pathname;
+          const fullUrl = `${currentUrl}/details?${queryParams}`;
+
+          if (event.ctrlKey || event.button === 1) window.open(fullUrl, '_blank');
+          else window.location.href = fullUrl;
+        });
+
+        return link;
+      }
+    }
+  ].reverse();
+
+  totalFooterValues = {}
 
   constructor(
     public _sharedComponentService: SharedComponentService,
-    // private _yarnService: YarnService,
     private _reportWdService: ReportWdService,
-    public _exportDataService: ExportDataService,
-    private primengConfig: PrimeNGConfig,
-    private filterService: FilterService,
-    
+    public _exportDataService: ExportDataService
   ) {
-    this._sharedComponentService.angularMaterialTableConfig()
+    this._sharedComponentService.angularMaterialTableConfig();
   }
 
   ngOnInit(): void {
     this.getData();
-    this.customFilterForDyers();
-    this.customFilterForName();
-    this.customFilterForCode();
-    this.customFilterForDyeingCode();
-    this.customFilterForConsigmentNumber();
-    this.customFilterForFabricOrder();  
   }
 
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+  }
+
+  // ✅ جلب داتا مثل PrimeNG
   getData() {
     this.loading = true;
-    this._reportWdService.selectInverntoryDetails({isShowClosedBalances: this.isShowClosedBalances, startDate:undefined, endDate:undefined}).subscribe((response: any) => {
-      this.fabrics = response
-
-      // PrimeNG Table
-      this.primengConfig.ripple = true;
+    this._reportWdService.selectInverntoryDetails({
+      isShowClosedBalances: this.isShowClosedBalances,
+      startDate: undefined,
+      endDate: undefined
+    }).subscribe((res: any) => {
+      this.fabrics = res || [];
       this.loading = false;
-    })
+
+      // لو grid جاهز
+      if (this.gridApi) {
+        this.gridApi.setRowData(this.fabrics);
+        requestAnimationFrame(() => this.updateFooter());
+      }
+    });
   }
 
   filterByDate() {
     this.loading = true;
-    this._reportWdService.selectInverntoryDetails({isShowClosedBalances: this.isShowClosedBalances, startDate:this.startDate, endDate:this.endDate}).subscribe((response: any) => {
-      this.fabrics = response
-
-      // PrimeNG Table
-      this.primengConfig.ripple = true;
+    this._reportWdService.selectInverntoryDetails({
+      isShowClosedBalances: this.isShowClosedBalances,
+      startDate: this.startDate,
+      endDate: this.endDate
+    }).subscribe((res: any) => {
+      this.fabrics = res || [];
       this.loading = false;
-    })
+
+      if (this.gridApi) {
+        this.gridApi.setRowData(this.fabrics);
+        requestAnimationFrame(() => this.updateFooter());
+      }
+    });
   }
 
   getClosedBalances() {
-    this.loading = true;
-    this._reportWdService.selectInverntoryDetails({isShowClosedBalances: this.isShowClosedBalances, startDate:undefined, endDate:undefined}).subscribe((response: any) => {
-      this.fabrics = response
-      
-      // PrimeNG Table
-      this.primengConfig.ripple = true;
-      this.loading = false;
-    })
+    // نفس getData بس يعتمد على isShowClosedBalances
+    this.getData();
   }
 
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForDyers() {
-    const customFilterName = "dyers-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedDyers
-      
-      if (this.selectedDyers[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+  // ✅ زر clear مثل PrimeNG clear(dt1)
+clearAll() {
+  if (!this.gridApi || !this.gridColumnApi) return;
 
-          // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].dyeing_name ) {
-                // count++
-                // if (count == filter.length) {
-                  return true;
-                // }
-              }
-            }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
+  // clear filters
+  this.gridApi.setFilterModel(null);
+  this.gridApi.onFilterChanged();
+
+  // ✅ clear sorting (AG Grid v31+)
+  this.gridColumnApi.applyColumnState({
+    defaultState: { sort: null, sortIndex: null }
+  });
+
+  this.updateFooter();
+}
+
+
+  // ✅ إظهار/إخفاء أعمدة بحسب checkboxes
+  applyColumnVisibility() {
+    if (!this.gridColumnApi) return;
+
+    const set = (colId: string, v: boolean) => this.gridColumnApi.setColumnVisible(colId, v);
+
+    set('total_amount_quantity_input', this.isShowTotalInput);
+    set('total_amount_quantity_output', this.iShowTotalOutput);
+    set('current_quantity', this.iShowTotalBalance);
+    set('current_quantity_with_form', this.iShowTotalBalanceWithForm);
+    set('diff_current_quantity_with_form', this.iShowTotalBalanceForm);
+    set('form_prepare_dyeing_current_quantity', this.iShowTotalBalanceFormPreparedDyeing);
+    set('color_name', this.iShowTotalBalanceFormPreparedDyeing);
+    set('work_order_number', this.iShowTotalBalanceFormPreparedDyeing);
+
+    set('total_amount_input', this.isShowTotalAmountInput);
+    set('total_amount_output', this.iShowTotalAmountOutput);
+    set('item_amount', this.iShowItemValue);
+    set('avg_price', this.isShowAvgPrice);
+    set('avg_inputes', this.isShowAvgInputes);
+    set('avg_wast', this.isShowAvgWast);
+    set('latest_price', this.isShowLatestPrice);
+    set('latest_price_dollar', this.isShowLatestPriceDollar);
+
+    this.updateFooter();
   }
 
-  customFilterForName() {
-    const customFilterName = "fabric-name-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedNames
-      
-      if (this.selectedNames[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].fabric_name ) {
-                // count++
-                // if (count == filter.length) {
-                  return true;
-                // }
-              }
-            }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
+  onModelUpdated() {
+    this.updateFooter();
   }
 
-  customFilterForCode() {
-    const customFilterName = "fabric-code-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedCodes
-      
-      if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+  // ✅ pinned footer مثل اللي بعتته إنت
 
-          // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].fabric_code ) {
-                // count++
-                // if (count == filter.length) {
-                  return true;
-                // }
-              }
+  updateFooter() {
+    if (!this.gridApi) return;
+
+    requestAnimationFrame(() => {
+      const summary: any = {};
+      const columns = (this.gridApi.getColumnDefs() || []).filter((c: any) => 'field' in c);
+
+      // 🧹 تفريغ القيم القديمة
+      this.totalFooterValues = {};
+
+      this.gridApi.forEachNodeAfterFilterAndSort((node) => {
+        if (!node.data) return;
+
+        columns.forEach((col: any) => {
+          const field = col.field;
+          if (!field) return;
+
+          // تجاهل الأعمدة غير الرقمية
+          if (col.excludeFromFooter) return;
+
+          let val = 0;
+
+          // 🔹 لو عنده valueGetter
+          if (typeof col.valueGetter === 'function') {
+            try {
+              const params = {
+                data: node.data,
+                node,
+                colDef: col,
+                api: this.gridApi,
+                columnApi: this.gridColumnApi,
+              };
+              val = Number(col.valueGetter(params)) || 0;
+            } catch {
+              val = 0;
             }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-  
-  customFilterForDyeingCode() {
-    const customFilterName = "dyeing-code-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedDyeingCodes
-      
-      if (this.selectedDyeingCodes[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].fabric_dyeing_code ) {
-                // count++
-                // if (count == filter.length) {
-                  return true;
-                // }
-              }
-            }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForConsigmentNumber() {
-    const customFilterName = "consigment-number-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedConsigmentNumber
-
-      if (this.selectedConsigmentNumber[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].consigment_dyeing_number) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
+          } else if (node.data[field] != null) {
+            val = Number(String(node.data[field]).replace(/[^\d.-]/g, '')) || 0;
           }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
 
-  customFilterForFabricOrder() {
-    const customFilterName = "fabric-order-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedFabricOrder
+          if (!this.totalFooterValues[field]) {
+            this.totalFooterValues[field] = 0;
+          }
 
-      if (this.selectedFabricOrder[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+          this.totalFooterValues[field] += val;
+        });
+      });
 
-          // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].wc_fabric_order_requisition_name ) {
-                // count++
-                // if (count == filter.length) {
-                  return true;
-                // }
+      // 🔢 صياغة الأرقام بالفوتر
+      columns
+        .filter(col => col['type'] === 'numericColumn' && !col['excludeFromFooter'])
+        .forEach((col: any) => {
+          const field = col.field;
+          if (!field) return;
+
+          if (col.type === 'numericColumn' && !col.excludeFromFooter) {
+            // console.log("field :::::::::: ", field);
+
+            summary[field] = Number(this.totalFooterValues[field] || 0).toLocaleString(
+              'en-US',
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
               }
+            );
+          } else {
+            summary[field] = '';
+          }
+          // console.log("summary[field] :::: ", summary[field]);
+
+          // أولاً: انتظر شوي لتتأكد أن الجدول رسم حاله
+          setTimeout(() => {
+            // اختار خلية الـ footer (pinned bottom row)
+            const inputQuantityFooterCell = document.querySelector(`.ag-floating-bottom-viewport .ag-cell-value[col-id="${field}"]`);
+
+            if (inputQuantityFooterCell) {
+
+              (inputQuantityFooterCell as HTMLElement).innerText = summary[field]; // 👈 الرقم اللي بدك تحطه
             }
-          // }
-        }
-        return false;
+
+          }, 500);
+
+        });
+
+
+
+      // 🏷️ ضع كلمة "الإجمالي" في أول عمود نصي
+      const firstTextCol = columns.find(
+        (c: any) => !c.type || c.type !== 'numericColumn'
+      );
+      if (firstTextCol && firstTextCol['field']) {
+        summary[firstTextCol['field']] = 'الإجمالي';
       }
-      else {
-        return true;
-      }
+
+
+
+      //     console.log('📊 Final footer summary:', summary);
+      this.pinnedBottomRowData = [summary];
+      this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
+      // console.log('✅ pinned row set in grid:', this.gridApi.getPinnedBottomRowCount());
+      this.gridApi.refreshCells({ force: true });
+
+
     });
   }
 
-  clear(table: Table) {
-    table.clear();
-    table.reset();
-    // this.getData();
-    this.startDate = null
-    this.endDate = null
-    this.selectedDyers = []
-    this.selectedNames = []
-    this.selectedCodes = []
-    this.selectedDyeingCodes = []
-    this.selectedConsigmentNumber = []
-    this.selectedFabricOrder = []
-  }
 
-  onMultiselectedDyers(event) {
-    this.selectedDyers = event
-    this.dt1?._filter()
-  }
+private uniq(arr: any[]) {
+  return Array.from(new Set(arr.filter(x => x != null && String(x).trim() !== '')));
+}
 
-  onMultiselectedNames(event) {
-    this.selectedNames = event
-    this.dt1?._filter()
-  }
+getColorList(row: any): string[] {
+  const details = Array.isArray(row?.details) ? row.details : [];
+  return this.uniq(details.map((d: any) => d?.color_name));
+}
 
-  onMultiselectedCodes(event) {
-    this.selectedCodes = event
-    this.dt1?._filter()
-  }
+getWorkOrderList(row: any): string[] {
+  const details = Array.isArray(row?.details) ? row.details : [];
+  return this.uniq(details.map((d: any) => d?.work_order_number));
+}
 
-  onMultiselectedDyeingCodes(event) {
-    this.selectedDyeingCodes = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedConsigmentNumber(event) {
-    this.selectedConsigmentNumber = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedFabricOrder(event) {
-    this.selectedFabricOrder = event
-    this.dt1?._filter()
-  }
-  
-  notZero(n) {
-    n = +n;  // Coerce to number.
-    if (!n) {  // Matches +0, -0, NaN
-      n = 1
-    }
+  // ====== دوالك كما هي ======
+  notZero(n: any) {
+    n = +n;
+    if (!n) n = 1;
     return n;
   }
 
-  getTotalTotalAmountQuantityInput() {
-    let sum = 0;
-    let data:any[] = this.dt1?.filteredValue == null ? this.fabrics:  this.dt1?.filteredValue
-    data.forEach(yarn => {
-      sum = sum + this._sharedComponentService.getTotalAmountQuantityInput(yarn.details)
-    });
-    return sum
-  }
+  getCurrentQuantity(data: any) {
+    if (!data) return 0;
+    let current = (data.current_quantity >= 0) ? data.current_quantity : 0;
+    let hasDyeingRequesition = false;
 
-  getTotalTotalAmountQuantityOutput() {
-    let sum = 0;
-    let data:any[] = this.dt1?.filteredValue == null ? this.fabrics:  this.dt1?.filteredValue
-    data.forEach(yarn => {
-      sum = sum + this._sharedComponentService.getTotalOutputQuantity(yarn.details)
-    });
-    return sum
-  }
-
-  getCurrentQuantity(data) {
-    let current = (data.current_quantity >= 0) ? data.current_quantity : 0
-    let hasDyeingRequesition = false
-    for (let index = 0; index < data.details.length; index++) {
-      const element = data.details[index];
-      if(element.type_of_requisition == 'اذن تشكيل') {
-        hasDyeingRequesition = true
-        current = current + parseFloat(element.form_quantity)
-      }
-      // else if (element.type_of_requisition == 'اذن صباغة' || 
-      // element.type_of_requisition == 'اذن نقل من مصبغة') {
-        else if (element.type_of_requisition == 'اذن صباغة') {
-        hasDyeingRequesition = true        
-        current = current - parseFloat(element.quantity)
+    for (let i = 0; i < (data.details?.length || 0); i++) {
+      const el = data.details[i];
+      if (el.type_of_requisition === 'اذن تشكيل') {
+        hasDyeingRequesition = true;
+        current = current + parseFloat(el.form_quantity);
+      } else if (el.type_of_requisition === 'اذن صباغة') {
+        hasDyeingRequesition = true;
+        current = current - parseFloat(el.quantity);
       }
     }
-    if(!hasDyeingRequesition) {
-      current = parseFloat((data.current_quantity >= 0) ? data.current_quantity : 0)
-    }
-    return current
+
+    if (!hasDyeingRequesition) current = parseFloat((data.current_quantity >= 0) ? data.current_quantity : 0);
+    return current;
   }
 
-  getTotalCurrentQuantity() {
-    let sum = 0.0;
-    let data:any[] = this.dt1?.filteredValue == null ? this.fabrics:  this.dt1?.filteredValue
-    data.forEach(fabric => {
-      sum = sum + this.getCurrentQuantity(fabric)
-    });
-    return sum
+  getTotalInputesPrice(fabrics: any) {
+    return fabrics?.details?.map((a: any) => (a.input_output == '1') ? parseFloat(a['price']) : 0)
+      .reduce((acc: number, value: number) => acc + value, 0) || 0;
   }
 
-  getTotalCurrentQuantityWithForm() {
-    let sum = 0.0;
-    let data:any[] = this.dt1?.filteredValue == null ? this.fabrics:  this.dt1?.filteredValue
-    data.forEach(fabric => {
-      sum = sum + ((fabric.current_quantity >= 0) ? fabric.current_quantity : 0)
-    });
-    return sum
+  getAvgInputesPrice(fabrics: any) {
+    return this._sharedComponentService.getInputAmount(fabrics?.details || []) /
+      this.notZero(this._sharedComponentService.getTotalAmountQuantityInput(fabrics?.details || []));
   }
 
-  getTotalTotalTransportBetweenQuantity() {
-    let sum = 0.0;
-    let data:any[] = this.dt1?.filteredValue == null ? this.fabrics:  this.dt1?.filteredValue
-    data.forEach(fabric => {
-      sum = sum + this.getTotalTransportBetweenQuantity(fabric)
-    });
-    return sum
-  }
-
-  getTotalFormQuantity() {
-    return (this.getTotalCurrentQuantity() + this.getTotalTotalTransportBetweenQuantity()) - this.getTotalCurrentQuantityWithForm()
-  }
-
-  getTotalFormCurrentQuantity(data) {
-    return data.details?.map(function (a) { return (parseFloat(a.form_current_quantity)) }).reduce((acc, value) => acc + value, 0.0);
-  }
-
-  getTotalQuantity(fabrics) {
-    return fabrics.details?.map(function (a) { return (a.input_output == '0' && a.type_of_requisition == 'اذن صباغة') ? (parseFloat(a['quantity'])) : 0.0 }).reduce((acc, value) => acc + value, 0.0);
-  }
-
-  getTotalTransportBetweenQuantity(fabrics) {
-    return fabrics?.details.map(function (a) { return (a.input_output == '1' && a.type_of_requisition == 'اذن نقل الى مصبغة') ? (parseFloat(a['quantity']) - parseFloat(a['current_quantity'])) : 0.0 }).reduce((acc, value) => acc + value, 0.0);
-  }
-
-  getTotalItemAmount() {
-    let sum = 0.0;
-    let data:any[] = this.dt1?.filteredValue == null ? this.fabrics:  this.dt1?.filteredValue
-    data.forEach(yarn => {
-      sum = sum + this._sharedComponentService.getItemAmount(yarn.details)
-    });
-    return sum
-  }
-
-  getTotalAvgPrice() {
-    let sum = 0.0;
-    let data:any[] = this.dt1?.filteredValue == null ? this.fabrics:  this.dt1?.filteredValue
-    data.forEach(yarn => {
-      sum = sum + this._sharedComponentService.getAvgPrice(yarn.details)
-    });
-    return sum
-  }
-
-
-  getTotalInputesPrice(fabrics){
-    return fabrics?.details?.map(function (a) { return (a.input_output == '1') ? (parseFloat(a['price'])) : 0 }).reduce((acc, value) => acc + value, 0);
-  }
-
-  getAvgInputesPrice(fabrics){
-    return this._sharedComponentService.getInputAmount(fabrics.details) / this.notZero(this._sharedComponentService.getTotalAmountQuantityInput(fabrics.details))
-  }
-  ///////////////////// ----------- End Search Tabel ----------- /////////////////////
-
-  transferData(data) {
-    this._sharedComponentService.setData(data)
+  // ✅ formatter موحد
+  num2(params: any) {
+    const v = (params && params.value != null) ? Number(params.value) : 0;
+    return (Number.isFinite(v) ? v : 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 }

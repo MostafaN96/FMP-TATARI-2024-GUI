@@ -219,7 +219,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       workOrderNumber: new FormControl(
         // this.maxWorkOrderNumberResult
         data.work_order_number_details
-        , [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
+        , [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
       storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       note1: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
       note2: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),

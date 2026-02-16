@@ -64,11 +64,14 @@ rowData: any[] = [];   // = fabrics
     {
   headerName: 'الطلبية',
   field: 'orders',
-  cellRenderer: (params) => {        
-    if (!Array.isArray(params.data.details[0].orders)) return '';    
+  cellRenderer: (params) => {
+    const orders = params?.data?.details?.[0]?.orders;
+
+    if (!Array.isArray(orders) || orders.length === 0) return '';
+
     return `
       <div style="line-height: 1.6">
-        ${params.data.details[0].orders.map(v => `<div>${v['order_name']}</div>`).join('')}
+        ${orders.map(v => `<div>${v?.order_name ?? ''}</div>`).join('')}
       </div>
     `;
   },

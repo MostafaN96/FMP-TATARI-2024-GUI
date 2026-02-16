@@ -200,7 +200,7 @@ this.route.queryParams.subscribe(params => {
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      workOrderNumber: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
+      workOrderNumber: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),

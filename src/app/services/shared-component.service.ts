@@ -60,11 +60,11 @@ export class SharedComponentService {
   // AG Grid Table
   public gridStyle = {
     width: '100%',
-    height: '500px',
+    height: 'calc(100vh - 220px)',
     enableRtl: true,
     // direction: 'rtl',      // ✅ أهم نقطة
     textAlign: 'right',    // ✅ محاذاة النصوص
-  overflow: 'auto',
+  // overflow: 'auto',
   };
   public localeText: {
     [key: string]: string;
@@ -813,6 +813,14 @@ setTimeout(() => {
     return parseFloat((egp / dollarPrice).toFixed(3))
   }
 
+  // ================= Helpers =================
+  setFilterParams(): any {
+    return {
+      excelMode: 'windows',
+      suppressMiniFilter: false,
+    };
+  }
+  
   
   format2(params: any): string {
     const v = Number(params?.value ?? 0);
@@ -829,6 +837,23 @@ setTimeout(() => {
     } catch {
       return String(value);
     }
+  }
+
+  dateFilterParams(): any {
+    return {
+      comparator: (filterDate: Date, cellValue: any) => {
+        if (!cellValue) return -1;
+        const cell = moment(cellValue).startOf('day').toDate();
+        const filter = moment(filterDate).startOf('day').toDate();
+        if (cell < filter) return -1;
+        if (cell > filter) return 1;
+        return 0;
+      }
+    };
+  }
+
+  formatDate(v: any): string {
+    return v ? moment(v).format('dddd, D/M/YYYY') : '';
   }
   
 }

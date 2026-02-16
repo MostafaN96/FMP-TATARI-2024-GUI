@@ -167,7 +167,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
       numberFabricPieces: new FormControl('', [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
       fabricWidth: new FormControl(data.fabric_width, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       fabricQuantityM2: new FormControl(data.fabric_quantity_m2, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
-      workOrderNumber: new FormControl(data.work_order_number_details, [Validators.required, Validators.pattern(this.patterns.validator_pattern.number)]),
+      workOrderNumber: new FormControl(data.work_order_number_details, [Validators.required, Validators.pattern(this.patterns.validator_pattern.shortText)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
   }

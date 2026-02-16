@@ -206,7 +206,8 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
   public defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
-    // ⬅️ كان 160 أو 200    resizable: true,
+    // ⬅️ كان 160 أو 200    
+    resizable: true,
     sortable: true,
     filter: 'agSetColumnFilter',
     filterParams: {

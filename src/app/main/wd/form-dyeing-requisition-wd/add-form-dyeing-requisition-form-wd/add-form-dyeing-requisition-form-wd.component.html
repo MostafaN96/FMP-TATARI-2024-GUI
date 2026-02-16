@@ -223,7 +223,7 @@
                                                 <mat-label>أمر الشغل</mat-label>
                                                 <input [disabled]="true" type="text" matInput formControlName="workOrderNumberDetails"
                                                     placeholder="مثال: 10214" [errorStateMatcher]="matcher"
-                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
+                                                    oninput="this.value = this.value.replace(/[^0-9a-zA-Z\u0600-\u06FF-]/g, '');" />
                                                 <mat-error *ngIf="row.get('workOrderNumberDetails').hasError('required') && (row.get('workOrderNumberDetails').dirty 
                                                     || row.get('workOrderNumberDetails').touched)">
                                                     <label [innerHTML]="_sharedComponentService.required_field">

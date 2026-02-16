@@ -131,10 +131,21 @@
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
 
+                                <!-- from_consigment_manufacturing_number Column -->
+                                <ng-container matColumnDef="from_consigment_manufacturing_number">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>من رقم الرسالة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.from_consigment_manufacturing_number }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
                                 <!-- consigment_manufacturing_number Column -->
                                 <ng-container matColumnDef="consigment_manufacturing_number">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>رقم الرسالة</b>
+                                        <b>الى رقم الرسالة</b>
                                     </th>
                                     <td mat-cell *matCellDef="let element">
                                         {{ element.consigment_manufacturing_number }}

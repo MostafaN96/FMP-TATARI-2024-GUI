@@ -204,9 +204,9 @@ export class ItemHostoryByDyedFabricTotalWeComponent implements OnInit {
   
           link.addEventListener('click', (event) => {
             const queryParams = new URLSearchParams({
-              id: element.dyed_fabric_id, 
-              code: element.dyed_fabric_code, 
-              name: element.dyed_fabric_name
+              id: element.data.dyed_fabric_id, 
+              code: element.data.dyed_fabric_code, 
+              name: element.data.dyed_fabric_name
             }).toString();
   
             const currentUrl = window.location.origin + window.location.pathname;

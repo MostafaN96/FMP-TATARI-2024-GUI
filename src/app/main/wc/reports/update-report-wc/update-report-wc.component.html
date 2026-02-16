@@ -1,0 +1,94 @@
+<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Title Page Section -->
+    <div *ngIf="showHeader" [class]="_sharedComponentService.titlePageClass">
+        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+            <h2 [class]="_sharedComponentService.TitleTextClass">تعديل مكان التخزين</h2>
+        </div>
+    </div>
+
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+            <div *ngIf="showHeader" class="row row-cols-3">
+                <div id="table-header-data" class="col">
+                    <table class="table table-style">
+                        <tbody>
+                            <tr>
+                                <th>المخزن:</th>
+                                <td>{{warehouseName}}</td>
+                            </tr>
+                            <tr>
+                                <th>كود المادة:</th>
+                                <td>{{fabricCode}}</td>
+                            </tr>
+                            <tr>
+                                <th>اسم المادة:</th>
+                                <td>{{fabricName}}</td>
+                            </tr>
+                            <tr>
+                                <th>رقم الرسالة:</th>
+                                <td>{{consigmentNumber}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div *ngIf="showGrid" class="col-lg-9">
+                    <div [class]="_sharedComponentService.gridForm2Class">
+                        <div class="col">
+                            <div [class]="_sharedComponentService.tableSectionClass">
+                                <div id="table-header-data-report" dir="rtl" class="ag-theme-alpine ag-rtl">
+                                    <ag-grid-angular
+                                        #agGrid
+                                        id="updateReportWcGrid"
+                                        class="ag-theme-alpine ag-rtl ag-compact"
+                                        [ngStyle]="_sharedComponentService.gridStyle"
+                                        [gridOptions]="gridOptions"
+                                        [columnDefs]="columnDefs"
+                                        [defaultColDef]="defaultColDef"
+                                        [rowData]="reportByFabricWcDetails"
+                                        [localeText]="_sharedComponentService.localeText"
+                                        [loadingCellRenderer]="loadingCellRenderer"
+                                        [loadingCellRendererParams]="loadingCellRendererParams"
+                                        (gridReady)="onGridReady($event)">
+                                    </ag-grid-angular>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div [class.col-lg-3]="showGrid" [class.col-lg-12]="!showGrid">
+                    <div class="update-panel">
+                        <div class="mb-2">عدد السطور المختارة: {{selectedWcIds.length}}</div>
+                        <form [formGroup]="updateForm" (ngSubmit)="onUpdate()">
+                            <mat-form-field appearance="outline" class="example-full-width w-100">
+                                <mat-label>مكان التخزين</mat-label>
+                                <input type="text" matInput formControlName="storagePlace" placeholder="مثال: S-1"
+                                    [errorStateMatcher]="matcher" />
+                                <mat-error *ngIf="updateForm.controls['storagePlace'].hasError('required') && (updateForm.controls['storagePlace'].dirty
+                                        || updateForm.controls['storagePlace'].touched)">
+                                    <label [innerHTML]="_sharedComponentService.required_field"></label>
+                                </mat-error>
+                                <mat-error *ngIf="updateForm.controls['storagePlace'].hasError('pattern')">
+                                    <label [innerHTML]="_sharedComponentService.invalid_message"></label>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <div [class]="_sharedComponentService.btnSectionClass">
+                                <div class="row row-cols-auto">
+                                    <div class="col">
+                                        <button type="submit" class="btn-style submit-btn" [disabled]="selectedWcIds.length === 0">
+                                            تعديل
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

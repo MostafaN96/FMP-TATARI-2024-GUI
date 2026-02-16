@@ -7,3 +7,52 @@ td table tfoot tr {
     color: var(--primary-color-3) !important;
     background-color: var(--primary-color-1) !important;
 }
+
+.details-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.details-table th,
+.details-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.details-table .col-warehouse {
+    width: 10%;
+}
+
+.details-table .col-from-order {
+    width: 20%;
+}
+
+.details-table .col-to-order {
+    width: 20%;
+}
+
+.details-table .col-fabric {
+    width: 24%;
+}
+
+.details-table .col-from-msg {
+    width: 10%;
+}
+
+.details-table .col-to-msg {
+    width: 10%;
+}
+
+.details-table .col-qty {
+    width: 4%;
+}
+
+.details-table .col-pieces {
+    width: 4%;
+}
+
+.details-table .col-document {
+    width: 5%;
+}

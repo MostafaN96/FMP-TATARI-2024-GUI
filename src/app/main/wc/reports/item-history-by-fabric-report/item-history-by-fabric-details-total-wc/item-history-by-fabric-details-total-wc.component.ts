@@ -1,7 +1,14 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 // grid angular Table
-import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef } from 'ag-grid-community';
+import { 
+  ColDef, 
+  ColGroupDef, 
+  GridApi, 
+  GridOptions, 
+  GridReadyEvent, 
+  SideBarDef 
+} from 'ag-grid-community';
 import { CustomLoadingCellRendererComponent } from 'src/app/general-pages/custom-loading-cell-renderer/custom-loading-cell-renderer.component';
 
 // Shared Service
@@ -29,9 +36,11 @@ export class ItemHistoryByFabricDetailsTotalWcComponent implements OnInit {
   fabricCode: string | undefined
   fabricName: string | undefined
 
+
   //////////////////////////////////// Grid Angular /////////////////////////////////
   @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
   gridApi!: GridApi;
+
   public columnDefs: ColDef[] = [
 
     // التسلسل
@@ -141,6 +150,17 @@ export class ItemHistoryByFabricDetailsTotalWcComponent implements OnInit {
       valueFormatter: this._sharedComponentService.format2.bind(this),
       filter: false,
     },
+
+    {
+      headerName: 'الطلبية',
+      field: 'order_name',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+      excludeFromFooter: true,
+      wrapText: true,        // ✅ لفّ النص
+      autoHeight: true,      // ✅ ارتفاع الصف يتعدل 
+    },
+
     { headerName: 'المخزن', field: 'warehouse_name', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
     { headerName: 'رقم الرسالة', field: 'consigment_manufacturing_number', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true, 
       wrapText: true,        // ✅ لفّ النص
@@ -196,6 +216,10 @@ export class ItemHistoryByFabricDetailsTotalWcComponent implements OnInit {
       headerName: 'الجهة', field: 'side_of', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true, wrapText: true,        // ✅ لفّ النص
       autoHeight: true,      // ✅ ارتفاع الصف يتعدل 
     },
+    {
+      headerName: 'حالة الجودة', field: 'status_name', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true, wrapText: true,        // ✅ لفّ النص
+      autoHeight: true,      // ✅ ارتفاع الصف يتعدل 
+    },
 
     { headerName: 'الوثيقة', field: 'document', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
 
@@ -231,7 +255,8 @@ export class ItemHistoryByFabricDetailsTotalWcComponent implements OnInit {
   public defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
-    // ⬅️ كان 160 أو 200    resizable: true,
+    // ⬅️ كان 160 أو 200    
+    resizable: true,
     sortable: true,
     filter: 'agSetColumnFilter',
     filterParams: {
@@ -523,6 +548,9 @@ export class ItemHistoryByFabricDetailsTotalWcComponent implements OnInit {
     }
     else if (typeOfRequisition == 'اذن نقل بين المخازن') {
       return `/dashboard/show-all-transition-between-wh-requisition-wc/details`
+    }
+    else if (typeOfRequisition == 'اذن نقل بين الطلبيات') {
+      return `/dashboard/show-all-transition-between-orders-requisition-wc/details`
     }
     return
   }

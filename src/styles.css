@@ -876,43 +876,7 @@ p-calendar span button {
     1px 1px 1px 1px rgba(0, 0, 0, 0.12) !important;
 }
 
-/* AG Grid Start */
-/* 🎨 لون الخلفية العام للهيدر */
-.ag-theme-alpine .ag-header {
-  background-color: var(--primary-color-1) !important; /* أزرق جميل */
-  color: white !important;
-}
-
-/* 🔹 تنسيق النص داخل الخلايا */
-.ag-theme-alpine .ag-header-cell-label {
-  color: white !important;
-  font-weight: bold;
-  text-align: center;
-  justify-content: center; /* لتوسيط النص داخل الخلية */
-}
-
-/* 🔹 لون الخط الفاصل بين الأعمدة */
-.ag-theme-alpine .ag-header-cell {
-  border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
-
-/* 🔹 لو بدك أيضاً لون hover للهيدر */
-.ag-theme-alpine .ag-header-cell:hover {
-  background-color: #1565c0 !important;
-  cursor: pointer;
-}
-
-.ag-theme-alpine .ag-pinned-bottom {
-  font-weight: bold;
-  background-color: var(--primary-color-1) !important;
-}
-
-.ag-theme-alpine .ag-floating-bottom .ag-row {
-  font-weight: bold;
-  background-color: var(--primary-color-1) !important;
-  border-top: 2px solid #ccc;
-  color: white !important;
-}
+/* ====================================  AG Grid Start ===================================== */
 
 /* RTL support manually for AG Grid Alpine theme */
 /* دعم RTL يدوي للـ ag-Grid */
@@ -965,8 +929,8 @@ p-calendar span button {
 
   #myGridDetails {
     width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
+    /* height: auto !important; */
+    /* overflow: visible !important; */
   }
 
   /* 🔹 تأكد أن الـ header يتعامل كجدول */
@@ -991,85 +955,194 @@ p-calendar span button {
 }
 
 
-
-/* ✅ خلية التفاصيل: خليه يبلّش من فوق */
-:host ::ng-deep .ag-cell.details-cell,
-:host ::ng-deep .ag-cell.details-cell .ag-cell-wrapper,
-:host ::ng-deep .ag-cell.details-cell .ag-cell-value {
-  display: block !important;
-  white-space: normal !important;
-  line-height: 1.6 !important;
-  padding: 6px 8px !important;
+/* ===== Header ===== */
+.ag-theme-alpine .ag-header {
+  background-color: var(--primary-color-1) !important;
+  color: #fff !important;
 }
 
-/* ✅ جدول التفاصيل داخل الخلية */
-:host ::ng-deep .details-table {
+.ag-theme-alpine .ag-header-cell-label {
+  color: #fff !important;
+  font-weight: 700;
+  text-align: center;
+  justify-content: center;
+}
+
+.ag-theme-alpine .ag-header-cell {
+  border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.ag-theme-alpine .ag-header-cell:hover {
+  background-color: #1565c0 !important;
+  cursor: pointer;
+}
+
+/* ===== Pinned Bottom ===== */
+.ag-theme-alpine .ag-pinned-bottom,
+.ag-theme-alpine .ag-floating-bottom .ag-row {
+  font-weight: 700;
+  background-color: var(--primary-color-1) !important;
+  border-top: 2px solid #ccc;
+  color: #fff !important;
+}
+
+
+:host ::ng-deep .ag-cell.details-cell {
+  --ag-line-height: normal !important;
+  line-height: normal !important;
+}
+
+:host ::ng-deep .ag-cell.details-cell .ag-cell-value,
+:host ::ng-deep .ag-cell.details-cell .ag-cell-wrapper {
+  height: auto !important;
+  overflow: visible !important;
+  display: block !important;
+}
+
+/* .details-host {
+  max-height: none !important;
+} */
+
+.details-host,
+.details-host table,
+.details-host td {
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word;   /* يكسر عند المسافة */
+  line-height: 1.5;
+}
+
+.details-host table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.details-host th,
+.details-host td {
+  padding: 2px 4px;
   font-size: 12px;
-}
-
-/* الهيدر */
-:host ::ng-deep .details-table thead td {
-  font-weight: 700;
-  padding: 6px 6px;
-  border: 1px solid #d0d7de;
-  background: #f3f6fb;
-  text-align: center;
-    background-color: #3f51b5;   /* أزرق */
-  color: #ffffff;              /* أبيض */
-}
-
-/* جسم الجدول */
-:host ::ng-deep .details-table tbody td {
-  padding: 6px 6px;
-  border: 1px solid #d0d7de;
   vertical-align: top;
+
+  /* 👇 هذا السطر هو الحل */
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+
+  /* ❌ امنع القص */
+  overflow: visible !important;
+  text-overflow: clip !important;
 }
 
-/* خطوط صفوف خفيفة للوضوح */
-:host ::ng-deep .details-table tbody tr:nth-child(even) td {
-  background: #fafbfc;
+
+.ag-theme-alpine .details-cell,
+.ag-theme-alpine .details-cell .ag-cell-wrapper,
+.ag-theme-alpine .details-cell .ag-cell-value {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  height: auto !important;
 }
 
-/* الفوتر (الإجمالي) */
-:host ::ng-deep .details-table tfoot td {
-  padding: 6px 6px;
-  border: 1px solid #d0d7de;
-  font-weight: 800;
-  background: #eef4ff;
+.details-host table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
-/* توسيط أرقام الكمية */
-:host ::ng-deep .details-table .qty {
+.details-host td, 
+.details-host th {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+
+  /* كسر سطر محترم */
+  overflow-wrap: break-word;
+  word-break: normal !important;
+}
+
+/* خلية AG نفسها */
+.ag-theme-alpine .details-cell,
+.ag-theme-alpine .details-cell .ag-cell-wrapper,
+.ag-theme-alpine .details-cell .ag-cell-value {
+  overflow: visible !important;
+  white-space: normal !important;
+  height: auto !important;
+}
+
+/* جدول التفاصيل */
+.ag-details .details-host .details-table{
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;   /* مهم مع colgroup */
+  direction: rtl;
+}
+
+.ag-details .details-host .details-table th,
+.ag-details .details-host .details-table td{
+  padding: 2px 4px;
+  font-size: 12px;
+  vertical-align: top;
+
+  /* لفّ النص */
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important; /* يحل النص الطويل */
+}
+
+.ag-details .details-host .details-table .center{
   text-align: center;
-  font-variant-numeric: tabular-nums;
 }
 
-/* 🔹 تصغير ارتفاع الصف */
-.ag-theme-alpine.ag-compact .ag-row {
-  height: 38px !important;   /* الافتراضي ~42 */
-  min-height: 32px !important;
+/* توزيع الأعمدة (عدّل النسب حسب اللي بدك) */
+.ag-details .details-host .details-table col.c-wo    { width: 16%; }
+.ag-details .details-host .details-table col.c-fabric-code{ width: 12%; }
+.ag-details .details-host .details-table col.c-fabric{ width: 34%; }
+.ag-details .details-host .details-table col.c-color { width: 26%; }
+.ag-details .details-host .details-table col.c-qty   { width: 12%; }
+.ag-details .details-host .details-table col.c-chk   { width: 12%; }
+
+.ag-theme-alpine.ag-details  .details-cell .ag-cell-value{
+  overflow: visible !important;
+  white-space: normal !important;
+  height: auto !important;
 }
 
-/* 🔹 تصغير padding الخلايا */
-.ag-theme-alpine.ag-compact .ag-cell {
-  padding: 2px 4px !important;
-  line-height: 1.5 !important;
-  font-size: 14px !important;
+.ag-details .ag-row-position-absolute {
+  position: relative !important;
 }
 
-/* 🔹 تصغير الهيدر */
-.ag-theme-alpine.ag-compact .ag-header-cell,
-.ag-theme-alpine.ag-compact .ag-header-group-cell {
-  padding: 2px 4px !important;
-  font-size: 14px !important;
+/* دعم العربي بشكل صحيح */
+.ag-cell-value {
+  direction: rtl;
+  text-align: right;
+  white-space: normal !important;
+  word-break: break-word !important;
 }
 
+/* .details-host td {
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+} */
 
-/* 🔹 إزالة فراغات إضافية */
-.ag-theme-alpine.ag-compact .ag-root-wrapper {
-  border-width: 1px;
+/* عناصر قائمة set filter */
+.ag-tabs {
+  min-width: 500px;
+}
+
+/* RTL داخل الفلتر */
+.ag-filter-body, .ag-set-filter-list {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ===== RTL tweaks ===== */
+.ag-theme-alpine.ag-rtl .ag-header-cell-text {
+  direction: rtl;
 }
 
 /* AG Grid End */

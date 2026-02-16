@@ -58,7 +58,7 @@
 
                             <ag-grid-angular 
                             #agGrid
-                            class="ag-theme-alpine ag-rtl" 
+                            class="ag-theme-alpine ag-rtl ag-compact" 
                             [ngStyle]="_sharedComponentService.gridStyle"
                                 [loadingCellRenderer]="loadingCellRenderer" 
                                 [loadingCellRendererParams]="loadingCellRendererParams"
@@ -70,6 +70,7 @@
                                 [undoRedoCellEditing]="true"
                                 [enableCellChangeFlash]="true"
                                 [rowData]="fabrics" 
+                                [sideBar]="sideBar"
                                 [localeText]="_sharedComponentService.localeText" 
                                 [pinnedBottomRowData]="pinnedBottomRowData"
                                 (modelUpdated)="onModelUpdated()">

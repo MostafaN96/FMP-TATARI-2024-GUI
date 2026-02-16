@@ -30,11 +30,28 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
   fabricName: string = ""
   consigmentNumber: string = ""
   warehouseName: string = ""
+  reportParams: any = {}
+  selectedWcIds: string[] = []
+  showUpdatePanel = false
 
   //////////////////////////////////// Grid Angular /////////////////////////////////
   @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
     gridApi!: GridApi;
     public columnDefs: ColDef[] = [
+
+      {
+        headerName: '',
+        field: 'select',
+        checkboxSelection: (params: any) => params.data?.input_output == '1',
+        headerCheckboxSelection: true,
+        headerCheckboxSelectionFilteredOnly: true,
+        width: 50,
+        pinned: 'right' as const,
+        sortable: false,
+        filter: false,
+        cellClass: 'text-center',
+        excludeFromFooter: true,
+      },
   
       // التسلسل
       {
@@ -177,7 +194,7 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
         autoHeight: true,      // ✅ ارتفاع الصف يتعدل 
   
       },
-  
+
       {
         headerName: 'نوع الاذن',
         field: 'type_of_requisition',
@@ -193,8 +210,13 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
         headerName: 'الجهة', field: 'side_of', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true, wrapText: true,        // ✅ لفّ النص
         autoHeight: true,      // ✅ ارتفاع الصف يتعدل 
       },
+      {
+      headerName: 'حالة الجودة', field: 'status_name', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true, wrapText: true,        // ✅ لفّ النص
+      autoHeight: true,      // ✅ ارتفاع الصف يتعدل 
+    },
   
       { headerName: 'الوثيقة', field: 'document', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
+      { headerName: 'رقم الاستاند', field: 'storage_place', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
   
   
       // تفاصيل الإذن (أيقونة)
@@ -247,10 +269,17 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
       ensureDomOrder: true,
       suppressHorizontalScroll: false,
       alwaysShowVerticalScroll: false,
+      rowSelection: 'multiple',
+      suppressRowClickSelection: true,
+      rowMultiSelectWithClick: true,
+      isRowSelectable: (node) => node?.data?.input_output == '1',
       onGridReady: (params) => {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
-      }
+      },
+      onSelectionChanged: () => {
+        this.updateSelectedWcIds();
+      },
     };
   
 
@@ -281,6 +310,7 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
     this.gridParams = params;
     this.route.queryParams
       .subscribe(headerParams => {
+        this.reportParams = { ...headerParams };
         this.getData(this.gridParams, headerParams); // أول تحميل يكون العادية
 
       })
@@ -304,6 +334,7 @@ this._reportWcService.selectInventoryDetailsByWarehouseByFabricByConsigmentManuf
 
   applyGridData(params: GridReadyEvent, data: any) {
     this.reportByFabricWcDetails = data;
+    this.selectedWcIds = [];
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridApi.setRowData(this.reportByFabricWcDetails);
@@ -320,6 +351,23 @@ this._reportWcService.selectInventoryDetailsByWarehouseByFabricByConsigmentManuf
   onModelUpdated() {
     this.updateFooter();
     // this.gridApi?.refreshCells({ force: true, columns: ['balance'] });
+  }
+
+  private updateSelectedWcIds() {
+    if (!this.gridApi) return;
+    const selectedNodes = this.gridApi.getSelectedNodes();
+    this.selectedWcIds = selectedNodes
+      .map((node) => node.data?.wc_id ?? node.data?.id)
+      .filter((id) => id != null)
+      .map((id) => String(id));
+
+    if (this.selectedWcIds.length === 0) {
+      this.showUpdatePanel = false;
+    }
+  }
+
+  openUpdatePanel() {
+    this.showUpdatePanel = this.selectedWcIds.length > 0;
   }
 
   updateFooter() {
@@ -528,6 +576,9 @@ this._reportWcService.selectInventoryDetailsByWarehouseByFabricByConsigmentManuf
     }
     else if (typeOfRequisition == 'اذن نقل بين المخازن') {
       return `/dashboard/show-all-transition-between-wh-requisition-wc/details`
+    }
+    else if (typeOfRequisition == 'اذن نقل بين الطلبيات') {
+      return `/dashboard/show-all-transition-between-orders-requisition-wc/details`
     }
     return
   }

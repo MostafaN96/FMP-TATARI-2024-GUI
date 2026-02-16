@@ -135,4 +135,14 @@ export class ReportWcService {
     return this._http.post(url,object);
   }
 
+  updateReportStoragePlace(payload: { wcIds: string[]; storagePlace: string }): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}update-report`;
+    return this._http.put(url, payload,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 }

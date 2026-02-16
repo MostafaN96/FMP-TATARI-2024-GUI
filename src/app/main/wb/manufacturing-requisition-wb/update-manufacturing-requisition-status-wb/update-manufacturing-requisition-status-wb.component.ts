@@ -65,9 +65,9 @@ export class UpdateManufacturingRequisitionStatusWbComponent implements OnInit {
         if (response.msg === "data updated") {
           this._constantsService.successUpdateMessage()
           // this._sharedComponentService.reloadPageWithParams(this.requisitionId);
-          setTimeout(() => {
-            window.location.reload()
-          }, this._constantsService.RELOAD_TIME);
+          // setTimeout(() => {
+          //   window.location.reload()
+          // }, this._constantsService.RELOAD_TIME);
         }
         else {
           if (response.msg == "quantity is wrong") {

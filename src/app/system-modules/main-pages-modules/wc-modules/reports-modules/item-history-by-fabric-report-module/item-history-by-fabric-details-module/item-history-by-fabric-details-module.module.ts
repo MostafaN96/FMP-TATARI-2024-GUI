@@ -11,7 +11,7 @@ import { SharedModule } from 'src/app/shared-modules/shared.module';
 
 @NgModule({
   declarations: [
-    ItemHistoryByFabricDetailsComponent
+    ItemHistoryByFabricDetailsComponent,
   ],
   imports: [
     SharedModule,

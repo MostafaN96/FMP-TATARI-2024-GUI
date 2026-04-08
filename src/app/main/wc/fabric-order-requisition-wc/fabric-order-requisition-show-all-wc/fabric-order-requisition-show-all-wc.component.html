@@ -1,4 +1,8 @@
 <section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    
+    <!-- Confirmation Popup for Parent Orders Actions -->
+    <p-confirmPopup></p-confirmPopup>
+    
     <!-- Title Page Section -->
     <div [class]="_sharedComponentService.titlePageClass">
         <!-- Sub Title Page -->
@@ -63,9 +67,31 @@
                                     </div>
                                     <!-- End Filter Section -->
 
+                                    <!-- Parent Orders System: Merge Button -->
+                                    <div class="row mt-3" *ngIf="selectedOrders.length >= 2">
+                                        <div class="col">
+                                            <button pButton 
+                                                type="button"
+                                                label="🔗 دمج {{ selectedOrders.length }} طلبيات"
+                                                class="p-button-success"
+                                                (click)="openMergeDialog()">
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 </ng-template>
                                 <ng-template pTemplate="header">
                                     <tr>
+
+                                        <!-- Selection Checkbox Column -->
+                                        <th style="width: 50px;">
+                                            تحديد
+                                        </th>
+
+                                        <!-- Merge Status Column -->
+                                        <th style="width: 100px;">
+                                            الحالة
+                                        </th>
 
                                         <!-- Number Column -->
                                         <th>
@@ -128,12 +154,57 @@
                                                 تفاصيل الإذن
                                             </div>
                                         </th>
+
+                                        <!-- Parent Orders Actions Column -->
+                                        <th data-html2canvas-ignore="true">
+                                            <div class="flex justify-content-between align-items-center">
+                                                الإجراءات
+                                            </div>
+                                        </th>
                                     </tr>
 
                                 </ng-template>
                                 <ng-template pTemplate="body" let-element let-index="rowIndex">
                                     <tr class="p-selectable-row"
-                                        [ngClass]="{'warning_background': element.is_active == '0'}">
+                                        [ngClass]="{'warning_background': element.is_active == '0', 'parent-order-row': element.is_parent && element.merged_count > 1}">
+
+                                        <!-- Selection Checkbox -->
+                                        <td style="text-align: center;">
+                                            <p-checkbox 
+                                                [binary]="true"
+                                                [ngModel]="selectedOrders.includes(element.id)"
+                                                (onChange)="toggleOrderSelection(element.id)">
+                                            </p-checkbox>
+                                        </td>
+
+                                        <!-- Merge Status -->
+                                        <td style="text-align: center;">
+                                            <!-- Parent Order (لديها طلبيات مدموجة تحتها) -->
+                                            <div *ngIf="element.is_parent && element.merged_count > 1">
+                                                <span class="merged-badge"
+                                                      pTooltip="عرض الطلبيات المدموجة"
+                                                      tooltipPosition="top"
+                                                      (click)="showMergedOrders(element)"
+                                                      style="cursor: pointer;">
+                                                    🔗 Parent ({{ element.merged_count }})
+                                                </span>
+                                            </div>
+                                            
+                                            <!-- Child Order (مدموجة تحت طلبية أم) -->
+                                            <div *ngIf="element.parent_wc_fabric_order_requisition_id && element.parent_name">
+                                                <span class="badge bg-warning text-dark"
+                                                      pTooltip="مدموجة تحت: {{ element.parent_name }}"
+                                                      tooltipPosition="top">
+                                                    🔗 Child
+                                                </span><br>
+                                                <small class="text-muted">→ {{ element.parent_name }}</small>
+                                            </div>
+                                            
+                                            <!-- Normal Order (عادية) -->
+                                            <div *ngIf="(!element.is_parent || element.merged_count <= 1) && !element.parent_wc_fabric_order_requisition_id">
+                                                <span class="badge bg-secondary">📦 عادية</span>
+                                            </div>
+                                        </td>
 
                                         <!-- Index Column -->
                                         <td>
@@ -157,7 +228,7 @@
 
                                         <!-- requisition_details Column -->
                                         <td>
-                                            <table class="table" *ngIf="element.requestionDetails.length > 0">
+                                            <table class="table" *ngIf="element.requestionDetails && element.requestionDetails.length > 0">
                                                 <thead>
                                                     <tr>
                                                         <th>
@@ -192,7 +263,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr *ngFor="let requestionDetailsData of element.requestionDetails">
+                                                    <tr *ngFor="let requestionDetailsData of (element.requestionDetails || [])">
 
                                                         <td>
                                                             {{ requestionDetailsData.fabric_name}}
@@ -210,7 +281,7 @@
                                                             {{ requestionDetailsData.net_current_quantity | number}}
 
                                                             <!-- <table class="table"
-                                                                *ngIf="requestionDetailsData.warehouseDetails.length > 0">
+                                                                *ngIf="requestionDetailsData.warehouseDetails && requestionDetailsData.warehouseDetails.length > 0">
                                                                 <thead>
                                                                     <tr>
                                                                         <th>
@@ -258,22 +329,22 @@
                                                         <td>الإجمالي</td>
                                                         <td></td>
                                                         <td>
-                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
+                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails || [],
                                                             'quantity') | number}}
                                                         </td>
                                                         <td>
                                                             {{
-                                                                _sharedComponentService.getTotalQuantity(element.requestionDetails,
+                                                                _sharedComponentService.getTotalQuantity(element.requestionDetails || [],
                                                                 'net_current_quantity') | number}}
                                                         </td>
 
                                                         <td>
-                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
+                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails || [],
                                                             'current_quantity') | number}}
                                                         </td>
 
                                                         <td>
-                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails,
+                                                            {{_sharedComponentService.getTotalQuantity(element.requestionDetails || [],
                                                             'over_current_quantity') | number}}
                                                         </td>
 
@@ -313,11 +384,36 @@
                                             </a>
                                         </td>
 
+                                        <!-- Parent Orders Actions Column -->
+                                        <td data-html2canvas-ignore="true" style="text-align: center;">
+                                            <!-- زر فصل الطلبية - يظهر فقط للطلبيات الأم (Parent) -->
+                                            <button pButton 
+                                                *ngIf="element.is_parent && element.merged_count > 1"
+                                                type="button"
+                                                icon="pi pi-times"
+                                                class="p-button-rounded p-button-warning p-button-sm"
+                                                pTooltip="فصل الطلبيات المدموجة"
+                                                tooltipPosition="top"
+                                                (click)="detachOrder($event, element)">
+                                            </button>
+                                            
+                                            <!-- زر عرض الطلبيات المدموجة - يظهر للطلبيات الأم -->
+                                            <button pButton 
+                                                *ngIf="element.is_parent && element.merged_count > 1"
+                                                type="button"
+                                                icon="pi pi-eye"
+                                                class="p-button-rounded p-button-info p-button-sm ms-2"
+                                                pTooltip="عرض الطلبيات المدموجة تحتها"
+                                                tooltipPosition="top"
+                                                (click)="showMergedOrders(element)">
+                                            </button>
+                                        </td>
+
                                     </tr>
                                 </ng-template>
                                 <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
                                     <tr>
-                                        <td colspan="7">لا يوجد بيانات</td>
+                                        <td colspan="10">لا يوجد بيانات</td>
                                     </tr>
                                 </ng-template>
                             </p-table>
@@ -329,4 +425,141 @@
 
         </div>
     </div>
+
+    <!-- ==================== Parent Orders System Dialogs ==================== -->
+
+    <!-- Dialog لدمج الطلبيات -->
+    <p-dialog 
+        [(visible)]="showMergeDialog" 
+        [modal]="true" 
+        [closable]="true"
+        [style]="{width: '500px'}"
+        header="دمج الطلبيات">
+        
+        <div class="p-4">
+            <h5 class="mb-3">الطلبيات المحددة للدمج:</h5>
+            
+            <ul class="list-group mb-4">
+                <li class="list-group-item" *ngFor="let orderId of selectedOrders">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>
+                            {{ getOrderById(orderId)?.name || orderId }}
+                        </span>
+                        <span class="badge bg-primary">
+                            {{ getOrderById(orderId)?.number }}
+                        </span>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="mb-3">
+                <label class="form-label">اختر الطلبية الأم (Parent):</label>
+                <p-dropdown 
+                    [(ngModel)]="selectedParentOrderId"
+                    [options]="selectedOrders"
+                    placeholder="اختر الطلبية الأم"
+                    [style]="{'width':'100%'}">
+                    <ng-template pTemplate="selectedItem">
+                        <div *ngIf="selectedParentOrderId">
+                            {{ getOrderById(selectedParentOrderId)?.name }}
+                        </div>
+                    </ng-template>
+                    <ng-template let-order pTemplate="item">
+                        <div>
+                            {{ getOrderById(order)?.name }}
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+
+            <small class="text-muted">
+                ملاحظة: جميع الطلبيات المحددة سيتم دمجها تحت الطلبية الأم المختارة
+            </small>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <button pButton 
+                type="button" 
+                label="إلغاء" 
+                icon="pi pi-times"
+                class="p-button-text"
+                (click)="cancelMerge()">
+            </button>
+            <button pButton 
+                type="button" 
+                label="دمج الطلبيات" 
+                icon="pi pi-check"
+                class="p-button-success"
+                (click)="mergeSelectedOrders()"
+                [disabled]="!selectedParentOrderId">
+            </button>
+        </ng-template>
+    </p-dialog>
+
+    <!-- Dialog لعرض الطلبيات المدموجة -->
+    <p-dialog 
+        [(visible)]="showMergedOrdersDialog" 
+        [modal]="true" 
+        [closable]="true"
+        [style]="{width: '800px'}"
+        [header]="'الطلبيات المدموجة تحت: ' + (currentParentOrder?.name || '')">
+        
+        <div class="p-3">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>الرقم</th>
+                            <th>اسم الطلبية</th>
+                            <!-- <th>الكمية المتبقية</th> -->
+                            <th>تاريخ الإنشاء</th>
+                            <th>التفاصيل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let child of mergedOrders">
+                            <td>{{ child.number }}</td>
+                            <td>{{ child.name }}</td>
+                            <!-- <td>{{ child.current_quantity | number }} متر</td> -->
+                            <td>{{ child.date | date:'short' }}</td>
+                            <td>
+                                <a 
+                                            [routerLink]="['details']" [queryParams]="{ id: child.id}">
+                                                <i class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <td colspan="2"><strong></strong></td>
+                            <td colspan="1"><strong></strong></td>
+                            <td colspan="1"><strong></strong></td>
+                            <!-- <td colspan="2"><strong>المجموع الكلي:</strong></td> -->
+                            <!-- <td colspan="2">
+                                <strong>{{ getTotalMergedQuantity() | number }} متر</strong>
+                            </td> -->
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="alert alert-info mt-3" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                هذه الطلبيات مدموجة معاً. جميع العمليات (البيع، التنفيذ، النقل) تُطبق عليها تلقائياً.<br>
+                <strong>ملاحظة:</strong> لفصل هذه الطلبيات، استخدم زر الفصل ⚠️ في الجدول الرئيسي.
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <button pButton 
+                type="button" 
+                label="إغلاق" 
+                icon="pi pi-times"
+                class="p-button-text"
+                (click)="closeMergedOrdersDialog()">
+            </button>
+        </ng-template>
+    </p-dialog>
+
 </section>

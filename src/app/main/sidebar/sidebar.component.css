@@ -1,43 +1,403 @@
+/* ==================== Global Styles ==================== */
 * {
-    transition: all 0.5s;
+    transition: all 0.3s ease;
 }
 
-.mat-menu-item {
-    padding: 6px 16px;
-}
-
+/* ==================== Navbar Container ==================== */
 .navbar {
-    background-color: var(--primary-color-1) !important;
+    background: var(--primary-color-1) !important;
+    background: linear-gradient(135deg, var(--primary-color-1) 0%, var(--btn-hover-color-1) 100%) !important;
     top: 0;
     width: 100%;
-    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
     z-index: 1000;
+    padding: 0.75rem 1rem;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.1);
 }
 
+/* ==================== Brand Section ==================== */
 .navbar-brand {
-    color: var(--primary-color-3);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    transition: all 0.3s ease;
 }
 
+.navbar-brand:hover {
+    transform: translateY(-2px);
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.navbar-brand:hover .logo-wrapper {
+    background: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: brightness(1.1);
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.brand-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.brand-subtitle {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* ==================== Navigation Links ==================== */
 .navbar-light .navbar-brand {
-    color: var(--primary-color-3);
+    color: #ffffff;
 }
 
 .navbar-light .navbar-nav .nav-link {
-    color: var(--primary-color-3);
+    color: #ffffff;
+    font-weight: 500;
+    padding: 8px 16px;
+    margin: 0 4px;
+    border-radius: 8px;
+    font-size: 15px;
+    position: relative;
+    overflow: hidden;
 }
 
-.navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .show > .nav-link {
-    background-color: var(--primary-color-4);
-    border-radius: 4px;
+.navbar-light .navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 80%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    transition: transform 0.3s ease;
 }
 
-.navbar-light .navbar-nav .nav-link:focus, .navbar-light .navbar-nav .nav-link:hover {
-    background-color: var(--primary-color-4);
-    border-radius: 4px;
+.navbar-light .navbar-nav .nav-link:hover::before,
+.navbar-light .navbar-nav .nav-link.active::before {
+    transform: translateX(-50%) scaleX(1);
 }
 
-@media (max-width: 991.98px) { 
+.navbar-light .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .show>.nav-link {
+    background-color: var(--hover-color-1);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-light .navbar-nav .nav-link:focus,
+.navbar-light .navbar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* ==================== User Section ==================== */
+.user-section {
+    display: flex;
+    align-items: center;
+}
+
+.user-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 50px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-icon {
+    color: #ffffff;
+    font-size: 22px;
+}
+
+.user-name {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.exchange-rate {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--primary-color-8);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.rate-icon {
+    color: #ffffff;
+    font-size: 16px;
+    opacity: 0.95;
+}
+
+.rate-text {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 13px;
+    direction: ltr;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--btn-delete-color-1);
+    border-radius: 25px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.logout-btn:hover {
+    background: var(--btn-hover-color-2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.logout-icon {
+    color: #ffffff;
+    font-size: 18px;
+    opacity: 0.95;
+}
+
+.logout-text {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* ==================== Dropdown Menus ==================== */
+.mat-menu-item {
+    padding: 10px 20px;
+    font-size: 14px;
+    min-height: 42px;
+    transition: all 0.2s ease;
+    color: var(--primary-color-1) !important;
+}
+
+.mat-menu-item:hover {
+    background-color: rgba(63, 81, 181, 0.1) !important;
+    transform: translateX(-4px);
+    border-right: 3px solid var(--primary-color-1);
+    color: var(--hover-color-1) !important;
+}
+
+.menu-element {
+    font-weight: 500;
+    color: var(--primary-color-1) !important;
+}
+
+/* Links inside mat-menu */
+::ng-deep .mat-menu-item a,
+::ng-deep .mat-menu-item button,
+::ng-deep a.mat-menu-item {
+    color: var(--primary-color-1) !important;
+    text-decoration: none;
+}
+
+::ng-deep .mat-menu-item:hover a,
+::ng-deep .mat-menu-item:hover button,
+::ng-deep a.mat-menu-item:hover {
+    color: var(--hover-color-1) !important;
+}
+
+::ng-deep .mat-menu-panel {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+}
+
+::ng-deep .mat-menu-content {
+    padding: 8px 0 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+}
+
+/* Force white background for all menu levels */
+::ng-deep .mat-menu-panel.mat-menu-panel {
+    background: #ffffff !important;
+}
+
+::ng-deep .cdk-overlay-pane .mat-menu-panel {
+    background: #ffffff !important;
+}
+
+/* ==================== Navbar Toggler ==================== */
+.navbar-toggler {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 991.98px) {
     .navbar-nav {
         align-items: center;
+        margin-top: 1rem;
     }
- }
+
+    .navbar-light .navbar-nav .nav-link {
+        width: 100%;
+        text-align: center;
+        margin: 4px 0;
+    }
+
+    .user-info-wrapper {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 1rem;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .user-info,
+    .exchange-rate,
+    .logout-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .brand-text {
+        display: none;
+    }
+
+    .logo-wrapper {
+        width: 42px;
+        height: 42px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .brand-name {
+        font-size: 18px;
+    }
+
+    .logo-wrapper {
+        width: 38px;
+        height: 38px;
+    }
+
+    .logo-img {
+        width: 26px;
+        height: 26px;
+    }
+
+    .user-name,
+    .rate-text,
+    .logout-text {
+        font-size: 12px;
+    }
+}
+
+/* ==================== Animation Effects ==================== */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.navbar-collapse.show,
+.navbar-collapse.collapsing {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* ==================== Accessibility ==================== */
+.navbar-brand:focus,
+.nav-link:focus,
+.logout-btn:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* ==================== Dark Mode Support ==================== */
+@media (prefers-color-scheme: dark) {
+    ::ng-deep .mat-menu-panel {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+    }
+
+    .mat-menu-item {
+        color: var(--primary-color-1) !important;
+    }
+
+    .menu-element {
+        color: var(--primary-color-1) !important;
+    }
+}

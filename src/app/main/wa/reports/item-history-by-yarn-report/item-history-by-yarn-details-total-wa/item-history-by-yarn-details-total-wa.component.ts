@@ -124,6 +124,77 @@ export class ItemHistoryByYarnDetailsTotalWaComponent implements OnInit {
    },
     { headerName: 'الى رقم طلب الغزل', field: 'to_consigment_yarn_number', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, excludeFromFooter: true },
 
+    // ايصال التصنيع (مع لينك)
+    {
+      headerName: 'ايصال التصنيع',
+      field: 'manufacturingDocuments',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+      filterValueGetter: (p: any) => {
+        const arr = Array.isArray(p.data?.manufacturingDocuments) ? p.data.manufacturingDocuments : [];
+        return arr.map((v: any) => v?.document ?? '').filter((x: string) => !!x);
+      },
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'document-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        arr.forEach((v: any) => {
+          const a = document.createElement('a');
+          a.textContent = v['document'] ?? '';
+          a.className = 'document-line';
+          a.style.cursor = 'pointer';
+          a.style.color = '#007bff';
+          a.style.display = 'block';
+
+          a.addEventListener('click', (event: MouseEvent) => {
+            const url = `${window.location.origin}/dashboard/show-all-manufacturing-requisition-wb/details?id=${v['requisition_id'] ?? ''}`;
+            if ((event as any).ctrlKey || (event as any).button === 1) window.open(url, '_blank');
+            else window.location.href = url;
+          });
+
+          host.appendChild(a);
+        });
+
+        return host;
+      },
+    },
+
+    {
+      headerName: 'نسبة الخيط',
+      field: 'manufacturingDocuments',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+      filterValueGetter: (p: any) => {
+        const arr = Array.isArray(p.data?.manufacturingDocuments) ? p.data.manufacturingDocuments : [];
+        return arr
+          .map((v: any) => (v?.ratio != null && v?.ratio !== '' ? `${v.ratio}%` : ''))
+          .filter((x: string) => !!x);
+      },
+      minWidth: 200,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => {
+        const host = document.createElement('div');
+        host.className = 'ratio-host';
+
+        const arr = Array.isArray(p.value) ? p.value : [];
+        host.innerHTML = arr.map((v: string) => `<div class="ratio-line">${v['ratio']}%</div>`).join('');
+        return host;
+      },
+    },
+
     // رقم الإذن (مع لينك)
     {
       headerName: 'رقم الاذن',

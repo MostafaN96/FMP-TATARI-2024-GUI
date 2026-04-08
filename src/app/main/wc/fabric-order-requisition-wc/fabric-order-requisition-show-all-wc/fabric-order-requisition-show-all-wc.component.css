@@ -1,4 +1,4 @@
-.table > :not(caption) > * > * {
+.table> :not(caption)>*>* {
     padding: 0.6px;
 }
 
@@ -10,4 +10,123 @@ td table tfoot tr {
     border: 1px solid #ccc;
     color: var(--primary-color-3) !important;
     background-color: var(--primary-color-1) !important;
+}
+
+/* ==================== Parent Orders System Styles ==================== */
+
+/* طلبية Parent مدموجة */
+.parent-order-row {
+    border-right: 4px solid #4CAF50 !important;
+    background-color: #f1f8f4 !important;
+}
+
+/* عداد الطلبيات المدموجة */
+.merged-badge {
+    background-color: #2196F3;
+    color: white;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 12px;
+    display: inline-block;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.merged-badge:hover {
+    background-color: #1976D2;
+    transform: scale(1.05);
+}
+
+/* زر الدمج */
+.p-button-success {
+    margin-bottom: 1rem;
+}
+
+/* Dialog للطلبيات المدموجة */
+.table-responsive {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.table-responsive table {
+    margin-bottom: 0;
+}
+
+.table-responsive thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* List Group في Dialog الدمج */
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+}
+
+/* Badge للأرقام */
+.badge {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+
+/* Alert في Dialog */
+.alert {
+    border-radius: 0.375rem;
+}
+
+.alert i {
+    margin-left: 0.5rem;
+}
+
+/* تحسين Checkbox */
+::ng-deep .p-checkbox {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+/* تحسين الأزرار في الإجراءات */
+.p-button-rounded {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.p-button-rounded.p-button-sm {
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Tooltip تحسينات */
+::ng-deep .p-tooltip {
+    max-width: 200px;
+}
+
+/* تحسين Dropdown */
+::ng-deep .p-dropdown {
+    width: 100%;
+}
+
+/* تحسين Dialog Header */
+::ng-deep .p-dialog .p-dialog-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* تحسين Dialog Footer */
+::ng-deep .p-dialog .p-dialog-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Responsive للـ Dialogs */
+@media (max-width: 768px) {
+    ::ng-deep .p-dialog {
+        width: 95% !important;
+    }
+
+    .table-responsive {
+        font-size: 0.875rem;
+    }
 }

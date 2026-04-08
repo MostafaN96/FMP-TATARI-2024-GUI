@@ -1,86 +1,121 @@
-<section id="dashboard-login" class="text-center main-content-wrap">
-  <h2 class="my-5">تسجيل الدخول</h2>
-
-  <form
-    [formGroup]="loginForm"
-    (ngSubmit)="onLogin()"
-    autocomplete="on"
-  >
-    <div class="container-fluid">
-      <div class="rows row-cols-1">
-
-
-        <!-- Start email -->
-        <div class="col">
-          <div>
-            <mat-form-field class="example-full-width w-100">
-              <mat-label>البريد الإلكتروني</mat-label>
-              <input
-                matInput
-                type="email"
-                formControlName="email"
-                name="email"
-                autocomplete="email"
-                placeholder="Ex. name@email.com"
-                [errorStateMatcher]="matcher"
-              />
-              <mat-error *ngIf="!loginForm.controls['email'].hasError('required')">
-                الرجاء إدخال الايميل بالشكل الصحيح
-              </mat-error>
-              <mat-error *ngIf="loginForm.controls['email'].hasError('required')">
-                الإيميل <b>مطلوب</b>
-              </mat-error>
-              <mat-error *ngIf="loginForm.controls['email'].hasError('pattern')">
-                صيغة الإيميل غير صحيحة
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-        <!-- End email -->
-
-        <!-- Start password -->
-        <div class="col">
-          <div class="mb-6">
-
-            
-            <mat-form-field class="example-full-width w-100">
-              <mat-label>كلمة المرور</mat-label>
-              <input
-                matInput
-                [type]="hide ? 'password' : 'text'"
-                formControlName="password"
-                name="password"
-                autocomplete="password"
-                placeholder="Create password"
-              />
-         <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-    </button>
-              <mat-error *ngIf="!loginForm.controls['password'].hasError('required')">
-                الرجاء إدخال كلمة المرور بالشكل الصحيح
-              </mat-error>
-              <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
-                كلمة المرور <b>مطلوب</b>
-              </mat-error>
-              <mat-error *ngIf="loginForm.controls['password'].hasError('pattern')">
-                المسموح فقط الاحرف, الفاصلة, النقطة, والخط السفلي (: | / _ , & $ @ . #)
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-        <!-- End password -->
-
-        <div class="col mt-5">
-          <button
-            [disabled]="!loginForm.valid"
-            class="btn-style submit-btn"
-            type="submit"
-          >
-            تسجيل دخول
-          </button>
-        </div>
-
+<section id="dashboard-login" class="login-wrapper">
+  <div class="login-container">
+    <div class="login-header">
+      <div class="logo-container">
+        <i class="fas fa-user-circle logo-icon"></i>
       </div>
+      <h1 class="login-title">تسجيل الدخول</h1>
+      <p class="login-subtitle">أهلاً بك في نظام إدارة التصنيع</p>
     </div>
-  </form>
+
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onLogin()"
+      autocomplete="on"
+      class="login-form"
+    >
+      <!-- Start email -->
+      <div class="form-field-container">
+        <mat-form-field class="custom-form-field" appearance="outline">
+          <mat-label>البريد الإلكتروني</mat-label>
+          <span matPrefix class="field-icon-wrapper">
+            <i class="fas fa-envelope field-icon"></i>
+          </span>
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            name="email"
+            autocomplete="email"
+            placeholder="name@example.com"
+            [errorStateMatcher]="matcher"
+          />
+          <mat-error *ngIf="loginForm.controls['email'].hasError('required')">
+            البريد الإلكتروني <strong>مطلوب</strong>
+          </mat-error>
+          <mat-error *ngIf="loginForm.controls['email'].hasError('pattern')">
+            الرجاء إدخال بريد إلكتروني صحيح
+          </mat-error>
+          <mat-error *ngIf="loginForm.controls['email'].hasError('minlength')">
+            البريد الإلكتروني قصير جداً
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- End email -->
+
+      <!-- Start password -->
+      <div class="form-field-container">
+        <mat-form-field class="custom-form-field" appearance="outline">
+          <mat-label>كلمة المرور</mat-label>
+          <span matPrefix class="field-icon-wrapper">
+            <i class="fas fa-lock field-icon"></i>
+          </span>
+          <input
+            matInput
+            [type]="hide ? 'password' : 'text'"
+            formControlName="password"
+            name="password"
+            autocomplete="current-password"
+            placeholder="أدخل كلمة المرور"
+          />
+          <button 
+            mat-icon-button 
+            matSuffix 
+            type="button"
+            (click)="hide = !hide" 
+            [attr.aria-label]="'إخفاء كلمة المرور'" 
+            [attr.aria-pressed]="hide"
+            class="toggle-password-btn"
+          >
+            <i [class]="hide ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+          <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
+            كلمة المرور <strong>مطلوبة</strong>
+          </mat-error>
+          <mat-error *ngIf="loginForm.controls['password'].hasError('minlength')">
+            كلمة المرور يجب أن تكون 8 أحرف على الأقل
+          </mat-error>
+          <mat-error *ngIf="loginForm.controls['password'].hasError('pattern')">
+            كلمة المرور تحتوي على أحرف غير مسموحة
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- End password -->
+
+      <!-- Remember me -->
+      <div class="remember-me-container">
+        <mat-checkbox formControlName="rememberMe" color="primary">
+          تذكرني
+        </mat-checkbox>
+      </div>
+
+      <!-- Submit button -->
+      <div class="submit-container">
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="!loginForm.valid || isLoading"
+          class="submit-btn"
+          type="submit"
+        >
+          <span *ngIf="!isLoading" class="btn-content">
+            <i class="fas fa-sign-in-alt btn-icon"></i>
+            تسجيل الدخول
+          </span>
+          <span *ngIf="isLoading" class="btn-loading">
+            <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
+            جاري تسجيل الدخول...
+          </span>
+        </button>
+      </div>
+
+      <!-- Additional info -->
+      <div class="login-footer">
+        <p class="info-text">
+          <i class="fas fa-info-circle info-icon"></i>
+          الرجاء استخدام بيانات الدخول الخاصة بك
+        </p>
+      </div>
+    </form>
+  </div>
 </section>

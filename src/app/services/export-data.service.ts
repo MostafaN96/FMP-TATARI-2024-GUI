@@ -247,7 +247,8 @@ getAllDisplayedColumns(gridColumnApi: any, excludedColumns) {
       field: col.getColId(),
       type: col.getColDef().type,
       width: col.getActualWidth(),
-      pinned: col.getPinned()
+      pinned: col.getPinned(),
+      left: typeof col.getLeft === 'function' ? col.getLeft() : 0
     }));
 
   return visibleColumns;
@@ -262,8 +263,15 @@ printGrid(gridApi: any, title: string = 'تقرير البيانات', columnApi
 
   // ✅ اجلب الأعمدة الظاهرة فعليًا
   const visibleCols = this.getAllDisplayedColumns(columnApi, excludedColumns);
-  const headers = visibleCols.map(col => col.headerName);  // عناوين الأعمدة
-  const fields = visibleCols.map(col => col.field);        // أسماء الحقول
+  const isRtl = typeof gridApi.getGridOption === 'function'
+    ? !!gridApi.getGridOption('enableRtl')
+    : false;
+  const orderedCols = [...visibleCols].sort((a, b) => (a.left ?? 0) - (b.left ?? 0));
+  if (isRtl) {
+    orderedCols.reverse();
+  }
+  const headers = orderedCols.map(col => col.headerName);  // عناوين الأعمدة
+  const fields = orderedCols.map(col => col.field);        // أسماء الحقول
 
   // ✅ اجلب فقط الصفوف المفلترة والمترتبة حاليًا
   const filteredData: any[] = [];
@@ -330,13 +338,13 @@ columnsToSum.forEach(field => {
   const printWindow = window.open('', '', 'width=1200,height=800');
   printWindow!.document.open();
   printWindow!.document.write(`
-    <html lang="ar">
+    <html lang="ar" dir="${isRtl ? 'rtl' : 'ltr'}">
       <head>
         <title>${title}</title>
         <style>
-          body { font-family: 'Cairo', sans-serif; margin: 10mm; }
+          body { font-family: 'Cairo', sans-serif; margin: 10mm; direction: ${isRtl ? 'rtl' : 'ltr'}; }
           h2 { text-align: center; margin-bottom: 15px; }
-          th, td { border: 1px solid #aaa; white-space: pre-line; }
+          th, td { border: 1px solid #aaa; white-space: pre-line; ${isRtl ? 'direction: rtl;' : ''} }
           th { background: #f0f0f0; }
           @media print {
             body { margin: 5mm; }

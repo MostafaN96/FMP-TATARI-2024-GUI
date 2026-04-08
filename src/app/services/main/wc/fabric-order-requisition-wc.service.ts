@@ -104,5 +104,59 @@ export class FabricOrderRequisitionWcService {
       });
   }
 
+  // ===================== Parent Orders System =====================
+  
+  // جلب جميع الطلبيات مع معلومات الـ Parent
+  getOrdersWithParentInfo(isClosed: string = 'opened'): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}with-parent-info/opened`;
+    if (isClosed === 'closed') {
+      url = `${this._constantsService.BASE_URL}${this.urlService}with-parent-info/closed`;
+    }
+    return this._http.get(url, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+
+  // دمج طلبيات
+  mergeOrders(orderIds: string[], parentOrderId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}merge-orders`;
+    return this._http.put(url, { orderIds, parentOrderId }, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+
+  // فصل طلبية
+  detachOrder(orderId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}detach-order/${orderId}`;
+    return this._http.put(url, {}, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+
+  // جلب الطلبيات المدموجة تحت طلبية معينة
+  getMergedOrders(parentId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}merged-orders/${parentId}`;
+    return this._http.get(url, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+
+  getAllWithMergeInfo(status?: string): Observable<any> {
+  const params = status ? `?status=${status}` : '';
+  return this._http.get(`${this._constantsService.BASE_URL}${this.urlService}all-with-merge-info${params}`, {
+    headers: new HttpHeaders({
+      'authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+  });
+}
+
 }
 

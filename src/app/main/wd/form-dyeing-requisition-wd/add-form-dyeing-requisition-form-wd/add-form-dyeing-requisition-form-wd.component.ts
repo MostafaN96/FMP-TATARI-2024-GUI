@@ -124,7 +124,7 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
   // set the placeholder to the AutoComplete input
   public textColor: string = "اللون"
 
-  public onFilteringColorName(e: any) {
+  public onFilteringColorName(e: any, index) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     predicate = predicate.or('code', 'contains', e.text);
@@ -132,7 +132,7 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.colors, query);
+    e.updateData(this.colors[index], query);
   }
 
   constructor(
@@ -302,18 +302,18 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
       row.controls['colorId'].setValue(null)
       row.controls['colorCode'].setValue(null)
       row.controls['dyeingColorsPricesId'].setValue(null)
-      this.colors = []
+      this.colors[index] = []
     }
     else {
-      this._colorService.selectByCategoryAndDeying(this.selectedData?.dyeing_id, event.itemData.id).subscribe((response: any) => {
-        this.colors = response
+      this._colorService.selectByCategoryAndDeyingByDyedFabricByFabricOrder(this.selectedData?.dyeing_id, event.itemData.id, row.controls['dyedFabricId'].value, row.controls['ordersRequisitionsId'].value).subscribe((response: any) => {
+        this.colors[index] = response
       })
     }
   }
 
   // Color
   selectColor(event: { itemData: any; }, row: FormGroup, index) {
-    if (!this.colors.includes(event.itemData)) {
+    if (!this.colors[index].includes(event.itemData)) {
       row.controls['colorId'].setValue(null)
       row.controls['colorCode'].setValue(null)
       row.controls['dyeingColorsPricesId'].setValue(null)

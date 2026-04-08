@@ -1,0 +1,159 @@
+/* Password Status Column Styling */
+.password-cell {
+    padding: 8px 12px;
+    max-width: 350px;
+}
+
+.password-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f5f5f5;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.password-hash-text {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #424242;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    direction: ltr;
+    text-align: left;
+}
+
+.password-plain-text {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2e7d32;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    direction: ltr;
+    text-align: left;
+    background: #ffffff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.password-plain-text span {
+    display: inline-block;
+    min-width: 100px;
+}
+
+.password-hash-text i,
+.password-plain-text i {
+    animation: pulse-key 2s infinite;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+@keyframes pulse-key {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Toggle Password Button */
+.toggle-btn {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-btn:hover {
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.toggle-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-btn i {
+    font-size: 12px;
+}
+
+/* Copy Button */
+.copy-btn {
+    background: linear-gradient(135deg, var(--primary-color-1), var(--btn-hover-color-1));
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.copy-btn:hover {
+    background: linear-gradient(135deg, var(--hover-color-1), var(--btn-hover-color-1));
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.copy-btn i {
+    font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .password-cell {
+        max-width: 250px;
+    }
+
+    .password-wrapper {
+        flex-direction: row;
+        gap: 6px;
+        padding: 6px 8px;
+    }
+
+    .password-hash-text,
+    .password-plain-text {
+        font-size: 10px;
+    }
+
+    .toggle-btn,
+    .copy-btn {
+        padding: 5px 8px;
+    }
+}

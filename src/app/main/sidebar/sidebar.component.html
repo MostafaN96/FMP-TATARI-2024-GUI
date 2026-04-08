@@ -3,9 +3,13 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light position-fixed">
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" [routerLink]="['/dashboard', 'home']">
-          <img src="../../../assets/images/logo.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
-          <!-- Logo Brand Title -->
-          <span class="ps-1">NulTech</span>
+          <div class="logo-wrapper">
+            <img src="../../../assets/images/logo.png" alt="NulTech Logo" width="32" height="32" class="logo-img">
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">NulTech</span>
+            <span class="brand-subtitle">نظام التصنيع</span>
+          </div>
         </a>          
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" 
         aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,17 +64,23 @@
             </mat-menu>
           </div>
 
-          <div class="navbar-nav" style="margin-inline-start: auto;">
-            <span class="text-white">
-              اسم المستخدم:  {{_sessionManagerService.Person_ID}} |
-            </span>
-            
-            <span *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[14])" class="text-white px-2">
-              سعر الصرف: {{dollarPrice}}
-            </span>
-            <a href="./" class="text-white px-2">
-              <i class="fa-solid fa-power-off"></i>
-            </a>
+          <div class="navbar-nav user-section" style="margin-inline-start: auto;">
+            <div class="user-info-wrapper">
+              <div class="user-info">
+                <i class="fas fa-user-circle user-icon"></i>
+                <span class="user-name">{{_sessionManagerService.Person_ID}}</span>
+              </div>
+              
+              <div *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[14])" class="exchange-rate">
+                <i class="fas fa-dollar-sign rate-icon"></i>
+                <span class="rate-text">{{dollarPrice}}</span>
+              </div>
+              
+              <a href="./" class="logout-btn" title="تسجيل الخروج">
+                <i class="fas fa-sign-out-alt logout-icon"></i>
+                <span class="logout-text">خروج</span>
+              </a>
+            </div>
           </div>
           
         </div>

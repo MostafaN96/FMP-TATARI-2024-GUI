@@ -38,6 +38,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 // To Make Date Correct As Local
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 
@@ -115,6 +116,7 @@ import 'ag-grid-enterprise';
     MatSliderModule,
     MatDialogModule,
     MatMomentDateModule,
+    MatProgressSpinnerModule,
 
     // AutoComplete
     AutoCompleteModule,

@@ -424,8 +424,8 @@
 
                                         <!-- Color -->
                                         <td class="table-td" style="min-width: 120px;">
-                                            <ejs-autocomplete [dataSource]='colors' [fields]='fieldsColor'
-                                                 (filtering)="onFilteringColorName($event)"
+                                            <ejs-autocomplete [dataSource]='colors[index]' [fields]='fieldsColor'
+                                                 (filtering)="onFilteringColorName($event, index)"
                                                 [placeholder]='textColor' [autofill]='autofill'
                                                 formControlName="colorId" (change)='selectColor($event, row, index)'
                                                 [errorStateMatcher]="matcher">

@@ -1,4 +1,12 @@
 <section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="loading-overlay">
+        <div class="loading-spinner">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>جاري تحميل البيانات...</p>
+        </div>
+    </div>
+
     <!-- Title Page Section -->
     <div [class]="_sharedComponentService.titlePageClass">
         <!-- Sub Title Page -->
@@ -9,10 +17,12 @@
 
     <mat-tab-group animationDuration="0ms">
         <mat-tab label="إجمالي">
-            <app-item-history-total-report-wd>
-            </app-item-history-total-report-wd>
+            <ng-template matTabContent>
+                <app-item-history-total-report-wd></app-item-history-total-report-wd>
+            </ng-template>
         </mat-tab>
         <mat-tab label="تفصيلي">
+            <ng-template matTabContent>
             <!-- Form Section -->
 
             <div class="container-fluid mt-2">
@@ -62,6 +72,9 @@
                                 <div class="mb-4">
                                     <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowClosedBalances"
                                         (change)="getClosedBalances()">اظهار الارصدة المغلقة</mat-checkbox>
+                                    <button mat-raised-button color="warn" (click)="resetFilters()" class="ms-3">
+                                        <i class="fas fa-undo me-2"></i>إعادة تعيين الفلاتر
+                                    </button>
                                 </div>
                                 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////------------------------------------------------ -->
 
@@ -80,8 +93,14 @@
 
                                 [sideBar]="sideBar"
                                 [localeText]="_sharedComponentService.localeText"
+                                [enableRtl]="true"
+                                [suppressContextMenu]="true"
+                                [animateRows]="false"
+                                [rowBuffer]="10"
 
                                 [pinnedBottomRowData]="pinnedBottomRowData"
+                                [overlayLoadingTemplate]="loadingOverlayTemplate"
+                                [overlayNoRowsTemplate]="noRowsOverlayTemplate"
 
                                 [loadingCellRenderer]="loadingCellRenderer"
                                 [loadingCellRendererParams]="loadingCellRendererParams"
@@ -98,6 +117,7 @@
 
                 </div>
             </div>
+            </ng-template>
         </mat-tab>
     </mat-tab-group>
 </section>

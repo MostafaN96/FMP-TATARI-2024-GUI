@@ -34,6 +34,10 @@ const routes: Routes = [
         { path: 'update-user-permissions', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/user-permissions-modules/update-user-permissions-module/update-user-permissions-module.module').then(m => m.UpdateUserPermissionsModuleModule) },
         { path: 'update-exchange-rate', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/exchange-rate-modules/update-exchange-rate-module/update-exchange-rate-module.module').then(m => m.UpdateExchangeRateModuleModule) },
 
+        // User
+        { path: 'add-user', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/user-modules/add-user-module/add-user-module.module').then(m => m.AddUserModuleModule) },
+        { path: 'show-all-user', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/user-modules/show-all-user-module/show-all-user-module.module').then(m => m.ShowAllUserModuleModule) },
+
         // Yarn
         { path: 'add-yarn', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/yarn-modules/add-yarn-module/add-yarn-module.module').then(m => m.AddYarnModuleModule) },
         { path: 'show-all-yarn', canActivate: [AuthGuard], loadChildren: () => import('./system-modules/main-pages-modules/yarn-modules/show-all-yarn-module/show-all-yarn-module.module').then(m => m.ShowAllYarnModuleModule) },

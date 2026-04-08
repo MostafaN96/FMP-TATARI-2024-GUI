@@ -1,4 +1,399 @@
-#dashboard-login{
-    width: 40%;
-    margin: auto;
+/* ==================== Main Container ==================== */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color-1) 0%, var(--btn-hover-color-1) 100%);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background Animation */
+.login-wrapper::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: backgroundMove 20s linear infinite;
+    opacity: 0.3;
+}
+
+@keyframes backgroundMove {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(50px, 50px);
+    }
+}
+
+/* ==================== Login Container ==================== */
+.login-container {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    z-index: 2;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== Header Section ==================== */
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color-1) 0%, var(--btn-hover-color-1) 100%);
+    border-radius: 50%;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(63, 81, 181, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 25px rgba(63, 81, 181, 0.4);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 15px 35px rgba(63, 81, 181, 0.6);
+    }
+}
+
+.logo-icon {
+    font-size: 48px;
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+    font-size: 14px;
+    color: #718096;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* ==================== Form Section ==================== */
+.login-form {
+    width: 100%;
+}
+
+.form-field-container {
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Custom Form Field Styling */
+.custom-form-field {
+    width: 100%;
+    direction: rtl;
+}
+
+.custom-form-field ::ng-deep .mat-form-field-outline {
+    color: #e2e8f0;
+}
+
+.custom-form-field ::ng-deep .mat-form-field-outline-thick {
+    color: var(--primary-color-1);
+}
+
+.custom-form-field ::ng-deep .mat-form-field-label {
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.custom-form-field ::ng-deep .mat-focused .mat-form-field-label {
+    color: var(--primary-color-1);
+}
+
+.field-icon-wrapper {
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+}
+
+.field-icon {
+    color: #a0aec0;
+    font-size: 18px;
+}
+
+.custom-form-field ::ng-deep .mat-focused .field-icon-wrapper .field-icon {
+    color: var(--primary-color-1);
+}
+
+.toggle-password-btn {
+    color: #a0aec0;
+    transition: color 0.3s ease;
+}
+
+.toggle-password-btn:hover {
+    color: var(--primary-color-1);
+}
+
+/* ==================== Remember Me ==================== */
+.remember-me-container {
+    margin: 20px 0;
+    text-align: right;
+}
+
+.remember-me-container ::ng-deep .mat-checkbox-label {
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.remember-me-container ::ng-deep .mat-checkbox-checked .mat-checkbox-background {
+    background-color: var(--primary-color-1);
+}
+
+/* ==================== Submit Button ==================== */
+.submit-container {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.submit-btn {
+    width: 100%;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-color-1) 0%, var(--btn-hover-color-1) 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 15px rgba(63, 81, 181, 0.4);
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.submit-btn:not([disabled]):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(63, 81, 181, 0.6);
+    background: linear-gradient(135deg, var(--hover-color-1) 0%, var(--btn-hover-color-1) 100%);
+}
+
+.submit-btn:not([disabled]):active {
+    transform: translateY(0);
+}
+
+.submit-btn[disabled] {
+    background: #cbd5e0;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-icon {
+    font-size: 18px;
+    margin-left: 6px;
+}
+
+.btn-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-spinner ::ng-deep circle {
+    stroke: #ffffff;
+}
+
+/* ==================== Footer ==================== */
+.login-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.info-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #718096;
+    font-size: 13px;
+    margin: 0;
+}
+
+.info-icon {
+    font-size: 16px;
+    color: var(--primary-color-1);
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 40px 30px;
+        border-radius: 15px;
+    }
+
+    .login-title {
+        font-size: 24px;
+    }
+
+    .login-subtitle {
+        font-size: 13px;
+    }
+
+    .logo-container {
+        width: 70px;
+        height: 70px;
+    }
+
+    .logo-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-wrapper {
+        padding: 15px;
+    }
+
+    .login-container {
+        padding: 30px 20px;
+    }
+
+    .login-title {
+        font-size: 22px;
+    }
+
+    .submit-btn {
+        height: 48px;
+        font-size: 15px;
+    }
+}
+
+/* ==================== Error Messages ==================== */
+::ng-deep .mat-error {
+    font-size: 12px;
+    margin-top: 4px;
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* ==================== Focus Effects ==================== */
+.custom-form-field ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: var(--primary-color-1);
+}
+
+.custom-form-field ::ng-deep input {
+    color: #2d3748;
+    font-size: 15px;
+}
+
+.custom-form-field ::ng-deep input::placeholder {
+    color: #a0aec0;
+    opacity: 1;
+}
+
+/* ==================== Accessibility ==================== */
+.submit-btn:focus {
+    outline: 2px solid var(--primary-color-1);
+    outline-offset: 2px;
+}
+
+.custom-form-field ::ng-deep input:focus {
+    outline: none;
+}
+
+/* ==================== RTL Support ==================== */
+[dir="rtl"] .field-icon {
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+/* ==================== Dark Mode Support (Optional) ==================== */
+@media (prefers-color-scheme: dark) {
+    .login-container {
+        background: #1a202c;
+    }
+
+    .login-title {
+        color: #e2e8f0;
+    }
+
+    .login-subtitle,
+    .info-text {
+        color: #a0aec0;
+    }
+
+    .custom-form-field ::ng-deep .mat-form-field-label {
+        color: #cbd5e0;
+    }
+
+    .custom-form-field ::ng-deep input {
+        color: #e2e8f0;
+    }
+
+    .login-footer {
+        border-top-color: #2d3748;
+    }
 }

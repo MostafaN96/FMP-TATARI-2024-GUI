@@ -20,7 +20,7 @@
                 <div [class]="_sharedComponentService.gridForm3Class">
                     <div class="col">
                         <!-- Date -->
-                        <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-form-field appearance="outline" class="example-form-field w-100">
                             <mat-label>التاريخ</mat-label>
                             <input [disabled]="true" matInput [matDatepicker]="datepicker" formControlName="date">
                             <mat-datepicker-toggle [disabled]="false" matSuffix [for]="datepicker">
@@ -47,7 +47,7 @@
 
                     <!-- Seller -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='sellers' [fields]='fieldsSeller' class="ejs-autocomplete"
+                        <ejs-autocomplete [dataSource]='sellers' [fields]='fieldsSeller' class="ejs-autocomplete w-100"
                             (filtering)="onFilteringSeller($event)" [placeholder]='textSeller' [autofill]='autofill'
                             formControlName="sellerId" (change)="selectSeller($event)" style="width: 260px;">
                         </ejs-autocomplete>

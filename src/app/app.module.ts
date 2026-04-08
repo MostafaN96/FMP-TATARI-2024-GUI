@@ -10,6 +10,7 @@ import { AppLayoutModule } from './app-layout.module';
 // Main
 import { SidebarComponent } from './main/sidebar/sidebar.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
 
 // UIKIT Animation
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -44,6 +45,7 @@ import { CustomLoadingCellRendererComponent } from './general-pages/custom-loadi
 
     // MAT Menu For navbar
     MatMenuModule,
+    MatIconModule,
 
     // NgxSpinnerModule,
 

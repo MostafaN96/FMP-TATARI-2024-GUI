@@ -10,6 +10,7 @@ import { SharedComponentService } from "src/app/services/shared-component.servic
 import { ExportDataService } from "src/app/services/export-data.service";
 import { ConstantsService } from 'src/app/services/constants.service';
 import { SessionManagerService } from 'src/app/services/main/session-manager.service';
+import { InventoryReportService } from 'src/app/services/inventory-report.service';
 
 // Call Service
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
@@ -35,6 +36,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
   isShowLatestPriceDollar = false
   isShowLatestManufacturingPrice = false
   isShowClosedBalances = false
+  isLoading = false
 
    @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
       gridApi!: GridApi;
@@ -74,6 +76,24 @@ export class ItemHistoryByFabricComponent implements OnInit {
         },
         excludeFromFooter: true,
       },
+      {
+        headerName: 'رقم الرسالة',
+        field: 'consigment_manufacturing_number',
+        filter: 'agSetColumnFilter',
+        filterParams: {
+          excelMode: 'windows',
+        },
+        excludeFromFooter: true,
+      },
+      {
+      headerName: 'الطلبية',
+      field: 'wc_fabric_order_requisition_name',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        excelMode: 'windows',
+      },
+      excludeFromFooter: true,
+    },
       {
         headerName: 'إجمالي الإدخال',
         field: 'input_quantity',
@@ -232,7 +252,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
     },
 
         {
-      headerName: 'رقم الا ستاند',
+      headerName: 'رقم الاستاند',
       field: 'storage_place',
       filter: false,
       minWidth: 200,
@@ -595,9 +615,14 @@ export class ItemHistoryByFabricComponent implements OnInit {
     totalFooterValues = {}
     public defaultColDef: ColDef = {
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       resizable: true,
-    sortable: true,
+      sortable: true,
+      wrapText: true,
+      autoHeight: true,
+      cellClass: 'ag-cell-wrap',
+      suppressMenu: false,
+      headerClass: 'ag-header-wrap'
     };
     sideBar: SideBarDef = {
     toolPanels: ['filters'],
@@ -616,7 +641,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
     public _exportDataService: ExportDataService,
     public _constantsService: ConstantsService,
     public _sessionManagerService: SessionManagerService,
-
+    private _inventoryReportService: InventoryReportService,
   ) {
   }
 
@@ -625,16 +650,21 @@ export class ItemHistoryByFabricComponent implements OnInit {
 
   onGridReady(params: GridReadyEvent) {
       this.gridParams = params;
-      this.getData(this.gridParams, "regular"); // أول تحميل يكون العادية
+      this.loadData(params, false);
     }
     
     onToggleBalanceType(event: MatCheckboxChange) {
-      const balanceType = event.checked ? "closed" : "regular";
-      this.getData(this.gridParams, balanceType);
+      this.loadData(this.gridParams, event.checked);
+    }
+
+    resetFilters() {
+      if (this.gridApi) {
+        this.gridApi.setFilterModel(null);
+      }
     }
     
-    getData(params: GridReadyEvent, balanceType: string) {
-      if (balanceType === "closed") {
+    private loadData(params: GridReadyEvent, isShowClosedBalances: boolean) {
+      if (isShowClosedBalances) {
         this.getClosedBalances(params);
       } else {
         this.getRegularBalances(params);
@@ -642,33 +672,41 @@ export class ItemHistoryByFabricComponent implements OnInit {
     }
     
     getRegularBalances(params: GridReadyEvent) {
-      this._reportWcService
-        .selectInverntoryDetails({ isShowClosedBalances: false })
-        .subscribe((response: any) => {
-          this.applyGridData(params, response);
-        });
+      this.isLoading = true;
+      this._inventoryReportService.fetchData(
+        (options) => this._reportWcService.selectInverntoryDetails(options),
+        params,
+        (response) => this.applyGridData(params, response),
+        () => this.isLoading = false,
+        { isShowClosedBalances: false }
+      );
     }
     
     getClosedBalances(params: GridReadyEvent) {
-      this._reportWcService
-        .selectInverntoryDetails({ isShowClosedBalances: true })
-        .subscribe((response: any) => {
-          this.applyGridData(params, response);
-        });
+      this.isLoading = true;
+      this._inventoryReportService.fetchData(
+        (options) => this._reportWcService.selectInverntoryDetails(options),
+        params,
+        (response) => this.applyGridData(params, response),
+        () => this.isLoading = false,
+        { isShowClosedBalances: true }
+      );
     }
     
     applyGridData(params: GridReadyEvent, data: any) {
       this.fabrics = data;
       this.gridApi = params.api;
       this.gridColumnApi = params.columnApi;
-      this.gridApi.setRowData(this.fabrics);
-    
-      requestAnimationFrame(() => setTimeout(() => this.updateFooter(), 100));
-    
-      setTimeout(() => {
-        const viewport = this.agGridElement.nativeElement.querySelector('.ag-center-cols-viewport');
-        if (viewport) viewport.scrollLeft = viewport.scrollWidth;
-      }, 100);
+      this._inventoryReportService.applyDataToGrid(
+        data,
+        this.gridApi,
+        this.gridColumnApi,
+        this.agGridElement,
+        () => {
+          this.updateFooter();
+          this.isLoading = false;
+        }
+      );
     }
     
     
@@ -734,31 +772,13 @@ export class ItemHistoryByFabricComponent implements OnInit {
     
               if (col.type === 'numericColumn' && !col.excludeFromFooter) {
                 // console.log("field :::::::::: ", field);
-    
-                summary[field] = Number(this.totalFooterValues[field] || 0).toLocaleString(
-                  'en-US',
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  }
-                );
+                // Store numeric value - valueFormatter will format it automatically
+                summary[field] = Number(this.totalFooterValues[field] || 0);
               } else {
                 summary[field] = '';
               }
               // console.log("summary[field] :::: ", summary[field]);
-    
-              // أولاً: انتظر شوي لتتأكد أن الجدول رسم حاله
-              setTimeout(() => {
-                // اختار خلية الـ footer (pinned bottom row)
-                const inputQuantityFooterCell = document.querySelector(`.ag-floating-bottom-viewport .ag-cell-value[col-id="${field}"]`);
-    
-                if (inputQuantityFooterCell) {
-    
-                  (inputQuantityFooterCell as HTMLElement).innerText = summary[field]; // 👈 الرقم اللي بدك تحطه
-                }
-    
-              }, 500);
-    
+
             });
     
     

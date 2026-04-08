@@ -194,6 +194,16 @@ export class ItemHistoryByFabricDetailsComponent implements OnInit {
         autoHeight: true,      // ✅ ارتفاع الصف يتعدل 
   
       },
+      
+ {
+      headerName: 'الطلبية',
+      field: 'wc_fabric_order_requisition_name',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        excelMode: 'windows',
+      },
+      excludeFromFooter: true,
+    },
 
       {
         headerName: 'نوع الاذن',

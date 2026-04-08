@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 // grid angular Table
 import { ColDef, GridApi, GridOptions, GridReadyEvent, SideBarDef } from 'ag-grid-community';
@@ -10,7 +10,7 @@ import { SharedComponentService } from "src/app/services/shared-component.servic
 import { ExportDataService } from "src/app/services/export-data.service";
 import { ConstantsService } from 'src/app/services/constants.service';
 import { SessionManagerService } from 'src/app/services/main/session-manager.service';
-import { SharedCashService } from 'src/app/services/main/shared-cash.service';
+import { InventoryReportService } from 'src/app/services/inventory-report.service';
 
 // Call Service
 import { ReportWaService } from "src/app/services/main/wa/report-wa.service";
@@ -35,6 +35,7 @@ export class ItemHistoryByYarnTotalWaComponent implements OnInit {
   isShowLatestPrice = true
   isShowLatestPriceDollar = true
   isShowClosedBalances = false
+  isLoading = false
 
 
   //////////////////////////////////// Grid Angular /////////////////////////////////
@@ -243,9 +244,14 @@ export class ItemHistoryByYarnTotalWaComponent implements OnInit {
   totalFooterValues = {}
   public defaultColDef: ColDef = {
     flex: 1,
-    minWidth: 200,
+    minWidth: 150,
     resizable: true,
     sortable: true,
+    wrapText: true,
+    autoHeight: true,
+    cellClass: 'ag-cell-wrap',
+    suppressMenu: false,
+    headerClass: 'ag-header-wrap'
   };
   public sideBar: SideBarDef | string | string[] | boolean | null = 'filters';
   public loadingCellRenderer: any = CustomLoadingCellRendererComponent;
@@ -267,13 +273,11 @@ domLayout: 'normal',
 
   constructor(
     public _sharedComponentService: SharedComponentService,
-    // private _yarnService: YarnService,
     private _reportWaService: ReportWaService,
     public _exportDataService: ExportDataService,
-    private cache: SharedCashService,
     public _constantsService: ConstantsService,
     public _sessionManagerService: SessionManagerService,
-
+    private _inventoryReportService: InventoryReportService,
   ) {
   }
 
@@ -281,53 +285,46 @@ domLayout: 'normal',
   }
 
   onGridReady(params: GridReadyEvent) {
-  this.gridParams = params;
-  this.getData(this.gridParams, "regular"); // أول تحميل يكون العادية
-}
-
-onToggleBalanceType(event: MatCheckboxChange) {
-  const balanceType = event.checked ? "closed" : "regular";
-  this.getData(this.gridParams, balanceType);
-}
-
-getData(params: GridReadyEvent, balanceType: string) {
-  if (balanceType === "closed") {
-    this.getClosedBalances(params);
-  } else {
-    this.getRegularBalances(params);
+    this.gridParams = params;
+    this.loadData(params, false);
   }
-}
 
-  getRegularBalances(params: GridReadyEvent) {
-  this._reportWaService
-    .selectInverntoryTotal({ isShowClosedBalances: false })
-    .subscribe((response: any) => {
-      this.applyGridData(params, response);
-    });
-}
+  onToggleBalanceType(event: MatCheckboxChange) {
+    this.loadData(this.gridParams, event.checked);
+  }
 
-getClosedBalances(params: GridReadyEvent) {
-  this._reportWaService
-    .selectInverntoryTotal({ isShowClosedBalances: true })
-    .subscribe((response: any) => {
-      this.applyGridData(params, response);
-    });
-}
+  resetFilters() {
+    if (this.gridApi) {
+      this.gridApi.setFilterModel(null);
+    }
+  }
 
-applyGridData(params: GridReadyEvent, data: any) {
-  this.yarns = data;
-  this.gridApi = params.api;
-  this.gridColumnApi = params.columnApi;
-  this.gridApi.setRowData(this.yarns);
+  private loadData(params: GridReadyEvent, isShowClosedBalances: boolean) {
+    this.isLoading = true;
+    this._inventoryReportService.fetchData(
+      (options) => this._reportWaService.selectInverntoryTotal(options),
+      params,
+      (response) => this.applyGridData(params, response),
+      () => this.isLoading = false,
+      { isShowClosedBalances }
+    );
+  }
 
-  requestAnimationFrame(() => setTimeout(() => this.updateFooter(), 100));
-
-  setTimeout(() => {
-    const viewport = this.agGridElement.nativeElement.querySelector('.ag-center-cols-viewport');
-    if (viewport) viewport.scrollLeft = viewport.scrollWidth;
-  }, 100);
-}
-
+  private applyGridData(params: GridReadyEvent, data: any) {
+    this.yarns = data;
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+    this._inventoryReportService.applyDataToGrid(
+      data,
+      this.gridApi,
+      this.gridColumnApi,
+      this.agGridElement,
+      () => {
+        this.updateFooter();
+        this.isLoading = false;
+      }
+    );
+  }
   onModelUpdated() {
     this.updateFooter();
   }
@@ -389,30 +386,12 @@ applyGridData(params: GridReadyEvent, data: any) {
 
           if (col.type === 'numericColumn' && !col.excludeFromFooter) {
             // console.log("field :::::::::: ", field);
-
-            summary[field] = Number(this.totalFooterValues[field] || 0).toLocaleString(
-                'en-US',
-                {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                }
-              );
+            // Store numeric value - valueFormatter will format it automatically
+            summary[field] = Number(this.totalFooterValues[field] || 0);
           } else {
             summary[field] = '';
           }
           // console.log("summary[field] :::: ", summary[field]);
-
-          // أولاً: انتظر شوي لتتأكد أن الجدول رسم حاله
-          setTimeout(() => {
-            // اختار خلية الـ footer (pinned bottom row)
-            const inputQuantityFooterCell = document.querySelector(`.ag-floating-bottom-viewport .ag-cell-value[col-id="${field}"]`);
-
-            if (inputQuantityFooterCell) {
-
-              (inputQuantityFooterCell as HTMLElement).innerText = summary[field]; // 👈 الرقم اللي بدك تحطه
-            }
-
-          }, 500);
 
         });
 

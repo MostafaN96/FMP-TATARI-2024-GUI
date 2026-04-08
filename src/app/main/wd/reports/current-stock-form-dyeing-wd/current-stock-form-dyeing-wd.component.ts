@@ -1,15 +1,21 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-
-// PrimeNG Table
-import { PrimeNGConfig } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { FilterService } from 'primeng/api';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  CellClickedEvent,
+  ColDef,
+  GridApi,
+  GridOptions,
+  GridReadyEvent,
+  RowSelectedEvent,
+  SideBarDef,
+  ValueFormatterParams
+} from 'ag-grid-community';
 
 import { SelectionModel } from '@angular/cdk/collections';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-current-stock-form-dyeing-wd',
@@ -24,45 +30,155 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
 
   @Output() parentFun = new EventEmitter<any>();
 
-  //////////////////////////////////// PrimeNG /////////////////////////////////
-  @ViewChild('dt1') dt1: Table | undefined;
   loading: boolean = true;
-  selectedFabrics: any[] = []
-  selectedFabricCodes: any[] = []
-  selectedColorCodes: any[] = []
-  selectedColorCategories: any[] = []
-  selectedColors: any[] = []
-  selectedDyedFabrics: any[] = []
-  selectedDyedFabricCodes: any[] = []
-  selectedSellerOrdersNumbers: any[] = []
-  selectedConsigmentNumber: any[] = []
-  selectedWorkOrderNumberDetails: any[] = []
   selection = new SelectionModel(true);
-  selectArrayValues: any[] = [];
 
   ///////////////////////////////// General ////////////////////////////////////////////////
   formDyeingFabricsByDyer: any
+  @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
+
+  gridApi: GridApi | null = null;
+  rowSelection: 'single' | 'multiple' = 'multiple';
+  public sideBar: SideBarDef = {
+    toolPanels: ['filters'],
+    defaultToolPanel: undefined
+  };
+  gridOptions: GridOptions = {
+    domLayout: 'normal',
+    ensureDomOrder: true,
+    suppressHorizontalScroll: false,
+    alwaysShowVerticalScroll: false,
+  };
+  defaultColDef: ColDef = {
+    sortable: true,
+    filter: 'agSetColumnFilter',
+    floatingFilter: false,
+    resizable: true,
+    minWidth: 110,
+    wrapHeaderText: true,
+    autoHeaderHeight: true,
+    wrapText: false,
+    autoHeight: false,
+    filterParams: {
+      excelMode: 'windows'
+    }
+  };
+  public columnDefs: ColDef[] = [
+    {
+      colId: 'selectAction',
+      headerName: 'اختيار',
+      width: 80,
+      minWidth: 80,
+      maxWidth: 80,
+      filter: false,
+      sortable: false,
+      suppressMenu: true,
+      pinned: 'right' as const,
+      checkboxSelection: () => this.isShowCheckBox,
+      headerCheckboxSelection: () => this.isShowCheckBox,
+      cellRenderer: () => this.isShowCheckBox ? '' : '<i class="fas fa-plus update-symbol"></i>'
+    },
+    { field: 'work_order_number_details', headerName: 'امر التشغيل', width: 105, minWidth: 105, maxWidth: 105 },
+    { field: 'wc_fabric_order_requisition_name', headerName: 'الطلبية', cellClass: 'ag-cell-wrap' },
+    { field: 'fabric_name', headerName: 'نوع القماش الخام', cellClass: 'ag-cell-wrap' },
+    { field: 'fabric_code', headerName: 'كود المادة', width: 95, minWidth: 95, maxWidth: 95 },
+    // { field: 'fabric_dyeing_code', headerName: 'كود المصبغة' },
+    { field: 'consigment_dyeing_number', headerName: 'رقم الرسالة' },
+    {
+      field: 'is_prepare_dyeing',
+      headerName: 'نزل المصبغة',
+      width: 85,
+      minWidth: 85,
+      maxWidth: 85,
+      valueFormatter: (params) => Number(params.value) === 1 ? '✓' : '✗'
+    },
+    { field: 'quantity', headerName: 'الكمية المشكلة', width: 95, minWidth: 95, maxWidth: 95, valueFormatter: this.numberFormatter.bind(this) },
+    { field: 'current_quantity', headerName: 'الكمية التشكيل المتبقية', width: 110, minWidth: 110, maxWidth: 110, valueFormatter: this.numberFormatter.bind(this) },
+    { field: 'price', headerName: 'السعر', width: 85, minWidth: 85, maxWidth: 85, valueFormatter: this.numberFormatter.bind(this) },
+    { field: 'price_dollar', headerName: 'السعر دولار', width: 90, minWidth: 90, maxWidth: 90, valueFormatter: this.numberFormatter.bind(this) },
+    {
+      colId: 'amount',
+      headerName: 'القيمة',
+      width: 95,
+      minWidth: 95,
+      maxWidth: 95,
+      valueGetter: (params) => this._sharedComponentService.getCollectTimes(params.data?.current_quantity, params.data?.price),
+      valueFormatter: this.numberFormatter.bind(this)
+    },
+    {
+      colId: 'amount_dollar',
+      headerName: 'القيمة دولار',
+      width: 105,
+      minWidth: 105,
+      maxWidth: 105,
+      valueGetter: (params) => this._sharedComponentService.getCollectTimes(params.data?.current_quantity, params.data?.price_dollar),
+      valueFormatter: this.numberFormatter.bind(this)
+    },
+    {
+      field: 'date',
+      headerName: 'التاريخ',
+      valueFormatter: (params) => this._sharedComponentService.formatDate(params.value)
+    },
+    {
+      colId: 'requisitionLink',
+      field: 'number',
+      headerName: 'رقم الاذن',
+      width: 90,
+      minWidth: 90,
+      maxWidth: 90,
+      cellClass: 'ag-link-cell',
+      cellRenderer: (params) => {
+        const href = this.getRequisitionLink(params.data);
+        if (!href) {
+          return params.value || '';
+        }
+        return `<a href="${href}">${params.value || ''}</a>`;
+      }
+    },
+    { field: 'color_category_name', headerName: 'فئة اللون' },
+    { field: 'color_name', headerName: 'اللون' },
+    { field: 'color_code', headerName: 'كود اللون' },
+    {
+      field: 'dyeingServices',
+      headerName: 'المعالجات',
+      minWidth: 190,
+      cellClass: 'ag-cell-wrap',
+      autoHeight: true,
+      wrapText: true,
+      valueGetter: (params) => this.getDyeingServicesText(params.data),
+      cellRenderer: (params) => this.getDyeingServicesHtml(params.data)
+    },
+    { field: 'dyed_fabric_name', headerName: 'القماش المصبوغ', cellClass: 'ag-cell-wrap' },
+    { field: 'dyed_fabric_code', headerName: 'كود القماش المصبوغ', width: 90, minWidth: 90, maxWidth: 90 },
+    { field: 'fabric_width', headerName: 'عرض القماش', width: 75, minWidth: 75, maxWidth: 75 },
+    { field: 'fabric_quantity_m2', headerName: 'وزن القماش م2', width: 85, minWidth: 85, maxWidth: 85 },
+    // { field: 'seller_name', headerName: 'العميل', cellClass: 'ag-cell-wrap' },
+    // { field: 'order_quantity', headerName: 'الكمية المطلوبة', valueFormatter: this.numberFormatter.bind(this) },
+    // { field: 'dyeing_current_quantity', headerName: 'الكمية المتبقية', valueFormatter: this.numberFormatter.bind(this) },
+    // { field: 'order_number', headerName: 'رقم طلبية العميل' },
+    {
+      colId: 'updateAction',
+      headerName: 'تعديل المعالجات',
+      filter: false,
+      sortable: false,
+      width: 80,
+      minWidth: 80,
+      maxWidth: 80,
+      suppressMenu: true,
+      cellRenderer: () => '<i class="fas fa-edit update-symbol"></i>'
+    }
+  ];
+  gridColumnApi: any;
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     public _exportDataService: ExportDataService,
-    private primengConfig: PrimeNGConfig,
-    private filterService: FilterService,
+    private router: Router,
   ) {
   }
 
   ngOnInit(): void {
     this.loading = true;
-    this.customFilterForFabric();
-    this.customFilterForFabricCode();
-    this.customFilterForColorCode();
-    this.customFilterForColorCategory();
-    this.customFilterForColor();
-    this.customFilterForDyedFabric();
-    this.customFilterForDyedFabricCode();
-    this.customFilterForSellerOrderNumber();
-    this.customFilterForConsigmentNumber();
-    this.customFilterForWorkOrderNumberDetails();
   }
 
   listen() {
@@ -70,415 +186,144 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
   }
 
   getData() {
-    // PrimeNG Table
-    this.primengConfig.ripple = true;
     this.loading = false;
+
+    if (this.gridApi) {
+      setTimeout(() => {
+        this.gridApi?.refreshHeader();
+        this.scrollCenterViewportToEnd();
+      });
+    }
   }
 
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForFabric() {
-    const customFilterName = "fabric-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedFabrics
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
+    this.getData();
+    this.scrollCenterViewportToEnd();
+  }
 
-      if (this.selectedFabrics[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+  private scrollCenterViewportToEnd() {
+    setTimeout(() => {
+      const viewport = this.agGridElement?.nativeElement?.querySelector('.ag-center-cols-viewport');
+      if (viewport) viewport.scrollLeft = viewport.scrollWidth;
+    }, 100);
+  }
 
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].fabric_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
+  onRowSelected(event: RowSelectedEvent) {
+    if (!event.data || !this.isShowCheckBox) {
+      return;
+    }
+
+    this.parentFun.emit(event.data);
+
+    if (event.node.isSelected()) {
+      this.selection.select(event.data);
+    } else {
+      this.selection.deselect(event.data);
+    }
+  }
+
+  onCellClicked(event: CellClickedEvent) {
+    if (!event.data) {
+      return;
+    }
+
+    if (event.colDef.colId === 'selectAction' && !this.isShowCheckBox) {
+      this.parentFun.emit(event.data);
+      return;
+    }
+
+    if (event.colDef.colId === 'updateAction') {
+      this.getSelectedData(event.data);
+      setTimeout(() => {
+        document.getElementById('update-form')?.scrollIntoView();
+      });
+    }
+  }
+
+  clear() {
+    this.gridApi?.setFilterModel(null);
+    this.gridApi?.deselectAll();
+    this.selection.clear();
+  }
+
+  exportAgGridToExcel() {
+    this.gridApi?.exportDataAsExcel({
+      fileName: 'جرد_التشكيل_المتبقي.xlsx'
     });
   }
 
-  customFilterForFabricCode() {
-    const customFilterName = "fabric-code-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedFabricCodes
+  private numberFormatter(params: ValueFormatterParams): string {
+    if (params.value === null || params.value === undefined || params.value === '') {
+      return '';
+    }
 
-      if (this.selectedFabricCodes[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+    const value = Number(params.value);
+    if (isNaN(value)) {
+      return params.value;
+    }
 
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].fabric_code) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
+    return value.toLocaleString('en-US');
+  }
+
+  private formatDate(value: any): string {
+    if (!value) {
+      return '';
+    }
+
+    const parsedDate = new Date(value);
+    if (isNaN(parsedDate.getTime())) {
+      return '';
+    }
+
+    return parsedDate.toLocaleDateString('ar-EG', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric'
     });
   }
 
-  customFilterForColorCode() {
-    const customFilterName = "color-code-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedColorCodes
+  private getRequisitionLink(data: any): string | null {
+    const route = this.goToRequisitionPage(data?.type_of_requisition, data?.wd_form_dyeing_order_requisition_id);
+    const requisitionId = data?.requisition_id;
 
-      if (this.selectedColorCodes[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+    if (!route || !requisitionId) {
+      return null;
+    }
 
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].color_code) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
+    const urlTree = this.router.createUrlTree([route], { queryParams: { id: requisitionId } });
+    return this.router.serializeUrl(urlTree);
   }
 
-  customFilterForColorCategory() {
-    const customFilterName = "color-category-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedColorCategories
-
-      if (this.selectedColorCategories[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].color_category_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
+  private getDyeingServicesText(data: any): string {
+    return (data?.dyeingServices || [])
+      .map((item) => `${item?.name || ''}${item?.price !== undefined && item?.price !== null ? ` (${this.numberFormatter({ value: item.price } as ValueFormatterParams)})` : ''}`)
+      .filter((item) => !!item)
+      .join(' | ');
   }
 
-  customFilterForColor() {
-    const customFilterName = "color-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedColors
+  private getDyeingServicesHtml(data: any): string {
+    const services = data?.dyeingServices || [];
+    if (!services.length) {
+      return '';
+    }
 
-      if (this.selectedColors[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
+    return services
+      .map((item) => {
+        const name = item?.name || '';
+        const price = item?.price !== undefined && item?.price !== null
+          ? this.numberFormatter({ value: item.price } as ValueFormatterParams)
+          : '';
 
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].color_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForDyedFabric() {
-    const customFilterName = "dyed-fabric-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedDyedFabrics
-
-      if (this.selectedDyedFabrics[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].dyed_fabric_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForDyedFabricCode() {
-    const customFilterName = "dyed-fabric-code-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedDyedFabricCodes
-
-      if (this.selectedDyedFabricCodes[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].dyed_fabric_code) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForSellerOrderNumber() {
-    const customFilterName = "order-number-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedSellerOrdersNumbers
-
-      if (this.selectedSellerOrdersNumbers[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].order_number) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForConsigmentNumber() {
-    const customFilterName = "consigment-number-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedConsigmentNumber
-
-      if (this.selectedConsigmentNumber[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].consigment_dyeing_number) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForWorkOrderNumberDetails() {
-    const customFilterName = "work-order-number-details-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedWorkOrderNumberDetails
-
-      if (this.selectedWorkOrderNumberDetails[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].work_order_number_details) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  clear(table: Table) {
-    table.clear();
-    table.reset();
-    this.selectedFabrics = []
-    this.selectedFabricCodes = []
-    this.selectedColorCodes = []
-    this.selectedColorCategories = []
-    this.selectedColors = []
-    this.selectedDyedFabrics = []
-    this.selectedDyedFabricCodes = []
-    this.selectedSellerOrdersNumbers = []
-    this.selectedConsigmentNumber = []
-    this.selectedWorkOrderNumberDetails = []
-  }
-
-  onMultiselectedFabric(event) {
-    this.selectedFabrics = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedFabricCode(event) {
-    this.selectedFabricCodes = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedColorCode(event) {
-    this.selectedColorCodes = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedColorCategory(event) {
-    this.selectedColorCategories = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedColor(event) {
-    this.selectedColors = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedDyedFabric(event) {
-    this.selectedDyedFabrics = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedDyedFabricCode(event) {
-    this.selectedDyedFabricCodes = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedSellerOrderNumber(event) {
-    this.selectedSellerOrdersNumbers = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedConsigmentNumber(event) {
-    this.selectedConsigmentNumber = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedWorkOrderNumberDetails(event) {
-    this.selectedWorkOrderNumberDetails = event
-    this.dt1?._filter()
+        return `
+          <div class="wd-service-row">
+            <span class="wd-service-name">${name}</span>
+            <span class="wd-service-price">${price}</span>
+          </div>
+        `;
+      })
+      .join('');
   }
 
   getSelectedData(selectedData: any) {

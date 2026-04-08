@@ -10,6 +10,7 @@ import { SharedComponentService } from "src/app/services/shared-component.servic
 import { ExportDataService } from "src/app/services/export-data.service";
 import { ConstantsService } from 'src/app/services/constants.service';
 import { SessionManagerService } from 'src/app/services/main/session-manager.service';
+import { InventoryReportService } from 'src/app/services/inventory-report.service';
 
 // Call Service
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
@@ -35,6 +36,7 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
   isShowLatestPriceDollar = true
   isShowLatestManufacturingPrice = true
   isShowClosedBalances = false
+  isLoading = false
 
   @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
   gridApi!: GridApi;
@@ -301,9 +303,14 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
   totalFooterValues = {}
   public defaultColDef: ColDef = {
     flex: 1,
-    minWidth: 200,
+    minWidth: 150,
     resizable: true,
     sortable: true,
+    wrapText: true,
+    autoHeight: true,
+    cellClass: 'ag-cell-wrap',
+    suppressMenu: false,
+    headerClass: 'ag-header-wrap'
   };
   // public sideBar: SideBarDef | string | string[] | boolean | null = 'filters';
   public loadingCellRenderer: any = CustomLoadingCellRendererComponent;
@@ -319,7 +326,7 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
     public _exportDataService: ExportDataService,
     public _constantsService: ConstantsService,
     public _sessionManagerService: SessionManagerService,
-
+    private _inventoryReportService: InventoryReportService,
   ) {
   }
 
@@ -328,16 +335,21 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
 
   onGridReady(params: GridReadyEvent) {
     this.gridParams = params;
-    this.getData(this.gridParams, "regular"); // أول تحميل يكون العادية
+    this.loadData(params, false);
   }
 
   onToggleBalanceType(event: MatCheckboxChange) {
-    const balanceType = event.checked ? "closed" : "regular";
-    this.getData(this.gridParams, balanceType);
+    this.loadData(this.gridParams, event.checked);
   }
 
-  getData(params: GridReadyEvent, balanceType: string) {
-    if (balanceType === "closed") {
+  resetFilters() {
+    if (this.gridApi) {
+      this.gridApi.setFilterModel(null);
+    }
+  }
+
+  private loadData(params: GridReadyEvent, isShowClosedBalances: boolean) {
+    if (isShowClosedBalances) {
       this.getClosedBalances(params);
     } else {
       this.getRegularBalances(params);
@@ -345,145 +357,105 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
   }
 
   getRegularBalances(params: GridReadyEvent) {
-    this._reportWcService
-      .selectInverntoryTotal({ isShowClosedBalances: false })
-      .subscribe((response: any) => {
-        this.applyGridData(params, response);
-      });
+    this.isLoading = true;
+    this._inventoryReportService.fetchData(
+      (options) => this._reportWcService.selectInverntoryTotal(options),
+      params,
+      (response) => this.applyGridData(params, response),
+      () => this.isLoading = false,
+      { isShowClosedBalances: false }
+    );
   }
 
   getClosedBalances(params: GridReadyEvent) {
-    this._reportWcService
-      .selectInverntoryTotal({ isShowClosedBalances: true })
-      .subscribe((response: any) => {
-        this.applyGridData(params, response);
-      });
+    this.isLoading = true;
+    this._inventoryReportService.fetchData(
+      (options) => this._reportWcService.selectInverntoryTotal(options),
+      params,
+      (response) => this.applyGridData(params, response),
+      () => this.isLoading = false,
+      { isShowClosedBalances: true }
+    );
   }
 
   applyGridData(params: GridReadyEvent, data: any) {
     this.fabrics = data;
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-    this.gridApi.setRowData(this.fabrics);
-
-    requestAnimationFrame(() => setTimeout(() => this.updateFooter(), 100));
-
-    setTimeout(() => {
-      const viewport = this.agGridElement.nativeElement.querySelector('.ag-center-cols-viewport');
-      if (viewport) viewport.scrollLeft = viewport.scrollWidth;
-    }, 100);
+    this._inventoryReportService.applyDataToGrid(
+      data,
+      this.gridApi,
+      this.gridColumnApi,
+      this.agGridElement,
+      () => {
+        this.calculateFooter();
+        this.isLoading = false;
+      }
+    );
   }
-
 
   onModelUpdated() {
-    this.updateFooter();
+    this.calculateFooter();
   }
 
-
-  updateFooter() {
+  calculateFooter() {
     if (!this.gridApi) return;
 
-    requestAnimationFrame(() => {
-      const summary: any = {};
-      const columns = (this.gridApi.getColumnDefs() || []).filter((c: any) => 'field' in c);
+    const summary: any = {};
+    const columns = this.gridApi.getColumnDefs() || [];
 
-      // 🧹 تفريغ القيم القديمة
-      this.totalFooterValues = {};
+    // Filter numeric columns with aggFunc
+    const numericColumns = columns.filter((col: any) => 
+      col.type === 'numericColumn' && !col.excludeFromFooter
+    );
 
-      this.gridApi.forEachNodeAfterFilterAndSort((node) => {
+    // Calculate totals
+    numericColumns.forEach((col: any) => {
+      const field = col.field;
+      if (!field) return;
+
+      let total = 0;
+      this.gridApi.forEachNodeAfterFilterAndSort((node: any) => {
         if (!node.data) return;
 
-        columns.forEach((col: any) => {
-          const field = col.field;
-          if (!field) return;
-
-          // تجاهل الأعمدة غير الرقمية
-          if (col.excludeFromFooter) return;
-
-          let val = 0;
-
-          // 🔹 لو عنده valueGetter
-          if (typeof col.valueGetter === 'function') {
-            try {
-              const params = {
-                data: node.data,
-                node,
-                colDef: col,
-                api: this.gridApi,
-                columnApi: this.gridColumnApi,
-              };
-              val = Number(col.valueGetter(params)) || 0;
-            } catch {
-              val = 0;
-            }
-          } else if (node.data[field] != null) {
-            val = Number(String(node.data[field]).replace(/[^\d.-]/g, '')) || 0;
+        let value = 0;
+        
+        // Handle valueGetter
+        if (typeof col.valueGetter === 'function') {
+          try {
+            value = Number(col.valueGetter({
+              data: node.data,
+              node: node,
+              colDef: col,
+              api: this.gridApi,
+              columnApi: this.gridColumnApi
+            })) || 0;
+          } catch (e) {
+            console.error('Error in valueGetter for field:', field, e);
+            value = 0;
           }
+        } else {
+          // Get raw numeric value
+          const rawValue = node.data[field];
+          value = Number(rawValue) || 0;
+        }
 
-          if (!this.totalFooterValues[field]) {
-            this.totalFooterValues[field] = 0;
-          }
-
-          this.totalFooterValues[field] += val;
-        });
+        total += value;
       });
 
-      // 🔢 صياغة الأرقام بالفوتر
-      columns
-        .filter(col => col['type'] === 'numericColumn' && !col['excludeFromFooter'])
-        .forEach((col: any) => {
-          const field = col.field;
-          if (!field) return;
-
-          if (col.type === 'numericColumn' && !col.excludeFromFooter) {
-            // console.log("field :::::::::: ", field);
-
-            summary[field] = Number(this.totalFooterValues[field] || 0).toLocaleString(
-              'en-US',
-              {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }
-            );
-          } else {
-            summary[field] = '';
-          }
-          // console.log("summary[field] :::: ", summary[field]);
-
-          // أولاً: انتظر شوي لتتأكد أن الجدول رسم حاله
-          setTimeout(() => {
-            // اختار خلية الـ footer (pinned bottom row)
-            const inputQuantityFooterCell = document.querySelector(`.ag-floating-bottom-viewport .ag-cell-value[col-id="${field}"]`);
-
-            if (inputQuantityFooterCell) {
-
-              (inputQuantityFooterCell as HTMLElement).innerText = summary[field]; // 👈 الرقم اللي بدك تحطه
-            }
-
-          }, 500);
-
-        });
-
-
-
-      // 🏷️ ضع كلمة "الإجمالي" في أول عمود نصي
-      const firstTextCol = columns.find(
-        (c: any) => !c.type || c.type !== 'numericColumn'
-      );
-      if (firstTextCol && firstTextCol['field']) {
-        summary[firstTextCol['field']] = 'الإجمالي';
-      }
-
-
-
-      //     console.log('📊 Final footer summary:', summary);
-      this.pinnedBottomRowData = [summary];
-      this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
-      // console.log('✅ pinned row set in grid:', this.gridApi.getPinnedBottomRowCount());
-      this.gridApi.refreshCells({ force: true });
-
-
+      // Store the numeric total (not formatted)
+      // The valueFormatter will format it automatically
+      summary[field] = total;
     });
+
+    // Add label to first text column
+    const firstTextCol = columns.find((c: any) => !c.type || c.type !== 'numericColumn');
+    if (firstTextCol && firstTextCol['field']) {
+      summary[firstTextCol['field']] = 'الإجمالي';
+    }
+
+    this.pinnedBottomRowData = [summary];
+    this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
   }
 
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////

@@ -1,4 +1,4 @@
-.table > :not(caption) > * > * {
+.table> :not(caption)>*>* {
     padding: 0.6px;
 }
 
@@ -10,4 +10,111 @@ td table tfoot tr {
     border: 1px solid #ccc;
     color: var(--primary-color-3) !important;
     background-color: var(--primary-color-1) !important;
+}
+
+/* AG Grid Styling */
+.warning_background {
+    background-color: #fff3cd !important;
+}
+
+.confirm_background {
+    background-color: #d4edda !important;
+}
+
+.hidden-cell {
+    display: none !important;
+}
+
+.update-symbol {
+    color: #007bff;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.update-symbol:hover {
+    color: #0056b3;
+}
+
+.delete-symbol {
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.delete-symbol:hover {
+    color: #bd2130;
+}
+
+/* AG Grid RTL Support */
+.ag-rtl {
+    direction: rtl;
+}
+
+.ag-header-cell-label {
+    justify-content: center;
+}
+
+.ag-header-cell-text {
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.ag-cell {
+    text-align: center;
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+}
+
+/* AG Grid Custom Styles */
+.details-cell {
+    white-space: normal !important;
+    line-height: 1.5;
+}
+
+.details-cell table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 5px 0;
+}
+
+.details-cell table td {
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+}
+
+.details-cell table thead td {
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+:host ::ng-deep .ag-custom-loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+:host ::ng-deep .ag-custom-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-top-color: var(--primary-color-3);
+    border-radius: 50%;
+    animation: ag-spin 0.7s linear infinite;
+}
+
+@keyframes ag-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

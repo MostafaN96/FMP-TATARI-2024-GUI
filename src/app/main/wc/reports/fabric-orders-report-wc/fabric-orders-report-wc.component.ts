@@ -180,10 +180,15 @@ export class FabricOrdersReportWcComponent implements OnInit {
       }, 100);
     }
   
+    resetFilters() {
+      if (this.gridApi) {
+        this.gridApi.setFilterModel(null);
+      }
+    }
+    
     onModelUpdated() {
         this.updateFooter();
       }
-    
       
       updateFooter() {
         if (!this.gridApi) return;

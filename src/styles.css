@@ -50,6 +50,25 @@ body {
   background-color: var(--body-bg-color) !important;
 }
 
+/* ==================== Material Menu Styling ==================== */
+.mat-menu-panel {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+.mat-menu-content {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+.mat-menu-item {
+  color: var(--primary-color-1) !important;
+}
+
+.mat-menu-item:hover {
+  color: var(--hover-color-1) !important;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -990,6 +1009,8 @@ p-calendar span button {
 :host ::ng-deep .ag-cell.details-cell {
   --ag-line-height: normal !important;
   line-height: normal !important;
+  height: auto !important;
+  overflow: visible !important;
 }
 
 :host ::ng-deep .ag-cell.details-cell .ag-cell-value,
@@ -997,6 +1018,48 @@ p-calendar span button {
   height: auto !important;
   overflow: visible !important;
   display: block !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* General cell wrapping */
+:host ::ng-deep .ag-cell-wrap {
+  display: flex !important;
+  align-items: flex-start !important;
+  padding: 8px 4px !important;
+}
+
+:host ::ng-deep .ag-cell-wrap .ag-cell-value {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  line-height: 1.5 !important;
+}
+
+/* Header wrapping */
+:host ::ng-deep .ag-header-wrap {
+  white-space: normal !important;
+  line-height: 1.6 !important;
+  padding: 8px 4px !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+:host ::ng-deep .ag-header-cell-text {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Row auto height */
+:host ::ng-deep .ag-row {
+  height: auto !important;
+}
+
+:host ::ng-deep .ag-row[role="row"] {
+  height: auto !important;
 }
 
 /* .details-host {
@@ -1008,7 +1071,8 @@ p-calendar span button {
 .details-host td {
   white-space: normal !important;
   word-break: normal !important;
-  overflow-wrap: break-word;   /* يكسر عند المسافة */
+  overflow-wrap: break-word;
+  /* يكسر عند المسافة */
   line-height: 1.5;
 }
 
@@ -1050,7 +1114,7 @@ p-calendar span button {
   table-layout: fixed;
 }
 
-.details-host td, 
+.details-host td,
 .details-host th {
   white-space: normal !important;
   overflow: visible !important;
@@ -1071,15 +1135,16 @@ p-calendar span button {
 }
 
 /* جدول التفاصيل */
-.ag-details .details-host .details-table{
+.ag-details .details-host .details-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;   /* مهم مع colgroup */
+  table-layout: fixed;
+  /* مهم مع colgroup */
   direction: rtl;
 }
 
 .ag-details .details-host .details-table th,
-.ag-details .details-host .details-table td{
+.ag-details .details-host .details-table td {
   padding: 2px 4px;
   font-size: 12px;
   vertical-align: top;
@@ -1089,22 +1154,40 @@ p-calendar span button {
   overflow: visible !important;
   text-overflow: clip !important;
   word-break: normal !important;
-  overflow-wrap: anywhere !important; /* يحل النص الطويل */
+  overflow-wrap: anywhere !important;
+  /* يحل النص الطويل */
 }
 
-.ag-details .details-host .details-table .center{
+.ag-details .details-host .details-table .center {
   text-align: center;
 }
 
 /* توزيع الأعمدة (عدّل النسب حسب اللي بدك) */
-.ag-details .details-host .details-table col.c-wo    { width: 16%; }
-.ag-details .details-host .details-table col.c-fabric-code{ width: 12%; }
-.ag-details .details-host .details-table col.c-fabric{ width: 34%; }
-.ag-details .details-host .details-table col.c-color { width: 26%; }
-.ag-details .details-host .details-table col.c-qty   { width: 12%; }
-.ag-details .details-host .details-table col.c-chk   { width: 12%; }
+.ag-details .details-host .details-table col.c-wo {
+  width: 16%;
+}
 
-.ag-theme-alpine.ag-details  .details-cell .ag-cell-value{
+.ag-details .details-host .details-table col.c-fabric-code {
+  width: 12%;
+}
+
+.ag-details .details-host .details-table col.c-fabric {
+  width: 34%;
+}
+
+.ag-details .details-host .details-table col.c-color {
+  width: 26%;
+}
+
+.ag-details .details-host .details-table col.c-qty {
+  width: 12%;
+}
+
+.ag-details .details-host .details-table col.c-chk {
+  width: 12%;
+}
+
+.ag-theme-alpine.ag-details .details-cell .ag-cell-value {
   overflow: visible !important;
   white-space: normal !important;
   height: auto !important;
@@ -1146,3 +1229,35 @@ p-calendar span button {
 }
 
 /* AG Grid End */
+
+/* ===== Loading Indicator Styles ===== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  background-color: white;
+  border-radius: 8px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.loading-spinner p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}

@@ -1,0 +1,75 @@
+.field-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 8px;
+}
+
+.field-icon {
+    color: var(--primary-color-1);
+    font-size: 16px;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, var(--primary-color-1), var(--btn-hover-color-1));
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--hover-color-1), var(--btn-hover-color-1));
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.submit-btn i {
+    margin-left: 8px;
+}
+
+/* Form field styling */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgba(0, 0, 0, 0.12);
+}
+
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: var(--primary-color-1);
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-label {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-label {
+    color: var(--primary-color-1);
+}
+
+::ng-deep .mat-input-element {
+    caret-color: var(--primary-color-1);
+}
+
+/* Error message styling */
+::ng-deep .mat-error {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Password visibility toggle button */
+::ng-deep .mat-icon-button {
+    color: var(--primary-color-1);
+}
+
+::ng-deep .mat-icon-button:hover {
+    background-color: rgba(63, 81, 181, 0.1);
+}

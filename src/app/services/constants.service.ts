@@ -248,6 +248,26 @@ export class ConstantsService {
     });
     return `تم حذف البيانات بنجاح`;
   }
+
+  // رسالة نجاح عامة (Generic success message)
+  successMessage(message: string): string {
+    UIkit.notification({
+      message: message,
+      timeout: 5000,
+      status: "success"
+    });
+    return message;
+  }
+
+  // رسالة خطأ عامة (Generic error message)
+  errorMessage(message: string): string {
+    UIkit.notification({
+      message: message,
+      timeout: 5000,
+      status: "warning"
+    });
+    return message;
+  }
   successUpdateImagesMessage(): string {
     return `The image updated successfully`;
   }
@@ -356,6 +376,7 @@ export class ConstantsService {
     'confirm-received-sell-we', // [17]
     'cancel-received-sell-we', // [18]
     'show-price-we', // [19]
+    'show-user-password', // [20]
 
     ]
   }
@@ -702,6 +723,12 @@ export class ConstantsService {
       'add-transition-between-orders-requisition-we', // [211]
       'show-all-transition-between-orders-requisition-we', // [212]
       'show-all-transition-between-orders-requisition-we/details', // [213]
+
+      
+      // User
+      'add-user', // [214]
+      'show-all-user', // [215]
+      'restore-user', // [216]
     ]
   }
 

@@ -317,7 +317,7 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
     const control = <FormArray>this.addRequisitionForm.get('items');
     
     control.controls[index]['controls']['colorCategoryId'].setValue(colorCategoryId)
-    this._colorService.selectByCategoryAndDeying(dyeingId, colorCategoryId).subscribe((response: any) => {
+    this._colorService.selectByCategoryAndDeyingByDyedFabricByFabricOrder(dyeingId, colorCategoryId, control.controls[index]['controls']['dyedFabricId'].value, control.controls[index]['controls']['ordersRequisitionsId'].value).subscribe((response: any) => {
       this.colors[index] = response
     })
   }

@@ -7,6 +7,7 @@ import { CustomLoadingCellRendererComponent } from 'src/app/general-pages/custom
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ExportDataService } from "src/app/services/export-data.service";
+import { InventoryReportService } from 'src/app/services/inventory-report.service';
 
 // Call Service
 import { ReportWeService } from "src/app/services/main/we/report-we.service";
@@ -34,6 +35,7 @@ export class ItemHostoryByDyedFabricComponent implements OnInit {
   isShowLatestPrice = true
   isShowLatestPriceDollar = true
   isShowClosedBalances = false
+  isLoading = false
 
 
   @ViewChild('agGrid', { read: ElementRef }) agGridElement!: ElementRef;
@@ -242,9 +244,14 @@ export class ItemHostoryByDyedFabricComponent implements OnInit {
   totalFooterValues = {}
   public defaultColDef: ColDef = {
     flex: 1,
-    minWidth: 200,
+    minWidth: 150,
     resizable: true,
     sortable: true,
+    wrapText: true,
+    autoHeight: true,
+    cellClass: 'ag-cell-wrap',
+    suppressMenu: false,
+    headerClass: 'ag-header-wrap'
   };
   public sideBar: SideBarDef | string | string[] | boolean | null = 'filters';
   public loadingCellRenderer: any = CustomLoadingCellRendererComponent;
@@ -261,7 +268,7 @@ gridParams!: GridReadyEvent;
     public _exportDataService: ExportDataService,
     public _sessionManagerService: SessionManagerService,
     public _constantsService: ConstantsService,
-
+    private _inventoryReportService: InventoryReportService,
   ) {
     this._sharedComponentService.angularMaterialTableConfig()
   }
@@ -270,51 +277,64 @@ gridParams!: GridReadyEvent;
   }
 
   onGridReady(params: GridReadyEvent) {
-  this.gridParams = params;
-  this.getData(this.gridParams, "regular"); // أول تحميل يكون العادية
-}
-
-onToggleBalanceType(event: MatCheckboxChange) {
-  const balanceType = event.checked ? "closed" : "regular";
-  this.getData(this.gridParams, balanceType);
-}
-
-getData(params: GridReadyEvent, balanceType: string) {
-  if (balanceType === "closed") {
-    this.getClosedBalances(params);
-  } else {
-    this.getRegularBalances(params);
+    this.gridParams = params;
+    this.loadData(params, false);
   }
-}
+
+  onToggleBalanceType(event: MatCheckboxChange) {
+    this.loadData(this.gridParams, event.checked);
+  }
+
+  resetFilters() {
+    if (this.gridApi) {
+      this.gridApi.setFilterModel(null);
+    }
+  }
+
+  private loadData(params: GridReadyEvent, isShowClosedBalances: boolean) {
+    if (isShowClosedBalances) {
+      this.getClosedBalances(params);
+    } else {
+      this.getRegularBalances(params);
+    }
+  }
 
 getRegularBalances(params: GridReadyEvent) {
-  this._reportWeService
-    .selectInverntoryDetails({ isShowClosedBalances: false })
-    .subscribe((response: any) => {
-      this.applyGridData(params, response);
-    });
+  this.isLoading = true;
+  this._inventoryReportService.fetchData(
+    (options) => this._reportWeService.selectInverntoryDetails(options),
+    params,
+    (response) => this.applyGridData(params, response),
+    () => this.isLoading = false,
+    { isShowClosedBalances: false }
+  );
 }
 
 getClosedBalances(params: GridReadyEvent) {
-  this._reportWeService
-    .selectInverntoryDetails({ isShowClosedBalances: true })
-    .subscribe((response: any) => {
-      this.applyGridData(params, response);
-    });
+  this.isLoading = true;
+  this._inventoryReportService.fetchData(
+    (options) => this._reportWeService.selectInverntoryDetails(options),
+    params,
+    (response) => this.applyGridData(params, response),
+    () => this.isLoading = false,
+    { isShowClosedBalances: true }
+  );
 }
 
 applyGridData(params: GridReadyEvent, data: any) {
   this.fabrics = data;
   this.gridApi = params.api;
   this.gridColumnApi = params.columnApi;
-  this.gridApi.setRowData(this.fabrics);
-
-  requestAnimationFrame(() => setTimeout(() => this.updateFooter(), 100));
-
-  setTimeout(() => {
-    const viewport = this.agGridElement.nativeElement.querySelector('.ag-center-cols-viewport');
-    if (viewport) viewport.scrollLeft = viewport.scrollWidth;
-  }, 100);
+  this._inventoryReportService.applyDataToGrid(
+    data,
+    this.gridApi,
+    this.gridColumnApi,
+    this.agGridElement,
+    () => {
+      this.updateFooter();
+      this.isLoading = false;
+    }
+  );
 }
 
 
@@ -380,30 +400,12 @@ applyGridData(params: GridReadyEvent, data: any) {
 
           if (col.type === 'numericColumn' && !col.excludeFromFooter) {
             // console.log("field :::::::::: ", field);
-
-            summary[field] = Number(this.totalFooterValues[field] || 0).toLocaleString(
-                'en-US',
-                {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                }
-              );
+            // Store numeric value - valueFormatter will format it automatically
+            summary[field] = Number(this.totalFooterValues[field] || 0);
           } else {
             summary[field] = '';
           }
           // console.log("summary[field] :::: ", summary[field]);
-
-          // أولاً: انتظر شوي لتتأكد أن الجدول رسم حاله
-          setTimeout(() => {
-            // اختار خلية الـ footer (pinned bottom row)
-            const inputQuantityFooterCell = document.querySelector(`.ag-floating-bottom-viewport .ag-cell-value[col-id="${field}"]`);
-
-            if (inputQuantityFooterCell) {
-
-              (inputQuantityFooterCell as HTMLElement).innerText = summary[field]; // 👈 الرقم اللي بدك تحطه
-            }
-
-          }, 500);
 
         });
 

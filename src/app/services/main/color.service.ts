@@ -67,6 +67,16 @@ export class ColorService {
       });
   }
 
+  selectByCategoryAndDeyingByDyedFabricByFabricOrder(deyingId: string, colorCategoryId: string, dyedFabricId: string, fabricOrderId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}${deyingId}/${colorCategoryId}/${dyedFabricId}/${fabricOrderId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   selectByCategory(colorCategoryId: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}by-category/${colorCategoryId}`;
     return this._http.get(url,

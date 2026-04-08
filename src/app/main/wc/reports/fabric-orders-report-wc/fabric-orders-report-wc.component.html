@@ -38,7 +38,12 @@
             <div [class]="_sharedComponentService.gridForm2Class">
                 <div class="col">
                     <div [class]="_sharedComponentService.tableSectionClass">
+                        <div class="mb-4">
 
+                            <button mat-raised-button color="warn" (click)="resetFilters()" class="ms-3">
+                                    <i class="fas fa-undo me-2"></i>إعادة تعيين الفلاتر
+                            </button>
+                        </div>
                         
                                     <div id="table-header-data-report"
                         dir="rtl"

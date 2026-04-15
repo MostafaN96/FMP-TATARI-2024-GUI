@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import {
   ColDef,
   GridApi,
@@ -60,7 +61,7 @@ export class ShowAllFormDyeingRequisitionWdComponent implements OnInit {
   filterStore = {
     dyeing_name: new Set<string>(),
     work_order_number: new Set<string>(),
-    wc_fabric_order_requisition_name: new Set<string>(),
+    parent_wc_fabric_order_requisition_name: new Set<string>(),
 
     // details
     details_work_order: new Set<string>(),
@@ -72,7 +73,7 @@ export class ShowAllFormDyeingRequisitionWdComponent implements OnInit {
   availableFilters: any = {
     dyeing_name: [],
     work_order_number: [],
-    wc_fabric_order_requisition_name: [],
+    parent_wc_fabric_order_requisition_name: [],
 
     details_work_order: [],
     details_fabric_code: [],
@@ -122,12 +123,12 @@ export class ShowAllFormDyeingRequisitionWdComponent implements OnInit {
     },
     {
       headerName: 'طلبية',
-      field: 'wc_fabric_order_requisition_name',
-      colId: 'wc_fabric_order_requisition_name',
+      field: 'parent_wc_fabric_order_requisition_name',
+      colId: 'parent_wc_fabric_order_requisition_name',
       filter: 'agSetColumnFilter',
       filterParams: {
         excelMode: 'windows',
-        values: (params: any) => params.success(this.availableFilters?.wc_fabric_order_requisition_name || []),
+        values: (params: any) => params.success(this.availableFilters?.parent_wc_fabric_order_requisition_name || []),
       },
     },
 
@@ -184,12 +185,13 @@ export class ShowAllFormDyeingRequisitionWdComponent implements OnInit {
         link.style.color = '#007bff';
 
         link.addEventListener('click', (event) => {
-          const queryParams = new URLSearchParams({ id: element.data.id }).toString();
-          const currentUrl = window.location.origin + window.location.pathname;
-          const fullUrl = `${currentUrl}/details?${queryParams}`;
-
-          if (event.ctrlKey || event.button === 1) window.open(fullUrl, '_blank');
-          else window.location.href = fullUrl;
+          const queryParams = { id: element.data.id };
+          if (event.ctrlKey || event.button === 1) {
+            const urlTree = this._router.createUrlTree(['details'], { relativeTo: this._activatedRoute, queryParams });
+            window.open(this._router.serializeUrl(urlTree), '_blank');
+          } else {
+            this._router.navigate(['details'], { relativeTo: this._activatedRoute, queryParams });
+          }
         });
         return link;
       }
@@ -257,6 +259,8 @@ export class ShowAllFormDyeingRequisitionWdComponent implements OnInit {
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _formDyeingRequisitionWdService: FormDyeingRequisitionWdService,
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit(): void { }

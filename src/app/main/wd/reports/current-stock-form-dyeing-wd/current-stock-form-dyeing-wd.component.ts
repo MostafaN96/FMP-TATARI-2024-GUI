@@ -73,7 +73,7 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       filter: false,
       sortable: false,
       suppressMenu: true,
-      pinned: 'right' as const,
+      // pinned: 'right' as const,
       checkboxSelection: () => this.isShowCheckBox,
       headerCheckboxSelection: () => this.isShowCheckBox,
       cellRenderer: () => this.isShowCheckBox ? '' : '<i class="fas fa-plus update-symbol"></i>'
@@ -167,7 +167,7 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
       suppressMenu: true,
       cellRenderer: () => '<i class="fas fa-edit update-symbol"></i>'
     }
-  ];
+  ].reverse();
   gridColumnApi: any;
 
   constructor(

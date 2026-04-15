@@ -1,17 +1,8 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-
-
-// Angular Material Table
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortable } from '@angular/material/sort';
-import { SelectionModel } from '@angular/cdk/collections';
-
-// Shared Service
-import { SharedComponentService } from "src/app/services/shared-component.service";
-import { ConstantsService } from "src/app/services/constants.service";
-
-// Call Service
-import { BussinessmanService } from "src/app/services/main/bussinessman.service";
+﻿import { Component, OnInit } from '@angular/core';
+import { ColDef, GridApi, GridReadyEvent, SideBarDef, GridOptions } from 'ag-grid-community';
+import { SharedComponentService } from 'src/app/services/shared-component.service';
+import { ConstantsService } from 'src/app/services/constants.service';
+import { BussinessmanService } from 'src/app/services/main/bussinessman.service';
 
 @Component({
   selector: 'app-show-all-supplier',
@@ -19,164 +10,95 @@ import { BussinessmanService } from "src/app/services/main/bussinessman.service"
   styleUrls: ['./show-all-supplier.component.css']
 })
 export class ShowAllSupplierComponent implements OnInit {
+  private gridApi!: GridApi;
+  rowData: any[] = [];
+  selectedRows: any[] = [];
+  selectedDataToUpdate: any;
 
- /////////////////// Variables ///////////////////
- suppliers: any[] = []
- selectedData:any = []
- selectedDataToUpdate: any
- selectArrayValues: any[] = [];
+  sideBar: SideBarDef = { toolPanels: ['filters'], defaultToolPanel: undefined };
+  defaultColDef: ColDef = { flex: 1, minWidth: 120, resizable: true, sortable: true, filter: true };
+  gridOptions: GridOptions = { enableRtl: true, animateRows: true, rowSelection: 'multiple', suppressRowClickSelection: true };
 
- //////////////////////////////////// Tabel Angular Material /////////////////////////////////
- @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
- displayedColumns: string[] = ['select', 'name', 'phone', 'address', 'supplier',
- 'seller',
- 'manufacturer',
- 'dyer',
- 'is_stock',
- 'update'];
- selection = new SelectionModel(true);
- filter = "";
- dataSourceSearchTabel: any;
- filterSelectObj = [
-  {
-    name: 'الموردين',
-    columnProp: 'is_supplier',
-    options: [""]
-  }, {
-    name: 'العملاء',
-    columnProp: 'is_seller',
-    options: [""]
-  }, {
-    name: 'الصناعيين',
-    columnProp: 'is_manufacturer',
-    options: [""]
-  }, {
-    name: 'المصابغ',
-    columnProp: 'is_dyer',
-    options: [""]
-  }, {
-    name: 'عميل ستوك',
-    columnProp: 'is_stock',
-    options: [""]
+  private boolCell = (v: any): string =>
+    v == 1
+      ? '<i class="fas fa-check-circle" style="color:#4caf50"></i>'
+      : '<i class="fas fa-times-circle" style="color:#ccc"></i>';
+
+  columnDefs: ColDef[] = [
+    { headerName: '', checkboxSelection: true, headerCheckboxSelection: true, maxWidth: 50, filter: false, sortable: false },
+    { headerName: 'اسم العميل', field: 'name', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' } },
+    { headerName: 'رقم الموبايل', field: 'phone', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' } },
+    { headerName: 'العنوان', field: 'address', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' } },
+    {
+      headerName: 'مورد', field: 'is_supplier', maxWidth: 90,
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows', valueFormatter: (p: any) => p.value == 1 ? 'مورد' : 'لا' },
+      cellRenderer: (p: any) => this.boolCell(p.value)
+    },
+    {
+      headerName: 'عميل', field: 'is_seller', maxWidth: 90,
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows', valueFormatter: (p: any) => p.value == 1 ? 'عميل' : 'لا' },
+      cellRenderer: (p: any) => this.boolCell(p.value)
+    },
+    {
+      headerName: 'صناعي', field: 'is_manufacturer', maxWidth: 90,
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows', valueFormatter: (p: any) => p.value == 1 ? 'صناعي' : 'لا' },
+      cellRenderer: (p: any) => this.boolCell(p.value)
+    },
+    {
+      headerName: 'صباغة', field: 'is_dyer', maxWidth: 90,
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows', valueFormatter: (p: any) => p.value == 1 ? 'صباغة' : 'لا' },
+      cellRenderer: (p: any) => this.boolCell(p.value)
+    },
+    {
+      headerName: 'عميل ستوك', field: 'is_stock', maxWidth: 110,
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows', valueFormatter: (p: any) => p.value == 1 ? 'عميل ستوك' : 'لا' },
+      cellRenderer: (p: any) => this.boolCell(p.value)
+    },
+    {
+      headerName: 'تعديل', field: 'id', maxWidth: 100, sortable: false, filter: false,
+      cellRenderer: (p: any) => {
+        const a = document.createElement('a');
+        a.innerHTML = '<i class="fas fa-edit update-symbol"></i>';
+        a.style.cursor = 'pointer';
+        a.addEventListener('click', () => {
+          this.selectedDataToUpdate = { ...p.data };
+          setTimeout(() => document.getElementById('update-form')?.scrollIntoView({ behavior: 'smooth' }), 50);
+        });
+        return a;
+      }
+    },
+  ];
+
+  constructor(
+    public _sharedComponentService: SharedComponentService,
+    private _constantsService: ConstantsService,
+    private _supplierService: BussinessmanService,
+  ) { }
+
+  ngOnInit(): void { this.getData(); }
+  onGridReady(params: GridReadyEvent) { this.gridApi = params.api; }
+  onSelectionChanged() { this.selectedRows = this.gridApi?.getSelectedRows() || []; }
+
+  getData() {
+    this._supplierService.selectAll().subscribe((response: any) => {
+      this.rowData = Array.isArray(response) ? response : [];
+    });
   }
-]
-filterValues = {};
 
- constructor(
-   public _sharedComponentService: SharedComponentService,
-   private _constantsService: ConstantsService,
-   private _supplierService: BussinessmanService,
-   
-
- ) {
-   this._sharedComponentService.angularMaterialTableConfig()
- }
-
- ngOnInit(): void {
-   this.getData();
- }
-
- getData() {
-   this._supplierService.selectAll().subscribe((response: any) => {
-     this.suppliers = response
-     this.dataSourceSearchTabel = new MatTableDataSource(this.suppliers);
-
-     this.sortColumns.sort(({ id: 'name', start: 'asc'}) as MatSortable);
-     this.dataSourceSearchTabel.sort = this.sortColumns;
-
-// Setup Filter
-this._sharedComponentService.setupFilter(response, this.dataSourceSearchTabel, this.filterSelectObj)
-this.filterSelectObj = [
-  {
-    name: 'الموردين',
-    columnProp: 'is_supplier',
-    options: ["1"]
-  }, {
-    name: 'العملاء',
-    columnProp: 'is_seller',
-    options: ["1"]
-  }, {
-    name: 'الصناعيين',
-    columnProp: 'is_manufacturer',
-    options: ["1"]
-  }, {
-    name: 'المصابغ',
-    columnProp: 'is_dyer',
-    options: ["1"]
-  }, {
-    name: 'عميل ستوك',
-    columnProp: 'is_stock',
-    options: ["1"]
+  delete() {
+    this._supplierService.delete(this.selectedRows).subscribe((response: any) => {
+      if (response.msg === 'the item is delete') {
+        this._constantsService.successDeleteMessage();
+        this.selectedRows = [];
+        this.getData();
+      } else {
+        this._constantsService.invalidIdErrorMessage();
+      }
+    });
   }
-]
-   })
- }
-
- ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
- applyFilter(filterValue: string) {
-  this.dataSourceSearchTabel = new MatTableDataSource(this.suppliers);
-   this.dataSourceSearchTabel.filter = filterValue.trim().toLowerCase();
- }
-
- // Reset table filters
- resetFilters(filterSelectObj) {
-  this.filterValues = {}
-  filterSelectObj.forEach((value, key) => {
-    value.modelValue = undefined;
-  })
-  this.dataSourceSearchTabel.filter = "";
-  this.getData();
-}
-
- isAllSelected() {
-   const numSelected = this.selection.selected.length;
-   const numRows = this.dataSourceSearchTabel.data.length;
-   return numSelected === numRows;
- }
-
- masterToggle() {
-   this.isAllSelected() ?
-     this.selection.clear() :
-     this.dataSourceSearchTabel.data.forEach((row: any) => this.selection.select(row));
- }
-
-
- getSelectedIndex(objectData: any) {
-   this.selectedData = []
-   if (this.selectArrayValues.includes(objectData)) {
-     let index = this.selectArrayValues.indexOf(objectData);
-     this.selectArrayValues[index] = delete this.selectArrayValues[index];
-   }
-   else {
-     this.selectArrayValues.push(objectData);
-   }
-   this.selectArrayValues.forEach((element) => {
-     if (element !== true)
-       this.selectedData.push(element)
-   });
-
- }
-
- selectAll() {
-   this.suppliers.forEach(suppliers => {
-     this.getSelectedIndex(suppliers)
-   })
- }
-
- getSelectedData(selectedData: any) {
-   this.selectedDataToUpdate = selectedData
- }
- ///////////////////// ----------- End Search Tabel ----------- /////////////////////
-
- delete() {
-   this._supplierService.delete(this.selectedData).subscribe(response => {
-    if (response.msg === "the item is delete") {
-      this._constantsService.successDeleteMessage()
-      this._sharedComponentService.reloadPage();
-    }
-    else {
-      this._constantsService.invalidIdErrorMessage()
-    }
-   })
- }
 }

@@ -1,8 +1,16 @@
-td table tbody tr {
+::ng-deep td table tbody tr {
     border: 1px solid #ccc;
 }
 
-td table tfoot tr {
+::ng-deep td table thead tr th {
+    background-color: var(--ag-header-background-color, #f8f8f8);
+    color: var(--ag-header-foreground-color, #181d1f);
+    border-bottom: 2px solid var(--ag-border-color, #babfc7);
+    font-weight: 700;
+    padding: 4px 8px;
+}
+
+::ng-deep td table tfoot tr {
     border: 1px solid #ccc;
     color: var(--primary-color-3) !important;
     background-color: var(--primary-color-1) !important;

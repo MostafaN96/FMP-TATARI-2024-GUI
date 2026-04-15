@@ -35,7 +35,7 @@ export class FormDyeingRequisitionDetailsWdComponent implements OnInit {
   displayedColumns: string[] = [
     'index',
     'work_order_number_details',
-    'wc_fabric_order_requisition_name',
+    'parent_wc_fabric_order_requisition_name',
     'fabric_name',
     'fabric_code',
     'fabric_dyeing_code',

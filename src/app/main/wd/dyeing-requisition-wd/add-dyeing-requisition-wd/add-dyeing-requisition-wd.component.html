@@ -196,6 +196,10 @@
                                         إجمالي التكلفة
                                     </th>
 
+                                    <th style="min-width: 200px;">
+                                        طلبية الجاهز
+                                    </th>
+
                                     <th style="max-width: 130px;">
                                         نوع القماش المصبوغ
                                     </th>
@@ -526,6 +530,18 @@
                                             </span>
                                         </td>
 
+                                        <td class="table-td" style="min-width: 200px;">
+                                            <ejs-autocomplete [dataSource]="dyedFabricOrderRequisitions[index]"
+                                                [fields]='fieldsDyedFabricOrderRequisition'
+                                                [placeholder]='textDyedFabricOrderRequisition'
+                                                [autofill]='autofill'
+                                                (filtering)='onFilteringDyedFabricOrderRequisition($event, index)'
+                                                (select)='selectDyedFabricOrderRequisition($event, row)'
+                                                (change)='selectDyedFabricOrderRequisition($event, row)'
+                                                formControlName="dyedFabricOrderRequisitionName">
+                                            </ejs-autocomplete>
+                                        </td>
+
                                         <td class="table-td" style="max-width: 130px;">
                                             <mat-form-field class="w-100">
                                                 <mat-label>
@@ -552,6 +568,7 @@
                                                 <mat-label>كمية المصبوغ</mat-label>
                                                 <input autocomplete="off" type="text" matInput
                                                     formControlName="dyeingQuantity" placeholder="مثال: 12000"
+                                                    [disabled]="!row.controls['dyedFabricOrderRequisitionId'].value"
                                                     [errorStateMatcher]="matcher"
                                                     oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                                     required 
@@ -754,7 +771,7 @@
                                     <td colspan="7"></td>
                                     <td class="text-center">{{getSumTotalCost(addRequisitionForm.controls.items.value,
                                         selectArrayValues) | number}}</td>
-                                    <td colspan="2"></td>
+                                    <td colspan="3"></td>
                                     <td>{{_sharedComponentService.getTotalQuantityForm(addRequisitionForm, 'items',
                                         'dyeingQuantity') | number}}</td>
                                     <td colspan="9"></td>
@@ -778,3 +795,7 @@
         </form>
     </div>
 </section>
+
+<!-- <pre>
+    {{addRequisitionForm.value | json}}
+</pre> -->

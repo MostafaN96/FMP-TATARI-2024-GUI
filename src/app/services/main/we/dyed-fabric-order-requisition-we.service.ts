@@ -59,6 +59,30 @@ export class DyedFabricOrderRequisitionWeService {
       });
   }
 
+  // selectDyedFabricsByWcFabricOrderIds
+  selectDyedFabricsByWcFabricOrderIds(wcFabricOrderIds: string[], dyedFabricId?: string): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}by-wc-fabric-order-ids`;
+
+    return this._http.post(url, { wcFabricOrderIds, dyedFabricId },
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
+  // selectDyedFabricsByOrdersRequisitionsIds
+  selectDyedFabricsByOrdersRequisitionsIds(ordersRequisitionsIds: string[]): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}by-orders-requisitions-ids`;
+
+    return this._http.post(url, { ordersRequisitionsIds },
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   // Select
   selectAll(isClosed): Observable<any> {
     let url = `${this._constantsService.BASE_URL}${this.urlService}opened-orders`;

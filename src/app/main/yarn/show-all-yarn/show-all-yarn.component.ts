@@ -1,15 +1,14 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import {
+  ColDef,
+  GridApi,
+  GridReadyEvent,
+  SideBarDef,
+  GridOptions,
+} from 'ag-grid-community';
 
-// PrimeNG Table
-import { PrimeNGConfig } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { FilterService } from 'primeng/api';
-
-// Shared Service
 import { SharedComponentService } from "../../../services/shared-component.service";
 import { ConstantsService } from "../../../services/constants.service";
-
-// Call Service
 import { YarnService } from "../../../services/main/yarn.service";
 
 @Component({
@@ -19,148 +18,111 @@ import { YarnService } from "../../../services/main/yarn.service";
 })
 export class ShowAllYarnComponent implements OnInit {
 
-  /////////////////// Variables ///////////////////
-  yarns: any[] = []
-  selectedData: any = []
-  selectedDataToUpdate: any
-  selectArrayValues: any[] = [];
+  private gridApi!: GridApi;
 
-  //////////////////////////////////// PrimeNG /////////////////////////////////
-  @ViewChild('dt1') dt1: Table | undefined;
-  loading: boolean = true;
-  selectedYarns: any[] = []
-  selectedCodes: any[] = []
+  rowData: any[] = [];
+  selectedRows: any[] = [];
+  selectedDataToUpdate: any;
+  loading = false;
+
+  sideBar: SideBarDef = {
+    toolPanels: ['filters'],
+    defaultToolPanel: undefined
+  };
+
+  defaultColDef: ColDef = {
+    flex: 1,
+    minWidth: 120,
+    resizable: true,
+    sortable: true,
+    filter: true,
+  };
+
+  gridOptions: GridOptions = {
+    enableRtl: true,
+    animateRows: true,
+    rowSelection: 'multiple',
+    suppressRowClickSelection: true,
+  };
+
+  columnDefs: ColDef[] = [
+    {
+      headerName: '',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      maxWidth: 50,
+      filter: false,
+      sortable: false,
+      pinned: 'right',
+    },
+    {
+      headerName: 'اسم الخيط',
+      field: 'name',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'الكود',
+      field: 'code',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'تعديل',
+      field: 'id',
+      maxWidth: 100,
+      sortable: false,
+      filter: false,
+      cellRenderer: (p: any) => {
+        const a = document.createElement('a');
+        a.innerHTML = '<i class="fas fa-edit update-symbol"></i>';
+        a.style.cursor = 'pointer';
+        a.addEventListener('click', () => {
+          this.selectedDataToUpdate = { ...p.data };
+          setTimeout(() => {
+            document.getElementById('update-form')?.scrollIntoView({ behavior: 'smooth' });
+          }, 50);
+        });
+        return a;
+      },
+    },
+  ];
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
     private _yarnService: YarnService,
-    private primengConfig: PrimeNGConfig,
-    private filterService: FilterService,
-
-  ) {
-    this._sharedComponentService.angularMaterialTableConfig()
-  }
+  ) { }
 
   ngOnInit(): void {
-    this.customFilterForYarns();
-    this.customFilterForCodes();
-
     this.getData();
+  }
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
+  }
+
+  onSelectionChanged() {
+    this.selectedRows = this.gridApi?.getSelectedRows() || [];
   }
 
   getData() {
     this.loading = true;
-
     this._yarnService.selectAll().subscribe((response: any) => {
-      this.yarns = response
-
-      // PrimeNG Table
-      this.primengConfig.ripple = true;
+      this.rowData = Array.isArray(response) ? response : [];
       this.loading = false;
-    })
-  }
-
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForYarns() {
-    const customFilterName = "yarn-name-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedYarns
-
-      if (this.selectedYarns[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
     });
   }
-  customFilterForCodes() {
-    const customFilterName = "code-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedCodes
-
-      if (this.selectedCodes[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].code) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  // Reset table filters
-  clear(table: Table) {
-    table.clear();
-    table.reset();
-    this.selectedYarns = []
-    this.selectedCodes = []
-  }
-
-  onMultiselectedYarns(event) {
-    this.selectedYarns = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedCodes(event) {
-    this.selectedCodes = event
-    this.dt1?._filter()
-  }
-
-  getSelectedData(selectedData: any) {
-    this.selectedDataToUpdate = selectedData
-  }
-  ///////////////////// ----------- End Search Tabel ----------- /////////////////////
 
   delete() {
-    this._yarnService.delete(this.selectedData).subscribe(response => {
-      if (response.msg === "the item is delete") {
-        this._constantsService.successDeleteMessage()
-        this._sharedComponentService.reloadPage();
+    this._yarnService.delete(this.selectedRows).subscribe((response: any) => {
+      if (response.msg === 'the item is delete') {
+        this._constantsService.successDeleteMessage();
+        this.selectedRows = [];
+        this.getData();
+      } else {
+        this._constantsService.invalidIdErrorMessage();
       }
-      else {
-        this._constantsService.invalidIdErrorMessage()
-      }
-    })
+    });
   }
 }

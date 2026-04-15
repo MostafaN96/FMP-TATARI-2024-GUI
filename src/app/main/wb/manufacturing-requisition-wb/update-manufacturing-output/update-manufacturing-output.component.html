@@ -172,6 +172,19 @@
                         </mat-form-field>
                     </div>
 
+                    <!-- Storage Place -->
+                    <div class="col">
+                        <mat-form-field appearance="outline" class="example-full-width w-100">
+                            <mat-label>رقم الاستاند</mat-label>
+                            <input type="text" matInput formControlName="storagePlace" placeholder="مثال: A1"
+                                [errorStateMatcher]="matcher" />
+                            <mat-error *ngIf="outputManufacturedWbForm.controls['storagePlace'].hasError('pattern')">
+                                <label [innerHTML]="_sharedComponentService.invalid_message">
+                                </label>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
                     <!-- Statement -->
                     <div class="col">
                         <mat-form-field appearance="outline" class="example-full-width w-100">

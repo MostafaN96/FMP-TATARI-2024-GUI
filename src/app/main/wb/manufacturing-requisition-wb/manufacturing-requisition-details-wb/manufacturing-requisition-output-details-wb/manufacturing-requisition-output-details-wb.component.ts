@@ -53,6 +53,7 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
     'consigment_number',
     'warehouse_name',
     'document',
+    'storage_place',
     'statement',
     'fabric_order_requisitions',
     'update'];
@@ -150,6 +151,25 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
       selectedData.manufacturingOrderRequisitionDetailsId = ""
     }
     this.selectedDataToUpdate = selectedData
+  }
+
+  handleOutputUpdated(updatedRow: any) {
+    const targetId = String(updatedRow?.id ?? '');
+
+    this.manufacturingRequisitionDetails = (this.manufacturingRequisitionDetails || []).map((item: any) => {
+      if (String(item?.id ?? '') === targetId) {
+        return {
+          ...item,
+          ...updatedRow
+        };
+      }
+      return item;
+    });
+
+    this.dataSourceSearchTabel = new MatTableDataSource(this.manufacturingRequisitionDetails);
+    this.dataSourceSearchTabel.sort = this.sortColumns;
+    this.selectedDataToUpdate = null;
+    this.showOutputUpdate = false;
   }
 
   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////

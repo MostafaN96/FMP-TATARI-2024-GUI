@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 // Form Services
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -24,6 +24,8 @@ export class UpdateManufacturingRequisitionStatusWbComponent implements OnInit {
   manufacturingStatus = this._constantsService.WB_MANUFACTURING_STATUS
 
   @Input() selectedData: any
+  @Output() updated = new EventEmitter<any>();
+
   inputManufacturedWbForm: FormGroup = new FormGroup({
     note: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     date: new FormControl("", [Validators.required]),
@@ -63,11 +65,17 @@ export class UpdateManufacturingRequisitionStatusWbComponent implements OnInit {
       this._manufacturingRequisitionWbService.update(this.inputManufacturedWbForm.value, this.selectedData.id).subscribe((response: any) => {
         this._constantsService.spinner.hide();
         if (response.msg === "data updated") {
+          const updatedRow = {
+            ...this.selectedData,
+            date: this.inputManufacturedWbForm.controls['date'].value,
+            note: this.inputManufacturedWbForm.controls['note'].value,
+            status: this.inputManufacturedWbForm.controls['status'].value,
+            status_name: this.manufacturingStatus.find((item: any) => item.value == this.inputManufacturedWbForm.controls['status'].value)?.name || this.selectedData?.status_name
+          };
+
+          Object.assign(this.selectedData, updatedRow);
+          this.updated.emit(updatedRow);
           this._constantsService.successUpdateMessage()
-          // this._sharedComponentService.reloadPageWithParams(this.requisitionId);
-          // setTimeout(() => {
-          //   window.location.reload()
-          // }, this._constantsService.RELOAD_TIME);
         }
         else {
           if (response.msg == "quantity is wrong") {

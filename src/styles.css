@@ -2,6 +2,23 @@
 
 @import "../node_modules/bootstrap/dist/css/bootstrap.rtl.min.css";
 
+/* ==================== AG Grid Inner Details Table ==================== */
+.details-table thead tr th {
+  background-color: #3f51b5 !important;
+  color: #fff !important;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-bottom: 2px solid #2c3a9e;
+}
+
+.details-table tfoot tr th {
+  background-color: #3f51b5 !important;
+  color: #fff !important;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-top: 2px solid #2c3a9e;
+}
+
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 

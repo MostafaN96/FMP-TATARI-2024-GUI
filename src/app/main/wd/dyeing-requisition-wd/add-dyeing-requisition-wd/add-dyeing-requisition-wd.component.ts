@@ -17,6 +17,8 @@ import { FormDyeingRequisitionDetailsWdService } from 'src/app/services/main/wd/
 import { DyeingRequisitionDetailsWdService } from 'src/app/services/main/wd/dyeing-requisition-details-wd.service';
 import { WarehouseService } from "src/app/services/main/warehouse.service";
 import { GradeItemService } from "src/app/services/main/grade-item.service";
+import { DyedFabricOrderRequisitionWeService } from "src/app/services/main/we/dyed-fabric-order-requisition-we.service";
+import { DyedFabricOrderRequisitionDetailsWeService } from "src/app/services/main/we/dyed-fabric-order-requisition-details-we.service";
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -67,6 +69,9 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
   fabricMap = new Map()
   isShowAdd = true
   maxWorkOrderNumberResult:any = ""
+  dyedFabricOrderRequisitions: any[] = []
+  wcFabricOrderRequisitionIds: string[] = []
+  wasteRatioMap = new Map<string, number>() // Map to store waste_ratio by dyedFabricOrderRequisitionId
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -122,6 +127,23 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     e.updateData(this.gradeItems, query);
   }
 
+  // --------------- Dyed Fabric Order Requisition --------------
+  // maps the appropriate column to fields property
+  public fieldsDyedFabricOrderRequisition: Object = { value: "id", text: "name" };
+  // set the placeholder to the AutoComplete input
+  public textDyedFabricOrderRequisition: string = "طلبية الجاهز"
+
+  public onFilteringDyedFabricOrderRequisition(e: any, index: number) {
+    e.preventDefaultAction = true;
+    var predicate = new Predicate('name', 'contains', e.text);
+    predicate = predicate.or('number', 'contains', e.text);
+    var query = new Query();
+    //frame the query based on search string with filter type.
+    query = (e.text != "") ? query.where(predicate) : query;
+    //pass the filter data source, filter query to updateData method.
+    e.updateData(this.dyedFabricOrderRequisitions[index], query);
+  }
+
   constructor(
     private _warehouseService: WarehouseService,
     private _dyeingServicesService: DyeingServicesService,
@@ -137,6 +159,8 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     private _dyeingRequisitionDetailsWdService: DyeingRequisitionDetailsWdService,
     private _gradeItemService: GradeItemService,
     public _quantityOccurrencesValidationService: QuantityOccurrencesValidationService,
+    private _dyedFabricOrderRequisitionWeService: DyedFabricOrderRequisitionWeService,
+    private _dyedFabricOrderRequisitionDetailsWeService: DyedFabricOrderRequisitionDetailsWeService,
 
   ) {
     this._sharedComponentService.configRouterReloadPage()
@@ -179,6 +203,35 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     }
     this.selectArrayValues.push(objectData);
     this.addItem(objectData)
+    
+    // Collect parent_wc_fabric_order_requisition_id (child order IDs)
+    if (objectData.parent_wc_fabric_order_requisition_id && !this.wcFabricOrderRequisitionIds.includes(objectData.parent_wc_fabric_order_requisition_id)) {
+      this.wcFabricOrderRequisitionIds.push(objectData.parent_wc_fabric_order_requisition_id);
+    }
+    
+    // Load dyed fabric order requisitions for all collected parent_wc_fabric_order_requisition_id
+    this.loadDyedFabricOrderRequisitions();
+  }
+
+  loadDyedFabricOrderRequisitions() {
+    const control = <FormArray>this.addRequisitionForm.get('items');
+    const rows = control.controls as FormGroup[];
+
+    if (this.wcFabricOrderRequisitionIds.length === 0 || rows.length === 0) {
+      return;
+    }
+
+    rows.forEach((row, index) => {
+      const rowParentWcFabricOrderId = this.selectArrayValues[index]?.parent_wc_fabric_order_requisition_id;
+      const rowWcFabricOrderIds = rowParentWcFabricOrderId ? [rowParentWcFabricOrderId] : this.wcFabricOrderRequisitionIds;
+      const dyedFabricId = row.controls['dyedFabricId'].value || this.selectArrayValues[index]?.dyed_fabric_id;
+
+      this._dyedFabricOrderRequisitionWeService
+        .selectDyedFabricsByWcFabricOrderIds(rowWcFabricOrderIds, dyedFabricId)
+        .subscribe((response: any) => {
+          this.dyedFabricOrderRequisitions[index] = response;
+        });
+    });
   }
 
   // Initialize Form Builder
@@ -186,9 +239,11 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
 
     return new FormGroup({
       index: new FormControl(index),
-      ordersRequisitionsId: new FormControl(data.orders_requisitions_id, [Validators.required]),
+      ordersRequisitionsId: new FormControl(null, [Validators.required]),
       fabricOrderId: new FormControl(data.wc_fabric_order_requisition_id, [Validators.required]),
       fabricOrderName: new FormControl(data.wc_fabric_order_requisition_name ?? ""),
+      dyedFabricOrderRequisitionId: new FormControl(null, [Validators.required]),
+      dyedFabricOrderRequisitionName: new FormControl(""),
       wdFormDyeingOrderRequisitionDetailsId: new FormControl(data.wd_form_dyeing_order_requisition_details_id ?? ""),
       wdFormRequisitionDetailsId: new FormControl(data.id, [Validators.required]),
       fabricName: new FormControl(data.fabric_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
@@ -200,6 +255,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       dyedFabricName: new FormControl(data.dyed_fabric_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       dyedFabricId: new FormControl(data.dyed_fabric_id, [Validators.required]),
       dyedFabricCode: new FormControl(data.dyed_fabric_code),
+      wasteRatio: new FormControl(0),
       colorCategoryName: new FormControl(data.color_category_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
       colorCategoryId: new FormControl(data.color_category_id, [Validators.required]),
       colorName: new FormControl(data.color_name, [Validators.pattern(this.patterns.validator_pattern.shortText)]),
@@ -242,6 +298,20 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     control.removeAt(index);
 
     this._quantityOccurrencesValidationService.removeIndexFromMapAndArray(this.fabricMap, index, objectData, this.selectArrayValues)
+    
+    // Remove parent_wc_fabric_order_requisition_id from array if no other rows use it
+    if (objectData.parent_wc_fabric_order_requisition_id) {
+      const stillExists = this.selectArrayValues.some(item => item.parent_wc_fabric_order_requisition_id === objectData.parent_wc_fabric_order_requisition_id);
+      if (!stillExists) {
+        const idIndex = this.wcFabricOrderRequisitionIds.indexOf(objectData.parent_wc_fabric_order_requisition_id);
+        if (idIndex > -1) {
+          this.wcFabricOrderRequisitionIds.splice(idIndex, 1);
+        }
+      }
+    }
+    
+    // Reload dyed fabric orders with updated IDs
+    this.loadDyedFabricOrderRequisitions();
   }
 
 
@@ -256,6 +326,18 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
   }
 
   validateDyeingQuantity(row: FormGroup) {
+    // Safety: do not allow entering dyeing quantity before selecting ready order
+    if (!row.controls['dyedFabricOrderRequisitionId'].value) {
+      row.controls['dyeingQuantity'].setValue('');
+      row.controls['dyeingQuantity'].setErrors(null);
+      row.controls['dyeingQuantity'].updateValueAndValidity();
+      return;
+    }
+
+    // Auto-calculate raw quantity for related rows based on entered dyeingQuantity FIRST
+    this.calculateRawQuantityForGroup(row);
+    
+    // Then validate after calculation
     const rowQuantity = parseFloat(row.controls['quantity'].value)
     const dyeingQuantity = parseFloat(row.controls['dyeingQuantity'].value)
     if (rowQuantity > 0) {
@@ -302,6 +384,8 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
       this.currentStockReport.formDyeingFabricsByDyer = []
       this.currentStockReport.listen();
       this.selectArrayValues = []
+      this.wcFabricOrderRequisitionIds = []
+      this.dyedFabricOrderRequisitions = []
     }
   }
 
@@ -361,6 +445,173 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     }
   }
 
+  //  Dyed Fabric Order Requisition
+  selectDyedFabricOrderRequisition(event: any, row: FormGroup) {
+    const control = <FormArray>this.addRequisitionForm.get('items');
+    const formRows = control.controls as FormGroup[];
+    const rowIndex = formRows.indexOf(row);
+
+    const options = ((rowIndex >= 0 ? this.dyedFabricOrderRequisitions[rowIndex] : null) || [])
+      .filter((item: any) => item && typeof item === 'object' && item.id !== undefined && item.id !== null);
+
+    const keys = [
+      event?.itemData?.id,
+      event?.itemData?.number,
+      event?.itemData?.name,
+      event?.value,
+      row.controls['dyedFabricOrderRequisitionName'].value
+    ]
+      .filter((v: any) => v !== undefined && v !== null && String(v).trim() !== '')
+      .map((v: any) => String(v).trim());
+
+    const matchedOption = options.find((item: any) => {
+      const itemId = String(item.id).trim();
+      const itemNumber = String(item.number ?? '').trim();
+      const itemName = String(item.name ?? '').trim();
+      return keys.some((key: string) => key === itemId || key === itemNumber || key === itemName);
+    });
+
+    const resolvedItem = matchedOption ? {
+      ...matchedOption,
+      orders_requisitions_id:
+        matchedOption.orders_requisitions_id ??
+        matchedOption.ordersRequisitionsId ??
+        row.controls['ordersRequisitionsId'].value
+    } : null;
+    
+    if (resolvedItem) {
+      row.controls['dyedFabricOrderRequisitionId'].setValue(resolvedItem.id);
+      row.controls['ordersRequisitionsId'].setValue(resolvedItem.orders_requisitions_id);
+      row.controls['dyedFabricOrderRequisitionName'].setValue(resolvedItem.name || resolvedItem.number || '');
+      
+      // Get waste_ratio from backend based on requisitionId and dyedFabricId
+      const dyedFabricId = row.controls['dyedFabricId'].value;
+      if (dyedFabricId) {
+        this._dyedFabricOrderRequisitionDetailsWeService.getWasteRatio(resolvedItem.id, dyedFabricId).subscribe((response: any) => {
+          const wasteRatio = response.wasteRatio || 0;
+          row.controls['wasteRatio'].setValue(wasteRatio);
+          this.wasteRatioMap.set(resolvedItem.id + '_' + dyedFabricId, wasteRatio);
+          
+          // Apply waste_ratio to all rows with same workOrderNumber, dyedFabricId, and fabricOrderId
+          this.applyWasteRatioToGroup(row, wasteRatio);
+        });
+      }
+    } else {
+      row.controls['dyedFabricOrderRequisitionId'].setValue(null);
+      row.controls['dyedFabricOrderRequisitionName'].setValue("");
+      row.controls['wasteRatio'].setValue(0);
+    }
+  }
+
+  // Apply waste_ratio to all rows in the same group
+  applyWasteRatioToGroup(currentRow: FormGroup, wasteRatio: number) {
+    const control = <FormArray>this.addRequisitionForm.get('items');
+    const rows = control.controls as FormGroup[];
+
+    const currentWorkOrder = currentRow.controls['workOrderNumber'].value;
+    const currentDyedFabricId = currentRow.controls['dyedFabricId'].value;
+    const currentFabricOrderId = currentRow.controls['fabricOrderId'].value;
+
+    if (!currentWorkOrder || !currentDyedFabricId || !currentFabricOrderId) {
+      return;
+    }
+
+    // Find all rows with same workOrderNumber, dyedFabricId, and fabricOrderId (including current row)
+    const groupRows = rows.filter(row => 
+      row.controls['workOrderNumber'].value === currentWorkOrder &&
+      row.controls['dyedFabricId'].value === currentDyedFabricId &&
+      row.controls['fabricOrderId'].value === currentFabricOrderId
+    );
+
+    // Apply waste_ratio to all rows in group (don't calculate anything yet, user will enter dyeingQuantity)
+    groupRows.forEach(row => {
+      row.controls['wasteRatio'].setValue(wasteRatio);
+    });
+  }
+
+  // Calculate raw quantity for rows with same workOrderNumber, fabricOrderId, and wdFormRequisitionDetailsId
+  // If wdFormDyeingOrderRequisitionDetailsId exists for all rows in the base group,
+  // apply it as an extra grouping key to avoid mixing different detail rows.
+  // User enters dyeingQuantity for each row, system calculates quantity based on calculated waste_ratio
+  calculateRawQuantityForGroup(currentRow: FormGroup) {
+    const control = <FormArray>this.addRequisitionForm.get('items');
+    const rows = control.controls as FormGroup[];
+
+    const currentWorkOrder = currentRow.controls['workOrderNumber'].value;
+    const currentFabricOrderId = currentRow.controls['fabricOrderId'].value;
+    const currentWdFormRequisitionDetailsId = currentRow.controls['wdFormRequisitionDetailsId'].value;
+    const currentWdFormDyeingOrderRequisitionDetailsId = currentRow.controls['wdFormDyeingOrderRequisitionDetailsId'].value;
+    const currentDyeingQuantity = parseFloat(currentRow.controls['dyeingQuantity'].value) || 0;
+
+    if (currentDyeingQuantity <= 0) {
+      return; // No dyeing quantity entered, nothing to calculate
+    }
+
+    if (!currentWorkOrder || !currentFabricOrderId || !currentWdFormRequisitionDetailsId) {
+      // No grouping criteria, just set quantity = dyeingQuantity for current row
+      currentRow.controls['quantity'].setValue(currentDyeingQuantity.toFixed(3));
+      return;
+    }
+
+    // Base group: same workOrderNumber, fabricOrderId, and wdFormRequisitionDetailsId
+    const baseGroupRows = rows.filter(row => 
+      row.controls['workOrderNumber'].value === currentWorkOrder &&
+      row.controls['fabricOrderId'].value === currentFabricOrderId &&
+      row.controls['wdFormRequisitionDetailsId'].value === currentWdFormRequisitionDetailsId
+    );
+
+    if (baseGroupRows.length === 0) {
+      return;
+    }
+
+    // Optional extra grouping by wdFormDyeingOrderRequisitionDetailsId only when this key exists for all base rows
+    const hasDetailIdForAllBaseRows = baseGroupRows.every(row => {
+      const value = row.controls['wdFormDyeingOrderRequisitionDetailsId'].value;
+      return value !== null && value !== undefined && String(value).trim() !== '';
+    });
+
+    let groupRows = baseGroupRows;
+    if (hasDetailIdForAllBaseRows && currentWdFormDyeingOrderRequisitionDetailsId !== null && currentWdFormDyeingOrderRequisitionDetailsId !== undefined && String(currentWdFormDyeingOrderRequisitionDetailsId).trim() !== '') {
+      groupRows = baseGroupRows.filter(row =>
+        row.controls['wdFormDyeingOrderRequisitionDetailsId'].value === currentWdFormDyeingOrderRequisitionDetailsId
+      );
+    }
+
+    if (groupRows.length === 0) {
+      return;
+    }
+
+    // Use the first validQuantity (الكمية المشكلة) in the group as requested
+    const totalValidQuantity = parseFloat(groupRows[0].controls['validQuantity'].value) || 0;
+
+    // Calculate total dyeingQuantity (كمية المصبوغ) from all rows that have dyeingQuantity entered
+    const totalDyeingQuantity = groupRows.reduce((sum, row) => 
+      sum + (parseFloat(row.controls['dyeingQuantity'].value) || 0), 0
+    );
+
+    if (totalValidQuantity <= 0 || totalDyeingQuantity <= 0) {
+      return;
+    }
+
+    // Calculate general waste ratio: (totalValid - totalDyeing) / totalValid * 100
+    const calculatedWasteRatio = ((totalValidQuantity - totalDyeingQuantity) / totalValidQuantity) * 100;
+
+    // Store the calculated waste ratio in the wasteRatio field for display/reference
+    groupRows.forEach(row => {
+      row.controls['wasteRatio'].setValue(calculatedWasteRatio.toFixed(2));
+    });
+
+    // Calculate each row's raw quantity based on its dyeingQuantity and the calculated waste ratio
+    // quantity = dyeingQuantity / (1 - wasteRatio / 100)
+    groupRows.forEach(row => {
+      const rowDyeingQuantity = parseFloat(row.controls['dyeingQuantity'].value) || 0;
+      if (rowDyeingQuantity > 0) {
+        const calculatedRawQuantity = rowDyeingQuantity / (1 - calculatedWasteRatio / 100);
+        row.controls['quantity'].setValue(calculatedRawQuantity.toFixed(3));
+      }
+    });
+  }
+
   async onAddRequisition() {
     this.isShowAdd = false
 
@@ -375,7 +626,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
         const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.addRequisitionForm, 'items',
           ['index', 'fabricId', 'fabricCode', 'fabricName', 'dyeingCode', 'consigmentDyeingId',
             'consigmentDyeingNumber', 'dyedFabricName', 'dyedFabricCode',
-            'colorCategoryId', 'colorCategoryName', 'colorId', 'colorName', 'colorCode', 'validQuantity'])
+            'colorCategoryId', 'colorCategoryName', 'colorId', 'colorName', 'colorCode', 'validQuantity', 'dyedFabricOrderRequisitionName', 'wasteRatio'])
 
         this._constantsService.spinner.show()
         this._dyeingRequisitionWdService.add(formGroup.value).subscribe(response => {

@@ -165,14 +165,26 @@ export class AddTransportWcWdRequisitionFormWcComponent implements OnInit {
     })
 
     this._bussinessmanService.selectDyer().subscribe((response: any) => {
-      this.dyers = response
+      this.dyers = response || []
+      this.applyDefaultDyeingToItems()
     })
 
   }
 
+  private setDefaultDyeingForRow(row: FormGroup) {
+    if (!row.controls['dyeingId'].value && Array.isArray(this.dyers) && this.dyers.length > 0) {
+      row.controls['dyeingId'].setValue(this.dyers[0].id)
+    }
+  }
+
+  private applyDefaultDyeingToItems() {
+    const control = this.transportWcWdForm.get('items') as FormArray;
+    control.controls.forEach((item: any) => this.setDefaultDyeingForRow(item as FormGroup))
+  }
+
   // Initialize Form Builder
   initItem() {
-    return new FormGroup({
+    const item = new FormGroup({
       ordersRequisitionsId: new FormControl("", [Validators.required]),
       fabricOrderId: new FormControl("", [Validators.required]),
       dyeingId: new FormControl("", [Validators.required]),
@@ -189,6 +201,9 @@ export class AddTransportWcWdRequisitionFormWcComponent implements OnInit {
       document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
+
+    this.setDefaultDyeingForRow(item)
+    return item;
   }
 
   addItem() {

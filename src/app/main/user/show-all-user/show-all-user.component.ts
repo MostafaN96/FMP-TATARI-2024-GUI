@@ -1,19 +1,9 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-
-
-// Angular Material Table
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortable } from '@angular/material/sort';
-import { SelectionModel } from '@angular/cdk/collections';
-
-// Shared Service
+import { Component, OnInit } from '@angular/core';
+import { ColDef, GridApi, GridReadyEvent, SideBarDef, GridOptions } from 'ag-grid-community';
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ConstantsService } from "src/app/services/constants.service";
-import { ExportDataService } from "src/app/services/export-data.service";
-import { SessionManagerService } from "src/app/services/main/session-manager.service";
-
-// Call Service
 import { UserService } from "src/app/services/main/user.service";
+import { SessionManagerService } from "src/app/services/main/session-manager.service";
 
 @Component({
   selector: 'app-show-all-user',
@@ -22,140 +12,176 @@ import { UserService } from "src/app/services/main/user.service";
 })
 export class ShowAllUserComponent implements OnInit {
 
+  private gridApi!: GridApi;
+  rowData: any[] = [];
+  selectedRows: any[] = [];
+  selectedDataToUpdate: any;
+  hasPasswordPermission = false;
 
+  sideBar: SideBarDef = { toolPanels: ['filters'], defaultToolPanel: undefined };
 
- /////////////////// Variables ///////////////////
- user: any[] = []
- selectedData:any = []
- selectedDataToUpdate: any
- selectArrayValues: any[] = [];
+  defaultColDef: ColDef = {
+    flex: 1, minWidth: 120, resizable: true, sortable: true, filter: true,
+  };
 
- //////////////////////////////////// Tabel Angular Material /////////////////////////////////
- @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
- displayedColumns: string[] = ['select', 'index', 'user_name', 'user_email', 'user_mobile', 'password_status', 'update'];
- selection = new SelectionModel(true);
- filter = "";
- dataSourceSearchTabel: any;
+  gridOptions: GridOptions = {
+    enableRtl: true,
+    animateRows: true,
+    rowSelection: 'multiple',
+    suppressRowClickSelection: true,
+  };
 
- constructor(
-   public _sharedComponentService: SharedComponentService,
-   private _constantsService: ConstantsService,
-   private _userService: UserService,
-   public _exportDataService: ExportDataService,
-   private _sessionManagerService: SessionManagerService,
+  columnDefs: ColDef[] = [
+    {
+      headerName: '',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      maxWidth: 50,
+      filter: false,
+      sortable: false,
+    },
+    {
+      headerName: 'اسم المستخدم',
+      field: 'user_name',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'البريد الإلكتروني',
+      field: 'user_email',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'رقم الهاتف',
+      field: 'user_mobile',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'كلمة المرور',
+      field: 'user_password',
+      colId: 'password_col',
+      hide: true,
+      filter: false,
+      sortable: false,
+      minWidth: 220,
+      cellRenderer: (p: any) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'password-wrapper';
 
- ) {
-   this._sharedComponentService.angularMaterialTableConfig()
- }
+        const span = document.createElement('span');
+        span.className = 'password-plain-text';
 
- ngOnInit(): void {
-   this.getData();
- }
+        const icon = document.createElement('i');
+        icon.className = p.data.showPassword ? 'fas fa-unlock' : 'fas fa-lock';
+        icon.style.color = p.data.showPassword ? '#4caf50' : '#ff9800';
+        icon.style.marginLeft = '6px';
 
- getData() {
-   this._userService.selectAll().subscribe((response: any) => {
-     // إظهار كلمة المرور افتراضياً بناءً على الصلاحية
-     const hasPermission = this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[4]);
-     
-     this.user = response.map((user: any) => ({
-       ...user,
-       showPassword: hasPermission // إظهار كلمة المرور إذا لديه صلاحية
-     }));
-     
-     this.dataSourceSearchTabel = new MatTableDataSource(this.user);
-     this.sortColumns.sort(({ id: 'user_name', start: 'asc'}) as MatSortable);
-     this.dataSourceSearchTabel.sort = this.sortColumns;
+        const text = document.createElement('span');
+        text.textContent = p.data.showPassword ? (p.value || '') : '••••••••';
 
-     // إخفاء عمود كلمة المرور بناءً على الصلاحية
-     if(!hasPermission) {
-       let index = this.displayedColumns.indexOf('password_status');
-       if(index !== -1) {
-         this.displayedColumns.splice(index, 1);
-       }
-     }
-   })
- }
+        span.appendChild(icon);
+        span.appendChild(text);
 
- ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
- applyFilter(filterValue: string) {
-   this.dataSourceSearchTabel.filter = filterValue.trim().toLowerCase();
- }
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'toggle-btn';
+        toggleBtn.title = p.data.showPassword ? 'إخفاء' : 'إظهار';
+        toggleBtn.innerHTML = `<i class="fas ${p.data.showPassword ? 'fa-eye-slash' : 'fa-eye'}"></i>`;
+        toggleBtn.addEventListener('click', () => {
+          p.data.showPassword = !p.data.showPassword;
+          p.api.refreshCells({ rowNodes: [p.node], force: true });
+        });
 
- isAllSelected() {
-   const numSelected = this.selection.selected.length;
-   const numRows = this.dataSourceSearchTabel.data.length;
-   return numSelected === numRows;
- }
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.title = 'نسخ';
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        copyBtn.addEventListener('click', () => this.copyToClipboard(p.value));
 
- masterToggle() {
-   this.isAllSelected() ?
-     this.selection.clear() :
-     this.dataSourceSearchTabel.data.forEach((row: any) => this.selection.select(row));
- }
+        wrapper.appendChild(span);
+        wrapper.appendChild(toggleBtn);
+        wrapper.appendChild(copyBtn);
+        return wrapper;
+      },
+    },
+    {
+      headerName: 'تعديل',
+      field: 'id',
+      maxWidth: 100,
+      sortable: false,
+      filter: false,
+      cellRenderer: (p: any) => {
+        const a = document.createElement('a');
+        a.innerHTML = '<i class="fas fa-edit update-symbol"></i>';
+        a.style.cursor = 'pointer';
+        a.addEventListener('click', () => {
+          this.selectedDataToUpdate = { ...p.data };
+          setTimeout(() => document.getElementById('update-form')?.scrollIntoView({ behavior: 'smooth' }), 50);
+        });
+        return a;
+      },
+    },
+  ];
 
+  constructor(
+    public _sharedComponentService: SharedComponentService,
+    private _constantsService: ConstantsService,
+    private _userService: UserService,
+    private _sessionManagerService: SessionManagerService,
+  ) { }
 
- getSelectedIndex(objectData: any) {
-   this.selectedData = []
-   if (this.selectArrayValues.includes(objectData)) {
-     let index = this.selectArrayValues.indexOf(objectData);
-     this.selectArrayValues[index] = delete this.selectArrayValues[index];
-   }
-   else {
-     this.selectArrayValues.push(objectData);
-   }
-   this.selectArrayValues.forEach((element) => {
-     if (element !== true)
-       this.selectedData.push(element)
-   });
+  ngOnInit(): void {
+    this.hasPasswordPermission = this._sessionManagerService.checkAuth(
+      this._constantsService.ROUTING_LINKS_DETAILS[4]
+    );
+    const pwdCol = this.columnDefs.find(c => (c as any).colId === 'password_col');
+    if (pwdCol) pwdCol.hide = !this.hasPasswordPermission;
+    this.getData();
+  }
 
- }
+  onGridReady(params: GridReadyEvent) { this.gridApi = params.api; }
 
- selectAll() {
-   this.user.forEach(user => {
-     this.getSelectedIndex(user)
-   })
- }
+  onSelectionChanged() { this.selectedRows = this.gridApi?.getSelectedRows() || []; }
 
- getSelectedData(selectedData: any) {
-   this.selectedDataToUpdate = selectedData
- }
- ///////////////////// ----------- End Search Tabel ----------- /////////////////////
+  getData() {
+    this._userService.selectAll().subscribe((response: any) => {
+      this.rowData = (Array.isArray(response) ? response : []).map((u: any) => ({
+        ...u,
+        showPassword: this.hasPasswordPermission,
+      }));
+    });
+  }
 
- delete() {
-   this._userService.delete(this.selectedData).subscribe(response => {
-    if (response.msg === "the item is delete") {
-      this._constantsService.successDeleteMessage()
-      this._sharedComponentService.reloadPage();
+  copyToClipboard(text: string) {
+    if (!text) {
+      this._constantsService.successMessage('لا توجد كلمة مرور لنسخها');
+      return;
     }
-    else {
-      this._constantsService.invalidIdErrorMessage()
-    }
-   })
- }
+    navigator.clipboard.writeText(text).then(() => {
+      this._constantsService.successMessage('تم نسخ كلمة المرور بنجاح');
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      this._constantsService.successMessage('تم نسخ كلمة المرور بنجاح');
+    });
+  }
 
- togglePasswordVisibility(user: any) {
-   user.showPassword = !user.showPassword;
- }
-
- copyToClipboard(text: string) {
-   if (!text) {
-     this._constantsService.successMessage('لا توجد كلمة مرور لنسخها');
-     return;
-   }
-   
-   navigator.clipboard.writeText(text).then(() => {
-     this._constantsService.successMessage('تم نسخ كلمة المرور بنجاح');
-   }).catch(() => {
-     // Fallback للمتصفحات القديمة
-     const textarea = document.createElement('textarea');
-     textarea.value = text;
-     textarea.style.position = 'fixed';
-     textarea.style.opacity = '0';
-     document.body.appendChild(textarea);
-     textarea.select();
-     document.execCommand('copy');
-     document.body.removeChild(textarea);
-     this._constantsService.successMessage('تم نسخ كلمة المرور بنجاح');
-   });
- }
+  delete() {
+    this._userService.delete(this.selectedRows).subscribe((response: any) => {
+      if (response.msg === 'the item is delete') {
+        this._constantsService.successDeleteMessage();
+        this.selectedRows = [];
+        this.getData();
+      } else {
+        this._constantsService.invalidIdErrorMessage();
+      }
+    });
+  }
 }

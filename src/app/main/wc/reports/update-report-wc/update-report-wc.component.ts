@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 
 // Forms
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -24,7 +24,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './update-report-wc.component.html',
   styleUrls: ['./update-report-wc.component.css']
 })
-export class UpdateReportWcComponent implements OnInit {
+export class UpdateReportWcComponent implements OnInit, OnChanges {
 
   /////////////////// Variables ///////////////////
   reportByFabricWcDetails: any[] = [];
@@ -37,7 +37,9 @@ export class UpdateReportWcComponent implements OnInit {
   @Input() selectedWcIds: string[] = [];
   @Input() showGrid = true;
   @Input() showHeader = true;
-  @Output() updated = new EventEmitter<void>();
+  @Input() initialStoragePlace = '';
+  @Input() reportParamsInput: any = null;
+  @Output() updated = new EventEmitter<{ wcIds: string[]; storagePlace: string }>();
 
   updateForm: FormGroup = new FormGroup({
     storagePlace: new FormControl('', [
@@ -153,6 +155,15 @@ export class UpdateReportWcComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (!this.showGrid) {
+      this.loadLatestSelectedStoragePlace();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!this.showGrid && (changes['selectedWcIds'] || changes['initialStoragePlace'] || changes['reportParamsInput'])) {
+      this.loadLatestSelectedStoragePlace();
+    }
   }
 
   onGridReady(params: GridReadyEvent) {
@@ -194,6 +205,38 @@ export class UpdateReportWcComponent implements OnInit {
       .map((id) => String(id));
   }
 
+  private loadLatestSelectedStoragePlace() {
+    const setValue = (value: any) => {
+      this.updateForm.controls['storagePlace'].setValue(String(value ?? ''), { emitEvent: false });
+    };
+
+    if (this.reportParamsInput) {
+      this.fabricCode = this.reportParamsInput['code'] || '';
+      this.fabricName = this.reportParamsInput['name'] || '';
+      this.consigmentNumber = this.reportParamsInput['consigmentNumber'] || '';
+      this.warehouseName = this.reportParamsInput['warehouseName'] || '';
+    }
+
+    if (!this.reportParamsInput?.id || !this.reportParamsInput?.warehouseId || !this.reportParamsInput?.consigmentManufacturingId || !this.reportParamsInput?.fabricOrderId) {
+      setValue(this.initialStoragePlace);
+      return;
+    }
+
+    this._reportWcService.selectInventoryDetailsByWarehouseByFabricByConsigmentManufacturing(
+      this.reportParamsInput['id'],
+      this.reportParamsInput['warehouseId'],
+      this.reportParamsInput['consigmentManufacturingId'],
+      this.reportParamsInput['fabricOrderId']
+    ).subscribe((response: any) => {
+      this.reportByFabricWcDetails = response || [];
+      const selectedIds = (this.selectedWcIds || []).map((id) => String(id));
+      const selectedRow = this.reportByFabricWcDetails.find((item: any) => selectedIds.includes(String(item?.wc_id ?? item?.id ?? '')));
+      setValue(selectedRow?.storage_place ?? this.initialStoragePlace);
+    }, () => {
+      setValue(this.initialStoragePlace);
+    });
+  }
+
   onUpdate() {
     this.updateForm.markAllAsTouched();
     if (this.updateForm.invalid || this.selectedWcIds.length === 0) {
@@ -202,8 +245,8 @@ export class UpdateReportWcComponent implements OnInit {
     }
 
     const payload = {
-      wcIds: this.selectedWcIds,
-      storagePlace: this.updateForm.value.storagePlace
+      wcIds: [...this.selectedWcIds],
+      storagePlace: String(this.updateForm.value.storagePlace || '')
     };
 
     this._constantsService.spinner.show();
@@ -218,7 +261,7 @@ export class UpdateReportWcComponent implements OnInit {
             this.getData(this.gridParams, this.reportParams);
           }
         }
-        this.updated.emit();
+        this.updated.emit(payload);
       } else {
         this._constantsService.userErrorMessage();
       }

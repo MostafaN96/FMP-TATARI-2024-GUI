@@ -49,4 +49,15 @@ export class DyeingRequisitionWdService {
       });
   }
 
+  // Select Lazy
+  selectAllLazy(payload: any): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-lazy`;
+    return this._http.post(url, payload,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 }

@@ -80,4 +80,14 @@ export class DyedFabricOrderRequisitionDetailsWeService {
       });
   }
 
+  getWasteRatio(requisitionId: string, dyedFabricId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}waste-ratio?requisitionId=${requisitionId}&dyedFabricId=${dyedFabricId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 }

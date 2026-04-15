@@ -1,4 +1,4 @@
-<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
+﻿<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
     <!-- Title Page Section -->
     <div [class]="_sharedComponentService.titlePageClass">
         <!-- Sub Title Page -->
@@ -14,281 +14,25 @@
             <div [class]="_sharedComponentService.gridForm2Class">
                 <div class="col">
                     <div [class]="_sharedComponentService.tableSectionClass">
-                        
-                        <div id="table-header-data-report">
-                            <p-table #dt1 [value]="fabrics" dataKey="id"
-                                columnResizeMode="expand"
-                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
-                                [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
-                                scrollHeight="600px" [filterDelay]="0" sortField="number" [responsive]="true"
-                                [sortOrder]="0" appendTo="body" [autoLayout]="true">
-                                <ng-template data-html2canvas-ignore="true" pTemplate="caption">
 
-                                    <!-- Start Filter Section -->
-                                    <div class="row row-cols-md-5 align-items-center">
+                        <div id="table-header-data-report"
+                        dir="rtl"
+                        class="ag-theme-alpine ag-rtl ag-details">
 
-                                        <div class="col">
-                                            <p-calendar class="w-100"
-                                            placeholder="البحث بـ التاريخ"
-                                            [(ngModel)]="dateFilters"
-                                                    appendTo="body"
-                                                    selectionMode="range"
-                                                    [readonlyInput]="true"
-                                                    [showIcon]="true"
-                                                    dateFormat="dd/mm/yy"
-                                                    (onClickOutside)="selectedDate($event)">
-                                                    </p-calendar>
-                                        </div>
+                            <ag-grid-angular
+                            #agGrid
+                            class="ag-theme-alpine ag-rtl"
+                            [ngStyle]="_sharedComponentService.gridStyle"
+                            [gridOptions]="gridOptions"
+                            [columnDefs]="columnDefs"
+                            [defaultColDef]="defaultColDef"
+                            [sideBar]="sideBar"
+                            (gridReady)="onGridReady($event)"
+                            (filterChanged)="onFilterChanged()">
+                            </ag-grid-angular>
 
-                                        <div class="col">
-                                            <p-columnFilter field="dyeing_name" matchMode="dyeing-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedDyeingName"
-                                                        [options]="_sharedComponentService.uniqueArray(fabrics, 'dyeing_name')"
-                                                        (onChange)="onMultiselectedDyeingName($event.value)"
-                                                        placeholder="البحث بـ المصبغة" optionLabel="dyeing_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.dyeing_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <div class="col">
-                                            <p-columnFilter field="warehouse_name" matchMode="warehouse-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedWarehouseName"
-                                                        [options]="_sharedComponentService.uniqueArray(fabrics, 'warehouse_name')"
-                                                        (onChange)="onMultiselectedWarehouseName($event.value)"
-                                                        placeholder="البحث بـ المخزن" optionLabel="warehouse_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.warehouse_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <div class="col">
-                                            <p-columnFilter field="release_process" matchMode="release-process-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedWarehouseName"
-                                                        [options]="_sharedComponentService.uniqueArray(fabrics, 'release_process')"
-                                                        (onChange)="onMultiselectedReleaseProcess($event.value)"
-                                                        placeholder="البحث بـ الارسالية الصادرة" optionLabel="release_process">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.release_process}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-                                        
-                                        
-                                        <div class="col">
-                                            <p-columnFilter field="details" matchMode="work-order-number-details-filter" [showMenu]="false"
-                                                [showClearButton]="false" [matchModeOptions]="selectedWorkOrderNumberDetails">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedWorkOrderNumberDetails" 
-                                                    [options]="_sharedComponentService.uniqueArray(dyeingDetails, 'work_order_number')"
-                                                        (onChange)="onMultiselectedWorkOrderNumberDetails($event.value)"
-                                                        placeholder="البحث بـ أمر الشغل" optionLabel="work_order_number">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.work_order_number}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <div class="col">
-                                            <div data-html2canvas-ignore="true" class="flex">
-                                                <button data-html2canvas-ignore="true" pButton label="اعادة"
-                                                    class="p-button-outlined" icon="pi pi-filter-slash"
-                                                    (click)="clear(dt1)"></button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <!-- End Filter Section -->
-
-                                </ng-template>
-                                <ng-template pTemplate="header">
-                                    <tr>
-
-                                        <!-- Number Column -->
-                                        <th>
-                                            رقم الإذن
-                                            <p-sortIcon data-html2canvas-ignore="true" field="number"></p-sortIcon>
-                                        </th>
-
-                                        <!-- Date Column -->
-                                        <th pResizableColumn pSortableColumn="date">
-                                            <div class="flex justify-content-between align-items-center">
-                                                تاريخ الإذن
-                                                <p-sortIcon data-html2canvas-ignore="true" field="date">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                        <!-- dyeing_name Column -->
-                                        <th pResizableColumn pSortableColumn="dyeing_name">
-                                            <div class="flex justify-content-between align-items-center">
-                                                المصبغة
-                                                <p-sortIcon data-html2canvas-ignore="true" field="dyeing_name">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                          <!-- warehouse_name Column -->
-                                          <th pResizableColumn pSortableColumn="warehouse_name">
-                                            <div class="flex justify-content-between align-items-center">
-                                                المخزن
-                                                <p-sortIcon data-html2canvas-ignore="true" field="warehouse_name">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                          <!-- release_process Column -->
-                                          <th pResizableColumn pSortableColumn="release_process">
-                                            <div class="flex justify-content-between align-items-center">
-                                                الارسالية الصادرة
-                                                <p-sortIcon data-html2canvas-ignore="true" field="release_process">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                        
-                                        <!-- details Column -->
-                                        <th>
-                                            <div class="flex justify-content-between align-items-center">
-                                                <table>
-                                                    <thead>
-                                                        <tr>
-
-                                                            <th style="width: 80px;">
-                                                                السعر
-                                                            </th>
-
-                                                            <th style="width: 80px;">
-                                                            اجرة الصباغة
-                                                            </th>
-
-                                                            <th style="width: 80px;">
-                                                            امر الشغل
-                                                            </th>
-
-                                                        </tr>
-                                                    </thead>
-                                                </table>
-                                            </div>
-                                        </th>
-                                      
-                                        <!-- note Column -->
-                                        <th>
-                                            <div class="flex justify-content-between align-items-center">
-                                                الملاحظات
-                                               
-                                            </div>
-                                        </th>                           
-
-                                        <!-- Details Column -->
-                                        <th data-html2canvas-ignore="true">
-                                            <div class="flex justify-content-between align-items-center">
-                                                تفاصيل الإذن
-                                            </div>
-                                        </th>
-                                    </tr>
-
-                                </ng-template>
-                                <ng-template pTemplate="body" let-element let-index="rowIndex">
-                                    <tr class="p-selectable-row"  [ngClass]="{'warning_background': element.is_active == '0'}">
-
-                                        <!-- Index Column -->
-                                        <td>
-                                            {{element.number}}
-                                        </td>
-
-                                        <!-- Date Column -->
-                                        <td>
-                                            {{element.date | date:'EEEE, d/M/y' }}
-                                        </td>
-                                        
-                                        <!-- dyeing_name Column -->
-                                        <td>
-                                            {{ element.dyeing_name }}
-                                        </td>
-
-                                        <!-- warehouse_name Column -->
-                                        <td>
-                                            {{ element.warehouse_name }}
-                                        </td>
-
-                                        <!-- release_process Column -->
-                                        <td>
-                                            {{ element.release_process }}
-                                        </td>
-                                        
-                                        <!-- details Column -->
-                                        <td>
-                                            <table>
-                                                <tbody>
-                                                    <tr *ngFor="let item of element.details">
-
-                                                        <td style="width: 80px;">
-                                                            {{item.price}}
-                                                        </td>
-
-                                                        <td style="width: 80px;">
-                                                            {{item.dyeing_fee}}
-                                                        </td>
-
-                                                        <td style="width: 80px;">
-                                                            {{item.work_order_number}}
-                                                        </td>
-
-                                                    </tr>
-                                                </tbody>
-
-                                            </table>
-                                        </td>
-
-                                        <!-- note Column -->
-                                        <td>
-                                            {{ element.note }}
-                                        </td>
-
-                                        <!-- Details Column -->
-                                        <td data-html2canvas-ignore="true">
-                                            <a
-                                            [routerLink]="['details']"
-                                            [queryParams]="{ id: element.id, dyeingid: element.dyeing_id}">
-                                                <i class="fas fa-angle-double-right update-symbol"></i>
-                                            </a>
-                                        </td>
-
-                                    </tr>
-                                </ng-template>
-                                <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
-                                    <tr>
-                                        <td colspan="6">لا يوجد بيانات</td>
-                                    </tr>
-                                </ng-template>
-                            </p-table>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>

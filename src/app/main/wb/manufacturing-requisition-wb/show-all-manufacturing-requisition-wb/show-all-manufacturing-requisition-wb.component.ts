@@ -34,6 +34,10 @@ consigmentDetails: any[] = []
   detailsData: any[] = new Array()
   filtredDetailsData: any[] = new Array()
   selectedDataToUpdate: any
+  selectedWcIds: string[] = []
+  showUpdatePanel = false
+  selectedStoragePlace = ''
+  selectedStorageReportParams: any = null
 
    //////////////////////////////////// PrimeNG /////////////////////////////////
    @ViewChild('dt1') dt1: Table | undefined;
@@ -87,7 +91,9 @@ consigmentDetails: any[] = []
   getData() {
     this.loading = true;
     this._manufacturingRequisitionWbService.selectAll().subscribe((response: any) => {
-      this.yarns = response
+      this.yarns = response || []
+      this.detailsData = []
+      this.filtredDetailsData = []
       // this.getCircularKnittingMachineName(this.yarns)
       this.getDetailsData(this.yarns)
 
@@ -100,6 +106,74 @@ consigmentDetails: any[] = []
 
   getSelectedData(selectedData: any) {
     this.selectedDataToUpdate = selectedData
+  }
+
+  handleStatusUpdated(updatedRow: any) {
+    const targetId = String(updatedRow?.id ?? '');
+
+    this.yarns = (this.yarns || []).map((item: any) => {
+      if (String(item?.id ?? '') === targetId) {
+        return {
+          ...item,
+          ...updatedRow
+        };
+      }
+      return item;
+    });
+
+    this.selectedDataToUpdate = null;
+  }
+
+  openUpdateStoragePlace(element: any) {
+    const wcId = element?.details?.wc_id ?? element?.wc_id ?? element?.details?.id ?? element?.id;
+    if (!wcId) {
+      this._constantsService.userErrorMessage();
+      return;
+    }
+
+    this.selectedWcIds = [String(wcId)];
+    this.selectedStoragePlace = element?.details?.storage_place ?? element?.storage_place ?? '';
+    this.selectedStorageReportParams = {
+      id: element?.fabric_id ?? element?.details?.fabric_id ?? '',
+      warehouseId: element?.warehouse_id ?? element?.details?.warehouse_id ?? '',
+      consigmentManufacturingId: element?.consigment_manufacturing_id ?? element?.details?.consigment_manufacturing_id ?? '',
+      fabricOrderId: element?.wc_fabric_order_requisition_id ?? element?.fabric_order_id ?? element?.details?.wc_fabric_order_requisition_id ?? '',
+      code: element?.fabric_code ?? element?.details?.fabric_code ?? '',
+      name: element?.fabric_name ?? element?.details?.fabric_name ?? '',
+      consigmentNumber: element?.consigment_number ?? element?.details?.consigment_number ?? '',
+      warehouseName: element?.warehouse_name ?? element?.details?.warehouse_name ?? ''
+    };
+    this.showUpdatePanel = true;
+  }
+
+  canOpenUpdateStorage(element: any): boolean {
+    return !!(element?.details?.wc_id ?? element?.wc_id ?? element?.details?.id ?? element?.id);
+  }
+
+  handleStorageUpdated(event: any) {
+    const wcIds = (event?.wcIds || []).map((id: any) => String(id));
+    const storagePlace = event?.storagePlace ?? '';
+
+    this.yarns = (this.yarns || []).map((item: any) => {
+      const rowWcId = String(item?.details?.wc_id ?? item?.wc_id ?? item?.details?.id ?? item?.id ?? '');
+      if (wcIds.includes(rowWcId)) {
+        return {
+          ...item,
+          storage_place: storagePlace,
+          details: {
+            ...(item?.details || {}),
+            storage_place: storagePlace
+          }
+        };
+      }
+      return item;
+    });
+
+    this.detailsData = this.yarns.map((item: any) => item?.details).filter((item: any) => item != null);
+    this.selectedWcIds = [];
+    this.selectedStoragePlace = '';
+    this.selectedStorageReportParams = null;
+    this.showUpdatePanel = false;
   }
 
   // getCircularKnittingMachineName(data) {

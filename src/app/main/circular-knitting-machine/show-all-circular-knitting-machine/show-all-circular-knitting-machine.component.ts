@@ -1,16 +1,7 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-
-// PrimeNG Table
-import { PrimeNGConfig } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { FilterService } from 'primeng/api';
-
-// Shared Service
+import { Component, OnInit } from '@angular/core';
+import { ColDef, GridApi, GridReadyEvent, SideBarDef, GridOptions } from 'ag-grid-community';
 import { SharedComponentService } from "src/app/services/shared-component.service";
 import { ConstantsService } from "src/app/services/constants.service";
-import { ExportDataService } from "src/app/services/export-data.service";
-
-// Call Service
 import { CircularKnittingMachineBussinessmanService } from "src/app/services/main/circular-knitting-machine-bussinessman.service";
 
 @Component({
@@ -20,360 +11,119 @@ import { CircularKnittingMachineBussinessmanService } from "src/app/services/mai
 })
 export class ShowAllCircularKnittingMachineComponent implements OnInit {
 
-  /////////////////// Variables ///////////////////
-  circularKnittingMachines: any[] = []
-  selectedData: any = []
-  selectedDataToUpdate: any
-  showInputUpdate = false
+  private gridApi!: GridApi;
+  rowData: any[] = [];
+  selectedRows: any[] = [];
+  selectedDataToUpdate: any;
+  showInputUpdate = false;
 
-  //////////////////////////////////// PrimeNG /////////////////////////////////
-  @ViewChild('dt1') dt1: Table | undefined;
-  loading: boolean = true;
-  selectedManufacturers: any[] = []
-  selectedFabricName: any[] = []
-  selectedFabricCode: any[] = []
-  selectedTypes: any[] = []
-  selectedDiameters: any[] = []
-  selectedSmoothness: any[] = []
-  selectedModels: any[] = []
+  sideBar: SideBarDef = { toolPanels: ['filters'], defaultToolPanel: undefined };
+
+  defaultColDef: ColDef = {
+    flex: 1, minWidth: 120, resizable: true, sortable: true, filter: true,
+  };
+
+  gridOptions: GridOptions = {
+    enableRtl: true,
+    animateRows: true,
+    rowSelection: 'multiple',
+    suppressRowClickSelection: true,
+  };
+
+  columnDefs: ColDef[] = [
+    {
+      headerName: '',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      maxWidth: 50,
+      filter: false,
+      sortable: false,
+    },
+    {
+      headerName: 'المصنع',
+      field: 'manufacturer_name',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'نوع الماكينة',
+      field: 'type',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'رقم الماكينة',
+      field: 'number',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'قطر الماكينة',
+      field: 'diameter',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'جوج الماكينة',
+      field: 'smoothness',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'طراز الماكينة',
+      field: 'model',
+      filter: 'agSetColumnFilter',
+      filterParams: { excelMode: 'windows' },
+    },
+    {
+      headerName: 'تعديل',
+      field: 'id',
+      maxWidth: 100,
+      sortable: false,
+      filter: false,
+      cellRenderer: (p: any) => {
+        const a = document.createElement('a');
+        a.innerHTML = '<i class="fas fa-edit update-symbol"></i>';
+        a.style.cursor = 'pointer';
+        a.addEventListener('click', () => {
+          this.showInputUpdate = true;
+          this.selectedDataToUpdate = { ...p.data };
+          setTimeout(() => document.getElementById('update-form')?.scrollIntoView({ behavior: 'smooth' }), 50);
+        });
+        return a;
+      },
+    },
+  ];
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
     private _circularKnittingMachineBussinessmanService: CircularKnittingMachineBussinessmanService,
-    public _exportDataService: ExportDataService,
-    private primengConfig: PrimeNGConfig,
-    private filterService: FilterService,
-  ) {
-  }
+  ) { }
 
-  ngOnInit(): void {
-    this.customFilterForManufacturers();
-    // this.customFilterForFabricName();
-    // this.customFilterForFabricCode();
-    this.customFilterForTypes();
-    this.customFilterForDiameters();
-    this.customFilterForSmoothness();
-    this.customFilterForModels();
-    this.getData();
-  }
+  ngOnInit(): void { this.getData(); }
+
+  onGridReady(params: GridReadyEvent) { this.gridApi = params.api; }
+
+  onSelectionChanged() { this.selectedRows = this.gridApi?.getSelectedRows() || []; }
 
   getData() {
-    this.loading = true;
-
     this._circularKnittingMachineBussinessmanService.selectAll().subscribe((response: any) => {
-      this.circularKnittingMachines = response
-
-      // PrimeNG Table
-      this.primengConfig.ripple = true;
-      this.loading = false;
-    })
-  }
-
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForManufacturers() {
-    const customFilterName = "manufacturer-name-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedManufacturers
-
-      if (this.selectedManufacturers[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].manufacturer_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
+      this.rowData = Array.isArray(response) ? response : [];
     });
   }
-  // customFilterForFabricName() {
-  //   const customFilterName = "fabric-name-filter";
-  //   this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-  //     filter = this.selectedFabricName
-
-  //     if (this.selectedFabricName[0] != null) {
-  //       if (filter === undefined || filter === null || !filter.length) {
-  //         return true;
-  //       }
-  //       if (value === undefined || value === null || value.length == 0) {
-  //         return false;
-  //       }
-  //       if (filter.length > 0) {
-  //         // let count = 0
-
-  //         // for (let i = 0; i < value.length; i++) {
-  //         for (let j = 0; j < filter.length; j++) {
-  //           if (value == filter[j].fabric_name) {
-  //             // count++
-  //             // if (count == filter.length) {
-  //             return true;
-  //             // }
-  //           }
-  //         }
-  //         // }
-  //       }
-  //       return false;
-  //     }
-  //     else {
-  //       return true;
-  //     }
-  //   });
-  // }
-
-  // customFilterForFabricCode() {
-  //   const customFilterName = "fabric-code-filter";
-  //   this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-  //     filter = this.selectedFabricCode
-
-  //     if (this.selectedFabricCode[0] != null) {
-  //       if (filter === undefined || filter === null || !filter.length) {
-  //         return true;
-  //       }
-  //       if (value === undefined || value === null || value.length == 0) {
-  //         return false;
-  //       }
-  //       if (filter.length > 0) {
-  //         // let count = 0
-
-  //         // for (let i = 0; i < value.length; i++) {
-  //         for (let j = 0; j < filter.length; j++) {
-  //           if (value == filter[j].fabric_code) {
-  //             // count++
-  //             // if (count == filter.length) {
-  //             return true;
-  //             // }
-  //           }
-  //         }
-  //         // }
-  //       }
-  //       return false;
-  //     }
-  //     else {
-  //       return true;
-  //     }
-  //   });
-  // }
-
-  customFilterForTypes() {
-    const customFilterName = "type-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedTypes
-
-      if (this.selectedTypes[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].type) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForDiameters() {
-    const customFilterName = "diameter-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedDiameters
-
-      if (this.selectedDiameters[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].diameter) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForSmoothness() {
-    const customFilterName = "smoothness-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedSmoothness
-
-      if (this.selectedTypes[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].smoothness) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForModels() {
-    const customFilterName = "model-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedModels
-
-      if (this.selectedModels[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].model) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-// Reset table filters
-  clear(table: Table) {
-    table.clear();
-    table.reset();
-    this.selectedManufacturers = []
-    // this.selectedFabricName = []
-    // this.selectedFabricCode = []
-    this.selectedTypes = []
-    this.selectedDiameters = []
-    this.selectedSmoothness = []
-    this.selectedModels = []
-  }
-
-  onMultiselectedManufacturers(event) {
-    this.selectedManufacturers = event
-    this.dt1?._filter()
-  }
-
-  // onMultiselectedFabricName(event) {
-  //   this.selectedFabricName = event
-  //   this.dt1?._filter()
-  // }
-
-  // onMultiselectedFabricCode(event) {
-  //   this.selectedFabricCode = event
-  //   this.dt1?._filter()
-  // }
-
-  onMultiselectedTypes(event) {
-    this.selectedTypes = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedDiameters(event) {
-    this.selectedDiameters = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedSmoothness(event) {
-    this.selectedSmoothness = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedModels(event) {
-    this.selectedModels = event
-    this.dt1?._filter()
-  }
-
-  getSelectedData(selectedData: any) {
-    this.showInputUpdate = true
-    this.selectedDataToUpdate = selectedData
-  }
-
-  ///////////////////// ----------- End Search Tabel ----------- /////////////////////
 
   delete() {
-    this._constantsService.spinner.show()
-    this._circularKnittingMachineBussinessmanService.delete(this.selectedData).subscribe(response => {
+    this._constantsService.spinner.show();
+    this._circularKnittingMachineBussinessmanService.delete(this.selectedRows).subscribe((response: any) => {
       this._constantsService.spinner.hide();
-      if (response.msg === "the item is delete") {
-        this._constantsService.successDeleteMessage()
-        this._sharedComponentService.reloadPage();
+      if (response.msg === 'the item is delete') {
+        this._constantsService.successDeleteMessage();
+        this.selectedRows = [];
+        this.getData();
+      } else {
+        this._constantsService.invalidIdErrorMessage();
       }
-      else {
-        this._constantsService.invalidIdErrorMessage()
-      }
-    })
+    });
   }
 }

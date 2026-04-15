@@ -388,6 +388,15 @@
                                             </div>
                                         </th>
 
+                                         <!-- storage_place Column -->
+                                         <th pResizableColumn pSortableColumn="storage_place">
+                                            <div class="flex justify-content-between align-items-center">
+                                                رقم الاستاند
+                                                <p-sortIcon data-html2canvas-ignore="true" field="storage_place">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
                                          <!-- price Column -->
                                          <th
                                          *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
@@ -486,6 +495,13 @@
                                             </div>
                                         </th>
 
+                                        <!-- Update Storage Place Column -->
+                                        <th data-html2canvas-ignore="true">
+                                            <div class="flex justify-content-between align-items-center">
+                                                تعديل رقم الاستاند
+                                            </div>
+                                        </th>
+
                                         <!-- Details Column -->
                                         <th data-html2canvas-ignore="true">
                                             <div class="flex justify-content-between align-items-center">
@@ -550,6 +566,11 @@
                                         <!-- current_quantity Column -->
                                         <td>
                                             {{ element.details.current_quantity }}
+                                        </td>
+
+                                        <!-- storage_place Column -->
+                                        <td>
+                                            {{ element.details.storage_place || element.storage_place }}
                                         </td>
                                         
                                         <!-- price Column -->
@@ -630,6 +651,15 @@
                                             </a>
                                         </td>
 
+                                        <!-- Update Storage Place Column -->
+                                        <td data-html2canvas-ignore="true">
+                                            <a *ngIf="canOpenUpdateStorage(element)"
+                                                onClick="document.getElementById('update-storage-place-panel').scrollIntoView();"
+                                                (click)="openUpdateStoragePlace(element)">
+                                                <i class="fas fa-edit update-symbol"></i>
+                                            </a>
+                                        </td>
+
                                         <!-- Details Column -->
                                         <td data-html2canvas-ignore="true">
                                             <a *ngIf="element.is_order == 0" [routerLink]="['details']" [queryParams]="{ 
@@ -694,6 +724,9 @@
                                                             number}}
                                         </td>
 
+                                        <!-- storage_place Column -->
+                                        <td></td>
+
                                         <!-- price Column -->
                                         <td></td>
 
@@ -730,6 +763,9 @@
                                         <!-- update Column -->
                                         <td></td>
 
+                                        <!-- Update Storage Place Column -->
+                                        <td></td>
+
                                         <!-- Details Column -->
                                         <td></td>
 
@@ -753,4 +789,20 @@
     </div>
 </section>
 
-<app-update-manufacturing-requisition-status-wb *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-update-manufacturing-requisition-status-wb>
+<app-update-manufacturing-requisition-status-wb
+    *ngIf="selectedDataToUpdate"
+    [selectedData]="selectedDataToUpdate"
+    (updated)="handleStatusUpdated($event)">
+</app-update-manufacturing-requisition-status-wb>
+
+<div id="update-storage-place-panel">
+    <app-update-report-wc
+        *ngIf="showUpdatePanel"
+        [showGrid]="false"
+        [showHeader]="false"
+        [selectedWcIds]="selectedWcIds"
+        [initialStoragePlace]="selectedStoragePlace"
+        [reportParamsInput]="selectedStorageReportParams"
+        (updated)="handleStorageUpdated($event)">
+    </app-update-report-wc>
+</div>

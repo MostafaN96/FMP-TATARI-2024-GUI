@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 
 // Form Services
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -50,6 +50,8 @@ export class UpdateManufacturingOutputComponent implements OnInit {
   circularKnittingMachines: any = []
 
   @Input() selectedData: any
+  @Output() updated = new EventEmitter<any>();
+
   outputManufacturedWbForm:FormGroup = new FormGroup({
     price: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
     quantity: new FormControl(null, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -59,6 +61,7 @@ export class UpdateManufacturingOutputComponent implements OnInit {
     circularKnittingMachineName: new FormControl(""),
     circularKnittingMachineId: new FormControl(""),
     document: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.number)]),
+    storagePlace: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.shortText)]),
     statement: new FormControl('', [Validators.pattern(this.patterns.validator_pattern.longText)]),
     personid: new FormControl(this._sessionManagerService.Person_ID, [Validators.required]),
     ipaddress: new FormControl(this._sessionManagerService.IP_ADDRESS, [Validators.required]),
@@ -90,6 +93,7 @@ export class UpdateManufacturingOutputComponent implements OnInit {
     this.outputManufacturedWbForm.controls['manufacturingFee'].setValue(this.selectedData?.manufacturing_fee)
     this.outputManufacturedWbForm.controls['manufacturingFeeDollar'].setValue(this.selectedData?.manufacturing_fee_dollar)
     this.outputManufacturedWbForm.controls['document'].setValue(this.selectedData?.document)
+    this.outputManufacturedWbForm.controls['storagePlace'].setValue(this.selectedData?.storage_place)
     this.outputManufacturedWbForm.controls['statement'].setValue(this.selectedData?.statement)
 
     this._circularKnittingMachineBussinessmanService.selectByManufacture(this.selectedData?.manufacture_id).subscribe((response: any) => {
@@ -124,11 +128,23 @@ export class UpdateManufacturingOutputComponent implements OnInit {
     this._wbManufacturingOutputService.update(this.outputManufacturedWbForm.value, this.selectedData.id).subscribe((response: any) =>{
       this._constantsService.spinner.hide();
       if (response.msg === "data updated") {
+        const updatedRow = {
+          ...this.selectedData,
+          price: this.outputManufacturedWbForm.controls['price'].value,
+          quantity: this.outputManufacturedWbForm.controls['quantity'].value,
+          fabric_piece: this.outputManufacturedWbForm.controls['numberFabricPieces'].value,
+          manufacturing_fee: this.outputManufacturedWbForm.controls['manufacturingFee'].value,
+          manufacturing_fee_dollar: this.outputManufacturedWbForm.controls['manufacturingFeeDollar'].value,
+          circular_knitting_machine_name: this.outputManufacturedWbForm.controls['circularKnittingMachineName'].value,
+          circular_knitting_machine_bussiness_man_id: this.outputManufacturedWbForm.controls['circularKnittingMachineId'].value,
+          document: this.outputManufacturedWbForm.controls['document'].value,
+          storage_place: this.outputManufacturedWbForm.controls['storagePlace'].value,
+          statement: this.outputManufacturedWbForm.controls['statement'].value,
+        };
+
+        Object.assign(this.selectedData, updatedRow);
+        this.updated.emit(updatedRow);
         this._constantsService.successUpdateMessage()
-        // this._sharedComponentService.reloadPageWithParams(this.requisitionId);
-        setTimeout(() => {
-          window.location.reload()
-        }, this._constantsService.RELOAD_TIME);
       }
       else {
         if (response.msg == "quantity is wrong") {

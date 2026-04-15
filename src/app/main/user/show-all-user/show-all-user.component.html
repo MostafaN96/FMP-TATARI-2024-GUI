@@ -1,169 +1,42 @@
-<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
-    <!-- Title Page Section -->
+﻿<section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
     <div [class]="_sharedComponentService.titlePageClass">
-        <!-- Sub Title Page -->
-        <div [class]="_sharedComponentService.subTitlePageClass" id="main-page-title">
+        <div [class]="_sharedComponentService.subTitlePageClass">
             <h2 [class]="_sharedComponentService.TitleTextClass">إظهار جميع المستخدمين</h2>
         </div>
     </div>
-    <!-- Form Section -->
-
-    <div class="container-fluid mt-2">
-        <div class="row row-cols-3">
-            <div class="col">
-                <div class="btn-export-section">
-                    <a (click)="_exportDataService.exportToPDF('table-header-data', 'table-data', 'المستخدمين')">
-                        <i title="PDF" class="far fa-file-pdf"></i>
-                    </a>
-
-                    <a (click)="_exportDataService.exportToExcel('table-header-data', 'table-data', 'المستخدمين')">
-                        <i title="Excel" class="far fa-file-excel px-2"></i>
-                    </a>
-                    
-                    <a
-                    (click)="_exportDataService.print('table-header-data', 'table-data', 'المستخدمين')">
-                    <i title="Print" class="fas fa-print pe-2"></i>
-                </a>
+    <div [class]="_sharedComponentService.mainPageFormClass">
+        <div [class]="_sharedComponentService.subMainPageFormClass">
+            <div [class]="_sharedComponentService.gridForm2Class">
+                <div class="col">
+                    <div [class]="_sharedComponentService.tableSectionClass">
+                        <div dir="rtl" class="ag-theme-alpine ag-rtl">
+                            <ag-grid-angular
+                                #agGrid
+                                class="ag-theme-alpine ag-rtl"
+                                [ngStyle]="_sharedComponentService.gridStyle"
+                                [gridOptions]="gridOptions"
+                                [columnDefs]="columnDefs"
+                                [defaultColDef]="defaultColDef"
+                                [sideBar]="sideBar"
+                                [rowData]="rowData"
+                                (gridReady)="onGridReady($event)"
+                                (selectionChanged)="onSelectionChanged()">
+                            </ag-grid-angular>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div [class]="_sharedComponentService.btnSectionClass">
+                <div class="row row-cols-auto">
+                    <div class="col">
+                        <button [disabled]="selectedRows.length < 1" (click)="delete()" type="submit"
+                            class="btn-style delete-btn">حذف</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Main Page Form -->
-    <div [class]="_sharedComponentService.mainPageFormClass">
-            <div [class]="_sharedComponentService.subMainPageFormClass">
-                <!-- Form Body -->
-                <div [class]="_sharedComponentService.gridForm2Class">
-                    <div class="col">
-                        <div [class]="_sharedComponentService.tableSectionClass">
-                            <mat-form-field class="w-100" appearance="outline">
-                                <input matInput [(ngModel)]="filter" (keyup)="applyFilter($any($event.target).value)"
-                                    placeholder="بحث" />
-                            </mat-form-field>
-
-                            <div class="example-table-container">
-
-                            <table id="table-data" mat-table matSort #sortColumns="matSort" [dataSource]="dataSourceSearchTabel"
-                            [class]="_sharedComponentService.tableStyleClass">
-
-                                <!-- Checkbox Column -->
-                                <ng-container matColumnDef="select">
-                                    <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
-                                        <mat-checkbox (change)="$event ? masterToggle() : null"
-                                            [checked]="selection.hasValue() && isAllSelected()"
-                                            [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                            (change)="selectAll()">
-                                        </mat-checkbox>
-                                    </th>
-                                    <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row" style="width: 5%;">
-                                        <mat-checkbox (click)="getSelectedIndex(row)" (click)="$event.stopPropagation()"
-                                            (change)="$event ? selection.toggle(row) : null"
-                                            [checked]="selection.isSelected(row)">
-                                        </mat-checkbox>
-                                    </td>
-                                </ng-container>
-
-                                <!-- index Column -->
-                                <ng-container matColumnDef="index">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>التسلسل</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element; let index = index">
-                                        {{index + 1 }}
-                                    </td>
-                                </ng-container>
-                                
-                                <!-- User Name Column -->
-                                <ng-container matColumnDef="user_name">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>اسم المستخدم</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.user_name }}
-                                    </td>
-                                </ng-container>
-
-                                <!-- User Email Column -->
-                                <ng-container matColumnDef="user_email">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>البريد الإلكتروني</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.user_email }}
-                                    </td>
-                                </ng-container>
-
-                                <!-- User Mobile Column -->
-                                <ng-container matColumnDef="user_mobile">
-                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
-                                        <b>رقم الهاتف</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.user_mobile }}
-                                    </td>
-                                </ng-container>
-
-                                <!-- Password Status Column -->
-                                <ng-container matColumnDef="password_status">
-                                    <th mat-header-cell *matHeaderCellDef>
-                                        <b>كلمة المرور</b>
-                                    </th>
-                                    <td mat-cell *matCellDef="let element; let i = index" class="password-cell">
-                                        <div class="password-wrapper">
-                                            <span class="password-plain-text" [title]="element.user_password">
-                                                <i class="fas" [class.fa-unlock]="element.showPassword" 
-                                                   [class.fa-lock]="!element.showPassword" 
-                                                   [style.color]="element.showPassword ? '#4caf50' : '#ff9800'" 
-                                                   style="margin-left: 6px;"></i>
-                                                <span *ngIf="element.showPassword">{{ element.user_password }}</span>
-                                                <span *ngIf="!element.showPassword">••••••••</span>
-                                            </span>
-                                            <button class="toggle-btn" (click)="togglePasswordVisibility(element)" 
-                                                    [title]="element.showPassword ? 'إخفاء' : 'إظهار'">
-                                                <i class="fas" [class.fa-eye]="!element.showPassword" 
-                                                   [class.fa-eye-slash]="element.showPassword"></i>
-                                            </button>
-                                            <button class="copy-btn" (click)="copyToClipboard(element.user_password)" 
-                                                    title="نسخ">
-                                                <i class="fas fa-copy"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </ng-container>
-
-                                <!-- Update Column -->
-                                <ng-container matColumnDef="update">
-                                    <th data-html2canvas-ignore="true" mat-header-cell *matHeaderCellDef>
-                                        <b>تعديل</b>
-                                    </th>
-                                    <td data-html2canvas-ignore="true" mat-cell *matCellDef="let row">
-                                        <a onClick="document.getElementById('update-form').scrollIntoView();"
-                                       (click)="getSelectedData(row)">
-                                            <i class="fas fa-edit update-symbol"></i>
-                                        </a>
-                                    </td>
-                                </ng-container>
-
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                            </table>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Buttons Section -->
-                <div [class]="_sharedComponentService.btnSectionClass">
-                    <div class="row row-cols-auto">
-                        <div class="col">
-                            <button [disabled]="selectedData.length < 1" 
-                            (click)="delete()"
-                            type="submit" class="btn-style delete-btn">حذف</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </div>
 </section>
-
-<app-update-user *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-update-user>
+<div id="update-form">
+    <app-update-user *ngIf="selectedDataToUpdate" [selectedData]="selectedDataToUpdate"></app-update-user>
+</div>

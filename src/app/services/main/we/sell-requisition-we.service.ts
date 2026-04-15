@@ -93,5 +93,15 @@ export class SellRequisitionWeService {
         })
       });
   }
-  
+
+  selectAllLazy(payload: any): Observable<any> {
+    this.urlService = 'we-sell-requisition/';
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-lazy`;
+    return this._http.post(url, payload, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+
 }

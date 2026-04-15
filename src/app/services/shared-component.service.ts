@@ -481,11 +481,11 @@ setTimeout(() => {
     dyeingFee: number, 
     fabricPiece: number,
     addedCost: number) {
-      console.log("price :::: ", price);
-      console.log("quantity :::: ", quantity);
-      console.log("dyeingFee :::: ", dyeingFee);
-      console.log("fabricPiece :::: ", fabricPiece);
-      console.log("addedCost :::: ", addedCost);
+      // console.log("price :::: ", price);
+      // console.log("quantity :::: ", quantity);
+      // console.log("dyeingFee :::: ", dyeingFee);
+      // console.log("fabricPiece :::: ", fabricPiece);
+      // console.log("addedCost :::: ", addedCost);
       
       
       let sumCostWithoutFabricPiece = 0

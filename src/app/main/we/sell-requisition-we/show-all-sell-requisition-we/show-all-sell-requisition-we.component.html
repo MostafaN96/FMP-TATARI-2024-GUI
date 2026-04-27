@@ -19,6 +19,18 @@
                         dir="rtl"
                         class="ag-theme-alpine ag-rtl ag-details">
 
+                            <!-- Toolbar -->
+                            <div class="grid-toolbar">
+                                <button
+                                    class="btn-reset-filter"
+                                    [class.btn-reset-filter--active]="isFiltered"
+                                    (click)="clearAg()"
+                                    title="إعادة تعيين جميع الفلاتر">
+                                    <i class="fa-solid fa-filter-circle-xmark"></i>
+                                    <span>إعادة الفلتر</span>
+                                </button>
+                            </div>
+
                             <p-confirmPopup></p-confirmPopup>
 
                             <ag-grid-angular

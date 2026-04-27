@@ -1,3 +1,47 @@
+/* Grid Toolbar */
+.grid-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 8px 4px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 4px;
+}
+
+.btn-reset-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1.5px solid #bdbdbd;
+    border-radius: 6px;
+    background: #fff;
+    color: #757575;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-reset-filter:hover {
+    border-color: var(--primary-color-1);
+    color: var(--primary-color-1);
+    background: #f0f3ff;
+}
+
+.btn-reset-filter--active {
+    border-color: var(--primary-color-6) !important;
+    color: var(--primary-color-6) !important;
+    background: #fff5f5 !important;
+    font-weight: 600;
+}
+
+.btn-reset-filter--active:hover {
+    background: #ffe8e8 !important;
+}
+
 td table tbody tr {
     border: 1px solid #ccc;
 }

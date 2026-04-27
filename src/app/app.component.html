@@ -1,11 +1,14 @@
 <app-sidebar *ngIf="isShowNav"></app-sidebar>
 
-<router-outlet>
-    <!-- <ngx-spinner
-    bdColor="rgba(255,255,255,255)"
-    template="<img src='../assets/images/Blocks-1s-200px.gif' />"
-    ></ngx-spinner> -->
-</router-outlet>
+<ngx-spinner
+  bdColor="rgba(0,0,0,0.4)"
+  size="medium"
+  color="#fff"
+  type="ball-clip-rotate"
+  [fullScreen]="true">
+</ngx-spinner>
+
+<router-outlet></router-outlet>
 
 <!-- <div class="demo  uk-notification uk-notification-style uk-notification-top-center"
     [class]="_constantsService.notificationResponseClass" [ngStyle]="{ display: notificationDisplay }">

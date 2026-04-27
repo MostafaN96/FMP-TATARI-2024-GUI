@@ -192,8 +192,10 @@ export class UpdateDyeingRequisitionWdComponent implements OnInit {
     }
     let sum = 0
     const element = dataSourceSearchTabel;
-    console.log("element.dyeing_quantity ::: ", element.dyeing_quantity);
-    
+    const dyeingQuantity = parseFloat(element.dyeing_quantity) || 0;
+
+    if (dyeingQuantity === 0) return 0;
+
     sum = this._sharedComponentService.getTotalCost(
       element.price, 
       element.quantity, 
@@ -201,10 +203,10 @@ export class UpdateDyeingRequisitionWdComponent implements OnInit {
       element.dyeing_fee, 
       element.fabric_piece,
       element.added_cost
-    ) / this._sharedComponentService.notZero(element.dyeing_quantity) 
-    console.log("sum ========getSumTotalCost======= ", sum);
-    
-    return parseFloat((sum).toFixed(3))
+    ) / dyeingQuantity;
+
+    const result = isFinite(sum) ? parseFloat((sum).toFixed(3)) : 0;
+    return result;
   }
 
   isChecked(control, value) {

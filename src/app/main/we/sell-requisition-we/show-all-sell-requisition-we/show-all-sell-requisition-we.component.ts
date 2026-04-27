@@ -35,6 +35,7 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
   titlePage = '';
   isShowConfirmDirectSell = false;
   loading = false;
+  isFiltered = false;
   lastGrandTotalQty = 0;
   lastGrandTotalFabricPiece = 0;
 
@@ -343,6 +344,7 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
 
   private getRowsLazy(p: IGetRowsParams) {
     this.loading = true;
+    this.gridApi?.showLoadingOverlay();
 
     const payload = {
       startRow: p.startRow,
@@ -366,11 +368,13 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
         p.successCallback(rows, lastRow);
 
         this.setPinnedBottomRow();
+        this.gridApi?.hideOverlay();
         this.loading = false;
       },
       error: () => {
         p.failCallback();
         this.gridApi?.setPinnedBottomRowData([]);
+        this.gridApi?.hideOverlay();
         this.loading = false;
       }
     });
@@ -417,12 +421,15 @@ export class ShowAllSellRequisitionWeComponent implements OnInit {
 
   onFilterChanged() {
     if (!this.gridApi) return;
+    const model = this.gridApi.getFilterModel();
+    this.isFiltered = model != null && Object.keys(model).length > 0;
     this.gridApi.purgeInfiniteCache();
   }
 
   clearAg() {
     if (!this.gridApi) return;
     this.gridApi.setFilterModel(null);
+    this.isFiltered = false;
     this.gridApi.purgeInfiniteCache();
   }
 

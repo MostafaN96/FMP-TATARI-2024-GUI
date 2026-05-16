@@ -85,6 +85,15 @@
                                             تسلسل
                                         </th>
 
+                                        <!-- wa_yarn_order_requisition_name Column -->
+                                        <th pResizableColumn pSortableColumn="wa_yarn_order_requisition_name">
+                                            <div class="flex justify-content-between align-items-center">
+                                                طلبية
+                                                <p-sortIcon data-html2canvas-ignore="true" field="wa_yarn_order_requisition_name">
+                                                </p-sortIcon>
+                                            </div>
+                                        </th>
+
                                         <!-- yarn Name Column -->
                                         <th pResizableColumn pSortableColumn="yarn_name">
                                             <div class="flex justify-content-between align-items-center">
@@ -163,6 +172,11 @@
                                             {{index + 1}}
                                         </td>
 
+                                        <!-- wa_yarn_order_requisition_name Column -->
+                                        <td>
+                                            {{element.wa_yarn_order_requisition_name}}
+                                        </td>
+
                                         <!-- yarn Name Column -->
                                         <td>
                                             {{element.yarn_name}}
@@ -223,8 +237,11 @@
                                         <!-- Index Column -->
                                         <td data-html2canvas-ignore="true"></td>
 
-                                        <!-- yarn Name Column -->
+                                        <!-- wa_yarn_order_requisition_name Column -->
                                         <td>الإجمالي</td>
+
+                                        <!-- yarn Name Column -->
+                                        <td></td>
 
                                         <!-- yarn Code Column -->
                                         <td></td>

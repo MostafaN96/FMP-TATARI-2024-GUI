@@ -215,6 +215,7 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
     return new FormGroup({
       index: new FormControl(index),
       parentOrdersRequisitionsId: new FormControl(data.parent_orders_requisitions_id, [Validators.required]),
+      parentWcFabricOrderRequisitionId: new FormControl(data.parent_wc_fabric_order_requisition_id, [Validators.required]),
       ordersRequisitionsId: new FormControl(data.orders_requisitions_id, [Validators.required]),
       fabricOrderId: new FormControl(data.wc_fabric_order_requisition_id, [Validators.required]),
       fabricOrderName: new FormControl(data.wc_fabric_order_requisition_name, [Validators.required]),
@@ -306,7 +307,7 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
       this.colors[index] = []
     }
     else {
-      this._colorService.selectByCategoryAndDeyingByDyedFabricByFabricOrder(this.selectedData?.dyeing_id, event.itemData.id, row.controls['dyedFabricId'].value, row.controls['parentOrdersRequisitionsId'].value).subscribe((response: any) => {
+      this._colorService.selectByCategoryAndDeyingByDyedFabricByFabricOrder(this.selectedData?.dyeing_id, event.itemData.id, row.controls['dyedFabricId'].value, row.controls['parentWcFabricOrderRequisitionId'].value).subscribe((response: any) => {
         this.colors[index] = response
       })
     }

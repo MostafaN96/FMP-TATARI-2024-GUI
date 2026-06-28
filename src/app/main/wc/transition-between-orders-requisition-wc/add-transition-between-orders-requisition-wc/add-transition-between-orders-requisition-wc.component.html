@@ -167,7 +167,7 @@
                                         <!-- order -->
                                         <td class="table-td" style="max-width: 180px;">
                                             <ejs-autocomplete [dataSource]='fromFabricOrder' [fields]='fieldsFromFabricOrder' 
-                                            (filtering)="onFilteringFromFabricOrder($event)"
+                                            (filtering)="onFilteringFromFabricOrder($event, index)"
                                             (change)='selectFromFabricOrder($event, row, index)'
                                                 [placeholder]='textFromFabricOrder' [autofill]='autofill'
                                                 formControlName="fromFabricOrderId"

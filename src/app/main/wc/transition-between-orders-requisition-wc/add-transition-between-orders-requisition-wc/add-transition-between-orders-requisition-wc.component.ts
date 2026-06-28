@@ -154,14 +154,14 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
   public textFromFabricOrder: string = "من الطلبية"
 
 
-  public onFilteringFromFabricOrder(e: any) {
+  public onFilteringFromFabricOrder(e: any, index: number) {
     e.preventDefaultAction = true;
     var predicate = new Predicate('name', 'contains', e.text);
     var query = new Query();
     //frame the query based on search string with filter type.
     query = (e.text != "") ? query.where(predicate) : query;
     //pass the filter data source, filter query to updateData method.
-    e.updateData(this.fromFabricOrder, query);
+    e.updateData(this.fromFabricOrder[index], query);
   }
 
   constructor(
@@ -339,9 +339,9 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
 
   //  Fabric Order
   selectFromFabricOrder(event: { itemData: any; }, row: FormGroup, index) {
-    let indexData = this.fromFabricOrder.indexOf(event.itemData)
+    let indexData = this.fromFabricOrder[index].indexOf(event.itemData)
 
-    if (this.fromFabricOrder[indexData] !== event.itemData) {
+    if (this.fromFabricOrder[index][indexData] !== event.itemData) {
       row.controls['fromOrdersRequisitionsId'].setValue("")
       row.controls['fromFabricOrderId'].setValue("")
       row.controls['fabricId'].setValue("")
@@ -377,11 +377,12 @@ export class AddTransitionBetweenOrdersRequisitionWcComponent implements OnInit 
       row.controls['quantity'].setValue("")
       this.currentQuantity[index] = 0
       this.fabrics[index] = []
+      this.fromFabricOrder[index] = []
     }
     else {
 
       this._fabricOrderRequisitionWcService.selectByWarehouseWc(event.itemData?.id).subscribe((response: any) => {
-        this.fromFabricOrder = response
+        this.fromFabricOrder[index] = response
       })
 
     }

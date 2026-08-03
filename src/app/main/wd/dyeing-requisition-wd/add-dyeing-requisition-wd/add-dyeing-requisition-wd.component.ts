@@ -201,6 +201,8 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
     if (this.selectArrayValues.includes(objectData)) {
       this.fabricMap.set(objectData, objectData?.current_quantity)
     }
+    console.log("objectData :::" , objectData);
+    
     this.selectArrayValues.push(objectData);
     this.addItem(objectData)
     
@@ -626,7 +628,7 @@ export class AddDyeingRequisitionWdComponent implements OnInit {
         const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.addRequisitionForm, 'items',
           ['index', 'fabricId', 'fabricCode', 'fabricName', 'dyeingCode', 'consigmentDyeingId',
             'consigmentDyeingNumber', 'dyedFabricName', 'dyedFabricCode',
-            'colorCategoryId', 'colorCategoryName', 'colorId', 'colorName', 'colorCode', 'validQuantity', 'dyedFabricOrderRequisitionName', 'wasteRatio'])
+            'colorCategoryName', 'colorName', 'validQuantity', 'dyedFabricOrderRequisitionName', 'wasteRatio'])
 
         this._constantsService.spinner.show()
         this._dyeingRequisitionWdService.add(formGroup.value).subscribe(response => {

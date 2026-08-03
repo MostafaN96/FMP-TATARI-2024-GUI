@@ -507,7 +507,7 @@ export class AddDyeingRequisitionFormWdComponent implements OnInit {
       const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.addRequisitionForm, 'items',
       ['index', 'fabricId', 'fabricCode', 'fabricName', 'dyeingCode', 'consigmentDyeingId',
       'consigmentDyeingNumber','dyedFabricName', 'dyedFabricCode', 
-      'colorCategoryId', 'colorCategoryName', 'colorId', 'colorName', 'colorCode', 'validQuantity', 'dyedFabricOrderRequisitionName', 'wasteRatio'])
+      'colorCategoryName', 'colorName', 'validQuantity', 'dyedFabricOrderRequisitionName', 'wasteRatio'])
 
       this._constantsService.spinner.show()
       this._dyeingRequisitionDetailsWdService.add(formGroup.value).subscribe(response => {

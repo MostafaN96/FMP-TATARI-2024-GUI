@@ -302,10 +302,12 @@ export class AddTransportWbWaRequisitionWbComponent implements OnInit {
       // Get Prices
       this._reportWbService.selectPriceInWb(event.itemData.id, this.transportWbWaRequisitionForm.controls['industryId'].value!).subscribe((response: any) => {
         this.yarnsDetails = response
-        this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails) , this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price]
-        this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar]
-        row.controls['price'].setValue(String(this.yarnsDetails[0].latest_price))
-        row.controls['priceDollar'].setValue(String(this.yarnsDetails[0].latest_price_dollar))
+        if (this.yarnsDetails && this.yarnsDetails.length > 0) {
+          this.listYarnPrices[index] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails) , this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), this.yarnsDetails[0].latest_price]
+          this.listYarnPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'quantity', 'price_dollar'), this.yarnsDetails[0].latest_price_dollar]
+          row.controls['price'].setValue(String(this.yarnsDetails[0].latest_price ?? 0))
+          row.controls['priceDollar'].setValue(String(this.yarnsDetails[0].latest_price_dollar ?? 0))
+        }
       })
     }
     this.validate(row, index)

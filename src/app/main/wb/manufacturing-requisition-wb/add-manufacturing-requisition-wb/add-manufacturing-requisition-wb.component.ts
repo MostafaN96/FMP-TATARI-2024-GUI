@@ -89,6 +89,15 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
   groupPrices: any = ["وسطي السعر", "وسطي سعر المدخلات", "آخر سعر"]
   isShowAdd = true
 
+  // سكان الإيصال
+  showScanDialog = false;
+  scannedData: any = null;
+  scanLoading = false;
+  enrichLoading = false;
+  enrichedData: any = null;
+  selectedIndustryFromScan: any = null;
+  selectedFabricFromScan: any = null;
+
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
   displayedColumns: string[] = ['select', 'date', 'yarn_code', 'yarn_name', 'yarn_lot_code', 'consigment_yarn_number', 'quantity'];
@@ -241,7 +250,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     })
   }
 
-  getSelectedIndex(objectData: any) {
+  getSelectedIndex(objectData: any, autoSelect: boolean = false) {
     if (this.selectArrayValues.includes(objectData)) {
       let index = this.selectArrayValues.indexOf(objectData);
       this.selectArrayValues[index] = delete this.selectArrayValues[index];
@@ -257,12 +266,14 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
         this.yarnsDetails = response
         this.getListYarnPrices[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPrice(this.yarnsDetails), this._sharedComponentService.getAvgInputesPrice(this.yarnsDetails), parseFloat(this.yarnsDetails[0].latest_price)]
         this.listYarnPricesDollar[this.selectArrayValues.length - 1] = [this._sharedComponentService.getAvgPriceDynamic(this.yarnsDetails, 'price_dollar', 'quantity'), this._sharedComponentService.getAvgInputesPriceDynamic(this.yarnsDetails, 'price_dollar', 'quantity'), parseFloat(this.yarnsDetails[0].latest_price_dollar)]
-        
+
         objectData.latest_price = this.yarnsDetails[0].latest_price
         objectData.latest_price_dollar = this.yarnsDetails[0].latest_price_dollar
         this.selectArrayValues.push(objectData);
         this.addItem(objectData)
-
+        if (autoSelect) {
+          this.selection.toggle(objectData);
+        }
       })
     }
   }
@@ -577,6 +588,245 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     } else {
       this.isShowAdd = true
     }
+  }
+
+  // ===== سكان الإيصال =====
+  onScanImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1];
+      const mimeType = file.type || 'image/jpeg';
+      this.scanLoading = true;
+      this.showScanDialog = true;
+      this.scannedData = null;
+      this.enrichedData = null;
+      this.selectedIndustryFromScan = null;
+      this.selectedFabricFromScan = null;
+
+      this._manufacturingRequisitionWbService.scanReceipt(base64, mimeType).subscribe({
+        next: (res: any) => {
+          this.scanLoading = false;
+          if (res.status === 1) {
+            this.scannedData = res.data;
+            // بعد قراءة الصورة، ابحث في قاعدة البيانات
+            this.enrichLoading = true;
+            this._manufacturingRequisitionWbService.enrichScanReceipt(
+              res.data.manufacturerName || '',
+              res.data.fabricName || '',
+              res.data.orderNumber || null
+            ).subscribe({
+              next: (enrichRes: any) => {
+                this.enrichLoading = false;
+                if (enrichRes.status === 1) {
+                  this.enrichedData = enrichRes.data;
+                  this.selectedIndustryFromScan = enrichRes.data.industryMatches?.[0] || null;
+                  this.selectedFabricFromScan = enrichRes.data.fabricMatches?.[0] || null;
+                }
+              },
+              error: () => { this.enrichLoading = false; }
+            });
+          } else {
+            this._constantsService.userErrorMessage();
+            this.showScanDialog = false;
+          }
+        },
+        error: () => {
+          this.scanLoading = false;
+          this._constantsService.userErrorMessage();
+          this.showScanDialog = false;
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+    (event.target as HTMLInputElement).value = '';
+  }
+
+  fillFromScan() {
+    if (!this.scannedData) return;
+    const d = this.scannedData;
+    console.log('📋 scannedData:', JSON.stringify(d));
+    console.log('🔎 enrichedData:', JSON.stringify(this.enrichedData));
+    console.log('🏭 selectedIndustry:', this.selectedIndustryFromScan);
+    console.log('🧵 selectedFabric:', this.selectedFabricFromScan);
+
+    // 1. الحقول الأساسية
+    if (d.date) {
+      this.addManufacturingRequisitionForm.controls['date'].setValue(new Date(d.date));
+    }
+    if (d.document) {
+      this.addManufacturingRequisitionForm.controls['document'].setValue(String(d.document));
+    }
+    if (d.quantity != null) {
+      this.addManufacturingRequisitionForm.controls['fabricQuantity'].setValue(String(d.quantity));
+    }
+    if (d.numberFabricPieces != null) {
+      this.addManufacturingRequisitionForm.controls['numberFabricPieces'].setValue(String(d.numberFabricPieces));
+    }
+    if (d.notes) {
+      this.addManufacturingRequisitionForm.controls['note'].setValue(d.notes);
+    }
+
+    const previousOrder = this.enrichedData?.previousOrder;
+
+    // إذا وُجدت الطلبية برقمها، استخدم بياناتها مباشرة
+    if (previousOrder?.foundByNumber && previousOrder.industryId && previousOrder.fabricId) {
+      this._applyOrderData(previousOrder);
+      return;
+    }
+
+    // وضع الاختيار اليدوي (فزي ماتش)
+    const industry = this.selectedIndustryFromScan;
+    const fabric = this.selectedFabricFromScan;
+
+    if (!industry) {
+      this.showScanDialog = false;
+      this._constantsService.successMessage('تم ملء البيانات الأساسية');
+      return;
+    }
+
+    // 2. تعيين المصنع
+    this.addManufacturingRequisitionForm.controls['industryId'].setValue(industry.id);
+    this.manufacturerName = industry.name;
+
+    this._wbService.selectQuantityByIndustryWb(industry.id).subscribe((yarnsResp: any) => {
+      this.yarns = yarnsResp;
+      this.dataSourceSearchTabel = new MatTableDataSource(yarnsResp);
+      this.dataSourceSearchTabel.sort = this.sortColumns;
+    });
+
+    if (!fabric) {
+      this._fabricService.selectFabricToBeManufacturedWb(industry.id).subscribe((fabrics: any) => {
+        this.fabrics = fabrics;
+      });
+      this.showScanDialog = false;
+      this._constantsService.successMessage('تم تعيين المصنع - اختر القماش يدوياً');
+      return;
+    }
+
+    // 3. تحميل الأقمشة وتعيين القماش
+    this._fabricService.selectFabricToBeManufacturedWb(industry.id).subscribe((fabrics: any) => {
+      this.fabrics = fabrics;
+      const matchedFabric = fabrics.find((f: any) => f.id === fabric.id);
+      if (!matchedFabric) {
+        this.showScanDialog = false;
+        this._constantsService.successMessage('تم تعيين المصنع - اختر القماش يدوياً');
+        return;
+      }
+
+      this.addManufacturingRequisitionForm.controls['fabricId'].setValue(matchedFabric.id);
+      this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(matchedFabric.code);
+      this.fabricName = matchedFabric.name;
+
+      if (previousOrder?.manufacturingFee) {
+        this.addManufacturingRequisitionForm.controls['manufacturingFee'].setValue(String(previousOrder.manufacturingFee));
+      }
+
+      this._wbManufacturingOutputService.selectLatestManufacturingFeeByIndustryByFabric(industry.id, matchedFabric.id).subscribe((fee: any) => {
+        this.latestManufacturingFee = fee;
+      });
+      this._wbManufacturingOutputService.selectLatestManufacturingFeeByIndustryByFabric(industry.id, matchedFabric.id).subscribe(() => {
+        this.latestManufacturingFeeDollar = [{ manufacturing_fee_dollar: previousOrder?.manufacturingFeeDollar || 0 }];
+      });
+
+      this._yarnOrderRequisitionWaService.selectByIndustryByFabricWb(industry.id, matchedFabric.id).subscribe((yarnOrders: any) => {
+        this.yarnOrder = yarnOrders;
+
+        if (!previousOrder?.yarnOrderId) {
+          this.showScanDialog = false;
+          this.calcAllQuantitiesRatio();
+          this._constantsService.successMessage('تم تعيين المصنع والقماش - اختر طلبية الخيط');
+          return;
+        }
+
+        const matchedYarnOrder = yarnOrders.find((yo: any) => yo.id === previousOrder.yarnOrderId);
+        if (!matchedYarnOrder) {
+          this.showScanDialog = false;
+          this.calcAllQuantitiesRatio();
+          this._constantsService.successMessage('تم تعيين المصنع والقماش - لم تُوجد طلبية الخيط');
+          return;
+        }
+
+        this.addManufacturingRequisitionForm.controls['yarnOrderId'].setValue(matchedYarnOrder.id);
+        this.addManufacturingRequisitionForm.controls['ordersRequisitionsId'].setValue(matchedYarnOrder.orders_requisitions_id);
+
+        this._applyYarns(industry.id, matchedFabric.id, matchedYarnOrder.id);
+      });
+    });
+  }
+
+  // تطبيق بيانات الطلبية مباشرة عندما وُجدت برقمها
+  private _applyOrderData(order: any) {
+    // 1. تعيين المصنع (industries محملة مسبقاً في ngOnInit)
+    this.addManufacturingRequisitionForm.controls['industryId'].setValue(order.industryId);
+    this.manufacturerName = order.industryName;
+
+    if (order.manufacturingFee) {
+      this.addManufacturingRequisitionForm.controls['manufacturingFee'].setValue(String(order.manufacturingFee));
+    }
+    if (order.manufacturingFeeDollar) {
+      this.addManufacturingRequisitionForm.controls['manufacturingFeeDollar'].setValue(String(order.manufacturingFeeDollar));
+    }
+
+    // 2. تحميل الأقمشة أولاً ثم تعيين fabricId داخل الـ subscribe (حتى يظهر الاسم)
+    this._fabricService.selectFabricToBeManufacturedWb(order.industryId).subscribe((fabrics: any) => {
+      this.fabrics = fabrics;
+      this.addManufacturingRequisitionForm.controls['fabricId'].setValue(order.fabricId);
+      this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(order.fabricCode);
+      this.fabricName = order.fabricName;
+
+      this._wbManufacturingOutputService.selectLatestManufacturingFeeByIndustryByFabric(order.industryId, order.fabricId).subscribe((fee: any) => {
+        this.latestManufacturingFee = fee;
+      });
+
+      // 3. تحميل طلبيات الخيط ثم تعيين yarnOrderId داخل الـ subscribe (حتى يظهر الاسم)
+      this._yarnOrderRequisitionWaService.selectByIndustryByFabricWb(order.industryId, order.fabricId).subscribe((yarnOrders: any) => {
+        this.yarnOrder = yarnOrders;
+        this.addManufacturingRequisitionForm.controls['yarnOrderId'].setValue(order.yarnOrderId);
+        this.addManufacturingRequisitionForm.controls['ordersRequisitionsId'].setValue(order.ordersRequisitionsId);
+
+        // 4. تحميل الخيوط واختيارها
+        this._applyYarns(order.industryId, order.fabricId, order.yarnOrderId);
+      });
+    });
+  }
+
+  // تحميل الخيوط وتعليم checkboxes وحساب الكميات
+  private _applyYarns(industryId: any, fabricId: any, yarnOrderId: any) {
+    this._wbService.selectQuantityByIndustryByFabricWb(industryId, fabricId, yarnOrderId).subscribe((yarns: any) => {
+      this.yarns = yarns;
+      this.dataSourceSearchTabel = new MatTableDataSource(yarns);
+      this.dataSourceSearchTabel.sort = this.sortColumns;
+
+      this.selectArrayValues = [];
+      this.selection.clear();
+      const fg = <FormGroup>this.addManufacturingRequisitionForm;
+      fg.removeControl('items');
+      fg.addControl('items', new FormArray([]));
+      this.getListYarnPrices = [];
+      this.listYarnPricesDollar = [];
+
+      const totalYarns = yarns.length;
+      yarns.forEach((yarn: any) => {
+        this.selection.select(yarn);
+        this.getSelectedIndex(yarn, false);
+      });
+
+      this.showScanDialog = false;
+
+      const waitAndCalc = () => {
+        const items: any[] = (this.addManufacturingRequisitionForm.controls.items as any)['controls'];
+        if (items.length >= totalYarns) {
+          this.calcAllQuantitiesRatio();
+        } else {
+          setTimeout(waitAndCalc, 300);
+        }
+      };
+      setTimeout(waitAndCalc, 300);
+      this._constantsService.successMessage('تم ملء جميع البيانات من الإيصال');
+    });
   }
 
   //  Get Average Inputes Price

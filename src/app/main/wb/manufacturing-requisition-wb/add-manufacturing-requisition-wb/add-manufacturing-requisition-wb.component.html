@@ -9,6 +9,16 @@
     <!-- Form Section -->
     <!-- Main Page Form -->
     <div [class]="_sharedComponentService.mainPageFormClass">
+
+        <!-- زر سكان الإيصال -->
+        <div class="mb-3">
+            <label class="btn-style" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                <i class="fas fa-camera"></i> سكان الإيصال
+                <input type="file" accept="image/*" capture="environment"
+                    style="display:none;" (change)="onScanImageSelected($event)">
+            </label>
+        </div>
+
         <form [formGroup]="addManufacturingRequisitionForm" (ngSubmit)="onAddRequisition()">
             <div [class]="_sharedComponentService.subMainPageForm2Class">
                 <!-- Form Body -->
@@ -675,7 +685,7 @@
                     <div class="col">
                         <mat-form-field class="example-full-width w-100" appearance="outline">
                             <mat-label>الكمية</mat-label>
-                            <input autocomplete="off" matInput (blur)="calcAllQuantitiesRatio()"
+                            <input autocomplete="off" matInput (blur)="calcAllQuantitiesRatio()" (input)="calcAllQuantitiesRatio()"
                                 oninput="this.value = this.value.replace(/[^1-90-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                 #code formControlName="fabricQuantity" placeholder="مثال: 12000" required>
                             <mat-error
@@ -935,3 +945,108 @@
 <!-- <pre>
     {{addManufacturingRequisitionForm.value | json}}
 </pre> -->
+
+<!-- Dialog نتيجة سكان الإيصال -->
+<p-dialog [(visible)]="showScanDialog" [modal]="true" [closable]="true"
+    [style]="{width: '560px'}" header="نتيجة قراءة الإيصال" dir="rtl">
+
+    <div class="p-2">
+
+        <!-- تحميل الصورة -->
+        <div *ngIf="scanLoading" class="text-center py-4">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p class="mt-2">جاري قراءة الإيصال...</p>
+        </div>
+
+        <!-- نتيجة القراءة -->
+        <div *ngIf="!scanLoading && scannedData">
+
+            <!-- البيانات المقروءة -->
+            <h6 class="fw-bold mb-2" style="font-size:0.85rem;">📄 البيانات المقروءة من الإيصال</h6>
+            <table class="table table-bordered table-sm mb-3" dir="rtl" style="font-size:0.82rem;">
+                <tbody>
+                    <tr *ngIf="scannedData.date"><th>التاريخ</th><td>{{ scannedData.date }}</td></tr>
+                    <tr *ngIf="scannedData.document"><th>الوثيقة</th><td>{{ scannedData.document }}</td></tr>
+                    <tr *ngIf="scannedData.orderNumber"><th>رقم الطلبية</th><td><strong>{{ scannedData.orderNumber }}</strong></td></tr>
+                    <tr *ngIf="scannedData.manufacturerName"><th>المصنع (مقروء)</th><td>{{ scannedData.manufacturerName }}</td></tr>
+                    <tr *ngIf="scannedData.fabricName"><th>القماش (مقروء)</th><td>{{ scannedData.fabricName }}</td></tr>
+                    <tr *ngIf="scannedData.quantity != null"><th>الكمية</th><td>{{ scannedData.quantity }}</td></tr>
+                    <tr *ngIf="scannedData.numberFabricPieces != null"><th>عدد الأثواب</th><td>{{ scannedData.numberFabricPieces }}</td></tr>
+                    <tr *ngIf="scannedData.notes"><th>ملاحظات</th><td>{{ scannedData.notes }}</td></tr>
+                </tbody>
+            </table>
+
+            <!-- الخيوط المقروءة -->
+            <div *ngIf="scannedData.yarns && scannedData.yarns.length > 0" class="mb-3">
+                <h6 class="fw-bold mb-1" style="font-size:0.85rem;">🧵 الخيوط المقروءة</h6>
+                <table class="table table-bordered table-sm" dir="rtl" style="font-size:0.82rem;">
+                    <thead class="table-light"><tr><th>النوع</th><th>الأكياس</th><th>الوزن (كغ)</th></tr></thead>
+                    <tbody>
+                        <tr *ngFor="let yarn of scannedData.yarns">
+                            <td>{{ yarn.type }}</td><td>{{ yarn.bags }}</td><td>{{ yarn.weight }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- إثراء قاعدة البيانات -->
+            <div *ngIf="enrichLoading" class="text-center py-2">
+                <i class="fas fa-spinner fa-spin"></i> جاري البحث في قاعدة البيانات...
+            </div>
+
+            <div *ngIf="!enrichLoading && enrichedData">
+                <h6 class="fw-bold mb-2" style="font-size:0.85rem;">🔍 التطابق في قاعدة البيانات</h6>
+
+                <!-- اختيار المصنع -->
+                <div class="mb-2">
+                    <label style="font-size:0.82rem; font-weight:600;">المصنع:</label>
+                    <select class="form-select form-select-sm" [(ngModel)]="selectedIndustryFromScan"
+                        [ngModelOptions]="{standalone: true}">
+                        <option [ngValue]="null">-- لا شيء --</option>
+                        <option *ngFor="let m of enrichedData.industryMatches" [ngValue]="m">{{ m.name }}</option>
+                    </select>
+                </div>
+
+                <!-- اختيار القماش -->
+                <div class="mb-2">
+                    <label style="font-size:0.82rem; font-weight:600;">القماش:</label>
+                    <select class="form-select form-select-sm" [(ngModel)]="selectedFabricFromScan"
+                        [ngModelOptions]="{standalone: true}">
+                        <option [ngValue]="null">-- لا شيء --</option>
+                        <option *ngFor="let f of enrichedData.fabricMatches" [ngValue]="f">{{ f.name }}</option>
+                    </select>
+                </div>
+
+                <!-- بيانات الإيصال السابق -->
+                <div *ngIf="enrichedData.previousOrder" class="alert p-2 mb-0"
+                    [class.alert-success]="enrichedData.previousOrder.foundByNumber"
+                    [class.alert-info]="!enrichedData.previousOrder.foundByNumber"
+                    style="font-size:0.8rem;">
+                    <strong *ngIf="enrichedData.previousOrder.foundByNumber">✅ وُجدت الطلبية برقمها مباشرة:</strong>
+                    <strong *ngIf="!enrichedData.previousOrder.foundByNumber">📋 من آخر إيصال مشابه:</strong>
+                    <br>طلبية الخيط: {{ enrichedData.previousOrder.yarnOrderName }}
+                    <span *ngIf="enrichedData.previousOrder.manufacturingFee">
+                        <br>أجرة التصنيع: {{ enrichedData.previousOrder.manufacturingFee }}
+                    </span>
+                    <span *ngIf="enrichedData.previousOrder.yarns?.length > 0">
+                        <br>خيوط: {{ enrichedData.previousOrder.yarns.length }} نوع
+                    </span>
+                </div>
+
+                <div *ngIf="!enrichedData.previousOrder && enrichedData.industryMatches.length === 0 && enrichedData.fabricMatches.length === 0"
+                    class="alert alert-warning p-2 mb-0" style="font-size:0.8rem;">
+                    لم يُعثر على تطابق في قاعدة البيانات — ستحتاج لاختيار المصنع والقماش يدوياً.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="إلغاء" icon="pi pi-times"
+            class="p-button-text" (click)="showScanDialog = false"></button>
+        <button pButton type="button" label="ملء البيانات" icon="pi pi-check"
+            class="p-button-success"
+            [disabled]="!scannedData || scanLoading || enrichLoading"
+            (click)="fillFromScan()"></button>
+    </ng-template>
+</p-dialog>

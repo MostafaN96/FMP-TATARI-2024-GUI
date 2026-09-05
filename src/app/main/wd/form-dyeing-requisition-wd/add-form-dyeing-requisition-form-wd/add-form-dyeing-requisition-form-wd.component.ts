@@ -17,6 +17,7 @@ import { ColorCategoryService } from "src/app/services/main/color-category.servi
 import { ColorService } from "src/app/services/main/color.service";
 import { DyeingServicesService } from "src/app/services/main/dyeing-services.service";
 import { FormDyeingRequisitionDetailsWdService } from "src/app/services/main/wd/form-dyeing-requisition-details-wd.service";
+import { FormDyeingRequisitionWdService } from "src/app/services/main/wd/form-dyeing-requisition-wd.service";
 import { ReportWdService } from "src/app/services/main/wd/report-wd.service";
 
 // Shared Service
@@ -76,6 +77,16 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
   fabricMap = new Map()
   filter = "";
   isShowAdd = true
+
+  // سكان الإيصال
+  showScanDialog = false;
+  scannedData: any = null;
+  scanLoading = false;
+  enrichLoading = false;
+  enrichedData: any = null;
+  selectedDyerFromScan: any = null;
+  pendingScanDocument: string | null = null;
+  pendingScanStatement: string | null = null;
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -142,6 +153,7 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
     private _colorService: ColorService,
     private _dyeingServicesService: DyeingServicesService,
     private _formDyeingRequisitionDetailsWdService: FormDyeingRequisitionDetailsWdService,
+    private _formDyeingRequisitionWdService: FormDyeingRequisitionWdService,
     public matcher: MyErrorStateMatcher,
     public _sharedComponentService: SharedComponentService,
     private _constantsService: ConstantsService,
@@ -249,6 +261,16 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
     let index = this.fabrics.indexOf(data)
     const control = <FormArray>this.addRequisitionForm.get('items');
     control.push(this.initItem(data, index));
+
+    if (this.pendingScanDocument || this.pendingScanStatement) {
+      const lastItem = control.at(control.length - 1) as FormGroup;
+      if (this.pendingScanDocument) {
+        lastItem.controls['document'].setValue(this.pendingScanDocument);
+      }
+      if (this.pendingScanStatement) {
+        lastItem.controls['statement'].setValue(this.pendingScanStatement);
+      }
+    }
   }
 
   getItem(form: any) {
@@ -381,6 +403,77 @@ export class AddFormDyeingRequisitionFormWdComponent implements OnInit {
     } else {
       this.isShowAdd = true
     }
+  }
+
+  // ===== سكان الإيصال =====
+  onScanImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1];
+      const mimeType = file.type || 'image/jpeg';
+      this.scanLoading = true;
+      this.showScanDialog = true;
+      this.scannedData = null;
+      this.enrichedData = null;
+      this.selectedDyerFromScan = null;
+
+      this._formDyeingRequisitionWdService.scanReceipt(base64, mimeType).subscribe({
+        next: (res: any) => {
+          this.scanLoading = false;
+          if (res.status === 1) {
+            this.scannedData = res.data;
+            this.enrichLoading = true;
+            this._formDyeingRequisitionWdService.enrichScanReceipt(
+              res.data.manufacturerName || '',
+              res.data.fabricName || ''
+            ).subscribe({
+              next: (enrichRes: any) => {
+                this.enrichLoading = false;
+                if (enrichRes.status === 1) {
+                  this.enrichedData = enrichRes.data;
+                  this.selectedDyerFromScan = enrichRes.data.industryMatches?.[0] || null;
+                }
+              },
+              error: () => { this.enrichLoading = false; }
+            });
+          } else {
+            this._constantsService.userErrorMessage();
+            this.showScanDialog = false;
+          }
+        },
+        error: () => {
+          this.scanLoading = false;
+          this._constantsService.userErrorMessage();
+          this.showScanDialog = false;
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+    (event.target as HTMLInputElement).value = '';
+  }
+
+  fillFromScan() {
+    if (!this.scannedData) return;
+    const d = this.scannedData;
+
+    this.pendingScanDocument = d.document ? String(d.document) : null;
+    this.pendingScanStatement = d.notes || null;
+
+    const items = (this.addRequisitionForm.get('items') as FormArray).controls;
+    items.forEach((item: any) => {
+      if (this.pendingScanDocument) {
+        item.controls['document'].setValue(this.pendingScanDocument);
+      }
+      if (this.pendingScanStatement) {
+        item.controls['statement'].setValue(this.pendingScanStatement);
+      }
+    });
+
+    this.showScanDialog = false;
+    this._constantsService.successMessage('تم ملء بيانات الإيصال - ستُطبَّق على الأقمشة المضافة');
   }
 
 }

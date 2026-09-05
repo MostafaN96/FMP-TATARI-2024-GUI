@@ -80,6 +80,15 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
   filter = "";
   isShowAdd = true
 
+  // سكان الإيصال
+  showScanDialog = false;
+  scannedData: any = null;
+  scanLoading = false;
+  enrichLoading = false;
+  enrichedData: any = null;
+  selectedDyerFromScan: any = null;
+  selectedFabricFromScan: any = null;
+
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
   //enable the highlight property to highlight the matched character in suggestion list
@@ -391,14 +400,14 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
     this.addRequisitionForm.markAllAsTouched();
     if (this.addRequisitionForm.valid) {
       if (this._quantityOccurrencesValidationService.validateQuantityDynamic(
-        this.fabricMap, this.addRequisitionForm.controls['items'].value, 
+        this.fabricMap, this.addRequisitionForm.controls['items'].value,
         'fabric_id', 'fabricId',
         'consigment_dyeing_id', 'consigmentDyeingId',
         'dyeingId', 'dyeing_id',
         'quantity', 'fabric_name')) {
 
         const formGroup = await this._sharedComponentService.deleteControlsOfFormArray(this.addRequisitionForm, 'items',
-          ['index', 'fabricCode', 'fabricName', 'dyeingCode', 
+          ['index', 'fabricCode', 'fabricName', 'dyeingCode',
           'fabricCode', 'colorCategoryId',
           'colorId', 'colorCode', 'consigmentDyeingNumber', 'dyedFabricCode', 'dyedFabricName', 'validQuantity'])
         this._constantsService.spinner.show()
@@ -428,6 +437,99 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
     } else {
       this.isShowAdd = true
     }
+  }
+
+  // ===== سكان الإيصال =====
+  onScanImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1];
+      const mimeType = file.type || 'image/jpeg';
+      this.scanLoading = true;
+      this.showScanDialog = true;
+      this.scannedData = null;
+      this.enrichedData = null;
+      this.selectedDyerFromScan = null;
+      this.selectedFabricFromScan = null;
+
+      this._formDyeingRequisitionWdService.scanReceipt(base64, mimeType).subscribe({
+        next: (res: any) => {
+          this.scanLoading = false;
+          if (res.status === 1) {
+            this.scannedData = res.data;
+            this.enrichLoading = true;
+            this._formDyeingRequisitionWdService.enrichScanReceipt(
+              res.data.manufacturerName || '',
+              res.data.fabricName || ''
+            ).subscribe({
+              next: (enrichRes: any) => {
+                this.enrichLoading = false;
+                if (enrichRes.status === 1) {
+                  this.enrichedData = enrichRes.data;
+                  this.selectedDyerFromScan = enrichRes.data.industryMatches?.[0] || null;
+                  this.selectedFabricFromScan = enrichRes.data.fabricMatches?.[0] || null;
+                }
+              },
+              error: () => { this.enrichLoading = false; }
+            });
+          } else {
+            this._constantsService.userErrorMessage();
+            this.showScanDialog = false;
+          }
+        },
+        error: () => {
+          this.scanLoading = false;
+          this._constantsService.userErrorMessage();
+          this.showScanDialog = false;
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+    (event.target as HTMLInputElement).value = '';
+  }
+
+  fillFromScan() {
+    if (!this.scannedData) return;
+    const d = this.scannedData;
+
+    if (d.date) {
+      this.addRequisitionForm.controls['date'].setValue(new Date(d.date));
+    }
+    if (d.notes) {
+      this.addRequisitionForm.controls['note'].setValue(d.notes);
+    }
+
+    const dyer = this.selectedDyerFromScan;
+
+    if (!dyer) {
+      this.showScanDialog = false;
+      this._constantsService.successMessage('تم ملء البيانات الأساسية');
+      return;
+    }
+
+    this.addRequisitionForm.controls['dyeingId'].setValue(dyer.id);
+    this.dyerName = dyer.name;
+    this.selectedDyeingId = dyer.id;
+
+    this._wdService.selectQuantityByDyeingWd(dyer.id).subscribe((response: any) => {
+      this.fabrics = response;
+      this.dataSourceSearchTabel = new MatTableDataSource(this.fabrics);
+      this.dataSourceSearchTabel.sort = this.sortColumns;
+    });
+
+    this._colorCategoryService.selectByDeying(dyer.id).subscribe((response: any) => {
+      this.colorCategories = response;
+    });
+
+    this._dyeingServicesService.selectByDeying(dyer.id).subscribe((response: any) => {
+      this.dyeingServicesData = response;
+    });
+
+    this.showScanDialog = false;
+    this._constantsService.successMessage('تم تعيين المصبغة - اختر الأقمشة من الجدول');
   }
 
 }

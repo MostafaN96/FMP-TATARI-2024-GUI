@@ -1,799 +1,393 @@
 <section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
-    <!-- Title Page Section -->
     <div [class]="_sharedComponentService.titlePageClass">
-        <!-- Sub Title Page -->
         <div [class]="_sharedComponentService.subTitlePageClass">
             <h2 [class]="_sharedComponentService.TitleTextClass">إظهار جميع اذونات التصنيع</h2>
         </div>
     </div>
-    <!-- Form Section -->
-    <!-- Main Page Form -->
+
     <div [class]="_sharedComponentService.mainPageFormClass">
         <div [class]="_sharedComponentService.subMainPageFormClass">
-            <!-- Form Body -->
             <div [class]="_sharedComponentService.gridForm2Class">
+                
                 <div class="col">
-                    <div [class]="_sharedComponentService.tableSectionClass">
-                        <div id="table-header-data-report">
-                            <p-table #dt1 [value]="yarns" dataKey="id"
-                                columnResizeMode="expand"
-                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
-                                [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20, 50, {showAll: 'All'}]" 
-                                [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
-                                scrollHeight="600px" [filterDelay]="0" sortField="number" [responsive]="true"
-                                [sortOrder]="0" appendTo="body" [autoLayout]="true"
-                                (onFilter)="handleFilter($event)">
-                                <ng-template data-html2canvas-ignore="true" pTemplate="caption">
+<!-- External Filters -->
+                            <div *ngIf="showFilters" class="row row-cols-md-5 g-2 mb-2 ext-filters-row">
 
-                                    <!-- Start Filter Section -->
-                                    <div class="row row-cols-md-5 align-items-center">
-
-                                        <div class="col">
-                                            <p-calendar class="w-100"
-                                            placeholder="البحث بـ التاريخ"
-                                            [(ngModel)]="dateFilters"
-                                                    appendTo="body"
-                                                    selectionMode="range"
-                                                    [readonlyInput]="true"
-                                                    [showIcon]="true"
-                                                    dateFormat="dd/mm/yy"
-                                                    (onClickOutside)="selectedDate($event)">
-                                                    </p-calendar>
-                                        </div>
-
-                                        <div class="col">
-                                            <p-columnFilter field="manufacture_name" matchMode="manufacture-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedManufactureName"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'manufacture_name')"
-                                                        (onChange)="onMultiselectedManufactureName($event.value)"
-                                                        placeholder="البحث بـ اسم المصنع" optionLabel="manufacture_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.manufacture_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <div class="col">
-                                            <p-columnFilter field="wc_fabric_order_requisition_name" matchMode="wc-fabric-order-requisition-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedWcFAbricOrderRequisitionName"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'wc_fabric_order_requisition_name')"
-                                                        (onChange)="onMultiselectedWcFAbricOrderRequisitionName($event.value)"
-                                                        placeholder="البحث بـ طلبية" optionLabel="wc_fabric_order_requisition_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.wc_fabric_order_requisition_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <div class="col">
-                                            <p-columnFilter field="circular_knitting_machine_name" matchMode="circular-knitting-machine-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedCircularKnittingMachineName"
-                                                        [options]="_sharedComponentService.uniqueArray(detailsData, 'circular_knitting_machine_name')"
-                                                        (onChange)="onMultiselectedCircularKnittingMachineName($event.value)"
-                                                        placeholder="البحث بـ الماكينة" optionLabel="circular_knitting_machine_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.circular_knitting_machine_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <div class="col">
-                                            <p-columnFilter field="fabric_code" matchMode="fabric-code-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedFabricCode"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'fabric_code')"
-                                                        (onChange)="onMultiselectedFabricCode($event.value)"
-                                                        placeholder="البحث بـ كود القماش" optionLabel="fabric_code">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.fabric_code}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <div class="col">
-                                            <p-columnFilter field="fabric_name" matchMode="fabric-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedFabricName"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'fabric_name')"
-                                                        (onChange)="onMultiselectedFabricName($event.value)"
-                                                        placeholder="البحث بـ اسم القماش" optionLabel="fabric_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.fabric_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <!-- <div class="col">
-                                            <p-columnFilter field="order_number" matchMode="order-number-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedOrderNumber"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'order_number')"
-                                                        (onChange)="onMultiselectedOrderNumber($event.value)"
-                                                        placeholder="البحث بـ رقم الطلبية" optionLabel="order_number">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.order_number}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div> -->
-
-                                        <!-- <div class="col">
-                                            <p-columnFilter field="seller_name" matchMode="seller-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedSellerName"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'seller_name')"
-                                                        (onChange)="onMultiselectedSellerName($event.value)"
-                                                        placeholder="البحث بـ اسم العميل" optionLabel="seller_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.seller_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div> -->
-
-                                        <div class="col" *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])">
-                                            <p-columnFilter field="status_name" matchMode="status-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedStatusName"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'status_name')"
-                                                        (onChange)="onMultiselectedStatusName($event.value)"
-                                                        placeholder="البحث بـ حالة الجودة" optionLabel="status_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.status_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <div class="col" 
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[15]) ||
-                                        _sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[16])">
-                                            <p-columnFilter field="is_approved_status_name" matchMode="is-approved-status-name-filter" [showMenu]="false"
-                                                [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedisApprovedStatusName"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'is_approved_status_name')"
-                                                        (onChange)="onMultiselectedIsApprovedStatusName($event.value)"
-                                                        placeholder="البحث بـ حالة الاستلام" optionLabel="is_approved_status_name">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.is_approved_status_name}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-                                        
-                                        <div class="col">
-                                            <p-columnFilter field="document" matchMode="requisition-document-filter"
-                                                [showMenu]="false" [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedRequisitionDocumnet"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'document')"
-                                                        (onChange)="onMultiselectedRequisitionDocumnet($event.value)"
-                                                        placeholder="البحث بـ رقم الايصال" optionLabel="document">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.document}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-                                        
-                                        <div class="col">
-                                            <p-columnFilter field="note" matchMode="requisition-note-filter"
-                                                [showMenu]="false" [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedRequisitionNote"
-                                                        [options]="_sharedComponentService.uniqueArray(yarns, 'note')"
-                                                        (onChange)="onMultiselectedRequisitionNote($event.value)"
-                                                        placeholder="البحث بـ الملاحظات" optionLabel="note">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.note}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div>
-
-                                        <!-- <div class="col">
-                                            <p-columnFilter field="details" matchMode="consigment-yarn-number-details-filter"
-                                                [showMenu]="false" [showClearButton]="false">
-                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                    <p-multiSelect [ngModel]="selectedConsigmentYarnNumber"
-                                                        [options]="_sharedComponentService.uniqueArray(detailsData, 'consigment_yarn_number')"
-                                                        (onChange)="onMultiselectedConsigmentYarnNumber($event.value)"
-                                                        placeholder="البحث بـ رقم الرسالة" optionLabel="consigment_yarn_number">
-                                                        <ng-template let-option pTemplate="item">
-                                                            <div class="p-multiselect-representative-option">
-                                                                <span class="ml-1">{{option.consigment_yarn_number}}</span>
-                                                            </div>
-                                                        </ng-template>
-                                                    </p-multiSelect>
-                                                </ng-template>
-                                            </p-columnFilter>
-                                        </div> -->
-                                         
-                            <div class="col">
-                                <input pInputText type="text"
-                                    (input)="dt1.filter($event.target.value, 'details.quantity')"
-                                    [value]="dt1.filters['quantity']?.value" placeholder="ب أصل الكمية"
-                                    class="p-inputtext-md w-100">
-                            </div>
-                                        
-                                        <div class="col">
-                                            <div data-html2canvas-ignore="true" class="flex">
-                                                <button data-html2canvas-ignore="true" pButton label="اعادة"
-                                                    class="p-button-outlined" icon="pi pi-filter-slash"
-                                                    (click)="clear(dt1)"></button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <!-- End Filter Section -->
-
-                                    
-                                <div class="d-flex justify-content-end">
-                                    <div class="pe-2">
-                                        <i class="fas fa-square-full manufacturing_status_new_text"></i>
-                                        غير مفحوص
-                                    </div>
-                                    <div class="pe-2">
-                                        <i class="fas fa-square-full manufacturing_status_good_after_check_text"></i>
-                                        مقبول بعد الفحص
-                                    </div>
-                                    <div class="pe-2">
-                                        <i class="fas fa-square-full manufacturing_status_not_good_after_check_text"></i>
-                                        غير مقبول
-                                    </div>
-                                    <div class="pe-2">
-                                        <i class="fas fa-square-full manufacturing_status_white_text"></i>
-                                        ابيض
-                                    </div>
+                                <div class="col">
+                                    <label class="filter-label">التاريخ</label>
+                                    <p-calendar class="w-100" placeholder="اختر فترة"
+                                        [(ngModel)]="externalDateFilters"
+                                        appendTo="body" selectionMode="range"
+                                        [readonlyInput]="true" [showIcon]="true"
+                                        [showButtonBar]="true" dateFormat="dd/mm/yy"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onClearClick)="applyFiltersToGrid()">
+                                    </p-calendar>
                                 </div>
 
-                                </ng-template>
+                                <div class="col">
+                                    <label class="filter-label">المصنع</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalManufactureName"
+                                        [suggestions]="filteredManufactureNames"
+                                        (completeMethod)="filterManufactureNames($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالمصنع..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">العميل</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalSellerName"
+                                        [suggestions]="filteredSellerNames"
+                                        (completeMethod)="filterSellerNames($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالعميل..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">حالة الجودة</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalStatusName"
+                                        [suggestions]="filteredStatusNames"
+                                        (completeMethod)="filterStatusNames($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالحالة..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">الاستلام</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalIsApprovedStatusName"
+                                        [suggestions]="filteredIsApprovedStatusNames"
+                                        (completeMethod)="filterIsApprovedStatusNames($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالاستلام..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">كود القماش</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalFabricCode"
+                                        [suggestions]="filteredFabricCodes"
+                                        (completeMethod)="filterFabricCodes($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالكود..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">اسم القماش</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalFabricName"
+                                        [suggestions]="filteredFabricNames"
+                                        (completeMethod)="filterFabricNames($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث باسم القماش..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">الماكينة</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalMachineName"
+                                        [suggestions]="filteredMachineNames"
+                                        (completeMethod)="filterMachineNames($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالماكينة..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">الطلبية</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalWcOrderName"
+                                        [suggestions]="filteredWcOrderNames"
+                                        (completeMethod)="filterWcOrderNames($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالطلبية..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">رقم الطلبية</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalOrderNumber"
+                                        [suggestions]="filteredOrderNumbers"
+                                        (completeMethod)="filterOrderNumbers($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث برقم الطلبية..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">الايصال</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalDocument"
+                                        [suggestions]="filteredDocuments"
+                                        (completeMethod)="filterDocuments($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true"
+                                        [minLength]="0"
+                                        placeholder="ابحث بالايصال..."
+                                        appendTo="body"
+                                        scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">أصل الكمية</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalQuantity"
+                                        [suggestions]="filteredQuantities"
+                                        (completeMethod)="filterQuantities($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true"
+                                        [minLength]="0"
+                                        placeholder="ابحث بالكمية..."
+                                        appendTo="body"
+                                        scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">الملاحظات</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalNote"
+                                        [suggestions]="filteredNotes"
+                                        (completeMethod)="filterNotes($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالملاحظات..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">الشحنة</label>
+                                    <p-autoComplete class="w-100 ac-filter"
+                                        [(ngModel)]="externalConsigmentNumber"
+                                        [suggestions]="filteredConsigmentNumbers"
+                                        (completeMethod)="filterConsigmentNumbers($event)"
+                                        (onSelect)="applyFiltersToGrid()"
+                                        (onUnselect)="applyFiltersToGrid()"
+                                        [multiple]="true" [minLength]="0"
+                                        placeholder="ابحث بالشحنة..." appendTo="body" scrollHeight="200px">
+                                    </p-autoComplete>
+                                </div>
+
+                                <div class="col">
+                                    <label class="filter-label">&nbsp;</label>
+                                    <button pButton type="button" label="إعادة" icon="pi pi-filter-slash"
+                                        class="p-button-outlined w-100"
+                                        (click)="clearAg()">
+                                    </button>
+                                </div>
+
+                            </div>
+                            <!-- End External Filters -->
+                </div>
+
+                <div class="col">
+                    <div [class]="_sharedComponentService.tableSectionClass">
+                        <div id="table-header-data-report" dir="rtl" [ngStyle]="containerStyle">
+
+                            
+
+                            <div class="grid-toolbar">
+                                <button class="btn-toggle-filters"
+                                    [class.btn-toggle-filters--active]="showFilters"
+                                    (click)="toggleFilters()"
+                                    title="إظهار/إخفاء الفلاتر">
+                                    <i class="fa-solid" [class.fa-filter]="!showFilters" [class.fa-filter-slash]="showFilters"></i>
+                                    <span>{{ showFilters ? 'إخفاء الفلاتر' : 'إظهار الفلاتر' }}</span>
+                                </button>
+                                <button *ngIf="isFiltered"
+                                    class="btn-reset-filter btn-reset-filter--active"
+                                    (click)="clearAg()"
+                                    title="إعادة تعيين جميع الفلاتر">
+                                    <i class="fa-solid fa-filter-circle-xmark"></i>
+                                    <span>إعادة الفلتر</span>
+                                </button>
+                                <span class="total-count">إجمالي السجلات: {{ totalRows | number }}</span>
+                            </div>
+
+                            <p-confirmPopup></p-confirmPopup>
+
+                            <!-- PrimeNG Table -->
+                            <p-table
+                                [value]="rows"
+                                [lazy]="true"
+                                [lazyLoadOnInit]="true"
+                                [totalRecords]="totalRows"
+                                [paginator]="true"
+                                [rows]="tableRows"
+                                [rowsPerPageOptions]="[25, 50, 100, 200]"
+                                [first]="tableFirst"
+                                (onLazyLoad)="loadData($event)"
+                                [loading]="loading"
+                                [scrollable]="true"
+                                scrollHeight="flex"
+                                [resizableColumns]="true"
+                                columnResizeMode="expand"
+                                styleClass="p-datatable-sm p-datatable-gridlines wb-main-table"
+                                [tableStyle]="{'min-width': '70rem'}"
+                                paginatorPosition="bottom"
+                                currentPageReportTemplate="من {first} إلى {last} من أصل {totalRecords}"
+                                [showCurrentPageReport]="true">
+
+                                <!-- HEADER -->
                                 <ng-template pTemplate="header">
                                     <tr>
-
-                                        <!-- Number Column -->
-                                        <th>
-                                            رقم الإذن
-                                            <p-sortIcon data-html2canvas-ignore="true" field="number"></p-sortIcon>
-                                        </th>
-
-                                        <!-- Date Column -->
-                                        <th pResizableColumn pSortableColumn="date">
-                                            <div class="flex justify-content-between align-items-center">
-                                                تاريخ الإذن
-                                                <p-sortIcon data-html2canvas-ignore="true" field="date">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- manufacture_name Column -->
-                                         <th pResizableColumn pSortableColumn="manufacture_name">
-                                            <div class="flex justify-content-between align-items-center">
-                                                اسم المصنع
-                                                <p-sortIcon data-html2canvas-ignore="true" field="manufacture_name">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- wc_fabric_order_requisition_name Column -->
-                                         <th pResizableColumn pSortableColumn="wc_fabric_order_requisition_name">
-                                            <div class="flex justify-content-between align-items-center">
-                                                طلبية
-                                                <p-sortIcon data-html2canvas-ignore="true" field="wc_fabric_order_requisition_name">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- circular_knitting_machine_name Column -->
-                                         <th pResizableColumn pSortableColumn="circular_knitting_machine_name">
-                                            <div class="flex justify-content-between align-items-center">
-                                                الماكينة
-                                                <p-sortIcon data-html2canvas-ignore="true" field="circular_knitting_machine_name">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- fabric_code Column -->
-                                         <th pResizableColumn pSortableColumn="fabric_code">
-                                            <div class="flex justify-content-between align-items-center">
-                                                كود القماش
-                                                <p-sortIcon data-html2canvas-ignore="true" field="fabric_code">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- fabric_name Column -->
-                                         <th pResizableColumn pSortableColumn="fabric_name">
-                                            <div class="flex justify-content-between align-items-center">
-                                                اسم القماش
-                                                <p-sortIcon data-html2canvas-ignore="true" field="fabric_name">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- fabric_piece Column -->
-                                         <th pResizableColumn pSortableColumn="fabric_piece">
-                                            <div class="flex justify-content-between align-items-center">
-                                                عدد الاثواب
-                                                <p-sortIcon data-html2canvas-ignore="true" field="fabric_piece">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- quantity Column -->
-                                         <th pResizableColumn pSortableColumn="quantity">
-                                            <div class="flex justify-content-between align-items-center">
-                                                الكمية
-                                                <p-sortIcon data-html2canvas-ignore="true" field="quantity">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- current_quantity Column -->
-                                         <th pResizableColumn pSortableColumn="current_quantity">
-                                            <div class="flex justify-content-between align-items-center">
-                                                الباقي من الكمية
-                                                <p-sortIcon data-html2canvas-ignore="true" field="current_quantity">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- storage_place Column -->
-                                         <th pResizableColumn pSortableColumn="storage_place">
-                                            <div class="flex justify-content-between align-items-center">
-                                                رقم الاستاند
-                                                <p-sortIcon data-html2canvas-ignore="true" field="storage_place">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                         <!-- price Column -->
-                                         <th
-                                         *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
-                                            <div class="flex justify-content-between align-items-center">
-                                                السعر  
-                                            </div>
-                                        </th>
-
-                                         <!-- price_dollar Column -->
-                                         <th
-                                         *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
-                                            <div class="flex justify-content-between align-items-center">
-                                                 السعر (دولار)
-                                            </div>
-                                        </th>
-
-                                         <!-- manufacturing_fee Column -->
-                                         <th
-                                         *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
-                                            <div class="flex justify-content-between align-items-center">
-                                                 أجرة التصنيع
-                                            </div>
-                                        </th>
-
-                                         <!-- manufacturing_fee_dollar Column -->
-                                         <th
-                                         *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
-                                            <div class="flex justify-content-between align-items-center">
-                                                أجرة التصنيع (دولار)
-                                            </div>
-                                        </th>
-
-                                         <!-- order_number Column -->
-                                         <th pResizableColumn pSortableColumn="order_number">
-                                            <div class="flex justify-content-between align-items-center">
-                                                رقم الطلبية
-                                                <p-sortIcon data-html2canvas-ignore="true" field="order_number">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                        <!-- seller_name Column -->
-                                        <th pResizableColumn pSortableColumn="seller_name">
-                                            <div class="flex justify-content-between align-items-center">
-                                                اسم العميل
-                                                <p-sortIcon data-html2canvas-ignore="true" field="seller_name">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-
-                                        <!-- status_name Column -->
-                                        <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
-                                        pResizableColumn pSortableColumn="status_name">
-                                            <div class="flex justify-content-between align-items-center">
-                                                حالة الجودة
-                                                <p-sortIcon data-html2canvas-ignore="true" field="status_name">
-                                                </p-sortIcon>
-                                            </div>
-                                        </th>
-                                      
-                                        <!-- document Column -->
-                                        <th>
-                                            <div class="flex justify-content-between align-items-center">
-                                                رقم الايصال
-                                            </div>
-                                        </th>
-                                      
-                                        <!-- consigment_yarn_number Column -->
-                                        <!-- <th>
-                                            <div class="flex justify-content-between align-items-center">
-                                                رقم الرسالة
-                                            </div>
-                                        </th> -->
-                                      
-                                        <!-- note Column -->
-                                        <th>
-                                            <div class="flex justify-content-between align-items-center">
-                                                الملاحظات
-                                            </div>
-                                        </th>  
-                                        
-                                        <!-- confirm_received Column -->
-                                        <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[15]) ||
-                                        _sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[16])"
-                                        data-html2canvas-ignore="true">
-                                            <div class="flex justify-content-between align-items-center">
-                                                تأكيد / الغاء الاستلام
-                                            </div>
-                                        </th>                         
-
-                                        <!-- update Column -->
-                                        <th *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
-                                        data-html2canvas-ignore="true">
-                                            <div class="flex justify-content-between align-items-center">
-                                                تعديل حالة الجودة
-                                            </div>
-                                        </th>
-
-                                        <!-- Update Storage Place Column -->
-                                        <th data-html2canvas-ignore="true">
-                                            <div class="flex justify-content-between align-items-center">
-                                                تعديل رقم الاستاند
-                                            </div>
-                                        </th>
-
-                                        <!-- Details Column -->
-                                        <th data-html2canvas-ignore="true">
-                                            <div class="flex justify-content-between align-items-center">
-                                                تفاصيل الإذن
-                                            </div>
-                                        </th>
-
-                                    </tr>
-
-                                </ng-template>
-                                <ng-template pTemplate="body" let-element let-index="rowIndex">
-                                    <tr class="p-selectable-row"  
-                                    [ngClass]="{'warning_background': element.is_active == '0'}"
-                                    [ngClass]="{'confirm_background': element.is_approved == '1'}"
-                                    >
-
-                                        <!-- Index Column -->
-                                        <td>
-                                            {{element.number}}
-                                        </td>
-
-                                        <!-- Date Column -->
-                                        <td>
-                                            {{element.date | date:'EEEE, d/M/y' }}
-                                        </td>
-                                        
-                                        <!-- manufacture_name Column -->
-                                        <td>
-                                            {{ element.manufacture_name }}
-                                        </td>
-                                        
-                                        <!-- wc_fabric_order_requisition_name Column -->
-                                        <td>
-                                            {{ element.wc_fabric_order_requisition_name }}
-                                        </td>
-                                        
-                                        <!-- circular_knitting_machine_name Column -->
-                                        <td>
-                                            {{ element.details.circular_knitting_machine_name }}
-                                        </td>
-                                        
-                                        <!-- fabric_code Column -->
-                                        <td>
-                                            {{ element.fabric_code }}
-                                        </td>
-                                        
-                                        <!-- fabric_name Column -->
-                                        <td>
-                                            {{ element.fabric_name }}
-                                        </td>
-                                        
-                                        <!-- fabric_piece Column -->
-                                        <td>
-                                            {{ element.details.fabric_piece }}
-                                        </td>
-                                        
-                                        <!-- quantity Column -->
-                                        <td>
-                                            {{ element.details.quantity }}
-                                        </td>
-                                        
-                                        <!-- current_quantity Column -->
-                                        <td>
-                                            {{ element.details.current_quantity }}
-                                        </td>
-
-                                        <!-- storage_place Column -->
-                                        <td>
-                                            {{ element.details.storage_place || element.storage_place }}
-                                        </td>
-                                        
-                                        <!-- price Column -->
-                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
-                                            {{ element.details.price | number }}
-                                        </td>
-                                        
-                                        <!-- price_dollar Column -->
-                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
-                                            {{ element.details.price_dollar | number }}
-                                        </td>
-                                        
-                                        <!-- manufacturing_fee Column -->
-                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
-                                            {{ element.details.manufacturing_fee | number }}
-                                        </td>
-                                        
-                                        <!-- manufacturing_fee_dollar Column -->
-                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[9])">
-                                            {{ element.details.manufacturing_fee_dollar | number }}
-                                        </td>
-                                        
-                                        <!-- order_number Column -->
-                                        <td>
-                                            {{ element.order_number }}
-                                        </td>
-
-                                        <!-- seller_name Column -->
-                                        <td>
-                                            {{ element.seller_name }}
-                                        </td>
-
-                                        <!-- status_name Column -->
-                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
-                                        [ngClass]="'manufacturing_status_'+element.status">
-                                            {{ element.status_name }}
-                                        </td>
-
-                                        <!-- document Column -->
-                                        <td>
-                                            {{ element.document }}
-                                        </td>
-
-                                        <!-- consigment_yarn_number Column -->
-                                        <!-- <td>
-                                            {{ element.consigment_yarn_number }}
-                                        </td> -->
-
-                                        <!-- note Column -->
-                                        <td>
-                                            {{ element.note }}
-                                        </td>
-                                        
-                                        <!-- confirm_received Column -->
-                                        <td data-html2canvas-ignore="true"
-                                        *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[15]) ||
-                                        _sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[16])">
-                                            <ng-container>
-                                                <p-confirmPopup></p-confirmPopup>
-                                                <a (click)="confirmCancelReceived($event, element, element.is_approved)">
-                                                    <i class="fa-solid fa-check update-symbol"
-                                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[15]) && 
-                                                    element.is_approved == '0'"></i>
-
-                                                    <i class="fa-solid fa-xmark delete-symbol"
-                                                    *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[16]) && 
-                                                    element.is_approved == '1'"></i>
-                                                </a>
-                                            </ng-container>
-                                        </td>
-
-                                        <!-- update Column -->
-                                        <td *ngIf="_sessionManagerService.checkAuth(_constantsService.ROUTING_LINKS_DETAILS[1])"
-                                        data-html2canvas-ignore="true">
-                                            <a onClick="document.getElementById('update-form').scrollIntoView();"
-                                                (click)="getSelectedData(element)">
-                                                <i class="fas fa-edit update-symbol"></i>
-                                            </a>
-                                        </td>
-
-                                        <!-- Update Storage Place Column -->
-                                        <td data-html2canvas-ignore="true">
-                                            <a *ngIf="canOpenUpdateStorage(element)"
-                                                onClick="document.getElementById('update-storage-place-panel').scrollIntoView();"
-                                                (click)="openUpdateStoragePlace(element)">
-                                                <i class="fas fa-edit update-symbol"></i>
-                                            </a>
-                                        </td>
-
-                                        <!-- Details Column -->
-                                        <td data-html2canvas-ignore="true">
-                                            <a *ngIf="element.is_order == 0" [routerLink]="['details']" [queryParams]="{ 
-                                                id: element.id, industryId: element.manufacture_id, fabricId: element.fabric_id,
-                                                isOrder: element.is_order, wbManufacturingOutputId: element.wb_manufacturing_output_id}">
-                                                <i class="fas fa-angle-double-right update-symbol"></i>
-                                            </a>
-                                            <a *ngIf="element.is_order == 1" 
-                                            [routerLink]="['/dashboard/'+_constantsService.ROUTING_LINKS[139]]" [queryParams]="{ id: element.id, sellerName: element.seller_name, 
-                                            orderNumber: element.order_number, manufacturingOrderRequisitionDetailsId: element.manufacturing_order_requisition_details_wb_id}">
-                                                <i class="fas fa-angle-double-right update-symbol"></i>
-                                            </a>
-                                        </td>
-
+                                        <th pResizableColumn pSortableColumn="number" style="width:80px">رقم الإذن <p-sortIcon field="number"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="date" style="width:100px">تاريخ الإذن <p-sortIcon field="date"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="manufacture_name" style="width:120px">اسم المصنع <p-sortIcon field="manufacture_name"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="wc_fabric_order_requisition_name" style="width:130px">طلبية <p-sortIcon field="wc_fabric_order_requisition_name"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="circular_knitting_machine_name" style="width:120px">الماكينة <p-sortIcon field="circular_knitting_machine_name"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="fabric_code" style="width:90px">كود القماش <p-sortIcon field="fabric_code"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="fabric_name" style="width:120px">اسم القماش <p-sortIcon field="fabric_name"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="fabric_piece" style="width:110px">الاثواب <p-sortIcon field="fabric_piece"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="quantity" style="width:110px">الكمية <p-sortIcon field="quantity"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="current_quantity" style="width:110px">الباقي <p-sortIcon field="current_quantity"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="storage_place" style="width:80px">الاستاند <p-sortIcon field="storage_place"></p-sortIcon></th>
+                                        <ng-container *ngIf="hasPrice">
+                                            <th pResizableColumn pSortableColumn="price" style="width:80px">السعر <p-sortIcon field="price"></p-sortIcon></th>
+                                            <th pResizableColumn pSortableColumn="price_dollar" style="width:80px">السعر $ <p-sortIcon field="price_dollar"></p-sortIcon></th>
+                                            <th pResizableColumn pSortableColumn="manufacturing_fee" style="width:100px">أجرة التصنيع <p-sortIcon field="manufacturing_fee"></p-sortIcon></th>
+                                            <th pResizableColumn pSortableColumn="manufacturing_fee_dollar" style="width:100px">أجرة التصنيع $ <p-sortIcon field="manufacturing_fee_dollar"></p-sortIcon></th>
+                                        </ng-container>
+                                        <th *ngIf="hasStatus" pResizableColumn pSortableColumn="status_name" style="width:100px">حالة الجودة <p-sortIcon field="status_name"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="document" style="width:80px">الايصال <p-sortIcon field="document"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="note" style="width:100px">ملاحظات <p-sortIcon field="note"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="consigment_number" style="width:80px">الشحنة <p-sortIcon field="consigment_number"></p-sortIcon></th>
+                                        <th pResizableColumn pSortableColumn="is_approved_status_name" style="width:90px">الاستلام <p-sortIcon field="is_approved_status_name"></p-sortIcon></th>
+                                        <th *ngIf="hasConfirm" style="width:65px; text-align:center">تأكيد/إلغاء</th>
+                                        <th *ngIf="hasStatus" style="width:65px; text-align:center">حالة الجودة تعديل</th>
+                                        <th style="width:65px; text-align:center">الاستاند تعديل</th>
+                                        <th style="width:65px; text-align:center">تفاصيل</th>
                                     </tr>
                                 </ng-template>
 
+                                <!-- BODY -->
+                                <ng-template pTemplate="body" let-row>
+                                    <tr>
+                                        <td>{{ row.number }}</td>
+                                        <td>{{ _sharedComponentService.formatDate(row.date) }}</td>
+                                        <td>{{ row.manufacture_name }}</td>
+                                        <td>{{ row.wc_fabric_order_requisition_name }}</td>
+                                        <td>{{ row.circular_knitting_machine_name }}</td>
+                                        <td>{{ row.fabric_code }}</td>
+                                        <td>{{ row.fabric_name }}</td>
+                                        <td class="num-cell">{{ numFmt(row.fabric_piece) }}</td>
+                                        <td class="num-cell">{{ numFmt(row.quantity) }}</td>
+                                        <td class="num-cell">{{ numFmt(row.current_quantity) }}</td>
+                                        <td>{{ row.storage_place }}</td>
+                                        <ng-container *ngIf="hasPrice">
+                                            <td class="num-cell">{{ numFmt(row.price) }}</td>
+                                            <td class="num-cell">{{ numFmt(row.price_dollar) }}</td>
+                                            <td class="num-cell">{{ numFmt(row.manufacturing_fee) }}</td>
+                                            <td class="num-cell">{{ numFmt(row.manufacturing_fee_dollar) }}</td>
+                                        </ng-container>
+                                        <td *ngIf="hasStatus" [class]="statusClass(row)">{{ row.status_name }}</td>
+                                        <td>{{ row.document }}</td>
+                                        <td>{{ row.note }}</td>
+                                        <td>{{ row.consigment_number }}</td>
+                                        <td>{{ row.is_approved_status_name }}</td>
+                                        <td *ngIf="hasConfirm" class="action-cell">
+                                            <a *ngIf="canApprove(row)" class="action-link" (click)="confirmCancelReceived($event, row, row.is_approved)">
+                                                <i class="fa-solid fa-check update-symbol"></i>
+                                            </a>
+                                            <a *ngIf="canCancel(row)" class="action-link" (click)="confirmCancelReceived($event, row, row.is_approved)">
+                                                <i class="fa-solid fa-xmark delete-symbol"></i>
+                                            </a>
+                                        </td>
+                                        <td *ngIf="hasStatus" class="action-cell">
+                                            <a class="action-link" (click)="selectedDataToUpdate = row; scrollToUpdateForm()">
+                                                <i class="fas fa-edit update-symbol"></i>
+                                            </a>
+                                        </td>
+                                        <td class="action-cell">
+                                            <a *ngIf="row.wc_id" class="action-link" (click)="openUpdateStoragePlace(row); scrollToStoragePanel()">
+                                                <i class="fas fa-edit update-symbol"></i>
+                                            </a>
+                                        </td>
+                                        <td class="action-cell">
+                                            <a class="action-link" (click)="navigateToDetails($event, row)">
+                                                <i class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+
+                                <!-- FOOTER TOTALS -->
                                 <ng-template pTemplate="footer">
-                                    <tr>
-                                        <!-- Index Column -->
-                                        <td style="max-width: 20px;"></td>
-
-                                        <!-- Date Column -->
-                                        <td style="max-width: 60px;">الإجمالي</td>
-
-                                        <!-- manufacture_name Column -->
-                                        <td style="max-width: 60px;"></td>
-
-                                        <!-- wc_fabric_order_requisition_name Column -->
-                                        <td style="max-width: 60px;"></td>
-
-                                        <!-- circular_knitting_machine_name Column -->
-                                        <td style="max-width: 60px;"></td>
-
-                                        <!-- fabric_code Column -->
-                                        <td style="max-width: 60px;"></td>
-
-                                        <!-- fabric_name Column -->
-                                        <td style="max-width: 60px;"></td>
-
-                                        <!-- fabric_piece Column -->
-                                        <td style="max-width: 60px;">
-                                            {{_sharedComponentService.getTotalQuantity(filtredDetailsData.length
-                                                            <
-                                                            1 ? detailsData: filtredDetailsData, 'fabric_piece') |
-                                                            number}}
-                                        </td>
-
-                                        <!-- quantity Column -->
-                                        <td style="max-width: 220px;">
-                                            {{_sharedComponentService.getTotalQuantity(filtredDetailsData.length
-                                                            <
-                                                            1 ? detailsData: filtredDetailsData, 'quantity') |
-                                                            number}}
-                                        </td>
-
-                                        <!-- current_quantity Column -->
-                                        <td style="max-width: 220px;">
-                                            {{_sharedComponentService.getTotalQuantity(filtredDetailsData.length
-                                                            <
-                                                            1 ? detailsData: filtredDetailsData, 'current_quantity') |
-                                                            number}}
-                                        </td>
-
-                                        <!-- storage_place Column -->
+                                    <tr class="totals-row">
+                                        <td class="totals-label">الإجمالي</td>
+                                        <td></td><td></td><td></td><td></td><td></td><td></td>
+                                        <td class="num-cell">{{ numFmt(grandFabricPiece) }}</td>
+                                        <td class="num-cell">{{ numFmt(grandQuantity) }}</td>
+                                        <td class="num-cell">{{ numFmt(grandCurrentQuantity) }}</td>
                                         <td></td>
-
-                                        <!-- price Column -->
-                                        <td></td>
-
-                                        <!-- price_dollar Column -->
-                                        <td></td>
-
-                                        <!-- manufacturing_fee Column -->
-                                        <td></td>
-
-                                        <!-- manufacturing_fee_dollar Column -->
-                                        <td></td>
-
-                                        <!-- order_number Column -->
-                                        <td></td>
-
-                                        <!-- seller_name Column -->
-                                        <td></td>
-
-                                        <!-- status_name Column -->
-                                        <td></td>
-
-                                        <!-- document Column -->
-                                        <td></td>
-
-                                        <!-- consigment_yarn_number Column -->
-                                        <!-- <td></td> -->
-
-                                        <!-- note Column -->
-                                        <td></td>
-
-                                        <!-- confirm_received Column -->
-                                        <td></td>
-
-                                        <!-- update Column -->
-                                        <td></td>
-
-                                        <!-- Update Storage Place Column -->
-                                        <td></td>
-
-                                        <!-- Details Column -->
-                                        <td></td>
-
+                                        <ng-container *ngIf="hasPrice">
+                                            <td></td><td></td><td></td><td></td>
+                                        </ng-container>
+                                        <td *ngIf="hasStatus"></td>
+                                        <td></td><td></td><td></td><td></td>
+                                        <td *ngIf="hasConfirm"></td>
+                                        <td *ngIf="hasStatus"></td>
+                                        <td></td><td></td>
                                     </tr>
                                 </ng-template>
 
-
-
-                                <ng-template data-html2canvas-ignore="true" pTemplate="emptymessage">
+                                <!-- EMPTY -->
+                                <ng-template pTemplate="emptymessage">
                                     <tr>
-                                        <td colspan="14">لا يوجد بيانات</td>
+                                        <td [attr.colspan]="totalColspan" class="empty-msg">لا توجد بيانات</td>
                                     </tr>
                                 </ng-template>
+
                             </p-table>
+
                         </div>
+
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
 
-<app-update-manufacturing-requisition-status-wb
-    *ngIf="selectedDataToUpdate"
-    [selectedData]="selectedDataToUpdate"
-    (updated)="handleStatusUpdated($event)">
-</app-update-manufacturing-requisition-status-wb>
+<div id="update-form">
+    <app-update-manufacturing-requisition-status-wb
+        *ngIf="selectedDataToUpdate"
+        [selectedData]="selectedDataToUpdate"
+        (updated)="handleStatusUpdated($event)">
+    </app-update-manufacturing-requisition-status-wb>
+</div>
 
 <div id="update-storage-place-panel">
     <app-update-report-wc

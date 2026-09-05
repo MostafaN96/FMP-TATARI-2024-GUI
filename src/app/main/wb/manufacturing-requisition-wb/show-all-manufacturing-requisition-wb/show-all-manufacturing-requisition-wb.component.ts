@@ -1,783 +1,363 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-
-// PrimeNG Table
-import { PrimeNGConfig } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { FilterService } from 'primeng/api';
-import * as moment from 'moment';
-
-
-// Shared Service
-import { SharedComponentService } from "src/app/services/shared-component.service";
-import { ConstantsService } from "src/app/services/constants.service";
-
-// Call Service
-import { ManufacturingRequisitionWbService } from "src/app/services/main/wb/manufacturing-requisition-wb.service";
-import { WbManufacturingOutputService } from "src/app/services/main/wb/wb-manufacturing-output.service";
-import { SessionManagerService } from 'src/app/services/main/session-manager.service';
-
-//
+import { Component, OnInit, AfterViewInit, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
+
+import { SharedComponentService } from 'src/app/services/shared-component.service';
+import { ConstantsService } from 'src/app/services/constants.service';
+import { SessionManagerService } from 'src/app/services/main/session-manager.service';
+import { ManufacturingRequisitionWbService } from 'src/app/services/main/wb/manufacturing-requisition-wb.service';
+import { WbManufacturingOutputService } from 'src/app/services/main/wb/wb-manufacturing-output.service';
 
 @Component({
   selector: 'app-show-all-manufacturing-requisition-wb',
   templateUrl: './show-all-manufacturing-requisition-wb.component.html',
   styleUrls: ['./show-all-manufacturing-requisition-wb.component.css'],
-  providers: [ConfirmationService]
+  providers: [ConfirmationService],
 })
-export class ShowAllManufacturingRequisitionWbComponent implements OnInit {
+export class ShowAllManufacturingRequisitionWbComponent implements OnInit, AfterViewInit {
 
-  /////////////////// Variables ///////////////////
-  yarns: any[] = []
-  circularKnittingMachineNames: any[] = new Array()
-consigmentDetails: any[] = []
-  detailsData: any[] = new Array()
-  filtredDetailsData: any[] = new Array()
-  selectedDataToUpdate: any
-  selectedWcIds: string[] = []
-  showUpdatePanel = false
-  selectedStoragePlace = ''
-  selectedStorageReportParams: any = null
+  isFiltered = false;
+  showFilters = true;
+  selectedDataToUpdate: any = null;
+  showUpdatePanel = false;
+  selectedWcIds: string[] = [];
+  selectedStoragePlace = '';
+  selectedStorageReportParams: any = null;
 
-   //////////////////////////////////// PrimeNG /////////////////////////////////
-   @ViewChild('dt1') dt1: Table | undefined;
-   loading: boolean = true;
-   selectedSellerName: any[] = []
-   selectedStatusName: any[] = []
-   selectedIsApprivedStatusName: any[] = []
-   selectedManufactureName: any[] = []
-   selectedCircularKnittingMachineName: any[] = []
-   selectedWcFAbricOrderRequisitionName: any[] = []
-   selectedFabricCode: any[] = []
-   selectedFabricName: any[] = []
-   selectedOrderNumber: any[] = []
-   selectedRequisitionDocumnet: any[] = []
-   selectedRequisitionNote: any[] = []
-   selectedConsigmentYarnNumber: any[] = []
-   startDate: any
-   endDate: any
-   dateFilters: any
+  rows: any[] = [];
+  totalRows = 0;
+  loading = false;
+  tableFirst = 0;
+  tableRows = 50;
+  containerStyle: any = {};
+
+  grandFabricPiece     = 0;
+  grandQuantity        = 0;
+  grandCurrentQuantity = 0;
+
+  hasPrice   = false;
+  hasStatus  = false;
+  hasConfirm = false;
+
+  availableFilters: any = {
+    manufacture_name:               [],
+    seller_name:                    [],
+    fabric_code:                    [],
+    fabric_name:                    [],
+    wc_fabric_order_requisition_name: [],
+    order_number:                   [],
+    consigment_number:              [],
+    circular_knitting_machine_name: [],
+    note:                           [],
+    storage_place:                  [],
+    document:                       [],
+    quantity:                       [],
+    status_name:                    ['غير مفحوص', 'مقبول بعد الفحص', 'غير مقبول', 'ابيض'],
+    is_approved_status_name:        ['تم الاستلام', 'لم يتم الاستلام'],
+  };
+
+  externalDateFilters: any = null;
+  externalManufactureName:      string[] = [];
+  externalSellerName:           string[] = [];
+  externalStatusName:           string[] = [];
+  externalIsApprovedStatusName: string[] = [];
+  externalFabricCode:           string[] = [];
+  externalFabricName:           string[] = [];
+  externalMachineName:          string[] = [];
+  externalWcOrderName:          string[] = [];
+  externalOrderNumber:          string[] = [];
+  externalConsigmentNumber:     string[] = [];
+  externalNote:                 string[] = [];
+  externalDocument:             string[] = [];
+  externalQuantity:             string[] = [];
+
+  filteredManufactureNames:      string[] = [];
+  filteredSellerNames:           string[] = [];
+  filteredStatusNames:           string[] = [];
+  filteredIsApprovedStatusNames: string[] = [];
+  filteredFabricCodes:           string[] = [];
+  filteredFabricNames:           string[] = [];
+  filteredMachineNames:          string[] = [];
+  filteredWcOrderNames:          string[] = [];
+  filteredOrderNumbers:          string[] = [];
+  filteredConsigmentNumbers:     string[] = [];
+  filteredNotes:                 string[] = [];
+  filteredDocuments:             string[] = [];
+  filteredQuantities:            string[] = [];
+
+  private makeFilter(key: string) {
+    return (event: any) => {
+      const q = (event.query ?? '').toLowerCase();
+      return (this.availableFilters[key] || []).map(String)
+        .filter((v: string) => v.toLowerCase().includes(q));
+    };
+  }
+
+  filterManufactureNames(event: any)      { this.filteredManufactureNames      = this.makeFilter('manufacture_name')(event); }
+  filterSellerNames(event: any)           { this.filteredSellerNames           = this.makeFilter('seller_name')(event); }
+  filterStatusNames(event: any)           { this.filteredStatusNames           = this.makeFilter('status_name')(event); }
+  filterIsApprovedStatusNames(event: any) { this.filteredIsApprovedStatusNames = this.makeFilter('is_approved_status_name')(event); }
+  filterFabricCodes(event: any)           { this.filteredFabricCodes           = this.makeFilter('fabric_code')(event); }
+  filterFabricNames(event: any)           { this.filteredFabricNames           = this.makeFilter('fabric_name')(event); }
+  filterMachineNames(event: any)          { this.filteredMachineNames          = this.makeFilter('circular_knitting_machine_name')(event); }
+  filterWcOrderNames(event: any)          { this.filteredWcOrderNames          = this.makeFilter('wc_fabric_order_requisition_name')(event); }
+  filterOrderNumbers(event: any)          { this.filteredOrderNumbers          = this.makeFilter('order_number')(event); }
+  filterConsigmentNumbers(event: any)     { this.filteredConsigmentNumbers     = this.makeFilter('consigment_number')(event); }
+  filterNotes(event: any)                 { this.filteredNotes                 = this.makeFilter('note')(event); }
+  filterDocuments(event: any)             { this.filteredDocuments             = this.makeFilter('document')(event); }
+  filterQuantities(event: any)            { this.filteredQuantities            = this.makeFilter('quantity')(event); }
+
+  get totalColspan(): number {
+    let n = 17;
+    if (this.hasPrice)   n += 4;
+    if (this.hasStatus)  n += 2;
+    if (this.hasConfirm) n += 1;
+    return n;
+  }
+
+  toggleFilters() {
+    this.showFilters = !this.showFilters;
+    setTimeout(() => this.computeContainerHeight(), 50);
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() { this.computeContainerHeight(); }
+
+  ngAfterViewInit() {
+    setTimeout(() => this.computeContainerHeight(), 200);
+  }
+
+  private computeContainerHeight() {
+    const container = document.getElementById('table-header-data-report');
+    if (!container) return;
+    const top = container.getBoundingClientRect().top;
+    const h = Math.max(800, window.innerHeight - top - 2);
+    this.containerStyle = { height: `${h}px` };
+  }
 
   constructor(
     public _sharedComponentService: SharedComponentService,
     public _constantsService: ConstantsService,
     public _sessionManagerService: SessionManagerService,
     private _manufacturingRequisitionWbService: ManufacturingRequisitionWbService,
-    private primengConfig: PrimeNGConfig,
-    private filterService: FilterService,
-    private confirmationService: ConfirmationService,
     private _wbManufacturingOutputService: WbManufacturingOutputService,
-  ) {
-
-  }
+    private confirmationService: ConfirmationService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
-    this.getData();
-    this.customFilterForSellerName();
-    this.customFilterForStatusName();
-    this.customFilterForWcFAbricOrderRequisitionName();
-    this.customFilterForIsApprovedStatusName();
-    this.customFilterForManufactureName();
-    this.customFilterForCircularKnittingMachineName();
-    this.customFilterForFabricCode();
-    this.customFilterForFabricName();
-    this.customFilterForOrderNumber();
-    this.customFilterForRequisitionDocumnet();
-    this.customFilterForRequisitionNote();
-    this.customFilterForConsigmentName();
-
+    this.hasPrice   = this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[9]);
+    this.hasStatus  = this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[1]);
+    this.hasConfirm = this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[15]) ||
+                      this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[16]);
   }
 
-  getData() {
+  numFmt(value: any): string {
+    return value != null ? Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '';
+  }
+
+  statusClass(row: any): string {
+    return row?.status != null ? `manufacturing_status_${row.status}` : '';
+  }
+
+  canApprove(row: any): boolean {
+    return this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[15]) && row?.is_approved == '0';
+  }
+
+  canCancel(row: any): boolean {
+    return this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[16]) && row?.is_approved == '1';
+  }
+
+  loadData(event: any) {
     this.loading = true;
-    this._manufacturingRequisitionWbService.selectAll().subscribe((response: any) => {
-      this.yarns = response || []
-      this.detailsData = []
-      this.filtredDetailsData = []
-      // this.getCircularKnittingMachineName(this.yarns)
-      this.getDetailsData(this.yarns)
+    const first    = event?.first ?? 0;
+    const rowCount = event?.rows  ?? this.tableRows;
+    this.tableFirst = first;
+    this.tableRows  = rowCount;
 
-      // PrimeNG Table
-      this.primengConfig.ripple = true;
-      this.loading = false;
+    const sortModel: any[] = [];
+    if (event?.sortField) {
+      sortModel.push({ colId: event.sortField, sort: event.sortOrder === 1 ? 'asc' : 'desc' });
+    }
 
-    })
-  }
-
-  getSelectedData(selectedData: any) {
-    this.selectedDataToUpdate = selectedData
-  }
-
-  handleStatusUpdated(updatedRow: any) {
-    const targetId = String(updatedRow?.id ?? '');
-
-    this.yarns = (this.yarns || []).map((item: any) => {
-      if (String(item?.id ?? '') === targetId) {
-        return {
-          ...item,
-          ...updatedRow
-        };
-      }
-      return item;
+    this._manufacturingRequisitionWbService.selectAllLazy({
+      startRow:    first,
+      endRow:      first + rowCount,
+      sortModel,
+      filterModel: this.getExternalFilterModel(),
+    }).subscribe({
+      next: (res: any) => {
+        this.rows                 = Array.isArray(res?.rows) ? res.rows : [];
+        this.totalRows            = Number(res?.totalRows ?? res?.lastRow ?? 0);
+        this.grandFabricPiece     = Number(res?.grandFabricPiece    ?? 0);
+        this.grandQuantity        = Number(res?.grandQuantity        ?? 0);
+        this.grandCurrentQuantity = Number(res?.grandCurrentQuantity ?? 0);
+        this.availableFilters     = res.availableFilters || this.availableFilters;
+        this.loading = false;
+      },
+      error: () => {
+        this.rows    = [];
+        this.loading = false;
+      },
     });
+  }
 
-    this.selectedDataToUpdate = null;
+  private reload() {
+    this.loadData({ first: this.tableFirst, rows: this.tableRows });
+  }
+
+  private formatDateForFilter(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d} 00:00:00`;
+  }
+
+  private getExternalFilterModel(): any {
+    const model: any = {};
+    const d = this.externalDateFilters;
+    if (d?.length >= 2 && d[0] && d[1]) {
+      model['date'] = {
+        filterType: 'date', type: 'inRange',
+        dateFrom: this.formatDateForFilter(d[0]),
+        dateTo:   this.formatDateForFilter(d[1]),
+      };
+    }
+    const addSet = (key: string, values: string[]) => {
+      if (values?.length) model[key] = { filterType: 'set', values };
+    };
+    addSet('manufacture_name',                this.externalManufactureName);
+    addSet('seller_name',                     this.externalSellerName);
+    addSet('status_name',                     this.externalStatusName);
+    addSet('is_approved_status_name',         this.externalIsApprovedStatusName);
+    addSet('fabric_code',                     this.externalFabricCode);
+    addSet('fabric_name',                     this.externalFabricName);
+    addSet('circular_knitting_machine_name',  this.externalMachineName);
+    addSet('wc_fabric_order_requisition_name', this.externalWcOrderName);
+    addSet('order_number',                    this.externalOrderNumber);
+    addSet('consigment_number',               this.externalConsigmentNumber);
+    addSet('note',                            this.externalNote);
+    addSet('document',                        this.externalDocument);
+    addSet('quantity',                        this.externalQuantity.map(String));
+    return model;
+  }
+
+  private clearExternalFilters() {
+    this.externalDateFilters          = null;
+    this.externalManufactureName      = [];
+    this.externalSellerName           = [];
+    this.externalStatusName           = [];
+    this.externalIsApprovedStatusName = [];
+    this.externalFabricCode           = [];
+    this.externalFabricName           = [];
+    this.externalMachineName          = [];
+    this.externalWcOrderName          = [];
+    this.externalOrderNumber          = [];
+    this.externalConsigmentNumber     = [];
+    this.externalNote                 = [];
+    this.externalDocument             = [];
+    this.externalQuantity             = [];
+  }
+
+  applyFiltersToGrid() {
+    const extModel = this.getExternalFilterModel();
+    this.isFiltered = Object.keys(extModel).length > 0;
+    this.tableFirst = 0;
+    this.loadData({ first: 0, rows: this.tableRows });
+  }
+
+  clearAg() {
+    this.clearExternalFilters();
+    this.isFiltered = false;
+    this.tableFirst = 0;
+    this.loadData({ first: 0, rows: this.tableRows });
+  }
+
+  navigateToDetails(event: MouseEvent, row: any) {
+    let url: string;
+    if (String(row.is_order) === '0') {
+      url = `${window.location.pathname}/details?id=${encodeURIComponent(row.id)}&industryId=${encodeURIComponent(row.manufacture_id)}&fabricId=${encodeURIComponent(row.fabric_id)}&isOrder=${row.is_order}&wbManufacturingOutputId=${encodeURIComponent(row.wb_manufacturing_output_id)}`;
+    } else {
+      url = `/dashboard/${this._constantsService.ROUTING_LINKS[139]}?id=${encodeURIComponent(row.id)}&sellerName=${encodeURIComponent(row.seller_name || '')}&orderNumber=${encodeURIComponent(row.order_number || '')}&manufacturingOrderRequisitionDetailsId=${encodeURIComponent(row.manufacturing_order_requisition_details_wb_id || '')}`;
+    }
+    if (event.ctrlKey) window.open(url, '_blank');
+    else this.router.navigateByUrl(url);
   }
 
   openUpdateStoragePlace(element: any) {
-    const wcId = element?.details?.wc_id ?? element?.wc_id ?? element?.details?.id ?? element?.id;
-    if (!wcId) {
-      this._constantsService.userErrorMessage();
-      return;
-    }
-
-    this.selectedWcIds = [String(wcId)];
-    this.selectedStoragePlace = element?.details?.storage_place ?? element?.storage_place ?? '';
+    const wcId = element?.wc_id;
+    if (!wcId) { this._constantsService.userErrorMessage(); return; }
+    this.selectedWcIds           = [String(wcId)];
+    this.selectedStoragePlace    = element?.storage_place ?? '';
     this.selectedStorageReportParams = {
-      id: element?.fabric_id ?? element?.details?.fabric_id ?? '',
-      warehouseId: element?.warehouse_id ?? element?.details?.warehouse_id ?? '',
-      consigmentManufacturingId: element?.consigment_manufacturing_id ?? element?.details?.consigment_manufacturing_id ?? '',
-      fabricOrderId: element?.wc_fabric_order_requisition_id ?? element?.fabric_order_id ?? element?.details?.wc_fabric_order_requisition_id ?? '',
-      code: element?.fabric_code ?? element?.details?.fabric_code ?? '',
-      name: element?.fabric_name ?? element?.details?.fabric_name ?? '',
-      consigmentNumber: element?.consigment_number ?? element?.details?.consigment_number ?? '',
-      warehouseName: element?.warehouse_name ?? element?.details?.warehouse_name ?? ''
+      id:                        element?.fabric_id ?? '',
+      warehouseId:               element?.warehouse_id ?? '',
+      consigmentManufacturingId: element?.consigment_manufacturing_id ?? '',
+      fabricOrderId:             element?.wc_fabric_order_requisition_id ?? '',
+      code:                      element?.fabric_code ?? '',
+      name:                      element?.fabric_name ?? '',
+      consigmentNumber:          element?.consigment_number ?? '',
+      warehouseName:             element?.warehouse_name ?? '',
     };
     this.showUpdatePanel = true;
   }
 
-  canOpenUpdateStorage(element: any): boolean {
-    return !!(element?.details?.wc_id ?? element?.wc_id ?? element?.details?.id ?? element?.id);
-  }
-
-  handleStorageUpdated(event: any) {
-    const wcIds = (event?.wcIds || []).map((id: any) => String(id));
-    const storagePlace = event?.storagePlace ?? '';
-
-    this.yarns = (this.yarns || []).map((item: any) => {
-      const rowWcId = String(item?.details?.wc_id ?? item?.wc_id ?? item?.details?.id ?? item?.id ?? '');
-      if (wcIds.includes(rowWcId)) {
-        return {
-          ...item,
-          storage_place: storagePlace,
-          details: {
-            ...(item?.details || {}),
-            storage_place: storagePlace
-          }
-        };
-      }
-      return item;
-    });
-
-    this.detailsData = this.yarns.map((item: any) => item?.details).filter((item: any) => item != null);
-    this.selectedWcIds = [];
-    this.selectedStoragePlace = '';
+  handleStorageUpdated(_event: any) {
+    this.selectedWcIds               = [];
+    this.selectedStoragePlace        = '';
     this.selectedStorageReportParams = null;
-    this.showUpdatePanel = false;
+    this.showUpdatePanel             = false;
+    this.reload();
   }
 
-  // getCircularKnittingMachineName(data) {
-  //   for (let i = 0; i < data.length; i++) {
-  //     const element = data[i].details;
-  //     this.circularKnittingMachineNames.push(element)
-  //   }    
-  // }
+  handleStatusUpdated(_updatedRow: any) {
+    this.selectedDataToUpdate = null;
+    this.reload();
+  }
 
-  getDetailsData(data) {
-    for (let i = 0; i < data.length; i++) {
-      const element = data[i].details;
-      this.detailsData.push(element)
+  confirmCancelReceived(event: Event, element: any, isApproved: any) {
+    if (isApproved == '0') {
+      this.popupReceived(event, element, 'تأكيد الأستلام', '1');
+    } else if (isApproved == '1') {
+      this.popupReceived(event, element, 'إلغاء الأستلام', '0');
     }
   }
 
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForSellerName() {
-    const customFilterName = "seller-name-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedSellerName
-
-      if (this.selectedSellerName[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].seller_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForStatusName() {
-    const customFilterName = "status-name-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedStatusName
-
-      if (this.selectedStatusName[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].status_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-  ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForIsApprovedStatusName() {
-    const customFilterName = "is-approved-status-name-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedIsApprivedStatusName
-
-      if (this.selectedIsApprivedStatusName[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].is_approved_status_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-    customFilterForManufactureName() {
-      const customFilterName = "manufacture-name-filter";
-      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-        filter = this.selectedManufactureName
-  
-        if (this.selectedManufactureName[0] != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
-          }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
-          }
-          if (filter.length > 0) {
-            // let count = 0
-  
-            // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].manufacture_name) {
-                // count++
-                // if (count == filter.length) {
-                return true;
-                // }
-              }
-            }
-            // }
-          }
-          return false;
-        }
-        else {
-          return true;
-        }
-      });
-    }
-
-    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-
-    customFilterForCircularKnittingMachineName() {
-      const customFilterName = "circular-knitting-machine-name-filter";
-      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-        filter = this.selectedCircularKnittingMachineName
-  
-        if (this.selectedCircularKnittingMachineName[0] != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
-          }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
-          }
-          if (filter.length > 0) {
-            // let count = 0
-  
-            // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              console.log("value :::: ", value);
-              console.log("filter[j] :::: ", filter[j]);
-              
-              if (value == filter[j].circular_knitting_machine_name) {
-                // count++
-                // if (count == filter.length) {
-                return true;
-                // }
-              }
-            }
-            // }
-          }
-          return false;
-        }
-        else {
-          return true;
-        }
-      });
-    }
-
-      ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForFabricCode() {
-    const customFilterName = "fabric-code-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedFabricCode
-
-      if (this.selectedFabricCode[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].fabric_code) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-  customFilterForWcFAbricOrderRequisitionName() {
-    const customFilterName = "wc-fabric-order-requisition-name-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedWcFAbricOrderRequisitionName
-
-      if (this.selectedWcFAbricOrderRequisitionName[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].wc_fabric_order_requisition_name) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-
-    ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-    customFilterForFabricName() {
-      const customFilterName = "fabric-name-filter";
-      this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-        filter = this.selectedFabricName
-  
-        if (this.selectedFabricName[0] != null) {
-          if (filter === undefined || filter === null || !filter.length) {
-            return true;
-          }
-          if (value === undefined || value === null || value.length == 0) {
-            return false;
-          }
-          if (filter.length > 0) {
-            // let count = 0
-  
-            // for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < filter.length; j++) {
-              if (value == filter[j].fabric_name) {
-                // count++
-                // if (count == filter.length) {
-                return true;
-                // }
-              }
-            }
-            // }
-          }
-          return false;
-        }
-        else {
-          return true;
-        }
-      });
-    }
-
-      ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-  customFilterForOrderNumber() {
-    const customFilterName = "order-number-filter";
-    this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-      filter = this.selectedOrderNumber
-
-      if (this.selectedOrderNumber[0] != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-
-          // for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value == filter[j].order_number) {
-              // count++
-              // if (count == filter.length) {
-              return true;
-              // }
-            }
-          }
-          // }
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    });
-  }
-  
-customFilterForRequisitionDocumnet() {
-  const customFilterName = "requisition-document-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedRequisitionDocumnet
-
-    if (this.selectedRequisitionDocumnet[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
-
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].document) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
-          }
-        }
-        // }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
-  
-customFilterForConsigmentName() {
-  const customFilterName = "consigment-yarn-number-details-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedConsigmentYarnNumber
-
-    if (this.selectedConsigmentYarnNumber[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        let count = 0
-        for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < filter.length; j++) {
-            if (value[i].consigment_yarn_number == filter[j].consigment_yarn_number) {
-              count++
-              if (count == filter.length) {
-                return true;
-              }
-            }
-          }
-        }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
-
-
-
-customFilterForRequisitionNote() {
-  const customFilterName = "requisition-note-filter";
-  this.filterService.register(customFilterName, (value: any[], filter: any[]): boolean => {
-    filter = this.selectedRequisitionNote
-
-    if (this.selectedRequisitionNote[0] != null) {
-      if (filter === undefined || filter === null || !filter.length) {
-        return true;
-      }
-      if (value === undefined || value === null || value.length == 0) {
-        return false;
-      }
-      if (filter.length > 0) {
-        // let count = 0
-
-        // for (let i = 0; i < value.length; i++) {
-        for (let j = 0; j < filter.length; j++) {
-          if (value == filter[j].note) {
-            // count++
-            // if (count == filter.length) {
-            return true;
-            // }
-          }
-        }
-        // }
-      }
-      return false;
-    }
-    else {
-      return true;
-    }
-  });
-}
-
-   ///////////////////// ----------- Start Search Tabel ----------- /////////////////////
-   selectedDate(event) {
-    this.filterService.register("date-filter", (value: any, filter: any[]): boolean => {
-      filter = this.dateFilters
-      
-      if (event != null) {
-        if (filter === undefined || filter === null || !filter.length) {
-          return true;
-        }
-        if (value === undefined || value === null || value.length == 0) {
-          return false;
-        }
-        if (filter.length > 0) {
-          // let count = 0
-          if(filter[0] != null && filter[1] != null) {
-            
-            if (moment(value).format('YYYY-MM-DD') >= moment(filter[0]).format('YYYY-MM-DD') &&  
-            moment(value).format('YYYY-MM-DD') <= moment(filter[1]).format('YYYY-MM-DD')) {
-              return true;
-              }
-            
-          } else if (filter[0] != null && filter[1] == null) {
-            
-            if (moment(value).format('YYYY-MM-DD') > moment(filter[0]).format('YYYY-MM-DD')) {
-              return false;
-              } else if (moment(value).format('YYYY-MM-DD') < moment(filter[0]).format('YYYY-MM-DD')) {
-                return false;
-              } else {
-                return true;
-              }
-          }
-
-        }
-        return false;
-      }
-      else {
-        return true;
-      }
-    })
-    this.dt1?.filter(event, "date", "date-filter")
-  }
-
-  // Reset table filters
-  clear(table: Table) {
-    table.clear();
-    table.reset();
-    this.selectedSellerName = []
-    this.selectedStatusName = []
-    this.selectedIsApprivedStatusName = []
-    this.selectedManufactureName = []
-    this.selectedCircularKnittingMachineName = []
-    this.selectedWcFAbricOrderRequisitionName = []
-    this.selectedFabricCode = []
-    this.selectedFabricName = []
-    this.selectedOrderNumber = []
-    this.selectedRequisitionDocumnet = []
-    this.selectedRequisitionNote = []
-    this.selectedConsigmentYarnNumber = []
-    this.dateFilters = []
-  }
-
-  onMultiselectedSellerName(event) {
-    this.selectedSellerName = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedStatusName(event) {
-    this.selectedStatusName = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedIsApprovedStatusName(event) {
-    this.selectedIsApprivedStatusName = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedManufactureName(event) {
-    this.selectedManufactureName = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedCircularKnittingMachineName(event) {
-    this.selectedCircularKnittingMachineName = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedWcFAbricOrderRequisitionName(event) {
-    this.selectedWcFAbricOrderRequisitionName = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedFabricCode(event) {
-    this.selectedFabricCode = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedFabricName(event) {
-    this.selectedFabricName = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedOrderNumber(event) {
-    this.selectedOrderNumber = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedRequisitionDocumnet(event) {
-    this.selectedRequisitionDocumnet = event
-    this.dt1?._filter()
-  }
-
-  onMultiselectedRequisitionNote(event) {
-    this.selectedRequisitionNote = event
-    this.dt1?._filter()
-  }
-
-    onMultiselectedConsigmentYarnNumber(event) {
-      this.selectedConsigmentYarnNumber = event
-      this.dt1?._filter()
-    }
-  handleFilter(event) {
-    this.filtredDetailsData = []
-    for (let i = 0; i < event.filteredValue.length; i++) {
-      const element = event.filteredValue[i].details;
-      this.filtredDetailsData.push(element)
-    }
-    
-  }
-  confirmCancelReceived(event: Event, element, isApproved) {
-    if(isApproved == "0") {
-      this.popupReceived(event, element, 'تأكيد الأستلام', "1")
-    } else if (isApproved == "1") {
-      this.popupReceived(event, element, 'إلغاء الأستلام', "0")
-    }
-  }
-  
-popupReceived(event: Event, element, message, isApproved) {
-  this.confirmationService.confirm({
+  popupReceived(event: Event, element: any, message: string, isApproved: string) {
+    this.confirmationService.confirm({
       target: event.target!,
-      message: message,
+      message,
       acceptLabel: 'نعم',
       rejectLabel: 'لا',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-          this.executeConfirmReceived(element, isApproved);
-      },
-      reject: () => {
-      }
-  });
-}
-
-executeConfirmReceived(data, isApproved) {
-  this._constantsService.spinner.show()
-  const formData = {
-    isApproved: isApproved,
-    personid: this._sessionManagerService.Person_ID,
-    ipaddress: this._sessionManagerService.IP_ADDRESS
+      accept: () => this.executeConfirmReceived(element, isApproved),
+      reject: () => {},
+    });
   }
-  this._wbManufacturingOutputService.confirmReceived(formData, data.wb_manufacturing_output_id).subscribe((response: any) => {
-    this._constantsService.spinner.hide();
-    if (response.msg == "data updated") {
-      this._constantsService.successUpdateMessage()
-      this.getData()
-    }
-    else {
-        this._constantsService.userErrorMessage()
-    }
-  })
-}
 
+  executeConfirmReceived(data: any, isApproved: string) {
+    this._constantsService.spinner.show();
+    const formData = {
+      isApproved,
+      personid:  this._sessionManagerService.Person_ID,
+      ipaddress: this._sessionManagerService.IP_ADDRESS,
+    };
+    this._wbManufacturingOutputService.confirmReceived(formData, data.wb_manufacturing_output_id).subscribe((response: any) => {
+      this._constantsService.spinner.hide();
+      if (response.msg == 'data updated') {
+        this._constantsService.successUpdateMessage();
+        this.reload();
+      } else {
+        this._constantsService.userErrorMessage();
+      }
+    });
+  }
 
+  scrollToUpdateForm() {
+    setTimeout(() => document.getElementById('update-form')?.scrollIntoView({ behavior: 'smooth' }), 100);
+  }
+
+  scrollToStoragePanel() {
+    setTimeout(() => document.getElementById('update-storage-place-panel')?.scrollIntoView({ behavior: 'smooth' }), 100);
+  }
 }

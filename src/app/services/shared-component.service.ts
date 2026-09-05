@@ -190,6 +190,13 @@ setTimeout(() => {
     return yarns?.map(function (a) { return (a.input_output == '1') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
   }
 
+  getTotalAmountQuantityOutput(yarns) {
+    if (!Array.isArray(yarns)) {
+      return 0;
+    }
+    return yarns?.map(function (a) { return (a.input_output == '0') ? (parseFloat(a['quantity'])) : 0 }).reduce((acc, value) => acc + value, 0);
+  }
+
   getInputAmount(yarns) {
     // نتحقق أولاً إن البيانات مصفوفة فعلاً
   if (!Array.isArray(yarns)) {

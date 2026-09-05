@@ -1,0 +1,230 @@
+/* ── Container flex layout ────────────────────────────────────────── */
+#table-header-data-report {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* p-table host takes all remaining flex space */
+::ng-deep #table-header-data-report > p-table {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* p-datatable fills its host */
+::ng-deep #table-header-data-report .p-datatable-flex-scrollable {
+  height: 100%;
+}
+
+/* ── External Filters ─────────────────────────────────────────────── */
+.ext-filters-row {
+  padding: 8px 4px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  flex-shrink: 0;
+}
+
+.ext-filters-row .col {
+  padding: 4px;
+}
+
+.filter-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+::ng-deep .ext-filters-row p-multiSelect .p-multiselect,
+::ng-deep .ext-filters-row p-calendar .p-calendar,
+::ng-deep .ext-filters-row p-autoComplete .p-autocomplete {
+  width: 100%;
+}
+
+::ng-deep .ext-filters-row .p-multiselect-label {
+  font-size: 0.82rem;
+  padding: 0.35rem 0.5rem;
+}
+
+::ng-deep .ext-filters-row .p-calendar input {
+  font-size: 0.82rem;
+}
+
+/* ── Toolbar ──────────────────────────────────────────────────────── */
+.grid-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 2px;
+  flex-shrink: 0;
+}
+
+.total-count {
+  font-size: 0.8rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+/* ── Table header ────────────────────────────────────────────────── */
+::ng-deep .wb-main-table .p-datatable-thead > tr > th {
+  text-align: right !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  padding: 5px 7px !important;
+  font-size: 0.78rem !important;
+  line-height: 1.3 !important;
+  background-color: #4a6fa5 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-color: #3d5d8a !important;
+}
+
+::ng-deep .wb-main-table .p-sortable-column .p-sortable-column-icon {
+  color: #cfe2ff !important;
+}
+::ng-deep .wb-main-table .p-highlight .p-sortable-column-icon {
+  color: #fff !important;
+}
+
+/* ── Table body cells ────────────────────────────────────────────── */
+::ng-deep .wb-main-table .p-datatable-tbody > tr > td {
+  text-align: right !important;
+  padding: 4px 7px !important;
+  vertical-align: middle !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.4 !important;
+  font-size: 0.83rem !important;
+  border-color: #d0d7e2 !important;
+}
+
+/* ── Alternating row colors (no !important → status colors win) ── */
+::ng-deep .wb-main-table .p-datatable-tbody > tr:nth-child(odd) > td {
+  background-color: #ffffff;
+}
+::ng-deep .wb-main-table .p-datatable-tbody > tr:nth-child(even) > td {
+  background-color: #eef2fb;
+}
+
+/* ── Status cell colors (same specificity, declared AFTER → win cascade) */
+::ng-deep .wb-main-table .p-datatable-tbody > tr > td.manufacturing_status_new {
+  background-color: #ebf216cc !important;
+}
+::ng-deep .wb-main-table .p-datatable-tbody > tr > td.manufacturing_status_good_after_check {
+  background-color: #48ad5ccc !important;
+  color: #fff !important;
+}
+::ng-deep .wb-main-table .p-datatable-tbody > tr > td.manufacturing_status_not_good_after_check {
+  background-color: #ce3737c7 !important;
+  color: #fff !important;
+}
+::ng-deep .wb-main-table .p-datatable-tbody > tr > td.manufacturing_status_white {
+  background-color: #f8f9fa !important;
+}
+
+/* Hover (after status so hover still works) */
+::ng-deep .wb-main-table .p-datatable-tbody > tr:hover > td {
+  background-color: #d0e4ff !important;
+}
+
+/* ── Footer totals (sticky) ──────────────────────────────────────── */
+::ng-deep .wb-main-table .p-datatable-tfoot {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+
+::ng-deep .wb-main-table .p-datatable-tfoot > tr > td {
+  text-align: right !important;
+  padding: 5px 7px !important;
+  font-size: 0.83rem !important;
+  background-color: #2c3e50 !important;
+  color: #e2e8f0 !important;
+  border-color: #1a252f !important;
+  font-weight: 700 !important;
+}
+
+.totals-label {
+  color: #ffffff !important;
+}
+
+/* ── Number cells ────────────────────────────────────────────────── */
+::ng-deep .wb-main-table .p-datatable-tbody > tr > td.num-cell {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+::ng-deep .wb-main-table .p-datatable-tfoot > tr > td.num-cell {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+  color: #ffd54f !important;
+}
+
+/* ── Action cells ────────────────────────────────────────────────── */
+::ng-deep .wb-main-table .p-datatable-tbody > tr > td.action-cell {
+  text-align: center !important;
+}
+
+.action-link {
+  cursor: pointer;
+  display: inline-block;
+  padding: 2px 4px;
+}
+
+.btn-toggle-filters {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border: 1px solid #4a6fa5;
+  border-radius: 4px;
+  background: #fff;
+  color: #4a6fa5;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-toggle-filters:hover,
+.btn-toggle-filters--active {
+  background: #4a6fa5;
+  color: #fff;
+}
+
+/* ── Paginator RTL ───────────────────────────────────────────────── */
+::ng-deep .wb-main-table .p-paginator {
+  direction: rtl;
+  font-size: 0.82rem;
+  padding: 4px 8px;
+  background-color: #f1f5f9 !important;
+  border-top: 1px solid #d0d7e2;
+  flex-shrink: 0;
+}
+
+/* ── Sort icon RTL ───────────────────────────────────────────────── */
+::ng-deep .wb-main-table .p-sortable-column-icon {
+  margin-right: 4px;
+  margin-left: 0;
+}
+
+/* ── Loading overlay ─────────────────────────────────────────────── */
+::ng-deep .wb-main-table .p-datatable-loading-overlay {
+  background: rgba(255,255,255,0.6);
+}
+
+/* ── Empty message ───────────────────────────────────────────────── */
+.empty-msg {
+  text-align: center !important;
+  padding: 24px !important;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* ── Column resizer ──────────────────────────────────────────────── */
+::ng-deep .wb-main-table .p-column-resizer {
+  width: 6px;
+}

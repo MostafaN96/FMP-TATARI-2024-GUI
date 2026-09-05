@@ -47,6 +47,15 @@ export class ShowAllFabricComponent implements OnInit {
   }
 
   private buildColumnDefs() {
+    const wrapStyle = {
+      'white-space': 'normal',
+      'word-break': 'normal',
+      'overflow-wrap': 'break-word',
+      'line-height': '1.5',
+      'padding-top': '6px',
+      'padding-bottom': '6px',
+    };
+
     const common: ColDef[] = [
       {
         headerName: '',
@@ -61,6 +70,10 @@ export class ShowAllFabricComponent implements OnInit {
         field: 'name',
         filter: 'agSetColumnFilter',
         filterParams: { excelMode: 'windows' },
+        wrapText: true,
+        autoHeight: true,
+        flex: 3,
+        cellStyle: wrapStyle,
       },
       {
         headerName: 'الكود',
@@ -69,15 +82,11 @@ export class ShowAllFabricComponent implements OnInit {
         filterParams: { excelMode: 'windows' },
       },
       {
-        headerName: 'كود المصبغة',
-        field: 'dyeing_code',
-        filter: 'agSetColumnFilter',
-        filterParams: { excelMode: 'windows' },
-      },
-      {
         headerName: 'وزن القماش م2',
         field: 'fabric_quantity_m2',
         filter: 'agNumberColumnFilter',
+        width: 130,
+        flex: 0,
       },
     ];
 
@@ -86,12 +95,18 @@ export class ShowAllFabricComponent implements OnInit {
         headerName: 'نسبة الهالك',
         field: 'waste_ratio',
         filter: 'agNumberColumnFilter',
+        width: 130,
+        flex: 0,
       },
       {
         headerName: 'اسم القماش الخام',
         field: 'fabric_name_code',
         filter: 'agSetColumnFilter',
         filterParams: { excelMode: 'windows' },
+        wrapText: true,
+        autoHeight: true,
+        flex: 3,
+        cellStyle: wrapStyle,
       },
     ];
 

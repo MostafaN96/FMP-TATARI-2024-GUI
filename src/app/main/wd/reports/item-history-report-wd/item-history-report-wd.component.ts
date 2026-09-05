@@ -312,6 +312,40 @@ export class ItemHistoryReportWdComponent implements OnInit {
 
         return link;
       }
+    },
+
+    // ✅ رابط حركات الرسالة
+    {
+      headerName: 'حركات الرسالة',
+      field: 'consigment_link',
+      excludeFromFooter: true,
+      filter: false,
+      sortable: false,
+      cellRenderer: (p: any) => {
+        if (!p.data?.consigment_dyeing_id) return '';
+        const link = document.createElement('a');
+        link.innerHTML = `<i class="fas fa-list-alt update-symbol"></i>`;
+        link.style.cursor = 'pointer';
+        link.style.color = '#28a745';
+        const queryParams = new URLSearchParams({
+          consigmentDyeingId: p.data.consigment_dyeing_id,
+          consigmentNumber: p.data.consigment_dyeing_number || ''
+        }).toString();
+
+        const baseUrl = window.location.origin + '/dashboard/report-wd/consigment-dyeing-history';
+        const fullUrl = `${baseUrl}?${queryParams}`;
+        link.href = fullUrl;
+
+        link.addEventListener('click', (event: MouseEvent) => {
+          if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+            return;
+          }
+          event.preventDefault();
+          window.location.href = fullUrl;
+        });
+
+        return link;
+      }
     }
   ];
 

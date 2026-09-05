@@ -1,5 +1,62 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* p-multiSelect panel: long text wrapping (used via panelStyleClass="multiselect-wrap-panel") */
+/* p-multiSelect filter input: ensure typed text is visible */
+.p-multiselect-panel .p-multiselect-filter {
+  color: #212529 !important;
+  background-color: #fff !important;
+  opacity: 1 !important;
+}
+
+/* p-autoComplete filter chip style */
+.ac-filter .p-autocomplete {
+  width: 100%;
+}
+.ac-filter .p-autocomplete-multiple-container {
+  width: 100%;
+  min-height: 34px;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px 6px;
+  font-size: 0.82rem;
+}
+.ac-filter .p-autocomplete-token {
+  font-size: 0.75rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #4a6fa5;
+  color: #fff;
+}
+.ac-filter .p-autocomplete-token-icon {
+  font-size: 0.7rem;
+}
+.ac-filter .p-autocomplete-input {
+  font-size: 0.82rem;
+  min-width: 80px;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #212529 !important;
+}
+
+.multiselect-wrap-panel {
+  min-width: 380px !important;
+}
+.multiselect-wrap-panel .p-multiselect-item {
+  white-space: normal !important;
+  word-break: break-word !important;
+  height: auto !important;
+  min-height: 32px;
+  align-items: flex-start !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  line-height: 1.35 !important;
+}
+.multiselect-wrap-panel .p-multiselect-item .p-checkbox {
+  margin-top: 2px;
+}
+
 @import "../node_modules/bootstrap/dist/css/bootstrap.rtl.min.css";
 
 /* ==================== AG Grid Inner Details Table ==================== */
@@ -786,7 +843,7 @@ tr.mat-row:hover {
 .p-datatable-resizable .p-datatable-tbody>tr>td {
   white-space: normal !important;
   justify-content: center;
-  /* max-width: 6rem !important; */
+  /* max-width: 6rem !important; */  
 }
 
 .p-datatable-resizable>.p-datatable-wrapper {

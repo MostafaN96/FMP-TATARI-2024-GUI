@@ -9,6 +9,16 @@
     <!-- Form Section -->
     <!-- Main Page Form -->
     <div [class]="_sharedComponentService.mainPageFormClass">
+
+        <!-- زر سكان الإيصال -->
+        <div class="mb-3">
+            <label class="btn-style" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                <i class="fas fa-camera"></i> سكان الإيصال
+                <input type="file" accept="image/*" capture="environment"
+                    style="display:none;" (change)="onScanImageSelected($event)">
+            </label>
+        </div>
+
         <form [formGroup]="addRequisitionForm" (ngSubmit)="onAddRequisition()">
             <div [class]="_sharedComponentService.subMainPageForm2Class" class="overflow-auto">
                 <!-- Form Body -->
@@ -856,3 +866,55 @@
         </form>
     </div>
 </section>
+
+<!-- Dialog نتيجة سكان الإيصال -->
+<p-dialog [(visible)]="showScanDialog" [modal]="true" [closable]="true"
+    [style]="{width: '520px'}" header="نتيجة قراءة الإيصال" dir="rtl">
+
+    <div class="text-center py-3" *ngIf="scanLoading">
+        <i class="pi pi-spin pi-spinner" style="font-size:2rem;"></i>
+        <p class="mt-2">جاري قراءة الإيصال...</p>
+    </div>
+
+    <div *ngIf="!scanLoading && scannedData">
+        <table class="table table-bordered table-sm mb-3" dir="rtl" style="font-size:0.82rem;">
+            <tbody>
+                <tr *ngIf="scannedData.date"><th>التاريخ</th><td>{{ scannedData.date }}</td></tr>
+                <tr *ngIf="scannedData.manufacturerName"><th>المصبغة (مقروءة)</th><td>{{ scannedData.manufacturerName }}</td></tr>
+                <tr *ngIf="scannedData.fabricName"><th>القماش (مقروء)</th><td>{{ scannedData.fabricName }}</td></tr>
+                <tr *ngIf="scannedData.notes"><th>ملاحظات</th><td>{{ scannedData.notes }}</td></tr>
+            </tbody>
+        </table>
+
+        <div class="text-center py-2" *ngIf="enrichLoading">
+            <i class="pi pi-spin pi-spinner"></i> جاري البحث في قاعدة البيانات...
+        </div>
+
+        <div *ngIf="!enrichLoading && enrichedData">
+            <h6 class="fw-bold mb-2" style="font-size:0.85rem;">🔍 التطابق في قاعدة البيانات</h6>
+
+            <div class="mb-2">
+                <label style="font-size:0.82rem;">المصبغة:</label>
+                <select class="form-select form-select-sm" [(ngModel)]="selectedDyerFromScan"
+                    [ngModelOptions]="{standalone: true}">
+                    <option [ngValue]="null">-- لا شيء --</option>
+                    <option *ngFor="let m of enrichedData.industryMatches" [ngValue]="m">{{ m.name }}</option>
+                </select>
+            </div>
+
+            <div *ngIf="!enrichedData.industryMatches?.length && !enrichedData.fabricMatches?.length"
+                class="alert alert-warning p-2 mb-0" style="font-size:0.8rem;">
+                لم يُعثر على تطابق في قاعدة البيانات — ستحتاج لاختيار المصبغة يدوياً.
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="إلغاء" icon="pi pi-times"
+            class="p-button-text" (click)="showScanDialog = false"></button>
+        <button pButton type="button" label="ملء البيانات" icon="pi pi-check"
+            class="p-button-success"
+            [disabled]="!scannedData || scanLoading || enrichLoading"
+            (click)="fillFromScan()"></button>
+    </ng-template>
+</p-dialog>

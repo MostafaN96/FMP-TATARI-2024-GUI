@@ -1,56 +1,288 @@
 <section [id]="_sharedComponentService.pageId()" [class]="_sharedComponentService.sectionClass">
-    <!-- Title Page Section -->
     <div [class]="_sharedComponentService.titlePageClass">
-        <!-- Sub Title Page -->
         <div [class]="_sharedComponentService.subTitlePageClass">
             <h2 [class]="_sharedComponentService.TitleTextClass">{{titlePage}}</h2>
         </div>
     </div>
-    <!-- Form Section -->
-    <!-- Main Page Form -->
+
     <div [class]="_sharedComponentService.mainPageFormClass">
         <div [class]="_sharedComponentService.subMainPageFormClass">
-            <!-- Form Body -->
             <div [class]="_sharedComponentService.gridForm2Class">
+
+                <div class="col">
+                    <!-- External Filters -->
+                    <div *ngIf="showFilters" class="row row-cols-md-5 g-2 mb-2 ext-filters-row">
+
+                        <div class="col">
+                            <label class="filter-label">التاريخ</label>
+                            <p-calendar class="w-100" placeholder="اختر فترة"
+                                [(ngModel)]="externalDateFilters"
+                                appendTo="body" selectionMode="range"
+                                [readonlyInput]="true" [showIcon]="true"
+                                [showButtonBar]="true" dateFormat="dd/mm/yy"
+                                (onSelect)="applyFiltersToGrid()"
+                                (onClearClick)="applyFiltersToGrid()">
+                            </p-calendar>
+                        </div>
+
+                        <div class="col">
+                            <label class="filter-label">العميل</label>
+                            <p-multiSelect class="w-100"
+                                [options]="availableFilters.seller_name"
+                                [(ngModel)]="externalSellerName"
+                                (onChange)="applyFiltersToGrid()"
+                                placeholder="كل العملاء"
+                                [filter]="true" appendTo="body"
+                                scrollHeight="180px">
+                            </p-multiSelect>
+                        </div>
+
+                        <div class="col">
+                            <label class="filter-label">اسم القماش</label>
+                            <p-multiSelect class="w-100"
+                                [options]="availableFilters.details_fabric"
+                                [(ngModel)]="externalDetailsFabric"
+                                (onChange)="applyFiltersToGrid()"
+                                placeholder="كل الأقمشة"
+                                [filter]="true" appendTo="body"
+                                scrollHeight="180px">
+                            </p-multiSelect>
+                        </div>
+
+                        <div class="col">
+                            <label class="filter-label">الطلبية</label>
+                            <p-multiSelect class="w-100"
+                                [options]="availableFilters.details_order"
+                                [(ngModel)]="externalDetailsOrder"
+                                (onChange)="applyFiltersToGrid()"
+                                placeholder="كل الطلبيات"
+                                [filter]="true" appendTo="body"
+                                scrollHeight="200px">
+                            </p-multiSelect>
+                        </div>
+
+                        <div class="col">
+                            <label class="filter-label">اللون</label>
+                            <p-multiSelect class="w-100"
+                                [options]="availableFilters.details_color"
+                                [(ngModel)]="externalDetailsColor"
+                                (onChange)="applyFiltersToGrid()"
+                                placeholder="كل الألوان"
+                                [filter]="true" appendTo="body"
+                                scrollHeight="180px">
+                            </p-multiSelect>
+                        </div>
+
+                        <div class="col">
+                            <label class="filter-label">أمر الشغل</label>
+                            <p-autoComplete class="w-100 ac-filter"
+                                [(ngModel)]="externalDetailsWorkOrder"
+                                [suggestions]="filteredWorkOrders"
+                                (completeMethod)="filterWorkOrders($event)"
+                                (onSelect)="applyFiltersToGrid()"
+                                (onUnselect)="applyFiltersToGrid()"
+                                [multiple]="true"
+                                [minLength]="0"
+                                placeholder="ابحث بأمر الشغل..."
+                                appendTo="body"
+                                scrollHeight="200px">
+                            </p-autoComplete>
+                        </div>
+
+                        <div class="col">
+                            <label class="filter-label">نوع الدرجة</label>
+                            <p-multiSelect class="w-100"
+                                [options]="availableFilters.details_grade_item"
+                                [(ngModel)]="externalDetailsGradeItem"
+                                (onChange)="applyFiltersToGrid()"
+                                placeholder="كل الدرجات"
+                                [filter]="true" appendTo="body"
+                                scrollHeight="180px">
+                            </p-multiSelect>
+                        </div>
+
+                        <div class="col">
+                            <label class="filter-label">&nbsp;</label>
+                            <button pButton type="button" label="إعادة" icon="pi pi-filter-slash"
+                                class="p-button-outlined w-100"
+                                (click)="clearAg()">
+                            </button>
+                        </div>
+
+                    </div>
+                    <!-- End External Filters -->
+                </div>
+
                 <div class="col">
                     <div [class]="_sharedComponentService.tableSectionClass">
-
-                        <div id="table-header-data-report"
-                        dir="rtl"
-                        class="ag-theme-alpine ag-rtl ag-details">
+                        <div id="table-header-data-report" dir="rtl" [ngStyle]="containerStyle">
 
                             <!-- Toolbar -->
                             <div class="grid-toolbar">
-                                <button
-                                    class="btn-reset-filter"
-                                    [class.btn-reset-filter--active]="isFiltered"
+                                <button class="btn-toggle-filters"
+                                    [class.btn-toggle-filters--active]="showFilters"
+                                    (click)="toggleFilters()"
+                                    title="إظهار/إخفاء الفلاتر">
+                                    <i class="fa-solid"
+                                        [class.fa-filter]="!showFilters"
+                                        [class.fa-filter-slash]="showFilters"></i>
+                                    <span>{{ showFilters ? 'إخفاء الفلاتر' : 'إظهار الفلاتر' }}</span>
+                                </button>
+                                <button *ngIf="isFiltered"
+                                    class="btn-reset-filter btn-reset-filter--active"
                                     (click)="clearAg()"
                                     title="إعادة تعيين جميع الفلاتر">
                                     <i class="fa-solid fa-filter-circle-xmark"></i>
                                     <span>إعادة الفلتر</span>
                                 </button>
+                                <span class="total-count">إجمالي السجلات: {{ totalRows | number }}</span>
                             </div>
 
                             <p-confirmPopup></p-confirmPopup>
 
-                            <ag-grid-angular
-                            #agGrid
-                            class="ag-theme-alpine ag-rtl"
-                            [ngStyle]="_sharedComponentService.gridStyle"
-                            [gridOptions]="gridOptions"
-                            [columnDefs]="columnDefs"
-                            [defaultColDef]="defaultColDef"
-                            [sideBar]="sideBar"
-                            (gridReady)="onGridReady($event)"
-                            (filterChanged)="onFilterChanged()">
-                            </ag-grid-angular>
+                            <!-- PrimeNG Table -->
+                            <p-table
+                                [value]="rows"
+                                [lazy]="true"
+                                [lazyLoadOnInit]="true"
+                                [totalRecords]="totalRows"
+                                [paginator]="true"
+                                [rows]="tableRows"
+                                [rowsPerPageOptions]="[25, 50, 100, 200]"
+                                [first]="tableFirst"
+                                (onLazyLoad)="loadData($event)"
+                                [loading]="loading"
+                                [scrollable]="true"
+                                scrollHeight="flex"
+                                columnResizeMode="expand"
+                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped "
+                                paginatorPosition="bottom"
+                                currentPageReportTemplate="من {first} إلى {last} من أصل {totalRecords}"
+                                [showCurrentPageReport]="true"
+                                appendTo="body" 
+                                [autoLayout]="true"
+                                [responsive]="true"
+                                >
+
+                                <!-- HEADER -->
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th  pSortableColumn="number">رقم الإذن <p-sortIcon field="number"></p-sortIcon></th>
+                                        <th  pSortableColumn="date">التاريخ <p-sortIcon field="date"></p-sortIcon></th>
+                                        <th  pSortableColumn="seller_name">العميل <p-sortIcon field="seller_name"></p-sortIcon></th>
+                                        <th  pSortableColumn="delivery_car_name">السائق <p-sortIcon field="delivery_car_name"></p-sortIcon></th>
+                                        <th >تفاصيل</th>
+                                        <th  pSortableColumn="note">ملاحظات <p-sortIcon field="note"></p-sortIcon></th>
+                                        <!-- <th style="text-align:center">تأكيد</th> -->
+                                        <th style="text-align:center">تفاصيل الإذن</th>
+                                    </tr>
+                                </ng-template>
+
+                                <!-- BODY -->
+                                <ng-template pTemplate="body" let-row>
+                                    <tr [ngClass]="{'row-warning': row.is_active == '0', 'row-confirmed': row.is_approved == '1'}">
+
+                                        <td>{{ row.number }}</td>
+                                        <td>{{ _sharedComponentService.formatDate(row.date) }}</td>
+                                        <td>{{ row.seller_name }}</td>
+                                        <td>{{ row.delivery_car_name }}</td>
+
+                                        <!-- Details sub-table -->
+                                        <td class="details-td">
+                                            <table class="details-table" *ngIf="rowDetails(row).length > 0">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width:170px">الطلبية</th>
+                                                        <th style="width:160px">اسم القماش</th>
+                                                        <th style="width:120px">اللون</th>
+                                                        <th class="num-col" style="width:85px">الكمية</th>
+                                                        <th class="num-col" style="width:85px">عدد الأثواب</th>
+                                                        <th style="width:100px">أمر الشغل</th>
+                                                        <th style="width:100px">نوع الدرجة</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let d of rowDetails(row)">
+                                                        <td>{{ d.we_dyed_fabric_order_requisition_name }}</td>
+                                                        <td>{{ d.dyed_fabric_name }}</td>
+                                                        <td>{{ d.color_name }}</td>
+                                                        <td class="num-col">{{ numFmt(d.quantity) }}</td>
+                                                        <td class="num-col">{{ numFmt(d.fabric_piece) }}</td>
+                                                        <td>{{ d.work_order_number }}</td>
+                                                        <td>{{ d.grade_item_name }}</td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>الإجمالي</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th class="num-col">{{ numFmt(rowTotalQty(row)) }}</th>
+                                                        <th class="num-col">{{ numFmt(rowTotalPieces(row)) }}</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </td>
+
+                                        <td>{{ row.note }}</td>
+
+                                        <!-- Confirm / Cancel -->
+                                        <!-- <td class="action-cell">
+                                            <a *ngIf="rowCanApprove(row)" class="action-link"
+                                                (click)="confirmCancelReceived($event, row, row.is_approved)">
+                                                <i class="fa-solid fa-check update-symbol"></i>
+                                            </a>
+                                            <a *ngIf="rowCanCancel(row)" class="action-link"
+                                                (click)="confirmCancelReceived($event, row, row.is_approved)">
+                                                <i class="fa-solid fa-xmark delete-symbol"></i>
+                                            </a>
+                                        </td> -->
+
+                                        <!-- Details link -->
+                                        <td class="action-cell">
+                                            <a class="action-link" (click)="navigateToDetails($event, row)">
+                                                <span *ngIf="row.is_direct == '1'" class="direct-label">تسليم مباشر</span>
+                                                <i *ngIf="row.is_direct != '1'" class="fas fa-angle-double-right update-symbol"></i>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                </ng-template>
+
+                                <!-- FOOTER TOTALS -->
+                                <ng-template pTemplate="footer">
+                                    <tr class="totals-row">
+                                        <td class="totals-label">الإجمالي</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="totals-details-cell">
+                                            <span class="totals-item">إجمالي الكمية: <strong>{{ numFmt(grandTotalQty) }}</strong></span>
+                                            <span class="totals-sep">|</span>
+                                            <span class="totals-item">إجمالي الأثواب: <strong>{{ numFmt(grandTotalFabricPiece) }}</strong></span>
+                                        </td>
+                                        <td></td>
+                                        <!-- <td></td> -->
+                                        <td></td>
+                                    </tr>
+                                </ng-template>
+
+                                <!-- EMPTY -->
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="8" class="empty-msg">لا توجد بيانات</td>
+                                    </tr>
+                                </ng-template>
+
+                            </p-table>
 
                         </div>
-
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 </section>

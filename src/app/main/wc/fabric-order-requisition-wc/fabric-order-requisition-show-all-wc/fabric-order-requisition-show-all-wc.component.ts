@@ -273,6 +273,68 @@ getData(isClosed?: string) {
     });
   }
 
+  // تغيير الطلبية الأم — الطفل المختار يصبح الأم الجديدة
+  changeParentAction(event: Event, child: any): void {
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: `هل تريد جعل "${child.name}" هي الطلبية الأم بدلاً من "${this.currentParentOrder?.name}"؟`,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this._constantsService.spinner.show();
+        this._fabricOrderRequisitionWcService.changeParent(this.currentParentOrder.id, child.id).subscribe({
+          next: (response: any) => {
+            this._constantsService.spinner.hide();
+            if (response.status === 1) {
+              this._constantsService.successMessage(response.message || 'تم تغيير الطلبية الأم بنجاح');
+              this.closeMergedOrdersDialog();
+              this.getData(this.router.url.includes('closed') ? 'closed' : undefined);
+            } else {
+              this._constantsService.userErrorMessage();
+            }
+          },
+          error: () => {
+            this._constantsService.spinner.hide();
+            this._constantsService.userErrorMessage();
+          }
+        });
+      },
+      reject: () => {}
+    });
+  }
+
+  // فصل طلبية واحدة فقط من الدمج
+  detachSingleOrderAction(event: Event, child: any): void {
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: `هل تريد فصل الطلبية "${child.name}" فقط؟`,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this._constantsService.spinner.show();
+        this._fabricOrderRequisitionWcService.detachSingleOrder(child.id).subscribe({
+          next: (response: any) => {
+            this._constantsService.spinner.hide();
+            if (response.status === 1) {
+              this._constantsService.successMessage(response.message || 'تم فصل الطلبية بنجاح');
+              this.closeMergedOrdersDialog();
+              this.getData(this.router.url.includes('closed') ? 'closed' : undefined);
+            } else {
+              this._constantsService.userErrorMessage();
+            }
+          },
+          error: () => {
+            this._constantsService.spinner.hide();
+            this._constantsService.userErrorMessage();
+          }
+        });
+      },
+      reject: () => {}
+    });
+  }
+
   // عرض الطلبيات المدموجة
   showMergedOrders(order: any): void {
     if (!order.is_parent || order.merged_count <= 1) {

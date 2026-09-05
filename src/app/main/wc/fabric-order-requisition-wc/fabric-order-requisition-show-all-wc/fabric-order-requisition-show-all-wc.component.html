@@ -514,6 +514,8 @@
                             <!-- <th>الكمية المتبقية</th> -->
                             <th>تاريخ الإنشاء</th>
                             <th>التفاصيل</th>
+                            <th>فصل</th>
+                            <th>اجعلها أم</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -523,10 +525,30 @@
                             <!-- <td>{{ child.current_quantity | number }} متر</td> -->
                             <td>{{ child.date | date:'short' }}</td>
                             <td>
-                                <a 
+                                <a
                                             [routerLink]="['details']" [queryParams]="{ id: child.id}">
                                                 <i class="fas fa-angle-double-right update-symbol"></i>
                                             </a>
+                            </td>
+                            <td style="text-align:center;">
+                                <button pButton
+                                    type="button"
+                                    icon="pi pi-minus-circle"
+                                    class="p-button-rounded p-button-danger p-button-sm"
+                                    pTooltip="فصل هذه الطلبية فقط"
+                                    tooltipPosition="top"
+                                    (click)="detachSingleOrderAction($event, child)">
+                                </button>
+                            </td>
+                            <td style="text-align:center;">
+                                <button pButton
+                                    type="button"
+                                    icon="pi pi-arrow-up"
+                                    class="p-button-rounded p-button-warning p-button-sm"
+                                    pTooltip="جعلها الطلبية الأم"
+                                    tooltipPosition="top"
+                                    (click)="changeParentAction($event, child)">
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -547,7 +569,7 @@
             <div class="alert alert-info mt-3" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
                 هذه الطلبيات مدموجة معاً. جميع العمليات (البيع، التنفيذ، النقل) تُطبق عليها تلقائياً.<br>
-                <strong>ملاحظة:</strong> لفصل هذه الطلبيات، استخدم زر الفصل ⚠️ في الجدول الرئيسي.
+                <strong>ملاحظة:</strong> لفصل طلبية واحدة فقط، استخدم زر الفصل <i class="pi pi-minus-circle"></i> بجانبها. لفصل جميع الطلبيات دفعةً واحدة، استخدم زر الفصل ⚠️ في الجدول الرئيسي.
             </div>
         </div>
 

@@ -126,6 +126,16 @@ export class ReportWdService {
       });
   }
 
+  selectAllMovementsByConsigmentDyeing(consigmentDyeingId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-all-movements-by-consigment-dyeing/${consigmentDyeingId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   formReportByFabric(object: any): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}form-report-by-fabric`;
     return this._http.post(url, object,

@@ -35,6 +35,13 @@ export class ManufacturingRequisitionWbService {
       });
   }
 
+  selectAllLazy(body: any): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-lazy`;
+    return this._http.post(url, body, {
+      headers: new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` })
+    });
+  }
+
   // Select
   selectAll(): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}`;
@@ -66,6 +73,26 @@ export class ManufacturingRequisitionWbService {
           'authorization': `Bearer ${localStorage.getItem('token')}`
         })
       });
+  }
+
+  // سكان الإيصال بالذكاء الاصطناعي
+  scanReceipt(image: string, mimeType: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}scan-receipt/`;
+    return this._http.post(url, { image, mimeType }, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+
+  // إثراء البيانات من قاعدة البيانات
+  enrichScanReceipt(manufacturerName: string, fabricName: string, orderNumber?: number | null): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}scan-receipt/enrich`;
+    return this._http.post(url, { manufacturerName, fabricName, orderNumber }, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
   }
 
 }

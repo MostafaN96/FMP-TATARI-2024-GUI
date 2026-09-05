@@ -60,6 +60,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { AutoCompleteModule as PrimeAutoCompleteModule } from 'primeng/autocomplete';
 
 // AgGrid
 import { AgGridModule } from 'ag-grid-angular';
@@ -138,6 +139,7 @@ import 'ag-grid-enterprise';
     InputTextModule,
     CheckboxModule,
     ConfirmPopupModule,
+    PrimeAutoCompleteModule,
 
     // Ag Grid
     AgGridModule,

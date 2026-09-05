@@ -139,6 +139,26 @@ export class FabricOrderRequisitionWcService {
     });
   }
 
+  // تغيير الطلبية الأم
+  changeParent(currentParentId: string, newParentId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}change-parent`;
+    return this._http.put(url, { currentParentId, newParentId }, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+
+  // فصل طلبية واحدة فقط من الدمج
+  detachSingleOrder(orderId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}detach-single-order/${orderId}`;
+    return this._http.put(url, {}, {
+      headers: new HttpHeaders({
+        'authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+
   // جلب الطلبيات المدموجة تحت طلبية معينة
   getMergedOrders(parentId: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}merged-orders/${parentId}`;

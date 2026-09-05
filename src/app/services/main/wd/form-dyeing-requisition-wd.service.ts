@@ -56,4 +56,18 @@ export class FormDyeingRequisitionWdService {
       });
   }
 
+  scanReceipt(image: string, mimeType: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}scan-receipt/`;
+    return this._http.post(url, { image, mimeType }, {
+      headers: new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` })
+    });
+  }
+
+  enrichScanReceipt(manufacturerName: string, fabricName: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}scan-receipt/enrich`;
+    return this._http.post(url, { manufacturerName, fabricName }, {
+      headers: new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` })
+    });
+  }
+
 }

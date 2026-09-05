@@ -23,7 +23,7 @@ export class AddSupplierComponent implements OnInit {
 
  // Form Group
  supplierForm:FormGroup = new FormGroup({
-  name: new FormControl('',[Validators.required,Validators.maxLength(90), Validators.minLength(3) , Validators.pattern(this.patterns.validator_pattern.shortText)]),
+  name: new FormControl('',[Validators.required,Validators.maxLength(90), Validators.minLength(2) , Validators.pattern(this.patterns.validator_pattern.shortText)]),
   phone: new FormControl('',[Validators.pattern(this.patterns.validator_pattern.number)]),
   address: new FormControl('',[Validators.pattern(this.patterns.validator_pattern.longText)]),
   isSupplier: new FormControl(0,[Validators.pattern(this.patterns.validator_pattern.number)]),

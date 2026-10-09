@@ -1,0 +1,60 @@
+.report-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.date-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.date-filter label {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  margin: 0;
+}
+
+.date-filter input {
+  min-width: 150px;
+}
+
+.date-hint {
+  font-size: 12px;
+  color: #555;
+  margin: -12px 0 10px;
+}
+
+/* السطر المعلَّم بالضغط (صفوف ag-grid تُنشأ خارج قالب المكوّن، لذا ::ng-deep) */
+:host ::ng-deep .ag-row.row-marked .ag-cell {
+  background-color: #fff3b0 !important;
+}
+
+:host ::ng-deep .ag-row.row-marked {
+  box-shadow: inset -4px 0 0 #f0ad00;
+}
+
+/* يد الضغط فقط أثناء «وضع التعليم» */
+:host ::ng-deep .marking-mode .ag-row:not(.ag-row-pinned) {
+  cursor: pointer;
+}
+
+/* زر «تفاصيل الإدخال» داخل الجدول */
+:host ::ng-deep .input-details-btn {
+  border: 1px solid #b6d4fe;
+  background: #f0f6ff;
+  color: #0d6efd;
+  border-radius: 4px;
+  padding: 1px 10px;
+  line-height: 22px;
+  cursor: pointer;
+}
+
+:host ::ng-deep .input-details-btn:hover {
+  background: #0d6efd;
+  color: #fff;
+}

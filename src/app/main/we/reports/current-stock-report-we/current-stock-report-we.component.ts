@@ -13,27 +13,33 @@ import { SessionManagerService } from "src/app/services/main/session-manager.ser
 
 // Call Service
 import { SellRequisitionWeService } from "src/app/services/main/we/sell-requisition-we.service";
+import { WeService } from "src/app/services/main/we/we.service";
 import { HttpClient } from '@angular/common/http';
 
 // Import Child Components
 import { ImageFabricScannerDialogComponent } from "../../image-fabric-scanner-dialog/image-fabric-scanner-dialog.component";
 
 declare let scanner;
+declare let UIkit: any;
 
 import {
   CellClickedEvent,
   ColDef,
   GridApi,
   GridReadyEvent,
+  ICellRendererParams,
   RowSelectedEvent,
   ValueFormatterParams
 } from 'ag-grid-community';
 import { Router } from '@angular/router';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-current-stock-report-we',
   templateUrl: './current-stock-report-we.component.html',
-  styleUrls: ['./current-stock-report-we.component.css']
+  styleUrls: ['./current-stock-report-we.component.css'],
+  // خدمة تأكيد خاصة بهذا الجدول حتى لا تلتقط نافذة تأكيد في الشاشة الأم رسائله
+  providers: [ConfirmationService]
 })
 export class CurrentStockReportWeComponent implements OnInit {
 
@@ -55,6 +61,8 @@ export class CurrentStockReportWeComponent implements OnInit {
   isShowValue = true
   isShowStoragePlace = false
   isShowUpdateStoragePlace = false
+  // مطابقة كود اللون في الطلبية مع المعروض، بمعزل عن عمود «تعديل البيانات» الكامل
+  isShowColorCodeEdit = false
   selectedDataToUpdate: any
   showInputUpdate = false
   isShowDyeingServices = false
@@ -88,6 +96,8 @@ export class CurrentStockReportWeComponent implements OnInit {
     public _sharedComponentService: SharedComponentService,
     public _exportDataService: ExportDataService,
     private _sellRequisitionWeService: SellRequisitionWeService,
+    private _weService: WeService,
+    private confirmationService: ConfirmationService,
     public _constantsService: ConstantsService,
     public _sessionManagerService: SessionManagerService,
     private router: Router,
@@ -181,7 +191,134 @@ export class CurrentStockReportWeComponent implements OnInit {
       setTimeout(() => {
         document.getElementById('update-form')?.scrollIntoView();
       });
+      return;
     }
+
+    // أيقونة القلم داخل خانة كود اللون: تأكيد ثم تعديل الطلبية لتطابق المعروض
+    const target = event.event?.target as HTMLElement | undefined;
+    const pencil = target?.closest?.('.color-code-edit') as HTMLElement | null;
+    if (event.colDef.colId === 'color_code' && pencil) {
+      this.confirmSyncOrderColorCode(event.data, pencil);
+    }
+  }
+
+  ///////////////////// مطابقة كود اللون في الطلبية مع المعروض /////////////////////
+  // الجرد يعرض كود اللون من مصدر الصف، وتحته كود الطلبية للقراءة فقط.
+  // القلم لا يفتح كتابة: يطلب تأكيداً ثم يجعل كود الطلبية = الكود المعروض.
+
+  private displayedCode(data: any): string {
+    return String(data?.color_code ?? '').trim();
+  }
+
+  // كود الطلبية مطابق للمعروض (فلا حاجة للتعديل)
+  private orderCodeMatches(data: any): boolean {
+    const codes: string[] = data?.order_color_codes || [];
+    return codes.length === 1 && codes[0] === this.displayedCode(data);
+  }
+
+  private canEditColorCode(data: any, rowPinned?: string | null): boolean {
+    return (this.isShowColorCodeEdit || this.isShowUpdateStoragePlace)
+      && !rowPinned
+      && !!data?.has_order_line
+      && !!this.displayedCode(data)
+      && !this.orderCodeMatches(data);
+  }
+
+  private orderCodeLabel(data: any): string {
+    const codes: string[] = data?.order_color_codes || [];
+    if (codes.length === 0) return 'بلا كود';
+    if (codes.length === 1) return codes[0];
+    return `عدة أكواد (${codes.join('، ')})`;
+  }
+
+  private confirmSyncOrderColorCode(row: any, target: HTMLElement) {
+    if (!this.canEditColorCode(row)) return;
+
+    const displayed = this.displayedCode(row);
+    this.confirmationService.confirm({
+      target,
+      message: `تعديل كود اللون في الطلبية من «${this.orderCodeLabel(row)}» إلى الكود المعروض «${displayed}»؟`,
+      acceptLabel: 'نعم، عدّل الطلبية',
+      rejectLabel: 'لا',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => this.syncOrderColorCode(row, displayed),
+    });
+  }
+
+  private syncOrderColorCode(row: any, displayed: string) {
+    this._weService.updateOrderColorCode({
+      ordersRequisitionsId: row.orders_requisitions_id,
+      dyedFabricId: row.dyed_fabric_id,
+      colorId: row.color_id,
+      colorCode: displayed,
+      // الكود المعروض هو كود مصدر الصف أصلاً، فلا نكتب على المصدر
+      requisitionDetailsId: null,
+    }).subscribe({
+      next: (response: any) => {
+        if (response?.msg !== 'data updated') {
+          if (response?.reason === 'no_order_line') {
+            UIkit.notification({
+              message: 'لا يوجد سطر طلبية لهذا القماش واللون',
+              timeout: 5000, status: 'warning'
+            });
+          } else {
+            this._constantsService.userErrorMessage();
+          }
+          return;
+        }
+
+        // كل صفوف الجرد بنفس الطلبية والقماش واللون صار كود طلبيتها هو الجديد
+        const changedNodes: any[] = [];
+        this.gridApi?.forEachNode((node) => {
+          if (node.data && this.sameColorKey(node.data, row)) {
+            node.data.order_color_codes = [displayed];
+            node.data.order_color_code = displayed;
+            changedNodes.push(node);
+          }
+        });
+        this.gridApi?.refreshCells({ rowNodes: changedNodes, columns: ['color_code'], force: true });
+
+        UIkit.notification({
+          message: `تم تعديل كود اللون في الطلبية إلى «${displayed}»`,
+          timeout: 4000, status: 'success'
+        });
+      },
+      error: () => this._constantsService.userErrorMessage()
+    });
+  }
+
+  private sameColorKey(a: any, b: any): boolean {
+    return String(a?.orders_requisitions_id) === String(b?.orders_requisitions_id)
+      && String(a?.dyed_fabric_id) === String(b?.dyed_fabric_id)
+      && String(a?.color_id) === String(b?.color_id);
+  }
+
+  private escapeHtml(value: any): string {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  private renderColorCodeCell(params: ICellRendererParams): string {
+    const value = this.escapeHtml(params.value);
+    const data = params.data;
+    if (params.node?.rowPinned || !data?.has_order_line) {
+      return value;
+    }
+
+    // سطر ثانٍ للقراءة فقط: كود الطلبية، مميّزاً إن اختلف عن المعروض
+    const matches = this.orderCodeMatches(data);
+    const orderLine = matches
+      ? `<span class="order-code order-code-match">الطلبية: مطابق</span>`
+      : `<span class="order-code order-code-diff">الطلبية: ${this.escapeHtml(this.orderCodeLabel(data))}</span>`;
+
+    const pencil = this.canEditColorCode(data)
+      ? `<i class="fas fa-pen color-code-edit" title="تعديل كود اللون في الطلبية ليطابق المعروض"></i>`
+      : '';
+
+    return `<div class="color-code-cell">`
+      + `<div class="color-code-main"><span class="color-code-value">${value}</span>${pencil}</div>`
+      + orderLine
+      + `</div>`;
   }
 
   private getRequisitionLink(data: any): string | null {
@@ -326,7 +463,18 @@ export class CurrentStockReportWeComponent implements OnInit {
       },
       { field: 'color_category_name', headerName: 'فئة اللون' },
       { field: 'color_name', headerName: 'اللون' },
-      { field: 'color_code', headerName: 'كود اللون' },
+      {
+        // الكود المعروض من مصدر الصف، وتحته كود الطلبية للقراءة فقط.
+        // القلم يطلب تأكيداً ثم يجعل كود الطلبية مطابقاً للمعروض.
+        colId: 'color_code',
+        field: 'color_code',
+        headerName: 'كود اللون',
+        minWidth: 150,
+        cellRenderer: (params: ICellRendererParams) => this.renderColorCodeCell(params),
+        tooltipValueGetter: (params) => params.data?.has_order_line
+          ? `المعروض: ${params.value ?? ''} — الطلبية: ${this.orderCodeLabel(params.data)}`
+          : ''
+      },
       { field: 'work_order_number', width: 110, minWidth: 110, maxWidth: 110, headerName: 'امر الشغل' },
       { field: 'grade_item_name', width: 110, minWidth: 110, maxWidth: 110, headerName: 'نوع الدرجة' },
       // { field: 'dyeing_code', headerName: 'كود الصبغة' },

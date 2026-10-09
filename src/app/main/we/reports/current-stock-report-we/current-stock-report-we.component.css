@@ -32,3 +32,43 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+/* كود اللون: القيمة المعروضة + القلم، وتحتها كود الطلبية للقراءة فقط */
+:host ::ng-deep .current-stock-grid .color-code-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    line-height: 1.3;
+}
+
+:host ::ng-deep .current-stock-grid .color-code-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+:host ::ng-deep .current-stock-grid .order-code {
+    font-size: 0.72rem;
+}
+
+:host ::ng-deep .current-stock-grid .order-code-match {
+    color: #6c757d;
+}
+
+:host ::ng-deep .current-stock-grid .order-code-diff {
+    color: #b54708;
+}
+
+:host ::ng-deep .current-stock-grid .color-code-edit {
+    color: #6c757d;
+    font-size: 0.75rem;
+    cursor: pointer;
+    opacity: 0.55;
+}
+
+:host ::ng-deep .current-stock-grid .ag-row-hover .color-code-edit,
+:host ::ng-deep .current-stock-grid .color-code-edit:hover {
+    opacity: 1;
+    color: #0d6efd;
+}

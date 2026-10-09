@@ -86,9 +86,9 @@ export class ManufacturingRequisitionWbService {
   }
 
   // إثراء البيانات من قاعدة البيانات
-  enrichScanReceipt(manufacturerName: string, fabricName: string, orderNumber?: number | null): Observable<any> {
+  enrichScanReceipt(manufacturerName: string, fabricName: string, orderNumber?: number | null, scannedYarns?: any[]): Observable<any> {
     const url = `${this._constantsService.BASE_URL}scan-receipt/enrich`;
-    return this._http.post(url, { manufacturerName, fabricName, orderNumber }, {
+    return this._http.post(url, { manufacturerName, fabricName, orderNumber, scannedYarns }, {
       headers: new HttpHeaders({
         'authorization': `Bearer ${localStorage.getItem('token')}`
       })

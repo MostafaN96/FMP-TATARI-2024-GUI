@@ -274,6 +274,27 @@ export class ItemHistoryReportWdComponent implements OnInit {
     { headerName: 'آخر سعر', field: 'latest_price', valueFormatter: this.num2, hide: !this.isShowLatestPrice, excludeFromFooter: true, type: 'numericColumn' },
     { headerName: 'آخر سعر دولار', field: 'latest_price_dollar', valueFormatter: this.num2, hide: !this.isShowLatestPriceDollar, excludeFromFooter: true, type: 'numericColumn' },
 
+    // ✅ تفاصيل حركات الإدخال في نافذة منبثقة
+    {
+      headerName: 'تفاصيل الإدخال',
+      colId: 'input_details',
+      excludeFromFooter: true,
+      filter: false,
+      sortable: false,
+      minWidth: 120,
+      cellRenderer: (p: any) => {
+        if (!p.data || p.node?.rowPinned) return '';
+        const count = (p.data.details || []).filter((d: any) => d?.input_output == 1).length;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'input-details-btn';
+        button.title = 'عرض حركات الإدخال';
+        button.innerHTML = `<i class="fas fa-sign-in-alt"></i> ${count}`;
+        button.addEventListener('click', () => this.openInputDetails(p.data));
+        return button;
+      }
+    },
+
     // ✅ رابط التفاصيل
     {
       headerName: 'حركة المادة',
@@ -359,8 +380,16 @@ export class ItemHistoryReportWdComponent implements OnInit {
     this._sharedComponentService.angularMaterialTableConfig();
   }
 
-  ngOnInit(): void {
-    this.getData();
+  // التفصيلي ثقيل، فلا يُحمَّل إلا عند فتح تبويبه أول مرة
+  private detailsLoaded = false;
+
+  ngOnInit(): void { }
+
+  onTabChange(index: number) {
+    if (index === 1 && !this.detailsLoaded) {
+      this.detailsLoaded = true;
+      this.getData();
+    }
   }
 
   onGridReady(params: GridReadyEvent) {
@@ -489,13 +518,21 @@ clearAll() {
   }
 
   onModelUpdated() {
+        if (this.isUpdatingFooter) return;
     this.updateFooter();
   }
 
   // ✅ pinned footer مثل اللي بعتته إنت
 
+  // setPinnedBottomRowData يُطلق modelUpdated من جديد؛ بدون هذا الحارس تدخل الشاشة
+  // حلقة تغذية راجعة تمنع اكتمال العرض بعد الفلترة
+  private isUpdatingFooter = false;
+
+
+
   updateFooter() {
-    if (!this.gridApi) return;
+    if (!this.gridApi || this.isUpdatingFooter) return;
+        this.isUpdatingFooter = true;
 
     requestAnimationFrame(() => {
           const summary: any = {};
@@ -575,6 +612,7 @@ clearAll() {
           //     console.log('📊 Final footer summary:', summary);
           this.pinnedBottomRowData = [summary];
           this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
+          this.isUpdatingFooter = false;
           console.log('✅ pinned row set in grid:', this.gridApi.getPinnedBottomRowCount());
           this.gridApi.refreshCells({ force: true });
     
@@ -582,6 +620,49 @@ clearAll() {
         });
   }
 
+
+  ///////////////////// نافذة تفاصيل الإدخال /////////////////////
+  // حركات السطر في التقرير لا تحمل رقم الإذن ولا معرّفه، فنجلبها من نفس مصدر صفحة «حركة المادة»
+  showInputDetails = false;
+  inputDetailsLoading = false;
+  inputDetailsRow: any = null;
+  inputDetails: any[] = [];
+
+  openInputDetails(row: any) {
+    this.inputDetailsRow = row;
+    this.inputDetails = [];
+    this.showInputDetails = true;
+    this.inputDetailsLoading = true;
+
+    this._reportWdService.selectInventoryDetailsByDyeingByFabricByConsigmentDyeing({
+      fabricId: row.fabric_id,
+      dyeingId: row.dyeing_id,
+      consigmentDyeingId: row.consigment_dyeing_id,
+      fabricOrderId: row.wc_fabric_order_requisition_id,
+    })
+      .pipe(finalize(() => this.inputDetailsLoading = false))
+      .subscribe({
+        next: (response: any) => {
+          // يطابق ما يحسبه التقرير في «إجمالي الإدخال»: نقل من C، تسوية إدخال، نقل من مصبغة أخرى
+          this.inputDetails = (Array.isArray(response) ? response : [])
+            .filter((d: any) => d?.input_output == 1);
+        },
+        error: () => this.inputDetails = [],
+      });
+  }
+
+  get inputDetailsTotal(): number {
+    return this.inputDetails.reduce((sum, d) => sum + (Number(d.quantity) || 0), 0);
+  }
+
+  inputRequisitionRoute(type: string): string {
+    switch (type) {
+      case 'اذن نقل من (C) الى (D)': return '/dashboard/show-all-transport-wc-wd-requisition/details';
+      case 'اذن تسوية': return '/dashboard/show-all-reconciliation-requisition-wd/details';
+      case 'اذن نقل بين المصابغ': return '/dashboard/show-all-transport-between-dyers-requisition/details';
+      default: return '';
+    }
+  }
 
 private uniq(arr: any[]) {
   return Array.from(new Set(arr.filter(x => x != null && String(x).trim() !== '')));

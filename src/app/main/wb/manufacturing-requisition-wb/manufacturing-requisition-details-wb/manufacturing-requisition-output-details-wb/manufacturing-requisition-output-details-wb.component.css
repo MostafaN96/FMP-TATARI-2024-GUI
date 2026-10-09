@@ -1,0 +1,47 @@
+/* خلايا القوائم (أذون التشكيل، حركة الرسالة): قائمة مضغوطة مطويّة على أول العناصر */
+.list-cell {
+    min-width: 170px;
+    font-size: 0.8rem;
+    vertical-align: top;
+}
+
+.lot-movements-cell {
+    min-width: 230px;
+}
+
+.list-cell td {
+    padding: 1px 4px;
+    white-space: nowrap;
+    border: none;
+}
+
+.list-cell .lm-qty {
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+}
+
+.list-cell .lm-work-order {
+    color: #6c757d;
+}
+
+.list-cell .lm-in {
+    color: #198754;
+}
+
+.list-cell .lm-total td {
+    border-top: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+.list-cell .list-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #0d6efd;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.list-cell .list-toggle:hover {
+    text-decoration: underline;
+}

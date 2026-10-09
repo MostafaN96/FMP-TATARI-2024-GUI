@@ -17,7 +17,9 @@
                         <div id="table-header-data-report">
                             <p-table #dt1 [value]="fabrics" dataKey="id" columnResizeMode="expand"
                                 styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" [rowHover]="true"
-                                [rows]="10" [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
+                                [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100, 500]"
+                                currentPageReportTemplate="{first} - {last} من {totalRecords}"
+                                [showCurrentPageReport]="true" [loading]="loading" responsiveLayout="scroll"
                                 scrollHeight="600px" [filterDelay]="0" sortField="number" [responsive]="true"
                                 [sortOrder]="0" appendTo="body" [autoLayout]="true">
                                 <ng-template data-html2canvas-ignore="true" pTemplate="caption">
@@ -110,6 +112,7 @@
                                                         <col class="col-fabric" />
                                                         <col class="col-from-msg" />
                                                         <col class="col-to-msg" />
+                                                        <col class="col-machine" />
                                                         <col class="col-qty" />
                                                         <col class="col-pieces" />
                                                         <col class="col-document" />
@@ -140,7 +143,11 @@
                                                             <th style="max-width: 60px;">
                                                                 الى رقم الرسالة
                                                             </th>
-                                                            
+
+                                                            <th style="max-width: 60px;">
+                                                                ماكينة الحياكة
+                                                            </th>
+
                                                             <th style="max-width: 60px;">
                                                                 الكمية
                                                             </th>
@@ -200,6 +207,7 @@
                                                     <col class="col-fabric" />
                                                     <col class="col-from-msg" />
                                                     <col class="col-to-msg" />
+                                                    <col class="col-machine" />
                                                     <col class="col-qty" />
                                                     <col class="col-pieces" />
                                                     <col class="col-document" />
@@ -231,6 +239,10 @@
                                                             {{item.consigment_manufacturing_number}}
                                                         </td>
 
+                                                        <td style="max-width: 60px;" [title]="item.machines_label || ''">
+                                                            {{item.machines_label || '—'}}
+                                                        </td>
+
                                                         <td style="max-width: 60px;">
                                                             {{item.quantity}}
                                                         </td>
@@ -249,6 +261,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td style="max-width: 60px;">الإجمالي</td>
+                                                        <td style="max-width: 60px;"></td>
                                                         <td style="max-width: 60px;"></td>
                                                         <td style="max-width: 60px;"></td>
                                                         <td style="max-width: 60px;"></td>

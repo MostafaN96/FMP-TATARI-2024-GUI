@@ -70,4 +70,20 @@ export class FormDyeingRequisitionWdService {
     });
   }
 
+  // سكان ورقة تشكيل الصباغة (prompt مخصص لتخطيط الورقة)
+  scanDyeingForm(image: string, mimeType: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}scan-receipt/dyeing`;
+    return this._http.post(url, { image, mimeType }, {
+      headers: new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` })
+    });
+  }
+
+  // مطابقة القراءة مع مخزون المصبغة والألوان والمعالجات والتاريخ
+  enrichDyeingScan(payload: { dyerName: string; color: string; treatments: string[]; items: any[]; orderName?: string }): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}scan-receipt/dyeing/enrich`;
+    return this._http.post(url, payload, {
+      headers: new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` })
+    });
+  }
+
 }

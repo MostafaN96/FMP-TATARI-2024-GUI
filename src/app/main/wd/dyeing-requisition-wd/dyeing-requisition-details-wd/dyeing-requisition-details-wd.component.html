@@ -146,6 +146,17 @@
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
 
+                                <!-- ماكينة الحياكة: قد تكون أكثر من ماكينة للسطر الواحد -->
+                                <ng-container matColumnDef="machines_label">
+                                    <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                        <b>ماكينة الحياكة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element" [title]="element.machines_label || ''">
+                                        {{ element.machines_label || '—' }}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
                                 <!-- quantity Column -->
                                 <ng-container matColumnDef="quantity">
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>

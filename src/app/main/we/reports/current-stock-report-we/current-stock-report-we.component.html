@@ -22,7 +22,7 @@
     <div class="col pb-4">
         <div [class]="_sharedComponentService.tableSectionClass">
 
-            <div id="table-header-data-report">
+            <div dir="rtl">
                 <!-- <div class="example-table-container"> -->
 
                 <div data-html2canvas-ignore="true" class="flex mt-1 mb-2">
@@ -30,12 +30,12 @@
                         icon="pi pi-filter-slash" (click)="clear()"></button>
                 </div>
 
-                <div 
-                id="table-header-data-report" 
+                <div
+                id="table-header-data-report"
                 dir="rtl"
                 class="ag-theme-alpine ag-rtl current-stock-grid">
                     <ag-grid-angular
-                    class="ag-theme-alpine ag-rtl" 
+                    class="ag-theme-alpine ag-rtl"
                         style="width: 100%; height: 600px;"
                         [enableRtl]="true"
                         [rowData]="dyersAndRequisitionsFabrics"
@@ -58,6 +58,9 @@
                         (cellClicked)="onCellClicked($event)">
                     </ag-grid-angular>
                 </div>
+
+                <!-- تأكيد تعديل كود اللون في الطلبية ليطابق المعروض -->
+                <p-confirmPopup></p-confirmPopup>
 
                 <!-- </div> -->
 

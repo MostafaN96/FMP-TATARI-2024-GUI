@@ -1,0 +1,113 @@
+.report-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.date-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.date-filter label {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  margin: 0;
+}
+
+.date-filter input {
+  min-width: 150px;
+}
+
+.date-hint {
+  font-size: 12px;
+  color: #555;
+  margin: -12px 0 10px;
+}
+
+/* السطر المعلَّم بالضغط (صفوف ag-grid تُنشأ خارج قالب المكوّن، لذا ::ng-deep) */
+:host ::ng-deep .ag-row.row-marked .ag-cell {
+  background-color: #fff3b0 !important;
+}
+
+:host ::ng-deep .ag-row.row-marked {
+  box-shadow: inset -4px 0 0 #f0ad00;
+}
+
+/* يد الضغط فقط أثناء «وضع التعليم» */
+:host ::ng-deep .marking-mode .ag-row:not(.ag-row-pinned) {
+  cursor: pointer;
+}
+
+/* سطر لكل ماكينة: ارتفاع ثابت وبلا التفاف، حتى يتقابل السطر نفسه في أعمدة الماكينة والايصال والكميات */
+:host ::ng-deep .machine-lines {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+:host ::ng-deep .machine-line {
+  height: 24px;
+  line-height: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px dashed #e2e2e2;
+}
+
+:host ::ng-deep .machine-line:last-child {
+  border-bottom: none;
+}
+
+/* عمود «حركات الإدخال»: ارتفاع محدود (~8 حركات) مع تمرير عمودي داخلي فقط.
+   overflow-x: hidden ضروري: تمرير عمودي وحده يجعل المتصفح يضيف تمريراً أفقياً للخلية،
+   فيلتقط التمرير الأفقي بدل الجدول. والجدول الداخلي يلتف ضمن عرض الخلية. */
+:host ::ng-deep .ag-cell.input-movements-cell {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  line-height: normal;
+}
+
+:host ::ng-deep .input-movements-box {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+:host ::ng-deep .input-movements-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+:host ::ng-deep .input-movements-table td {
+  border-bottom: 1px dashed #e2e2e2;
+  padding: 2px 4px;
+  text-align: right;
+  line-height: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* نوع الإذن يلتف، والرقم والتاريخ والكمية سطر واحد */
+:host ::ng-deep .input-movements-table td:nth-child(1) { width: 40%; white-space: normal; }
+:host ::ng-deep .input-movements-table td:nth-child(2) { width: 16%; }
+:host ::ng-deep .input-movements-table td:nth-child(3) { width: 22%; }
+:host ::ng-deep .input-movements-table td:nth-child(4) { width: 22%; }
+
+:host ::ng-deep .input-movements-table tr:last-child td {
+  border-bottom: none;
+}
+
+:host ::ng-deep .input-movements-table td.num {
+  text-align: left;
+  direction: ltr;
+  font-weight: 600;
+}

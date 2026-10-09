@@ -60,6 +60,7 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
   availableFilters: any = {
     warehouse_name: [],
     document: [],
+    consigment_manufacturing_number: [],
   };
 
   columnDefs: MyColDef[] = [
@@ -91,6 +92,21 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
         values: (params: any) =>
           params.success(this.availableFilters?.warehouse_name || []),
       },
+    },
+    {
+      // ملخّص ماكينات سطور الإذن؛ الإذن الواحد قد يضم أكثر من ماكينة.
+      // بلا فلترة خادمية لأنه حقل محسوب بعد الاستعلام لا عمود في الجدول.
+      headerName: 'ماكينة الحياكة',
+      field: 'machines_label',
+      colId: 'machines_label',
+      width: 170,
+      minWidth: 140,
+      excludeFromFooter: true,
+      filter: false,
+      sortable: false,
+      cellClass: 'ag-cell-wrap',
+      tooltipValueGetter: (params: any) => params.value || '',
+      valueFormatter: (params: any) => params.node?.rowPinned ? '' : (params.value || '—'),
     },
     {
       headerName: 'التفاصيل',
@@ -169,6 +185,19 @@ export class ShowAllTransportWcWdRequisitionWcComponent implements OnInit {
       },
       filterValueGetter: (p: any) =>
         (p.data?.details || []).map((d: any) => d.document).filter(Boolean).join(' | '),
+    },
+    // فلتر مخفي برقم الرسالة (من التفاصيل)
+    {
+      headerName: 'رقم الرسالة (تفاصيل)',
+      colId: 'consigment_manufacturing_number',
+      hide: true,
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        excelMode: 'windows',
+        values: (params: any) => params.success(this.availableFilters?.consigment_manufacturing_number || []),
+      },
+      filterValueGetter: (p: any) =>
+        (p.data?.details || []).map((d: any) => d.consigment_manufacturing_number).filter(Boolean).join(' | '),
     },
   ];
 

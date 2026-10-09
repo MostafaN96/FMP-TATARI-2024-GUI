@@ -14,6 +14,7 @@ import { InventoryReportService } from 'src/app/services/inventory-report.servic
 
 // Call Service
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
+import { wcInputRequisitionRoute } from '../wc-input-details-dialog/wc-input-details-dialog.component';
 
 @Component({
   selector: 'app-item-history-by-fabric',
@@ -136,6 +137,21 @@ export class ItemHistoryByFabricComponent implements OnInit {
         hide: !this.iShowTotalBalance,
         type: 'numericColumn',
       },
+      // يظهران فقط مع فلتر التاريخ (الإدخال والإخراج عندها حركات الفترة)
+      {
+        headerName: 'رصيد أول المدة',
+        field: 'opening_balance',
+        valueFormatter: (params: any) => this.formatNumber(params.value),
+        hide: true,
+        type: 'numericColumn',
+      },
+      {
+        headerName: 'رصيد آخر المدة',
+        field: 'closing_balance',
+        valueFormatter: (params: any) => this.formatNumber(params.value),
+        hide: true,
+        type: 'numericColumn',
+      },
       {
         headerName: 'قيمة المدخلات',
         field: 'total_amount_input',
@@ -230,6 +246,21 @@ export class ItemHistoryByFabricComponent implements OnInit {
           excludeFromFooter: true,
         },
 
+    // الأعمدة الخمسة التالية سطرٌ لكل ماكينة (السطر i في كل منها لنفس الماكينة)
+    {
+      headerName: 'الماكينة',
+      field: 'receipt_machine_names',
+      filter: false,
+      minWidth: 220,
+      flex: 5,
+      sortable: false,
+      cellClass: 'details-cell',
+      wrapText: true,
+      autoHeight: true,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => this.machineLinesRenderer(p.value),
+    },
+
         {
       headerName: 'ايصال التصنيع',
       field: 'documents',
@@ -241,14 +272,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
       wrapText: true,
       autoHeight: true,
       excludeFromFooter: true,
-      cellRenderer: (p: any) => {
-        const host = document.createElement('div');
-        host.className = 'document-host';
-
-        const arr = Array.isArray(p.value) ? p.value : [];
-        host.innerHTML = arr.map((v: string) => `<div class="document-line">${v}</div>`).join('');
-        return host;
-      },
+      cellRenderer: (p: any) => this.machineLinesRenderer(p.value),
     },
 
         {
@@ -283,14 +307,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
       wrapText: true,
       autoHeight: true,
       excludeFromFooter: true,
-      cellRenderer: (p: any) => {
-        const host = document.createElement('div');
-        host.className = 'manufacturing-quantity-host';
-
-        const arr = Array.isArray(p.value) ? p.value : [];
-        host.innerHTML = arr.map((v: string) => `<div class="manufacturing-quantity-line">${v}</div>`).join('');
-        return host;
-      },
+      cellRenderer: (p: any) => this.machineLinesRenderer(p.value, true),
     },
 
         {
@@ -304,14 +321,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
       wrapText: true,
       autoHeight: true,
       excludeFromFooter: true,
-      cellRenderer: (p: any) => {
-        const host = document.createElement('div');
-        host.className = 'manufacturing-current-quantity-host';
-
-        const arr = Array.isArray(p.value) ? p.value : [];
-        host.innerHTML = arr.map((v: string) => `<div class="manufacturing-current-quantity-line">${v}</div>`).join('');
-        return host;
-      },
+      cellRenderer: (p: any) => this.machineLinesRenderer(p.value, true),
     },
 
         {
@@ -325,14 +335,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
       wrapText: true,
       autoHeight: true,
       excludeFromFooter: true,
-      cellRenderer: (p: any) => {
-        const host = document.createElement('div');
-        host.className = 'current-quantity-host';
-
-        const arr = Array.isArray(p.value) ? p.value : [];
-        host.innerHTML = arr.map((v: string) => `<div class="current-quantity-line">${v}</div>`).join('');
-        return host;
-      },
+      cellRenderer: (p: any) => this.machineLinesRenderer(p.value, true),
     },
 
         {
@@ -376,6 +379,31 @@ export class ItemHistoryByFabricComponent implements OnInit {
       },
     },
 
+      // حركات الإدخال التي حسب منها السطر «إجمالي الإدخال» (حركات الفترة إن طُبّق التاريخ).
+      // مخفي افتراضياً ويُظهَر بزر «إظهار حركات الإدخال»
+      {
+        headerName: 'حركات الإدخال',
+        colId: 'input_movements',
+        field: 'input_movements',
+        hide: true,
+        filter: false,
+        sortable: false,
+        // عرض ثابت لا flex: يضاف لعرض الجدول فيظهر التمرير الأفقي بدل أن يُضغط العمود
+        width: 460,
+        minWidth: 380,
+        flex: 0,
+        wrapText: true,
+        autoHeight: true,
+        // لا details-cell: ارتفاع الخلية محدود وتمرير داخلي (انظر .input-movements-box).
+        // سطر بمئات الحركات كان يصير بآلاف البكسلات فيتعطّل تمرير الجدول
+        cellClass: 'input-movements-cell',
+        excludeFromFooter: true,
+        // نص للتصدير إلى إكسل/PDF، والعرض من cellRenderer
+        valueGetter: (p: any) => this.inputMovements(p.data)
+          .map((d: any) => `${d.type_of_requisition} ${d.number ?? ''} (${this._sharedComponentService.formatDate(d.date)}): ${this.formatNumber(d.quantity)}`)
+          .join(' | '),
+        cellRenderer: (p: any) => this.inputMovementsRenderer(p),
+      },
       {
         headerName: 'حركة الصنف',
         field: 'details',
@@ -421,22 +449,42 @@ export class ItemHistoryByFabricComponent implements OnInit {
       filter: 'agSetColumnFilter',
 
       // ✅ هاي أهم سطر: هي اللي بتخلي الفلتر "يشوف" كل عناصر المصفوفة
-      filterValueGetter: (p: any) => (p.data?.documents || []),
+      // كل ايصال على حدة (documents نصٌّ واحد لكل ماكينة قد يجمع عدة ايصالات)
+      filterValueGetter: (p: any) => (p.data?.documents_flat || []),
 
       filterParams: {
-        
+
       refreshValuesOnOpen: true,
 
       // ✅ هون السحر
       buttons: ['apply', 'reset'],   // أو ['apply'] فقط
-      
+
         values: (params: any) => {
           const set = new Set<string>();
 
           params.api.forEachNodeAfterFilterAndSort((node: any) => {
-            (node.data?.documents || []).forEach((v: string) => v && set.add(v));
+            (node.data?.documents_flat || []).forEach((v: string) => v && set.add(v));
           });
 
+          params.success([...set].sort());
+        },
+      },
+    },
+
+    {
+      headerName: 'الماكينة',
+      colId: 'receipt_machine_filter',
+      hide: true,
+      filter: 'agSetColumnFilter',
+      filterValueGetter: (p: any) => (p.data?.receipt_machine_names || []),
+      filterParams: {
+        refreshValuesOnOpen: true,
+        buttons: ['apply', 'reset'],
+        values: (params: any) => {
+          const set = new Set<string>();
+          params.api.forEachNodeAfterFilterAndSort((node: any) => {
+            (node.data?.receipt_machine_names || []).forEach((v: string) => v && set.add(v));
+          });
           params.success([...set].sort());
         },
       },
@@ -652,7 +700,7 @@ export class ItemHistoryByFabricComponent implements OnInit {
       this.gridParams = params;
       this.loadData(params, false);
     }
-    
+
     onToggleBalanceType(event: MatCheckboxChange) {
       this.loadData(this.gridParams, event.checked);
     }
@@ -662,41 +710,166 @@ export class ItemHistoryByFabricComponent implements OnInit {
         this.gridApi.setFilterModel(null);
       }
     }
-    
-    private loadData(params: GridReadyEvent, isShowClosedBalances: boolean) {
-      if (isShowClosedBalances) {
-        this.getClosedBalances(params);
-      } else {
-        this.getRegularBalances(params);
+
+    ///////////////////// فلتر التاريخ /////////////////////
+    // YYYY-MM-DD من <input type="date">؛ الفارغ يعني بلا حد
+    fromDate = ''
+    toDate = ''
+    // التاريخ المطبّق فعلاً على البيانات المعروضة (لا ما كُتب في الحقل ولم يُطبَّق)
+    appliedDateRange: { fromDate: string, toDate: string } | null = null
+
+    applyDateFilter() {
+      if (this.fromDate && this.toDate && this.fromDate > this.toDate) {
+        [this.fromDate, this.toDate] = [this.toDate, this.fromDate];
       }
+      this.loadData(this.gridParams, this.isShowClosedBalances);
     }
-    
-    getRegularBalances(params: GridReadyEvent) {
+
+    clearDateFilter() {
+      this.fromDate = '';
+      this.toDate = '';
+      this.loadData(this.gridParams, this.isShowClosedBalances);
+    }
+
+    ///////////////////// تعليم الأسطر /////////////////////
+    // بعد تفعيل «وضع التعليم»، الضغط على سطر يعلّمه أو يلغي تعليمه ليسهل تتبّعه أثناء المراجعة
+    isMarkingMode = false
+    markedRows = new Set<any>()
+    rowClassRules = {
+      'row-marked': (params: any) => !!params.data && this.markedRows.has(params.data),
+    }
+
+    toggleMarkingMode() {
+      this.isMarkingMode = !this.isMarkingMode;
+    }
+
+    onRowClicked(event: any) {
+      if (!this.isMarkingMode || !event.data || event.node?.rowPinned) return;
+      // الضغط على رابط (حركة الصنف، رقم إذن) لا يعلّم السطر
+      if ((event.event?.target as HTMLElement)?.closest?.('a, button')) return;
+      if (this.markedRows.has(event.data)) {
+        this.markedRows.delete(event.data);
+      } else {
+        this.markedRows.add(event.data);
+      }
+      this.gridApi.redrawRows({ rowNodes: [event.node] });
+    }
+
+    clearMarkedRows() {
+      this.markedRows.clear();
+      this.gridApi?.redrawRows();
+    }
+
+    ///////////////////// عمود حركات الإدخال /////////////////////
+    isShowInputMovements = false
+
+    toggleInputMovements() {
+      this.isShowInputMovements = !this.isShowInputMovements;
+      this.gridColumnApi?.setColumnsVisible(['input_movements'], this.isShowInputMovements);
+      this.gridApi?.resetRowHeights();
+    }
+
+    private inputMovements(row: any): any[] {
+      return (row?.details || []).filter((d: any) => d?.input_output == 1);
+    }
+
+    // جدول صغير داخل الخلية: النوع | رقم الإذن (رابط) | التاريخ | الكمية
+    private inputMovementsRenderer(p: any): HTMLElement | string {
+      if (!p.data) return '';
+      // سطر الإجمالي: مجموع حركات الإدخال لكل الأسطر الظاهرة (بعد الفلاتر)
+      if (p.node?.rowPinned) {
+        const totals = p.data.__inputMovementsTotals;
+        if (!totals) return '';
+        return `${this.formatNumber(totals.quantity)} (${totals.count} حركة)`;
+      }
+      const movements = this.inputMovements(p.data);
+      if (!movements.length) return '—';
+
+      const table = document.createElement('table');
+      table.className = 'input-movements-table';
+      const body = document.createElement('tbody');
+      for (const d of movements) {
+        const tr = document.createElement('tr');
+
+        const type = document.createElement('td');
+        type.textContent = d.type_of_requisition || '';
+
+        const number = document.createElement('td');
+        const route = wcInputRequisitionRoute(d.type_of_requisition);
+        if (route && d.requisition_id) {
+          const link = document.createElement('a');
+          link.href = `${route}?id=${encodeURIComponent(d.requisition_id)}`;
+          link.target = '_blank';
+          link.textContent = d.number ?? '';
+          number.appendChild(link);
+        } else {
+          number.textContent = d.number ?? '';
+        }
+
+        const date = document.createElement('td');
+        date.textContent = this._sharedComponentService.formatDate(d.date);
+
+        const quantity = document.createElement('td');
+        quantity.className = 'num';
+        quantity.textContent = this.formatNumber(d.quantity);
+
+        tr.append(type, number, date, quantity);
+        body.appendChild(tr);
+      }
+      table.appendChild(body);
+
+      const box = document.createElement('div');
+      box.className = 'input-movements-box';
+      box.appendChild(table);
+      return box;
+    }
+
+    // سطر لكل ماكينة. الأسطر لا تلتفّ (والنص الكامل في التلميح) حتى تبقى متقابلة بين الأعمدة
+    private machineLinesRenderer(value: any, isNumber = false) {
+      const host = document.createElement('div');
+      host.className = 'machine-lines';
+      for (const v of Array.isArray(value) ? value : []) {
+        const line = document.createElement('div');
+        line.className = 'machine-line';
+        const text = isNumber ? this.formatNumber(v) : String(v || '—');
+        line.textContent = text;
+        line.title = text;
+        host.appendChild(line);
+      }
+      return host;
+    }
+
+    private formatNumber(value: any) {
+      if (!value) return '0';
+      return Number(value).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    private loadData(params: GridReadyEvent, isShowClosedBalances: boolean) {
       this.isLoading = true;
+      const dateRange = (this.fromDate || this.toDate)
+        ? { fromDate: this.fromDate, toDate: this.toDate }
+        : null;
       this._inventoryReportService.fetchData(
         (options) => this._reportWcService.selectInverntoryDetails(options),
         params,
-        (response) => this.applyGridData(params, response),
+        (response) => {
+          this.appliedDateRange = dateRange;
+          this.applyGridData(params, response);
+        },
         () => this.isLoading = false,
-        { isShowClosedBalances: false }
+        { isShowClosedBalances, ...(dateRange || {}) }
       );
     }
-    
-    getClosedBalances(params: GridReadyEvent) {
-      this.isLoading = true;
-      this._inventoryReportService.fetchData(
-        (options) => this._reportWcService.selectInverntoryDetails(options),
-        params,
-        (response) => this.applyGridData(params, response),
-        () => this.isLoading = false,
-        { isShowClosedBalances: true }
-      );
-    }
-    
+
     applyGridData(params: GridReadyEvent, data: any) {
       this.fabrics = data;
+      this.markedRows.clear();
       this.gridApi = params.api;
       this.gridColumnApi = params.columnApi;
+      this.gridColumnApi.setColumnsVisible(['opening_balance', 'closing_balance'], !!this.appliedDateRange);
       this._inventoryReportService.applyDataToGrid(
         data,
         this.gridApi,
@@ -710,14 +883,20 @@ export class ItemHistoryByFabricComponent implements OnInit {
     }
     
     
+      // setPinnedBottomRowData يُطلق modelUpdated من جديد؛ بدون هذا الحارس تدخل الشاشة
+      // حلقة تغذية راجعة تمنع اكتمال العرض بعد الفلترة
+      private isUpdatingFooter = false;
+
       onModelUpdated() {
+        if (this.isUpdatingFooter) return;
         this.updateFooter();
       }
-    
-      
+
+
       updateFooter() {
-        if (!this.gridApi) return;
-    
+        if (!this.gridApi || this.isUpdatingFooter) return;
+        this.isUpdatingFooter = true;
+
         requestAnimationFrame(() => {
           const summary: any = {};
           const columns = (this.gridApi.getColumnDefs() || []).filter((c: any) => 'field' in c);
@@ -793,13 +972,19 @@ export class ItemHistoryByFabricComponent implements OnInit {
     
     
     
-          //     console.log('📊 Final footer summary:', summary);
+          // إجمالي عمود «حركات الإدخال» (الأسطر الظاهرة بعد الفلاتر)
+          const inputTotals = { quantity: 0, count: 0 };
+          this.gridApi.forEachNodeAfterFilterAndSort((node) => {
+            for (const d of this.inputMovements(node.data)) {
+              inputTotals.quantity += Number(d.quantity) || 0;
+              inputTotals.count++;
+            }
+          });
+          summary.__inputMovementsTotals = inputTotals;
+
           this.pinnedBottomRowData = [summary];
           this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
-          console.log('✅ pinned row set in grid:', this.gridApi.getPinnedBottomRowCount());
-          this.gridApi.refreshCells({ force: true });
-    
-    
+          this.isUpdatingFooter = false;
         });
       }
   

@@ -54,6 +54,7 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
     suppressRowTransform: true,
     animateRows: true,
     onFilterChanged: () => {
+      this.syncTopFiltersFromGrid();
       this.gridApi?.purgeInfiniteCache();
     },
   };
@@ -64,6 +65,56 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
     release_process: [],
     details_work_order: [],
   };
+
+  // شريط الفلاتر أعلى الجدول — نفس القيم المقترحة من الخادم، ويكتب في filterModel نفسه
+  topFilterDefs = [
+    { colId: 'dyeing_name',        label: 'المصبغة' },
+    { colId: 'warehouse_name',     label: 'المخزن' },
+    { colId: 'release_process',    label: 'الارسالية الصادرة' },
+    { colId: 'details_work_order', label: 'أمر الشغل' },
+  ];
+  topFilterValues: { [colId: string]: string[] } = {};
+
+  // تُحسب مرة عند وصول البيانات لا في القالب: استدعاء دالة من [options] يُنشئ مصفوفة
+  // جديدة كل دورة كشف تغيير فيُعاد بناء القائمة ويتعذّر الاختيار
+  topFilterOptions: { [colId: string]: { label: string; value: string }[] } = {};
+
+  private buildTopFilterOptions() {
+    for (const def of this.topFilterDefs) {
+      // PrimeNG يبحث على label، والقيم قد تأتي أرقاماً، فنوحّدها نصوصاً
+      const next = (this.availableFilters?.[def.colId] || [])
+        .filter((v: any) => v !== null && v !== undefined && String(v) !== '')
+        .map((v: any) => String(v));
+
+      // القيم المختارة حالياً تختفي من قائمة الخادم المتسلسلة، فنبقيها كي لا يُفرَغ الاختيار
+      for (const picked of this.topFilterValues[def.colId] || []) {
+        if (!next.includes(picked)) next.push(picked);
+      }
+
+      const prev = this.topFilterOptions[def.colId] || [];
+      const changed = prev.length !== next.length || prev.some((o, i) => o.value !== next[i]);
+      if (changed) this.topFilterOptions[def.colId] = next.map((v: string) => ({ label: v, value: v }));
+    }
+  }
+
+  onTopFilterChange(colId: string) {
+    if (!this.gridApi) return;
+    const model = { ...(this.gridApi.getFilterModel() || {}) };
+    const selected = this.topFilterValues[colId] || [];
+    if (selected.length) model[colId] = { filterType: 'set', values: selected };
+    else delete model[colId];
+    this.gridApi.setFilterModel(model);
+  }
+
+  // يبقي شريط الفلاتر متوافقاً مع أي تغيير يتم من لوحة ag-grid الجانبية
+  private syncTopFiltersFromGrid() {
+    if (!this.gridApi) return;
+    const model = this.gridApi.getFilterModel() || {};
+    for (const def of this.topFilterDefs) {
+      const f = model[def.colId];
+      this.topFilterValues[def.colId] = f?.filterType === 'set' && Array.isArray(f.values) ? f.values : [];
+    }
+  }
 
   columnDefs: MyColDef[] = [
     {
@@ -94,6 +145,21 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
         values: (params: any) =>
           params.success(this.availableFilters?.dyeing_name || []),
       },
+    },
+    {
+      // ملخّص ماكينات سطور الإذن؛ الإذن الواحد قد يضم أكثر من ماكينة.
+      // بلا فلترة خادمية لأنه حقل محسوب بعد الاستعلام لا عمود في الجدول.
+      headerName: 'ماكينة الحياكة',
+      field: 'machines_label',
+      colId: 'machines_label',
+      width: 170,
+      minWidth: 140,
+      excludeFromFooter: true,
+      filter: false,
+      sortable: false,
+      cellClass: 'ag-cell-wrap',
+      tooltipValueGetter: (params: any) => params.value || '',
+      valueFormatter: (params: any) => params.node?.rowPinned ? '' : (params.value || '—'),
     },
     {
       headerName: 'المخزن',
@@ -227,6 +293,7 @@ export class ShowAllDyeingRequisitionWdComponent implements OnInit {
 
         this.lastGrandTotalQty = Number(res?.grandTotalQty ?? 0);
         this.availableFilters = res.availableFilters || {};
+        this.buildTopFilterOptions();
 
         setTimeout(() => { this.refreshAllSetFilters(); }, 0);
 

@@ -30,6 +30,7 @@ import { ExportDataService } from "src/app/services/export-data.service";
 
 // Auto Complete
 import { Query, Predicate } from '@syncfusion/ej2-data';
+import { AutoCompleteComponent } from '@syncfusion/ej2-angular-dropdowns';
 
 @Component({
   selector: 'app-add-manufacturing-requisition-wb',
@@ -100,6 +101,9 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
 
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
+  @ViewChild('industryAC') industryAC!: AutoCompleteComponent;
+  @ViewChild('fabricAC') fabricAC!: AutoCompleteComponent;
+  @ViewChild('yarnOrderAC') yarnOrderAC!: AutoCompleteComponent;
   displayedColumns: string[] = ['select', 'date', 'yarn_code', 'yarn_name', 'yarn_lot_code', 'consigment_yarn_number', 'quantity'];
   dataSourceSearchTabel: any;
 
@@ -616,7 +620,8 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
             this._manufacturingRequisitionWbService.enrichScanReceipt(
               res.data.manufacturerName || '',
               res.data.fabricName || '',
-              res.data.orderNumber || null
+              res.data.orderNumber || null,
+              res.data.yarns || []
             ).subscribe({
               next: (enrichRes: any) => {
                 this.enrichLoading = false;
@@ -654,7 +659,7 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
 
     // 1. الحقول الأساسية
     if (d.date) {
-      this.addManufacturingRequisitionForm.controls['date'].setValue(new Date(d.date));
+      this.addManufacturingRequisitionForm.controls['date'].setValue(new Date(d.date + 'T00:00:00'));
     }
     if (d.document) {
       this.addManufacturingRequisitionForm.controls['document'].setValue(String(d.document));
@@ -688,37 +693,40 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
     }
 
     // 2. تعيين المصنع
-    this.addManufacturingRequisitionForm.controls['industryId'].setValue(industry.id);
     this.manufacturerName = industry.name;
+    this._setAC(this.industryAC, industry.name, this.addManufacturingRequisitionForm.controls['industryId'], industry.id);
 
-    this._wbService.selectQuantityByIndustryWb(industry.id).subscribe((yarnsResp: any) => {
-      this.yarns = yarnsResp;
-      this.dataSourceSearchTabel = new MatTableDataSource(yarnsResp);
-      this.dataSourceSearchTabel.sort = this.sortColumns;
+    // تحميل الماكينات الدوارة للمصنع (side effect عادة من selectIndustry)
+    this._circularKnittingMachineBussinessmanService.selectByManufacture(industry.id).subscribe((machines: any) => {
+      this.circularKnittingMachines = machines;
+      if (machines?.[0]) this.addManufacturingRequisitionForm.controls['circularKnittingMachineId'].setValue(machines[0].id);
     });
 
-    if (!fabric) {
-      this._fabricService.selectFabricToBeManufacturedWb(industry.id).subscribe((fabrics: any) => {
-        this.fabrics = fabrics;
-      });
-      this.showScanDialog = false;
-      this._constantsService.successMessage('تم تعيين المصنع - اختر القماش يدوياً');
-      return;
-    }
-
-    // 3. تحميل الأقمشة وتعيين القماش
     this._fabricService.selectFabricToBeManufacturedWb(industry.id).subscribe((fabrics: any) => {
       this.fabrics = fabrics;
-      const matchedFabric = fabrics.find((f: any) => f.id === fabric.id);
-      if (!matchedFabric) {
+
+      if (!fabric) {
         this.showScanDialog = false;
         this._constantsService.successMessage('تم تعيين المصنع - اختر القماش يدوياً');
         return;
       }
 
-      this.addManufacturingRequisitionForm.controls['fabricId'].setValue(matchedFabric.id);
-      this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(matchedFabric.code);
+      const matchedFabric = fabrics.find((f: any) => String(f.id) === String(fabric.id));
+      if (!matchedFabric) {
+        this._wbService.selectQuantityByIndustryWb(industry.id).subscribe((yarnsResp: any) => {
+          this.yarns = yarnsResp;
+          this.dataSourceSearchTabel = new MatTableDataSource(yarnsResp);
+          this.dataSourceSearchTabel.sort = this.sortColumns;
+        });
+        this.showScanDialog = false;
+        this._constantsService.successMessage('تم تعيين المصنع - اختر القماش يدوياً');
+        return;
+      }
+
+      // 3. تعيين القماش
       this.fabricName = matchedFabric.name;
+      this._setAC(this.fabricAC, matchedFabric.name, this.addManufacturingRequisitionForm.controls['fabricId'], matchedFabric.id);
+      this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(matchedFabric.code);
 
       if (previousOrder?.manufacturingFee) {
         this.addManufacturingRequisitionForm.controls['manufacturingFee'].setValue(String(previousOrder.manufacturingFee));
@@ -741,17 +749,17 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
           return;
         }
 
-        const matchedYarnOrder = yarnOrders.find((yo: any) => yo.id === previousOrder.yarnOrderId);
+        const matchedYarnOrder = yarnOrders.find((yo: any) => String(yo.id) === String(previousOrder.yarnOrderId));
         if (!matchedYarnOrder) {
           this.showScanDialog = false;
           this.calcAllQuantitiesRatio();
-          this._constantsService.successMessage('تم تعيين المصنع والقماش - لم تُوجد طلبية الخيط');
+          this._constantsService.successMessage('تم تعيين المصنع والقماش - لم تُوجد طلبية الخيط، اخترها يدوياً');
           return;
         }
 
-        this.addManufacturingRequisitionForm.controls['yarnOrderId'].setValue(matchedYarnOrder.id);
+        // 4. تعيين الطلبية
+        this._setAC(this.yarnOrderAC, matchedYarnOrder.name, this.addManufacturingRequisitionForm.controls['yarnOrderId'], matchedYarnOrder.id);
         this.addManufacturingRequisitionForm.controls['ordersRequisitionsId'].setValue(matchedYarnOrder.orders_requisitions_id);
-
         this._applyYarns(industry.id, matchedFabric.id, matchedYarnOrder.id);
       });
     });
@@ -759,9 +767,9 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
 
   // تطبيق بيانات الطلبية مباشرة عندما وُجدت برقمها
   private _applyOrderData(order: any) {
-    // 1. تعيين المصنع (industries محملة مسبقاً في ngOnInit)
-    this.addManufacturingRequisitionForm.controls['industryId'].setValue(order.industryId);
+    // 1. تعيين المصنع
     this.manufacturerName = order.industryName;
+    this._setAC(this.industryAC, order.industryName, this.addManufacturingRequisitionForm.controls['industryId'], order.industryId);
 
     if (order.manufacturingFee) {
       this.addManufacturingRequisitionForm.controls['manufacturingFee'].setValue(String(order.manufacturingFee));
@@ -770,27 +778,41 @@ export class AddManufacturingRequisitionWbComponent implements OnInit {
       this.addManufacturingRequisitionForm.controls['manufacturingFeeDollar'].setValue(String(order.manufacturingFeeDollar));
     }
 
-    // 2. تحميل الأقمشة أولاً ثم تعيين fabricId داخل الـ subscribe (حتى يظهر الاسم)
+    this._circularKnittingMachineBussinessmanService.selectByManufacture(order.industryId).subscribe((machines: any) => {
+      this.circularKnittingMachines = machines;
+      if (machines?.[0]) this.addManufacturingRequisitionForm.controls['circularKnittingMachineId'].setValue(machines[0].id);
+    });
+
+    // 2. تحميل الأقمشة وتعيين القماش
     this._fabricService.selectFabricToBeManufacturedWb(order.industryId).subscribe((fabrics: any) => {
       this.fabrics = fabrics;
-      this.addManufacturingRequisitionForm.controls['fabricId'].setValue(order.fabricId);
-      this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(order.fabricCode);
       this.fabricName = order.fabricName;
+      this._setAC(this.fabricAC, order.fabricName, this.addManufacturingRequisitionForm.controls['fabricId'], order.fabricId);
+      this.addManufacturingRequisitionForm.controls['fabricCode'].setValue(order.fabricCode);
 
       this._wbManufacturingOutputService.selectLatestManufacturingFeeByIndustryByFabric(order.industryId, order.fabricId).subscribe((fee: any) => {
         this.latestManufacturingFee = fee;
       });
 
-      // 3. تحميل طلبيات الخيط ثم تعيين yarnOrderId داخل الـ subscribe (حتى يظهر الاسم)
+      // 3. تحميل طلبيات الخيط وتعيين الطلبية
       this._yarnOrderRequisitionWaService.selectByIndustryByFabricWb(order.industryId, order.fabricId).subscribe((yarnOrders: any) => {
         this.yarnOrder = yarnOrders;
-        this.addManufacturingRequisitionForm.controls['yarnOrderId'].setValue(order.yarnOrderId);
+        const matchedYarnOrder = yarnOrders.find((yo: any) => String(yo.id) === String(order.yarnOrderId));
+        const yarnOrderName = matchedYarnOrder?.name ?? order.yarnOrderName ?? '';
+        this._setAC(this.yarnOrderAC, yarnOrderName, this.addManufacturingRequisitionForm.controls['yarnOrderId'], order.yarnOrderId);
         this.addManufacturingRequisitionForm.controls['ordersRequisitionsId'].setValue(order.ordersRequisitionsId);
-
         // 4. تحميل الخيوط واختيارها
         this._applyYarns(order.industryId, order.fabricId, order.yarnOrderId);
       });
     });
+  }
+
+  // يضع النص في حقل Syncfusion AutoComplete ويحفظ القيمة الحقيقية (id) في الـ form بدون writeValue
+  private _setAC(ac: AutoCompleteComponent, displayText: string, control: any, formValue: any) {
+    const input: HTMLInputElement | null =
+      (ac as any)?.inputElement ?? ac?.element?.querySelector?.('input') ?? null;
+    if (input) input.value = displayText;
+    control.setValue(formValue, { emitModelToViewChange: false });
   }
 
   // تحميل الخيوط وتعليم checkboxes وحساب الكميات

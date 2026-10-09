@@ -45,6 +45,10 @@ td table tfoot tr {
     width: 10%;
 }
 
+.details-table .col-machine {
+    width: 14%;
+}
+
 .details-table .col-qty {
     width: 4%;
 }

@@ -11,11 +11,13 @@ import { SharedModule } from 'src/app/shared-modules/shared.module';
 
 // Child Component
 import { ItemHistoryByFabricTotalWcComponent } from 'src/app/main/wc/reports/item-history-by-fabric-report/item-history-by-fabric-total-wc/item-history-by-fabric-total-wc.component';
+import { WcInputDetailsDialogComponent } from 'src/app/main/wc/reports/item-history-by-fabric-report/wc-input-details-dialog/wc-input-details-dialog.component';
 
 @NgModule({
   declarations: [
     ItemHistoryByFabricComponent,
-    ItemHistoryByFabricTotalWcComponent
+    ItemHistoryByFabricTotalWcComponent,
+    WcInputDetailsDialogComponent
   ],
   imports: [
     SharedModule,

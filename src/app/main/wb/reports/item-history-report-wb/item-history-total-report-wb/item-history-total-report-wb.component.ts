@@ -250,6 +250,7 @@ export class ItemHistoryTotalReportWbComponent implements OnInit {
   }
 
   onModelUpdated() {
+        if (this.isUpdatingFooter) return;
     this.updateFooter();
   }
 
@@ -293,8 +294,15 @@ export class ItemHistoryTotalReportWbComponent implements OnInit {
       });
   }
 
+  // setPinnedBottomRowData يُطلق modelUpdated من جديد؛ بدون هذا الحارس تدخل الشاشة
+  // حلقة تغذية راجعة تمنع اكتمال العرض بعد الفلترة
+  private isUpdatingFooter = false;
+
+
+
   updateFooter() {
-    if (!this.gridApi) return;
+    if (!this.gridApi || this.isUpdatingFooter) return;
+        this.isUpdatingFooter = true;
 
     requestAnimationFrame(() => {
       const summary: any = {};
@@ -350,6 +358,7 @@ export class ItemHistoryTotalReportWbComponent implements OnInit {
 
       this.pinnedBottomRowData = [summary];
       this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
+          this.isUpdatingFooter = false;
       this.gridApi.refreshCells({ force: true });
     });
   }

@@ -251,13 +251,15 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
 
   // Initialize Form Builder
   initItem(selectedRowFabric: any, selectedOrderedFabric: any, index: number) {
-    return new FormGroup({
+    const group = new FormGroup({
       index: new FormControl(index),
       fabricId: new FormControl(selectedRowFabric.fabric_id, [Validators.required]),
       fabricCode: new FormControl(selectedRowFabric.fabric_code),
       dyeingCode: new FormControl(selectedRowFabric.fabric_dyeing_code),
       fabricName: new FormControl(selectedRowFabric.fabric_name),
       consigmentDyeingId: new FormControl(selectedRowFabric.consigment_dyeing_id, [Validators.required]),
+      // ماكينة الحياكة المراد الخصم منها؛ الفراغ يعني الخصم من كامل رصيد الرسالة
+      machineLinkId: new FormControl(""),
       consigmentDyeingNumber: new FormControl(selectedRowFabric.consigment_dyeing_number, [Validators.required]),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -275,6 +277,22 @@ export class AddFormDyeingRequisitionByOrderFormWdComponent implements OnInit {
       document: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
+
+    // نحتفظ بصف الجرد على المجموعة نفسها ليبقى ملتصقاً بالسطر مهما حُذفت بنود قبله
+    (group as any).stockRow = selectedRowFabric;
+    return group;
+  }
+
+  // اختيار ماكينة الحياكة التي ستُخصم منها الكمية.
+  // سقف الكمية يتبع الماكينة المختارة، وعند "كل الماكينات" يعود لرصيد الرسالة كاملاً.
+  onSelectMachine(event: any, row: FormGroup) {
+    const stock = (row as any).stockRow
+    if (!stock) return
+
+    const linkId = event?.target?.value || ""
+    const machine = (stock.machines || []).find((m) => String(m.machineLinkId) === String(linkId))
+    row.controls['validQuantity'].setValue(machine ? machine.quantity : stock.current_quantity)
+    this.validate(row)
   }
 
   addItem(selectedRowFabric: any, selectedOrderedFabric) {

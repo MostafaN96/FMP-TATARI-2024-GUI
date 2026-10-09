@@ -1,0 +1,51 @@
+<p-dialog [visible]="visible" (visibleChange)="close($event)" [modal]="true" [closable]="true"
+    [dismissableMask]="true" [style]="{ width: '900px', maxWidth: '95vw' }" header="تفاصيل حركات الإدخال">
+    <div dir="rtl">
+
+        <div class="input-details-head">
+            <span *ngFor="let item of headerItems"><b>{{ item.label }}:</b> {{ item.value }}</span>
+            <span *ngIf="dateRange" class="input-details-period">
+                <b>الفترة:</b> {{ dateRange.fromDate || 'البداية' }} ← {{ dateRange.toDate || 'اليوم' }}
+            </span>
+        </div>
+
+        <div *ngIf="!movements.length" class="input-details-empty">لا توجد حركات إدخال</div>
+
+        <table *ngIf="movements.length" class="input-details-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>نوع الإذن</th>
+                    <th>رقم الإذن</th>
+                    <th>التاريخ</th>
+                    <th>الكمية</th>
+                    <th>السعر</th>
+                    <th>عدد الأتواب</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let d of movements; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ d.type_of_requisition }}</td>
+                    <td>
+                        <a *ngIf="requisitionRoute(d.type_of_requisition) && d.requisition_id; else plainNumber"
+                            [routerLink]="[requisitionRoute(d.type_of_requisition)]"
+                            [queryParams]="{ id: d.requisition_id }" target="_blank">{{ d.number }}</a>
+                        <ng-template #plainNumber>{{ d.number }}</ng-template>
+                    </td>
+                    <td>{{ _sharedComponentService.formatDate(d.date) }}</td>
+                    <td class="num">{{ d.quantity | number:'1.2-2' }}</td>
+                    <td class="num">{{ d.price | number:'1.2-2' }}</td>
+                    <td class="num">{{ d.fabric_piece }}</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">الإجمالي ({{ movements.length }} حركة)</td>
+                    <td class="num">{{ total | number:'1.2-2' }}</td>
+                    <td colspan="2"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</p-dialog>

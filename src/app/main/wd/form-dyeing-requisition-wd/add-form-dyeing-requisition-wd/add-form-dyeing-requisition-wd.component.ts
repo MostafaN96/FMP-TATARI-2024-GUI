@@ -29,6 +29,8 @@ import { QuantityOccurrencesValidationService } from "src/app/services/main/quan
 
 // Auto Complete
 import { Query, Predicate } from '@syncfusion/ej2-data';
+import { AutoCompleteComponent } from '@syncfusion/ej2-angular-dropdowns';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-add-form-dyeing-requisition-wd',
@@ -40,12 +42,13 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
   //////////////////////////////////// Tabel Angular Material /////////////////////////////////
   @ViewChild('sortColumns', { static: true }) sortColumns!: MatSort;
   displayedColumns: string[] = [
-    'select', 
-    'wc_fabric_order_requisition_name', 
-    'code', 
-    'fabric_dyeing_code', 
-    'name', 
-    'consigment_dyeing_number', 
+    'select',
+    'wc_fabric_order_requisition_name',
+    'code',
+    'fabric_dyeing_code',
+    'name',
+    'consigment_dyeing_number',
+    'machine',
     'quantity'
   ];
   dataSourceSearchTabel: any;
@@ -80,14 +83,15 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
   filter = "";
   isShowAdd = true
 
-  // سكان الإيصال
+  // سكان ورقة التشكيل
+  @ViewChild('dyeingAC') dyeingAC!: AutoCompleteComponent;
   showScanDialog = false;
   scannedData: any = null;
   scanLoading = false;
   enrichLoading = false;
   enrichedData: any = null;
-  selectedDyerFromScan: any = null;
-  selectedFabricFromScan: any = null;
+  fillLoading = false;
+  readonly SCAN_MIN_ITEM_SCORE = 55;
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
@@ -226,7 +230,7 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
 
   // Initialize Form Builder
   initItem(data: any, index: number) {
-    return new FormGroup({
+    const group = new FormGroup({
       index: new FormControl(index),
       parentOrdersRequisitionsId: new FormControl(data.parent_orders_requisitions_id, [Validators.required]),
       parentWcFabricOrderRequisitionId: new FormControl(data.parent_wc_fabric_order_requisition_id, [Validators.required]),
@@ -238,6 +242,8 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
       dyeingCode: new FormControl(data.fabric_dyeing_code),
       fabricName: new FormControl(data.fabric_name),
       consigmentDyeingId: new FormControl(data.consigment_dyeing_id, [Validators.required]),
+      // ماكينة الحياكة المراد الخصم منها؛ الفراغ يعني الخصم من كامل رصيد الرسالة
+      machineLinkId: new FormControl(""),
       consigmentDyeingNumber: new FormControl(data.consigment_dyeing_number, [Validators.required]),
       price: new FormControl(data.price, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl(data.priceDollar, [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -257,6 +263,22 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
       document: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.number)]),
       statement: new FormControl("", [Validators.pattern(this.patterns.validator_pattern.longText)]),
     });
+
+    // نحتفظ بصف الجرد على المجموعة نفسها ليبقى ملتصقاً بالسطر مهما حُذفت بنود قبله
+    (group as any).stockRow = data;
+    return group;
+  }
+
+  // اختيار ماكينة الحياكة التي ستُخصم منها الكمية.
+  // سقف الكمية يتبع الماكينة المختارة، وعند "كل الماكينات" يعود لرصيد الرسالة كاملاً.
+  onSelectMachine(event: any, row: FormGroup) {
+    const stock = (row as any).stockRow
+    if (!stock) return
+
+    const linkId = event?.target?.value || ""
+    const machine = (stock.machines || []).find((m) => String(m.machineLinkId) === String(linkId))
+    row.controls['validQuantity'].setValue(machine ? machine.quantity : stock.current_quantity)
+    this.validate(row)
   }
 
   addItem(data: any) {
@@ -439,7 +461,7 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
     }
   }
 
-  // ===== سكان الإيصال =====
+  // ===== سكان ورقة التشكيل =====
   onScanImageSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -452,38 +474,40 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
       this.showScanDialog = true;
       this.scannedData = null;
       this.enrichedData = null;
-      this.selectedDyerFromScan = null;
-      this.selectedFabricFromScan = null;
 
-      this._formDyeingRequisitionWdService.scanReceipt(base64, mimeType).subscribe({
+      this._formDyeingRequisitionWdService.scanDyeingForm(base64, mimeType).subscribe({
         next: (res: any) => {
           this.scanLoading = false;
-          if (res.status === 1) {
-            this.scannedData = res.data;
-            this.enrichLoading = true;
-            this._formDyeingRequisitionWdService.enrichScanReceipt(
-              res.data.manufacturerName || '',
-              res.data.fabricName || ''
-            ).subscribe({
-              next: (enrichRes: any) => {
-                this.enrichLoading = false;
-                if (enrichRes.status === 1) {
-                  this.enrichedData = enrichRes.data;
-                  this.selectedDyerFromScan = enrichRes.data.industryMatches?.[0] || null;
-                  this.selectedFabricFromScan = enrichRes.data.fabricMatches?.[0] || null;
-                }
-              },
-              error: () => { this.enrichLoading = false; }
-            });
-          } else {
+          if (res.status !== 1) {
             this._constantsService.userErrorMessage();
             this.showScanDialog = false;
+            return;
           }
+          this.scannedData = res.data;
+          this.enrichLoading = true;
+          this._formDyeingRequisitionWdService.enrichDyeingScan({
+            dyerName: res.data.dyerName || '',
+            color: res.data.color || '',
+            treatments: res.data.treatments || [],
+            items: res.data.items || [],
+            orderName: res.data.orderName || '',
+          }).subscribe({
+            next: (enrichRes: any) => {
+              this.enrichLoading = false;
+              if (enrichRes.status === 1) {
+                this.enrichedData = enrichRes.data;
+                for (const it of this.enrichedData.items || []) it.accepted = it.score >= this.SCAN_MIN_ITEM_SCORE;
+              }
+            },
+            error: () => { this.enrichLoading = false; }
+          });
         },
-        error: () => {
+        error: (err: any) => {
           this.scanLoading = false;
-          this._constantsService.userErrorMessage();
           this.showScanDialog = false;
+          const msg = err?.error?.message;
+          if (msg) this._constantsService.errorMessage(msg);
+          else this._constantsService.userErrorMessage();
         }
       });
     };
@@ -491,45 +515,110 @@ export class AddFormDyeingRequisitionWdComponent implements OnInit {
     (event.target as HTMLInputElement).value = '';
   }
 
-  fillFromScan() {
-    if (!this.scannedData) return;
+  // Syncfusion يعرض الـ id الخام عند setValue، لذا نكتب الاسم في الحقل مباشرة
+  private _setAC(ac: AutoCompleteComponent, displayText: string, control: any, formValue: any) {
+    const input: HTMLInputElement | null =
+      (ac as any)?.inputElement ?? ac?.element?.querySelector?.('input') ?? null;
+    if (input) input.value = displayText;
+    control.setValue(formValue, { emitModelToViewChange: false });
+  }
+
+  async fillFromScan() {
+    if (!this.scannedData || !this.enrichedData) return;
     const d = this.scannedData;
+    const e = this.enrichedData;
+    this.fillLoading = true;
 
-    if (d.date) {
-      this.addRequisitionForm.controls['date'].setValue(new Date(d.date));
-    }
-    if (d.notes) {
-      this.addRequisitionForm.controls['note'].setValue(d.notes);
-    }
+    try {
+      if (d.date) this.addRequisitionForm.controls['date'].setValue(new Date(d.date));
+      if (d.notes) this.addRequisitionForm.controls['note'].setValue(d.notes);
 
-    const dyer = this.selectedDyerFromScan;
+      if (!e.dyer) {
+        this._constantsService.successMessage('تم ملء البيانات الأساسية — لم يُعثر على المصبغة');
+        return;
+      }
 
-    if (!dyer) {
-      this.showScanDialog = false;
-      this._constantsService.successMessage('تم ملء البيانات الأساسية');
-      return;
-    }
+      // 1) المصبغة + تحميل ما يعتمد عليها (نفس ما يفعله selectDyeing)
+      this._setAC(this.dyeingAC, e.dyer.name, this.addRequisitionForm.controls['dyeingId'], e.dyer.id);
+      this.dyerName = e.dyer.name;
+      this.selectedDyeingId = e.dyer.id;
 
-    this.addRequisitionForm.controls['dyeingId'].setValue(dyer.id);
-    this.dyerName = dyer.name;
-    this.selectedDyeingId = dyer.id;
-
-    this._wdService.selectQuantityByDyeingWd(dyer.id).subscribe((response: any) => {
-      this.fabrics = response;
+      const [fabrics, colorCategories, services] = await Promise.all([
+        firstValueFrom(this._wdService.selectQuantityByDyeingWd(e.dyer.id)),
+        firstValueFrom(this._colorCategoryService.selectByDeying(e.dyer.id)),
+        firstValueFrom(this._dyeingServicesService.selectByDeying(e.dyer.id)),
+      ]);
+      this.fabrics = fabrics as any[];
+      this.colorCategories = colorCategories;
+      this.dyeingServicesData = services;
       this.dataSourceSearchTabel = new MatTableDataSource(this.fabrics);
       this.dataSourceSearchTabel.sort = this.sortColumns;
-    });
 
-    this._colorCategoryService.selectByDeying(dyer.id).subscribe((response: any) => {
-      this.colorCategories = response;
-    });
+      // 2) الأسطر المقبولة → إضافتها كما يفعل getSelectedIndex ثم تعبئة قيمها
+      const serviceIds = (e.treatments || []).filter((t: any) => t.match).map((t: any) => t.match.id);
+      let added = 0;
+      for (const im of e.items || []) {
+        if (!im.accepted || !im.match) continue;
+        const row = this.fabrics.find((r: any) =>
+          String(r.fabric_id) === String(im.match.fabric_id) &&
+          String(r.consigment_dyeing_id) === String(im.match.consigment_dyeing_id) &&
+          String(r.wc_fabric_order_requisition_id) === String(im.match.wc_fabric_order_requisition_id)
+        );
+        if (!row) continue;
+        await this._addScannedRow(row, im, d.workOrderNumber, e.color, serviceIds);
+        added++;
+      }
 
-    this._dyeingServicesService.selectByDeying(dyer.id).subscribe((response: any) => {
-      this.dyeingServicesData = response;
-    });
+      this._constantsService.successMessage(`تم تعبئة ${added} سطر من ورقة التشكيل`);
+    } finally {
+      this.fillLoading = false;
+      this.showScanDialog = false;
+    }
+  }
 
-    this.showScanDialog = false;
-    this._constantsService.successMessage('تم تعيين المصبغة - اختر الأقمشة من الجدول');
+  private async _addScannedRow(row: any, im: any, workOrderNumber: string, colorMatch: any, serviceIds: any[]) {
+    const prices: any = await firstValueFrom(
+      this._reportWdService.selectPriceByFabricByDyeingByConsigmentDyeingInWd(row.fabric_id, row.dyeing_id, row.consigment_dyeing_id)
+    );
+    this.fabricsDetails = prices;
+    row.price = prices?.[0]?.latest_price ?? 0;
+    row.priceDollar = prices?.[0]?.latest_price_dollar ?? 0;
+    this.fabricMap.set(row, row.current_quantity);
+    this.selectArrayValues.push(row);
+    this.addItem(row);
+
+    const items = <FormArray>this.addRequisitionForm.get('items');
+    const index = items.length - 1;
+    const fg = <FormGroup>items.at(index);
+
+    this.getListFabricPrices[index] = [this._sharedComponentService.getAvgPrice(prices), this._sharedComponentService.getAvgInputesPrice(prices), parseFloat(prices?.[0]?.latest_price)];
+    this.listFabricPricesDollar[index] = [this._sharedComponentService.getAvgPriceDynamic(prices, 'quantity', 'price_dollar'), this._sharedComponentService.getAvgInputesPriceDynamic(prices, 'quantity', 'price_dollar'), parseFloat(prices?.[0]?.latest_price_dollar)];
+
+    const s = im.suggested || {};
+    if (workOrderNumber) fg.controls['workOrderNumberDetails'].setValue(String(workOrderNumber));
+    if (s.quantity != null) fg.controls['quantity'].setValue(s.quantity);
+    if (s.fabricWidth != null) fg.controls['fabricWidth'].setValue(s.fabricWidth);
+    if (s.fabricQuantityM2 != null) fg.controls['fabricQuantityM2'].setValue(s.fabricQuantityM2);
+    if (serviceIds.length) fg.controls['dyeingServices'].setValue(serviceIds);
+    this.validate(fg);
+
+    // 3) اللون: نحمّل ألوان الفئة المطابقة ثم نختار اللون
+    const c = colorMatch?.match;
+    const categoryId = c?.colorCategoryId ?? this._constantsService.DEFAULT_COLOR_CATEGORY_ID;
+    fg.controls['colorCategoryId'].setValue(categoryId);
+    const colors: any = await firstValueFrom(
+      this._colorService.selectByCategoryAndDeyingByDyedFabricByFabricOrder(
+        this.selectedDyeingId, categoryId, fg.controls['dyedFabricId'].value, fg.controls['parentWcFabricOrderRequisitionId'].value)
+    );
+    this.colors[index] = colors;
+    if (c) {
+      const found = (colors || []).find((x: any) => String(x.id) === String(c.colorId));
+      if (found) {
+        fg.controls['colorId'].setValue(found.id);
+        fg.controls['colorCode'].setValue(found.code);
+        fg.controls['dyeingColorsPricesId'].setValue(found.dyeing_colors_prices_id);
+      }
+    }
   }
 
 }

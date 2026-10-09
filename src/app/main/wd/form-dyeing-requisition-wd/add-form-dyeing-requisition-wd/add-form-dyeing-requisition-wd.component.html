@@ -13,7 +13,7 @@
         <!-- زر سكان الإيصال -->
         <div class="mb-3">
             <label class="btn-style" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
-                <i class="fas fa-camera"></i> سكان الإيصال
+                <i class="fas fa-camera"></i> سكان ورقة التشكيل
                 <input type="file" accept="image/*" capture="environment"
                     style="display:none;" (change)="onScanImageSelected($event)">
             </label>
@@ -49,7 +49,7 @@
 
                     <!-- Dyers -->
                     <div class="col">
-                        <ejs-autocomplete [dataSource]='dyers' [fields]='fieldsDyeing' 
+                        <ejs-autocomplete #dyeingAC [dataSource]='dyers' [fields]='fieldsDyeing'
                             (filtering)="onFilteringDyeing($event)" [placeholder]='textDyeing' [autofill]='autofill'
                             formControlName="dyeingId" class="ejs-autocomplete w-100" (change)="selectDyeing($event)">
                         </ejs-autocomplete>
@@ -162,6 +162,12 @@
                                     </th>
                                     <td mat-cell *matCellDef="let element">
                                         {{ element.wc_fabric_order_requisition_name }}
+                                        <span *ngIf="element.is_merged_order"
+                                              class="badge bg-info text-dark ms-1"
+                                              style="font-size:0.68rem; cursor:help;"
+                                              [title]="'مدموجة مع: ' + (element.merged_orders_names || []).join(' · ')">
+                                            <i class="fas fa-object-group"></i> مدمجة ({{ element.merged_orders_count }})
+                                        </span>
                                     </td>
                                 </ng-container>
 
@@ -202,6 +208,31 @@
                                     </th>
                                     <td mat-cell *matCellDef="let element">
                                         {{ element.consigment_dyeing_number }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- Machine Column -->
+                                <ng-container matColumnDef="machine">
+                                    <th mat-header-cell *matHeaderCellDef>
+                                        <b>الماكينة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <ng-container *ngIf="element.has_machine; else noMachine">
+                                            <div *ngFor="let m of element.machines" style="font-size:0.78rem; line-height:1.5;">
+                                                <span [title]="m.machineName" [class.text-muted]="!m.isNamed">
+                                                    {{ m.machineType || m.machineName }}
+                                                </span>
+                                                <span class="badge bg-light text-dark ms-1">{{ m.quantity }}</span>
+                                            </div>
+                                            <div *ngIf="element.quantity_without_machine > 0"
+                                                 class="text-muted" style="font-size:0.74rem;">
+                                                بلا ماكينة
+                                                <span class="badge bg-light text-dark ms-1">{{ element.quantity_without_machine }}</span>
+                                            </div>
+                                        </ng-container>
+                                        <ng-template #noMachine>
+                                            <span class="text-muted" style="font-size:0.78rem;">—</span>
+                                        </ng-template>
                                     </td>
                                 </ng-container>
 
@@ -424,6 +455,26 @@
                                                 </mat-label>
                                                 <input [disabled]="true" matInput placeholder="الكمية المتوفرة" formControlName="validQuantity" readonly>
                                             </mat-form-field>
+
+                                            <!-- اختيار ماكينة الحياكة التي تُخصم منها الكمية -->
+                                            <div *ngIf="$any(row).stockRow?.has_machine" class="mt-1">
+                                                <select class="form-control form-control-sm"
+                                                        formControlName="machineLinkId"
+                                                        (change)="onSelectMachine($event, row)"
+                                                        style="font-size:0.72rem;">
+                                                    <option value="">
+                                                        كل الماكينات ({{ $any(row).stockRow.current_quantity }})
+                                                    </option>
+                                                    <option *ngFor="let m of $any(row).stockRow.machines"
+                                                            [value]="m.machineLinkId">
+                                                        {{ m.machineName }} — {{ m.quantity }}
+                                                    </option>
+                                                </select>
+                                                <small *ngIf="$any(row).stockRow.quantity_without_machine > 0"
+                                                       class="text-muted" style="font-size:0.68rem;">
+                                                    بلا ماكينة: {{ $any(row).stockRow.quantity_without_machine }}
+                                                </small>
+                                            </div>
                                         </td>
 
                                         <!-- Price -->
@@ -867,54 +918,147 @@
     </div>
 </section>
 
-<!-- Dialog نتيجة سكان الإيصال -->
-<p-dialog [(visible)]="showScanDialog" [modal]="true" [closable]="true"
-    [style]="{width: '520px'}" header="نتيجة قراءة الإيصال" dir="rtl">
+<!-- Dialog نتيجة سكان ورقة التشكيل -->
+<p-dialog [(visible)]="showScanDialog" [modal]="true" [closable]="!fillLoading"
+    [style]="{width: '760px', maxWidth: '96vw'}" header="نتيجة قراءة ورقة التشكيل" dir="rtl">
 
     <div class="text-center py-3" *ngIf="scanLoading">
         <i class="pi pi-spin pi-spinner" style="font-size:2rem;"></i>
-        <p class="mt-2">جاري قراءة الإيصال...</p>
+        <p class="mt-2">جاري قراءة الورقة...</p>
     </div>
 
-    <div *ngIf="!scanLoading && scannedData">
-        <table class="table table-bordered table-sm mb-3" dir="rtl" style="font-size:0.82rem;">
+    <div *ngIf="!scanLoading && scannedData" style="font-size:0.82rem;">
+
+        <!-- رأس الورقة كما قُرئ -->
+        <table class="table table-bordered table-sm mb-2" dir="rtl">
             <tbody>
+                <tr><th style="width:130px;">أمر الشغل</th><td>{{ scannedData.workOrderNumber || '—' }}</td></tr>
+                <tr><th>المصدر (المصبغة)</th>
+                    <td>
+                        {{ scannedData.dyerName || '—' }}
+                        <ng-container *ngIf="enrichedData?.dyer">
+                            <span class="badge bg-success ms-2">→ {{ enrichedData.dyer.name }} ({{ enrichedData.dyer.score }}%)</span>
+                        </ng-container>
+                        <span *ngIf="enrichedData && !enrichedData.dyer" class="badge bg-danger ms-2">لم يُعثر على المصبغة</span>
+                    </td>
+                </tr>
+                <tr *ngIf="scannedData.orderName"><th>الطلبية (مقروءة)</th><td>{{ scannedData.orderName }}</td></tr>
+                <tr *ngIf="scannedData.clientName"><th>العميل</th><td>{{ scannedData.clientName }}</td></tr>
+                <tr *ngIf="scannedData.cardNumber"><th>رقم الكارتلة</th><td>{{ scannedData.cardNumber }}</td></tr>
                 <tr *ngIf="scannedData.date"><th>التاريخ</th><td>{{ scannedData.date }}</td></tr>
-                <tr *ngIf="scannedData.manufacturerName"><th>المصبغة (مقروءة)</th><td>{{ scannedData.manufacturerName }}</td></tr>
-                <tr *ngIf="scannedData.fabricName"><th>القماش (مقروء)</th><td>{{ scannedData.fabricName }}</td></tr>
-                <tr *ngIf="scannedData.notes"><th>ملاحظات</th><td>{{ scannedData.notes }}</td></tr>
+                <tr *ngIf="scannedData.machineNumber || scannedData.ropesCount">
+                    <th>ماكينة / حبال</th><td>{{ scannedData.machineNumber || '—' }} / {{ scannedData.ropesCount || '—' }}</td>
+                </tr>
             </tbody>
         </table>
 
         <div class="text-center py-2" *ngIf="enrichLoading">
-            <i class="pi pi-spin pi-spinner"></i> جاري البحث في قاعدة البيانات...
+            <i class="pi pi-spin pi-spinner"></i> جاري المطابقة مع مخزون المصبغة...
         </div>
 
-        <div *ngIf="!enrichLoading && enrichedData">
-            <h6 class="fw-bold mb-2" style="font-size:0.85rem;">🔍 التطابق في قاعدة البيانات</h6>
+        <ng-container *ngIf="!enrichLoading && enrichedData">
 
-            <div class="mb-2">
-                <label style="font-size:0.82rem;">المصبغة:</label>
-                <select class="form-select form-select-sm" [(ngModel)]="selectedDyerFromScan"
-                    [ngModelOptions]="{standalone: true}">
-                    <option [ngValue]="null">-- لا شيء --</option>
-                    <option *ngFor="let m of enrichedData.industryMatches" [ngValue]="m">{{ m.name }}</option>
-                </select>
+            <!-- اللون -->
+            <div class="mb-2" *ngIf="enrichedData.color">
+                <b>اللون:</b> «{{ enrichedData.color.scanned }}»
+                <span *ngIf="enrichedData.color.match" class="badge bg-success ms-1">
+                    → {{ enrichedData.color.match.colorName }}
+                    <small *ngIf="enrichedData.color.match.colorCode">({{ enrichedData.color.match.colorCode }})</small>
+                    — {{ enrichedData.color.match.colorCategoryName }} — {{ enrichedData.color.score }}%
+                </span>
+                <span *ngIf="!enrichedData.color.match" class="badge bg-warning text-dark ms-1">
+                    لا مطابقة ({{ enrichedData.color.score }}%)
+                    <ng-container *ngIf="enrichedData.color.historyHint"> — آخر لون: {{ enrichedData.color.historyHint.name }}</ng-container>
+                </span>
             </div>
 
-            <div *ngIf="!enrichedData.industryMatches?.length && !enrichedData.fabricMatches?.length"
-                class="alert alert-warning p-2 mb-0" style="font-size:0.8rem;">
-                لم يُعثر على تطابق في قاعدة البيانات — ستحتاج لاختيار المصبغة يدوياً.
+            <!-- المعالجات -->
+            <div class="mb-2" *ngIf="enrichedData.treatments?.length">
+                <b>المعالجات:</b>
+                <span *ngFor="let t of enrichedData.treatments" class="badge ms-1"
+                      [class.bg-success]="t.match" [class.bg-warning]="!t.match" [class.text-dark]="!t.match">
+                    {{ t.scanned }}<ng-container *ngIf="t.match"> → {{ t.match.name }}</ng-container> ({{ t.score }}%)
+                </span>
             </div>
-        </div>
+
+            <!-- الأسطر -->
+            <h6 class="fw-bold mt-3 mb-1" style="font-size:0.85rem;">
+                الأسطر ({{ enrichedData.items?.length || 0 }}) — مخزون المصبغة: {{ enrichedData.stockCount }} صف
+            </h6>
+            <div *ngIf="!enrichedData.items?.length" class="alert alert-warning p-2">لم تُقرأ أي أسطر من الجدول.</div>
+
+            <div class="table-responsive" *ngIf="enrichedData.items?.length">
+                <table class="table table-bordered table-sm mb-0" dir="rtl">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:36px;">إضافة</th>
+                            <th>المقروء</th>
+                            <th>المطابَق في المخزون</th>
+                            <th style="width:70px;">الثقة</th>
+                            <th style="width:60px;">الكمية</th>
+                            <th style="width:60px;">عرض</th>
+                            <th style="width:70px;">غرامات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let im of enrichedData.items"
+                            [class.table-danger]="im.suggested?.quantityExceedsStock"
+                            [class.table-warning]="!im.suggested?.quantityExceedsStock && im.score < SCAN_MIN_ITEM_SCORE">
+                            <td class="text-center">
+                                <input type="checkbox" [(ngModel)]="im.accepted" [ngModelOptions]="{standalone: true}" [disabled]="!im.match">
+                            </td>
+                            <td>
+                                <div>{{ im.scanned.fabricName || '—' }}</div>
+                                <small class="text-muted">رسالة: {{ im.scanned.consignmentName || '—' }}</small>
+                            </td>
+                            <td>
+                                <ng-container *ngIf="im.match">
+                                    <div>{{ im.match.fabric_name }}</div>
+                                    <small class="text-muted">
+                                        رسالة {{ im.match.consigment_dyeing_number }} · {{ im.match.wc_fabric_order_requisition_name }}
+                                        · متوفر {{ im.match.current_quantity }}
+                                    </small>
+                                    <div *ngIf="im.consignmentOnly" class="text-danger" style="font-size:0.75rem;">
+                                        <i class="fas fa-exclamation-circle"></i> رقم الرسالة يطابق لكن القماش مختلف — راجع يدوياً
+                                    </div>
+                                </ng-container>
+                                <span *ngIf="!im.match" class="text-danger">لا مطابقة</span>
+                            </td>
+                            <td class="text-center">
+                                <b>{{ im.score }}%</b><br>
+                                <small class="text-muted">ق{{ im.fabricScore }} / ر{{ im.consignmentScore }}<ng-container *ngIf="scannedData.orderName"> / ط{{ im.orderScore }}</ng-container></small>
+                            </td>
+                            <td class="text-center">
+                                {{ im.suggested?.quantity ?? '—' }}
+                                <i *ngIf="im.suggested?.quantityExceedsStock" class="fas fa-exclamation-triangle text-danger" title="الكمية أكبر من المتوفر"></i>
+                                <i *ngIf="im.suggested?.weightSuspicious" class="fas fa-question-circle text-warning" title="الوزن أكبر من أصل الوزن — قد يكون خطأ قراءة عمود"></i>
+                                <br><small class="text-muted" *ngIf="im.scanned?.originalWeight != null">أصل {{ im.scanned.originalWeight }}</small>
+                            </td>
+                            <td class="text-center">
+                                {{ im.suggested?.fabricWidth ?? '—' }}
+                                <small *ngIf="im.suggested?.fabricWidthFromHistory" class="text-info" title="من آخر تشكيل">(ت)</small>
+                            </td>
+                            <td class="text-center">
+                                {{ im.suggested?.fabricQuantityM2 ?? '—' }}
+                                <small *ngIf="im.suggested?.fabricQuantityM2FromHistory" class="text-info" title="من آخر تشكيل">(ت)</small>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <small class="text-muted d-block mt-1">
+                (ت) = قيمة من آخر تشكيل لنفس القماش عند هذه المصبغة · ق = تشابه القماش · ر = تطابق رقم الرسالة · ط = تشابه الطلبية ·
+                الصفوف الصفراء تحت {{ SCAN_MIN_ITEM_SCORE }}% غير مُحددة تلقائياً
+            </small>
+        </ng-container>
     </div>
 
     <ng-template pTemplate="footer">
         <button pButton type="button" label="إلغاء" icon="pi pi-times"
-            class="p-button-text" (click)="showScanDialog = false"></button>
-        <button pButton type="button" label="ملء البيانات" icon="pi pi-check"
+            class="p-button-text" [disabled]="fillLoading" (click)="showScanDialog = false"></button>
+        <button pButton type="button" [label]="fillLoading ? 'جاري التعبئة...' : 'ملء البيانات'" icon="pi pi-check"
             class="p-button-success"
-            [disabled]="!scannedData || scanLoading || enrichLoading"
+            [disabled]="!scannedData || !enrichedData || scanLoading || enrichLoading || fillLoading"
             (click)="fillFromScan()"></button>
     </ng-template>
 </p-dialog>

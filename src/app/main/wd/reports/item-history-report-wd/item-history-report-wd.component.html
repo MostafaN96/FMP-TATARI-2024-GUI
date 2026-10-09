@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <mat-tab-group animationDuration="0ms">
+    <mat-tab-group animationDuration="0ms" (selectedIndexChange)="onTabChange($event)">
         <mat-tab label="إجمالي">
             <ng-template matTabContent>
                 <app-item-history-total-report-wd></app-item-history-total-report-wd>
@@ -120,4 +120,68 @@
             </ng-template>
         </mat-tab>
     </mat-tab-group>
+
+    <!-- تفاصيل حركات الإدخال للسطر -->
+    <p-dialog [(visible)]="showInputDetails" [modal]="true" [closable]="true" [dismissableMask]="true"
+        [style]="{ width: '900px', maxWidth: '95vw' }" styleClass="input-details-dialog" header="تفاصيل حركات الإدخال">
+      <div dir="rtl">
+
+        <div class="input-details-head" *ngIf="inputDetailsRow">
+            <span><b>المصبغة:</b> {{ inputDetailsRow.dyeing_name }}</span>
+            <span><b>المادة:</b> {{ inputDetailsRow.fabric_code }} - {{ inputDetailsRow.fabric_name }}</span>
+            <span><b>الرسالة:</b> {{ inputDetailsRow.consigment_dyeing_number }}</span>
+            <span><b>الطلبية:</b> {{ inputDetailsRow.wc_fabric_order_requisition_name }}</span>
+        </div>
+
+        <div *ngIf="inputDetailsLoading" class="input-details-empty">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div *ngIf="!inputDetailsLoading && !inputDetails.length" class="input-details-empty">
+            لا توجد حركات إدخال
+        </div>
+
+        <table *ngIf="!inputDetailsLoading && inputDetails.length" class="input-details-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>نوع الإذن</th>
+                    <th>رقم الإذن</th>
+                    <th>التاريخ</th>
+                    <th>الكمية</th>
+                    <th>السعر</th>
+                    <th>البيان</th>
+                    <th>ملاحظات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let d of inputDetails; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                        {{ d.type_of_requisition }}
+                        <div class="input-details-side" *ngIf="d.type_of_requisition === 'اذن نقل بين المصابغ'">{{ d.side_of }}</div>
+                    </td>
+                    <td>
+                        <a *ngIf="inputRequisitionRoute(d.type_of_requisition); else plainNumber"
+                            [routerLink]="[inputRequisitionRoute(d.type_of_requisition)]"
+                            [queryParams]="{ id: d.requisition_id }" target="_blank">{{ d.number }}</a>
+                        <ng-template #plainNumber>{{ d.number }}</ng-template>
+                    </td>
+                    <td>{{ _sharedComponentService.formatDate(d.date) }}</td>
+                    <td class="num">{{ d.quantity | number:'1.2-2' }}</td>
+                    <td class="num">{{ d.price | number:'1.2-2' }}</td>
+                    <td>{{ d.statement }}</td>
+                    <td>{{ d.note }}</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">الإجمالي ({{ inputDetails.length }} حركة)</td>
+                    <td class="num">{{ inputDetailsTotal | number:'1.2-2' }}</td>
+                    <td colspan="3"></td>
+                </tr>
+            </tfoot>
+        </table>
+      </div>
+    </p-dialog>
 </section>

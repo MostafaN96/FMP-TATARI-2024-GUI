@@ -190,12 +190,21 @@ export class DyedFabricOrdersReportWeComponent implements OnInit {
     
     
       onModelUpdated() {
+        if (this.isUpdatingFooter) return;
         this.updateFooter();
       }
     
       
+      // setPinnedBottomRowData يُطلق modelUpdated من جديد؛ بدون هذا الحارس تدخل الشاشة
+  // حلقة تغذية راجعة تمنع اكتمال العرض بعد الفلترة
+  private isUpdatingFooter = false;
+
+
+    
+      
       updateFooter() {
-        if (!this.gridApi) return;
+        if (!this.gridApi || this.isUpdatingFooter) return;
+        this.isUpdatingFooter = true;
     
         requestAnimationFrame(() => {
           const summary: any = {};
@@ -293,6 +302,7 @@ export class DyedFabricOrdersReportWeComponent implements OnInit {
           //     console.log('📊 Final footer summary:', summary);
           this.pinnedBottomRowData = [summary];
           this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
+          this.isUpdatingFooter = false;
           console.log('✅ pinned row set in grid:', this.gridApi.getPinnedBottomRowCount());
           this.gridApi.refreshCells({ force: true });
     

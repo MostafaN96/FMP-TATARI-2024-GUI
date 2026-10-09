@@ -62,70 +62,53 @@ export class FabricOrdersReportWcComponent implements OnInit {
           {
             headerName: 'المطلوب',
             field: 'needed_quantity',
-            valueFormatter: (params: any) => {
-                if (!params.value) return '0';
-                return Number(params.value).toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                });
-              },
+            valueFormatter: (p: any) => this.fmtNum(p.value),
             type: 'numericColumn',
+            filter: 'agNumberColumnFilter',
             aggFunc: 'sum',
           },
           {
             headerName: 'المنتهي',
             field: 'net_current_quantity',
-            valueFormatter: (params: any) => {
-                if (!params.value) return '0';
-                return Number(params.value).toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                });
-              },
+            valueFormatter: (p: any) => this.fmtNum(p.value),
             type: 'numericColumn',
+            filter: 'agNumberColumnFilter',
             aggFunc: 'sum',
             // ⚠️ لا تضع excludeFromFooter هون
           },
           {
             headerName: 'المتبقي',
             field: 'current_quantity',
-            valueFormatter: (params: any) => {
-                if (!params.value) return '0';
-                return Number(params.value).toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                });
-              },
+            valueFormatter: (p: any) => this.fmtNum(p.value),
             type: 'numericColumn',
+            filter: 'agNumberColumnFilter',
             aggFunc: 'sum',
           },
           {
             headerName: 'الزائدة',
             field: 'over_current_quantity',
-            valueFormatter: (params: any) => {
-                if (!params.value) return '0';
-                return Number(params.value).toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                });
-              },
+            valueFormatter: (p: any) => this.fmtNum(p.value),
             type: 'numericColumn',
+            filter: 'agNumberColumnFilter',
             aggFunc: 'sum',
           },
           {
             headerName: 'نسبة الزيادة',
             field: 'over_current_quantity_ratio',
-            valueFormatter: (params: any) => {
-                if (!params.value) return '0';
-                return Number(params.value).toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                });
-              },
+            // نسبة مئوية: لا تُجمع في الفوتر (جمع النسب بلا معنى)
+            valueFormatter: (p: any) => p.node?.rowPinned ? '' : `${this.fmtNum(p.value)}%`,
+            type: 'numericColumn',
+            filter: 'agNumberColumnFilter',
             excludeFromFooter: true,
           },
-          
+
         ].reverse(); gridColumnApi: any;
+
+        fmtNum(v: any): string {
+          const n = Number(v);
+          if (!Number.isFinite(n)) return '0';
+          return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
         ;
         totalFooterValues = {}
         public defaultColDef: ColDef = {
@@ -187,112 +170,42 @@ export class FabricOrdersReportWcComponent implements OnInit {
     }
     
     onModelUpdated() {
+        if (this.isUpdatingFooter) return;
         this.updateFooter();
       }
       
+      // setPinnedBottomRowData يُطلق modelUpdated من جديد؛ بدون هذا الحارس تدخل الشاشة
+  // حلقة تغذية راجعة تمنع اكتمال العرض بعد الفلترة
+  private isUpdatingFooter = false;
+
+
+      
       updateFooter() {
-        if (!this.gridApi) return;
-    
+        if (!this.gridApi || this.isUpdatingFooter) return;
+        this.isUpdatingFooter = true;
+
         requestAnimationFrame(() => {
-          const summary: any = {};
           const columns = (this.gridApi.getColumnDefs() || []).filter((c: any) => 'field' in c);
-    
-          // 🧹 تفريغ القيم القديمة
+          const numericCols = columns.filter((c: any) => c.type === 'numericColumn' && !c.excludeFromFooter);
+
           this.totalFooterValues = {};
-    
+          for (const col of numericCols) this.totalFooterValues[(col as any).field] = 0;
+
+          // نجمع الصفوف بعد الفلترة فقط، فالفوتر يتبع الفلاتر
           this.gridApi.forEachNodeAfterFilterAndSort((node) => {
             if (!node.data) return;
-    
-            columns.forEach((col: any) => {
-              const field = col.field;
-              if (!field) return;
-    
-              // تجاهل الأعمدة غير الرقمية
-              if (col.excludeFromFooter) return;
-    
-              let val = 0;
-    
-              // 🔹 لو عنده valueGetter
-              if (typeof col.valueGetter === 'function') {
-                try {
-                  const params = {
-                    data: node.data,
-                    node,
-                    colDef: col,
-                    api: this.gridApi,
-                    columnApi: this.gridColumnApi,
-                  };
-                  val = Number(col.valueGetter(params)) || 0;
-                } catch {
-                  val = 0;
-                }
-              } else if (node.data[field] != null) {
-                val = Number(String(node.data[field]).replace(/[^\d.-]/g, '')) || 0;
-              }
-    
-              if (!this.totalFooterValues[field]) {
-                this.totalFooterValues[field] = 0;
-              }
-    
-              this.totalFooterValues[field] += val;
-            });
+            for (const col of numericCols) {
+              const field = (col as any).field;
+              this.totalFooterValues[field] += Number(node.data[field]) || 0;
+            }
           });
-    
-          // 🔢 صياغة الأرقام بالفوتر
-          columns
-            .filter(col => col['type'] === 'numericColumn' && !col['excludeFromFooter'])
-            .forEach((col: any) => {
-              const field = col.field;
-              if (!field) return;
-    
-              if (col.type === 'numericColumn' && !col.excludeFromFooter) {
-                // console.log("field :::::::::: ", field);
-    
-                summary[field] = Number(this.totalFooterValues[field] || 0).toLocaleString(
-                  'en-US',
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  }
-                );
-              } else {
-                summary[field] = '';
-              }
-              // console.log("summary[field] :::: ", summary[field]);
-    
-              // أولاً: انتظر شوي لتتأكد أن الجدول رسم حاله
-              setTimeout(() => {
-                // اختار خلية الـ footer (pinned bottom row)
-                const inputQuantityFooterCell = document.querySelector(`.ag-floating-bottom-viewport .ag-cell-value[col-id="${field}"]`);
-    
-                if (inputQuantityFooterCell) {
-    
-                  (inputQuantityFooterCell as HTMLElement).innerText = summary[field]; // 👈 الرقم اللي بدك تحطه
-                }
-    
-              }, 500);
-    
-            });
-    
-    
-    
-          // 🏷️ ضع كلمة "الإجمالي" في أول عمود نصي
-          const firstTextCol = columns.find(
-            (c: any) => !c.type || c.type !== 'numericColumn'
-          );
-          if (firstTextCol && firstTextCol['field']) {
-            summary[firstTextCol['field']] = 'الإجمالي';
-          }
-    
-    
-    
-          //     console.log('📊 Final footer summary:', summary);
+
+          // نمرّر أرقاماً خاماً؛ الـ valueFormatter نفسه يصوغها، فلا NaN ولا حاجة للتلاعب بالـ DOM
+          const summary: any = { ...this.totalFooterValues, bussiness_man_name: 'الإجمالي' };
+
           this.pinnedBottomRowData = [summary];
           this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
-          console.log('✅ pinned row set in grid:', this.gridApi.getPinnedBottomRowCount());
-          this.gridApi.refreshCells({ force: true });
-    
-    
+          this.isUpdatingFooter = false;
         });
       }
   

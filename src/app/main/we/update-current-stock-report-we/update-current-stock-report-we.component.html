@@ -96,6 +96,49 @@
                     </div>
                 </div>
             </div>
+            <!-- مزامنة كود اللون مع سطر الطلبية -->
+            <div class="row" *ngIf="orderColorRows.length">
+                <div class="col-12">
+                    <div class="alert p-2 mb-2"
+                         [class.alert-warning]="hasOrderCodeMismatch"
+                         [class.alert-light]="!hasOrderCodeMismatch"
+                         style="font-size:0.85rem;">
+                        <b>كود اللون في الطلبية</b>
+                        <span class="text-muted"> — المعروض في الجرد: </span>
+                        <span class="badge bg-secondary">{{ stockColorCode || '—' }}</span>
+
+                        <table class="table table-sm table-bordered mt-2 mb-2" dir="rtl">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width:40px;"></th>
+                                    <th>كود اللون في الطلبية</th>
+                                    <th style="width:90px;">الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of orderColorRows">
+                                    <td class="text-center">
+                                        <input type="radio" name="orderRow" [value]="row.id"
+                                               [(ngModel)]="selectedOrderRowId"
+                                               [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <td>{{ row.color_code || '—' }}</td>
+                                    <td>
+                                        <span *ngIf="isOrderCodeDifferent(row)" class="badge bg-warning text-dark">مختلف</span>
+                                        <span *ngIf="!isOrderCodeDifferent(row)" class="badge bg-success">مطابق</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <mat-checkbox [(ngModel)]="syncOrderColorCode" [ngModelOptions]="{standalone: true}"
+                                      [disabled]="!selectedOrderRowId">
+                            تحديث كود اللون في سطر الطلبية المحدد ليطابق المعروض
+                        </mat-checkbox>
+                    </div>
+                </div>
+            </div>
+
             <!-- Buttons Section -->
             <div [class]="_sharedComponentService.btnSectionClass">
                 <div class="row row-cols-auto">

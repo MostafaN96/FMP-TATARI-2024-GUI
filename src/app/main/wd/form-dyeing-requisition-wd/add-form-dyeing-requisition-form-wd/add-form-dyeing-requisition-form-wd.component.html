@@ -5,13 +5,13 @@
     <div [class]="_sharedComponentService.mainPageFormClass">
 
         <!-- زر سكان الإيصال -->
-        <div class="mb-3">
+        <!-- <div class="mb-3">
             <label class="btn-style" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
                 <i class="fas fa-camera"></i> سكان الإيصال
                 <input type="file" accept="image/*" capture="environment"
                     style="display:none;" (change)="onScanImageSelected($event)">
             </label>
-        </div>
+        </div> -->
 
         <form [formGroup]="addRequisitionForm" (ngSubmit)="onAddRequisition()">
             <div [class]="_sharedComponentService.subMainPageForm2Class">
@@ -305,6 +305,26 @@
                                                 </mat-label>
                                                 <input [disabled]="true" matInput placeholder="الكمية المتوفرة" formControlName="validQuantity" readonly>
                                             </mat-form-field>
+
+                                            <!-- اختيار ماكينة الحياكة التي تُخصم منها الكمية -->
+                                            <div *ngIf="$any(row).stockRow?.has_machine" class="mt-1">
+                                                <select class="form-control form-control-sm"
+                                                        formControlName="machineLinkId"
+                                                        (change)="onSelectMachine($event, row)"
+                                                        style="font-size:0.72rem;">
+                                                    <option value="">
+                                                        كل الماكينات ({{ $any(row).stockRow.current_quantity }})
+                                                    </option>
+                                                    <option *ngFor="let m of $any(row).stockRow.machines"
+                                                            [value]="m.machineLinkId">
+                                                        {{ m.machineName }} — {{ m.quantity }}
+                                                    </option>
+                                                </select>
+                                                <small *ngIf="$any(row).stockRow.quantity_without_machine > 0"
+                                                       class="text-muted" style="font-size:0.68rem;">
+                                                    بلا ماكينة: {{ $any(row).stockRow.quantity_without_machine }}
+                                                </small>
+                                            </div>
                                         </td>
 
                                         <!-- Price -->

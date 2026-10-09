@@ -42,6 +42,11 @@ export class UpdateCurrentStockReportWeComponent implements OnInit {
   colorCategories: any = []
   colors: any = []
 
+  // سطور الطلبية المطابقة، لمقارنة كود اللون المسجّل فيها بالمعروض في الجرد
+  orderColorRows: any[] = []
+  selectedOrderRowId: string | null = null
+  syncOrderColorCode = false
+
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 
   //enable the highlight property to highlight the matched character in suggestion list
@@ -123,7 +128,40 @@ export class UpdateCurrentStockReportWeComponent implements OnInit {
     this.weForm.controls['colorCategoryId'].setValue(this.selectedData?.color_category_id)
     this.weForm.controls['dyeingColorPricesId'].setValue(this.selectedData?.dyeing_colors_prices_id)
     this.weForm.controls['weId'].setValue(this.selectedData?.we_id)
-    this.weForm.controls['wdFormDyeingRequisitionDetailsId'].setValue(this.selectedData?.wd_form_dyeing_requisition_details_id)
+    // (أُزيل سطر يضبط عنصراً غير موجود في النموذج wdFormDyeingRequisitionDetailsId:
+    //  كان يرمي خطأً فيوقف ngOnChanges قبل تحميل سطور الطلبية أدناه.)
+
+    this.loadOrderColorRows()
+  }
+
+  // سطور الطلبية المقابلة لصف الجرد؛ نكشف ما إذا كان كود اللون فيها مختلفاً عن المعروض
+  private loadOrderColorRows() {
+    this.orderColorRows = []
+    this.selectedOrderRowId = null
+    this.syncOrderColorCode = false
+
+    const ordersRequisitionsId = this.selectedData?.orders_requisitions_id
+    const dyedFabricId = this.selectedData?.dyed_fabric_id
+    if (!ordersRequisitionsId || !dyedFabricId) return
+
+    this._weService
+      .selectOrderColorCodes(ordersRequisitionsId, dyedFabricId, this.selectedData?.color_id)
+      .subscribe((rows: any[]) => {
+        this.orderColorRows = rows || []
+        if (this.orderColorRows.length === 1) this.selectedOrderRowId = this.orderColorRows[0].id
+      })
+  }
+
+  get stockColorCode(): string {
+    return String(this.selectedData?.color_code ?? '')
+  }
+
+  isOrderCodeDifferent(row: any): boolean {
+    return String(row?.color_code ?? '') !== this.stockColorCode
+  }
+
+  get hasOrderCodeMismatch(): boolean {
+    return this.orderColorRows.some(r => this.isOrderCodeDifferent(r))
   }
 
   initItem(data) {
@@ -175,7 +213,12 @@ export class UpdateCurrentStockReportWeComponent implements OnInit {
     this.weForm.markAllAsTouched();
     if (this.weForm.valid) {
       this._constantsService.spinner.show()
-      this._weService.updateWEData(this.weForm.value).subscribe((response: any) => {
+      const payload = {
+        ...this.weForm.value,
+        syncOrderColorCode: this.syncOrderColorCode && !!this.selectedOrderRowId,
+        weDyedFabricOrderRequisitionDetailsId: this.selectedOrderRowId,
+      }
+      this._weService.updateWEData(payload).subscribe((response: any) => {
         this._constantsService.spinner.hide();
         if (response.msg == "data updated") {
           this._constantsService.successUpdateMessage()

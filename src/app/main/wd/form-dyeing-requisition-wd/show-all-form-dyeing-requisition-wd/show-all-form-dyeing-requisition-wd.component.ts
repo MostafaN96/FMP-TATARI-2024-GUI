@@ -112,6 +112,21 @@ export class ShowAllFormDyeingRequisitionWdComponent implements OnInit {
       },
     },
     {
+      // ملخّص ماكينات سطور الإذن؛ الإذن الواحد قد يضم أكثر من ماكينة.
+      // بلا فلترة خادمية لأنه حقل محسوب بعد الاستعلام لا عمود في الجدول.
+      headerName: 'ماكينة الحياكة',
+      field: 'machines_label',
+      colId: 'machines_label',
+      width: 170,
+      minWidth: 140,
+      excludeFromFooter: true,
+      filter: false,
+      sortable: false,
+      cellClass: 'ag-cell-wrap',
+      tooltipValueGetter: (params: any) => params.value || '',
+      valueFormatter: (params: any) => params.node?.rowPinned ? '' : (params.value || '—'),
+    },
+    {
       headerName: 'رقم الطلب',
       field: 'work_order_number',
       colId: 'work_order_number',

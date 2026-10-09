@@ -50,6 +50,8 @@ export class AddSellRequisitionWcComponent implements OnInit {
   fabricOrder: any = []
   sellers: any = []
   consigments: any = []
+  // الأمانة المختارة لكل سطر، لعرض توزيع كميتها على ماكينات الحياكة
+  machinesOfConsigment: any = []
   currentQuantity: any = []
   fabricsDetails: any
   listFabricPrices: any = []
@@ -189,6 +191,8 @@ export class AddSellRequisitionWcComponent implements OnInit {
       fabricCode: new FormControl(""),
       fabricName: new FormControl(""),
       consigmentManufacturingId: new FormControl("", [Validators.required]),
+      // ماكينة الحياكة المراد الخصم منها؛ الفراغ يعني الخصم من كامل رصيد الأمانة
+      machineLinkId: new FormControl(""),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -295,6 +299,21 @@ export class AddSellRequisitionWcComponent implements OnInit {
     this.validate(row, index)
   }
 
+  // اختيار ماكينة الحياكة التي ستُخصم منها الكمية.
+  // سقف الكمية يتبع الماكينة المختارة، وعند "كل الماكينات" يعود لرصيد الأمانة كاملاً.
+  onSelectMachine(event: any, row: FormGroup, index) {
+    const consigment = this.machinesOfConsigment[index]
+    if (!consigment) return
+
+    const linkId = event?.target?.value || ""
+    const machine = (consigment.machines || []).find((m) => String(m.machineLinkId) === String(linkId))
+    const cap = machine ? machine.quantity : consigment.current_quantity
+
+    this.currentQuantity[index] = cap
+    row.controls['validQuantity'].setValue(cap)
+    this.validate(row, index)
+  }
+
   validate(row: FormGroup, index) {
     if (parseFloat(row.controls['quantity'].value) > parseFloat(this.currentQuantity[index])) {
       row.controls['quantity'].setErrors({ 'incorrect': true });
@@ -320,7 +339,12 @@ export class AddSellRequisitionWcComponent implements OnInit {
       row.controls['quantity'].setValue(null)
       this.currentQuantity[index] = 0
       this.listFabricPricesDollar[index] = []
+      this.machinesOfConsigment[index] = null
+      row.controls['machineLinkId'].setValue("")
     } else {
+      this.machinesOfConsigment[index] = event.itemData
+      // تغيير الأمانة يُلغي أي ماكينة كانت مختارة لأن قائمتها تختلف
+      row.controls['machineLinkId'].setValue("")
       this.currentQuantity[index] = event.itemData.current_quantity
       row.controls['validQuantity'].setValue(event.itemData.current_quantity)
 

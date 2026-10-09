@@ -46,6 +46,8 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
   fabrics: any = []
   consigments: any = []
   currentQuantity: any = []
+  // رسالة الصباغة المختارة لكل سطر، لعرض توزيع كميتها على ماكينات الحياكة
+  machinesOfConsigment: any = []
   dyers: any = []
   dyersDetails: any = []
   fabricOrder: any = []
@@ -162,6 +164,8 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
       fabricId: new FormControl("", [Validators.required]),
       fabricCode: new FormControl(""),
       consigmentDyeingId: new FormControl("", [Validators.required]),
+      // ماكينة الحياكة المراد الخصم منها؛ الفراغ يعني الخصم من كامل رصيد الرسالة
+      machineLinkId: new FormControl(""),
       price: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       priceDollar: new FormControl("0", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
       quantity: new FormControl("", [Validators.required, Validators.pattern(this.patterns.validator_pattern.floatNumber)]),
@@ -245,6 +249,20 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
     this.validate(row, index)
   }
 
+  // اختيار ماكينة الحياكة التي ستُخصم منها الكمية.
+  // سقف الكمية يتبع الماكينة المختارة، وعند "كل الماكينات" يعود لرصيد الرسالة كاملاً.
+  onSelectMachine(event: any, row: FormGroup, index) {
+    const consigment = this.machinesOfConsigment[index]
+    if (!consigment) return
+
+    const linkId = event?.target?.value || ""
+    const machine = (consigment.machines || []).find((m) => String(m.machineLinkId) === String(linkId))
+    const cap = machine ? machine.quantity : consigment.current_quantity
+
+    this.currentQuantity[index] = cap
+    this.validate(row, index)
+  }
+
   validate(row: FormGroup, index) {
     if ((parseFloat(row.controls['quantity'].value) > parseFloat(this.currentQuantity[index])) && !+row.controls['inputOutput'].value) {
       row.controls['quantity'].setErrors({ 'incorrect': true });
@@ -281,7 +299,12 @@ export class AddReconcilitionRequisitionWdComponent implements OnInit {
       this.currentQuantity[index] = 0
       this.listFabricPrices[index] = []
       this.listFabricPricesDollar[index] = []
+      this.machinesOfConsigment[index] = null
+      row.controls['machineLinkId'].setValue("")
     } else {
+      this.machinesOfConsigment[index] = event.itemData
+      // تغيير الرسالة يُلغي أي ماكينة كانت مختارة لأن قائمتها تختلف
+      row.controls['machineLinkId'].setValue("")
       this.currentQuantity[index] = event.itemData.current_quantity
 
       // Get Prices

@@ -143,6 +143,21 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
       hide: !this.iShowTotalBalance,
       type: 'numericColumn',
     },
+    // يظهران فقط مع فلتر التاريخ (الإدخال والإخراج عندها حركات الفترة)
+    {
+      headerName: 'رصيد أول المدة',
+      field: 'opening_balance',
+      valueFormatter: (params: any) => this.formatNumber(params.value),
+      hide: true,
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'رصيد آخر المدة',
+      field: 'closing_balance',
+      valueFormatter: (params: any) => this.formatNumber(params.value),
+      hide: true,
+      type: 'numericColumn',
+    },
     {
       headerName: 'قيمة المدخلات',
       field: 'total_amount_input',
@@ -235,6 +250,15 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
       field: 'latest_manufacturing_price',
       hide: !this.isShowLatestManufacturingPrice || !this._sessionManagerService.checkAuth(this._constantsService.ROUTING_LINKS_DETAILS[11]),
       excludeFromFooter: true,
+    },
+    {
+      headerName: 'تفاصيل الإدخال',
+      colId: 'input_details',
+      filter: false,
+      sortable: false,
+      minWidth: 120,
+      excludeFromFooter: true,
+      cellRenderer: (p: any) => this.inputDetailsButton(p),
     },
     {
       headerName: 'حركة الصنف',
@@ -348,40 +372,113 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
     }
   }
 
-  private loadData(params: GridReadyEvent, isShowClosedBalances: boolean) {
-    if (isShowClosedBalances) {
-      this.getClosedBalances(params);
-    } else {
-      this.getRegularBalances(params);
+  ///////////////////// فلتر التاريخ /////////////////////
+  // YYYY-MM-DD من <input type="date">؛ الفارغ يعني بلا حد
+  fromDate = ''
+  toDate = ''
+  // التاريخ المطبّق فعلاً على البيانات المعروضة (لا ما كُتب في الحقل ولم يُطبَّق)
+  appliedDateRange: { fromDate: string, toDate: string } | null = null
+
+  applyDateFilter() {
+    if (this.fromDate && this.toDate && this.fromDate > this.toDate) {
+      [this.fromDate, this.toDate] = [this.toDate, this.fromDate];
     }
+    this.loadData(this.gridParams, this.isShowClosedBalances);
   }
 
-  getRegularBalances(params: GridReadyEvent) {
+  clearDateFilter() {
+    this.fromDate = '';
+    this.toDate = '';
+    this.loadData(this.gridParams, this.isShowClosedBalances);
+  }
+
+  ///////////////////// تعليم الأسطر /////////////////////
+  // بعد تفعيل «وضع التعليم»، الضغط على سطر يعلّمه أو يلغي تعليمه ليسهل تتبّعه أثناء المراجعة
+  isMarkingMode = false
+  markedRows = new Set<any>()
+  rowClassRules = {
+    'row-marked': (params: any) => !!params.data && this.markedRows.has(params.data),
+  }
+
+  toggleMarkingMode() {
+    this.isMarkingMode = !this.isMarkingMode;
+  }
+
+  onRowClicked(event: any) {
+    if (!this.isMarkingMode || !event.data || event.node?.rowPinned) return;
+    // الضغط على رابط «حركة الصنف» أو زر «تفاصيل الإدخال» لا يعلّم السطر
+    if ((event.event?.target as HTMLElement)?.closest?.('a, button')) return;
+    if (this.markedRows.has(event.data)) {
+      this.markedRows.delete(event.data);
+    } else {
+      this.markedRows.add(event.data);
+    }
+    this.gridApi.redrawRows({ rowNodes: [event.node] });
+  }
+
+  clearMarkedRows() {
+    this.markedRows.clear();
+    this.gridApi?.redrawRows();
+  }
+
+  ///////////////////// نافذة تفاصيل الإدخال /////////////////////
+  // تعرض حركات الإدخال المحسوبة في السطر نفسه (details: حركات الفترة إن طُبّق التاريخ)
+  showInputDetails = false
+  inputDetailsMovements: any[] = []
+  inputDetailsHeader: { label: string, value: any }[] = []
+
+  private inputDetailsButton(p: any) {
+    if (!p.data || p.node?.rowPinned) return '';
+    const count = (p.data.details || []).filter((d: any) => d?.input_output == 1).length;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'input-details-btn';
+    button.title = 'عرض حركات الإدخال';
+    button.innerHTML = `<i class="fas fa-sign-in-alt"></i> ${count}`;
+    button.addEventListener('click', () => this.openInputDetails(p.data));
+    return button;
+  }
+
+  openInputDetails(row: any) {
+    this.inputDetailsHeader = [
+      { label: 'المادة', value: `${row.code ?? ''} - ${row.name ?? ''}` },
+      { label: 'النطاق', value: 'كل المخازن والطلبيات' },
+    ];
+    this.inputDetailsMovements = row.details || [];
+    this.showInputDetails = true;
+  }
+
+  private formatNumber(value: any) {
+    if (!value) return '0';
+    return Number(value).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  private loadData(params: GridReadyEvent, isShowClosedBalances: boolean) {
     this.isLoading = true;
+    const dateRange = (this.fromDate || this.toDate)
+      ? { fromDate: this.fromDate, toDate: this.toDate }
+      : null;
     this._inventoryReportService.fetchData(
       (options) => this._reportWcService.selectInverntoryTotal(options),
       params,
-      (response) => this.applyGridData(params, response),
+      (response) => {
+        this.appliedDateRange = dateRange;
+        this.applyGridData(params, response);
+      },
       () => this.isLoading = false,
-      { isShowClosedBalances: false }
-    );
-  }
-
-  getClosedBalances(params: GridReadyEvent) {
-    this.isLoading = true;
-    this._inventoryReportService.fetchData(
-      (options) => this._reportWcService.selectInverntoryTotal(options),
-      params,
-      (response) => this.applyGridData(params, response),
-      () => this.isLoading = false,
-      { isShowClosedBalances: true }
+      { isShowClosedBalances, ...(dateRange || {}) }
     );
   }
 
   applyGridData(params: GridReadyEvent, data: any) {
     this.fabrics = data;
+    this.markedRows.clear();
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+    this.gridColumnApi.setColumnsVisible(['opening_balance', 'closing_balance'], !!this.appliedDateRange);
     this._inventoryReportService.applyDataToGrid(
       data,
       this.gridApi,
@@ -394,12 +491,26 @@ export class ItemHistoryByFabricTotalWcComponent implements OnInit {
     );
   }
 
+  // setPinnedBottomRowData يُطلق modelUpdated من جديد؛ بدون هذا الحارس يُعاد حساب
+  // الإجمالي في حلقة
+  private isUpdatingFooter = false;
+
   onModelUpdated() {
+    if (this.isUpdatingFooter) return;
     this.calculateFooter();
   }
 
   calculateFooter() {
-    if (!this.gridApi) return;
+    if (!this.gridApi || this.isUpdatingFooter) return;
+    this.isUpdatingFooter = true;
+    try {
+      this.buildFooter();
+    } finally {
+      this.isUpdatingFooter = false;
+    }
+  }
+
+  private buildFooter() {
 
     const summary: any = {};
     const columns = this.gridApi.getColumnDefs() || [];

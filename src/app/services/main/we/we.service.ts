@@ -99,4 +99,32 @@ export class WeService {
       });
   }
 
+  // تعديل كود اللون من خانة الجرد: يُكتب على سطر الطلبية المطابق (طلبية + قماش + لون)
+  updateOrderColorCode(obj: {
+    ordersRequisitionsId: string, dyedFabricId: string, colorId: string,
+    colorCode: string, requisitionDetailsId?: string | null
+  }): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}order-color-code`;
+    return this._http.put(url, obj,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
+  // سطور الطلبية المطابقة لصف الجرد، لعرض كود اللون المسجّل في الطلبية ومقارنته بالمعروض
+  selectOrderColorCodes(ordersRequisitionsId: string, dyedFabricId: string, colorId?: string): Observable<any> {
+    let url = `${this._constantsService.BASE_URL}${this.urlService}order-color-codes`
+      + `?ordersRequisitionsId=${encodeURIComponent(ordersRequisitionsId || '')}`
+      + `&dyedFabricId=${encodeURIComponent(dyedFabricId || '')}`
+      + `&colorId=${encodeURIComponent(colorId || '')}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
 }

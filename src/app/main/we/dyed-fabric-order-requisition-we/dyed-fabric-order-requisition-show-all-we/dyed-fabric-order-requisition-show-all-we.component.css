@@ -118,3 +118,51 @@ td table tfoot tr {
         transform: rotate(360deg);
     }
 }
+/* ملفات إكسل تفاصيل الطلبية (عناصر الخلية يُنشئها ag-grid خارج القالب، لذا ::ng-deep) */
+:host ::ng-deep .excel-files-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+    padding: 4px 0;
+    text-align: right;
+}
+
+:host ::ng-deep .excel-file-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+:host ::ng-deep .excel-file-link {
+    flex: 1;
+    min-width: 0;
+    color: #1d6f42;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host ::ng-deep .excel-file-link:hover {
+    text-decoration: underline;
+}
+
+:host ::ng-deep .excel-file-remove {
+    color: #adb5bd;
+    font-size: 12px;
+}
+
+:host ::ng-deep .excel-file-remove:hover {
+    color: #dc3545;
+}
+
+:host ::ng-deep .excel-file-upload {
+    color: #007bff;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+:host ::ng-deep .excel-file-upload:hover {
+    text-decoration: underline;
+}

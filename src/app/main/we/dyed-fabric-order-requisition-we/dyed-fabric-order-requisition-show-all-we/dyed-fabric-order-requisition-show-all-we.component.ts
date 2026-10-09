@@ -249,6 +249,18 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
       }
     },
     {
+      // ملفات إكسل تفاصيل الطلبية التي ترسلها الشركة: رفع، تنزيل، حذف
+      headerName: 'ملف الطلبية (إكسل)',
+      colId: 'excel_files',
+      minWidth: 190,
+      flex: 1.5,
+      sortable: false,
+      filter: false,
+      autoHeight: true,
+      cellClass: (params) => params.data?.is_active == '0' ? 'warning_background' : '',
+      cellRenderer: (params: any) => this.excelFilesRenderer(params),
+    },
+    {
       headerName: 'إغلاق الطلبية',
       colId: 'close_order',
       width: 100,
@@ -427,6 +439,159 @@ export class DyedFabricOrderRequisitionShowAllWeComponent implements OnInit {
         this._constantsService.userErrorMessage();
       }
     });
+  }
+
+  ///////////////////// ملفات إكسل تفاصيل الطلبية /////////////////////
+
+  private readonly excelAccept = '.xlsx,.xls,.xlsm,.csv';
+  private readonly maxExcelSizeMb = 20;
+  uploadingOrderIds = new Set<string>();
+
+  private excelFilesRenderer(params: any): HTMLElement | string {
+    if (!params.data) return '';
+    const order = params.data;
+    const files: any[] = order.excelFiles || [];
+
+    const host = document.createElement('div');
+    host.className = 'excel-files-cell';
+
+    for (const file of files) {
+      const line = document.createElement('div');
+      line.className = 'excel-file-line';
+
+      const link = document.createElement('a');
+      link.className = 'excel-file-link';
+      link.href = '#';
+      link.title = `${file.original_name}\nرُفع: ${this._sharedComponentService.formatDate(file.created_at)}`;
+      link.innerHTML = '<i class="far fa-file-excel"></i> ';
+      link.appendChild(document.createTextNode(file.original_name));
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.downloadOrderFile(file);
+      });
+
+      const remove = document.createElement('a');
+      remove.className = 'excel-file-remove';
+      remove.href = '#';
+      remove.title = 'حذف الملف';
+      remove.innerHTML = '<i class="fas fa-times"></i>';
+      remove.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.confirmDeleteOrderFile(event, params, file);
+      });
+
+      line.appendChild(link);
+      line.appendChild(remove);
+      host.appendChild(line);
+    }
+
+    const uploading = this.uploadingOrderIds.has(String(order.id));
+    const upload = document.createElement('a');
+    upload.className = 'excel-file-upload';
+    upload.href = '#';
+    upload.innerHTML = uploading
+      ? '<i class="fas fa-spinner fa-spin"></i> جاري الرفع...'
+      : `<i class="fas fa-upload"></i> ${files.length ? 'رفع ملف آخر' : 'رفع ملف'}`;
+    upload.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (!this.uploadingOrderIds.has(String(order.id))) this.pickOrderFile(params);
+    });
+    host.appendChild(upload);
+
+    return host;
+  }
+
+  private pickOrderFile(params: any) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = this.excelAccept;
+    input.addEventListener('change', () => {
+      const file = input.files?.[0];
+      if (file) this.uploadOrderFile(params, file);
+    });
+    input.click();
+  }
+
+  private uploadOrderFile(params: any, file: File) {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (!this.excelAccept.split(',').includes(`.${ext}`)) {
+      this._constantsService.errorMessage('الملف يجب أن يكون إكسل (xlsx, xls, xlsm) أو csv');
+      return;
+    }
+    if (file.size > this.maxExcelSizeMb * 1024 * 1024) {
+      this._constantsService.errorMessage(`حجم الملف أكبر من ${this.maxExcelSizeMb} ميغا`);
+      return;
+    }
+
+    const order = params.data;
+    this.uploadingOrderIds.add(String(order.id));
+    this.refreshFilesCell(params);
+
+    this._dyedFabricOrderRequisitionWeService.uploadOrderFile(order.id, file)
+      .pipe(finalize(() => {
+        this.uploadingOrderIds.delete(String(order.id));
+        this.refreshFilesCell(params);
+      }))
+      .subscribe({
+        next: (response: any) => {
+          if (response?.file) {
+            order.excelFiles = [response.file, ...(order.excelFiles || [])];
+            this._constantsService.successMessage('تم رفع الملف');
+          } else {
+            this._constantsService.userErrorMessage();
+          }
+        },
+        error: (error: any) => {
+          const msg = error?.error?.msg;
+          this._constantsService.errorMessage(
+            msg === 'invalid file type' ? 'نوع الملف غير مسموح' :
+            msg === 'file too large' ? `حجم الملف أكبر من ${this.maxExcelSizeMb} ميغا` :
+            'تعذّر رفع الملف'
+          );
+        }
+      });
+  }
+
+  downloadOrderFile(file: any) {
+    this._dyedFabricOrderRequisitionWeService.downloadOrderFile(file.id).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.original_name || 'order.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      },
+      error: () => this._constantsService.errorMessage('الملف غير موجود'),
+    });
+  }
+
+  private confirmDeleteOrderFile(event: Event, params: any, file: any) {
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: `حذف الملف «${file.original_name}»؟`,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this._dyedFabricOrderRequisitionWeService.deleteOrderFile(file.id).subscribe({
+          next: () => {
+            params.data.excelFiles = (params.data.excelFiles || []).filter((f: any) => f.id !== file.id);
+            this.refreshFilesCell(params);
+            this._constantsService.successDeleteMessage();
+          },
+          error: () => this._constantsService.userErrorMessage(),
+        });
+      },
+    });
+  }
+
+  private refreshFilesCell(params: any) {
+    if (!this.gridApi || !params.node) return;
+    this.gridApi.refreshCells({ rowNodes: [params.node], columns: ['excel_files'], force: true });
+    this.gridApi.resetRowHeights();
   }
 
   inquireReport() {

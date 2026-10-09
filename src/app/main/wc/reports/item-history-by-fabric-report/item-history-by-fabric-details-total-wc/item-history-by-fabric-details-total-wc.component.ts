@@ -338,12 +338,20 @@ export class ItemHistoryByFabricDetailsTotalWcComponent implements OnInit {
 
 
   onModelUpdated() {
+        if (this.isUpdatingFooter) return;
     this.updateFooter();
     // this.gridApi?.refreshCells({ force: true, columns: ['balance'] });
   }
 
+  // setPinnedBottomRowData يُطلق modelUpdated من جديد؛ بدون هذا الحارس تدخل الشاشة
+  // حلقة تغذية راجعة تمنع اكتمال العرض بعد الفلترة
+  private isUpdatingFooter = false;
+
+
+
   updateFooter() {
-    if (!this.gridApi) return;
+    if (!this.gridApi || this.isUpdatingFooter) return;
+        this.isUpdatingFooter = true;
 
     requestAnimationFrame(() => {
       const summary: any = {};
@@ -467,6 +475,7 @@ export class ItemHistoryByFabricDetailsTotalWcComponent implements OnInit {
       // ✅ 4) Set pinned bottom row
       this.pinnedBottomRowData = [summary];
       this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
+          this.isUpdatingFooter = false;
       this.gridApi.refreshCells({ force: true });
     });
   }

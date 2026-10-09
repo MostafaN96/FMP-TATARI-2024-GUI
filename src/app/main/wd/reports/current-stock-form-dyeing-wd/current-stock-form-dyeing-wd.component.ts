@@ -85,6 +85,16 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
     // { field: 'fabric_dyeing_code', headerName: 'كود المصبغة' },
     { field: 'consigment_dyeing_number', headerName: 'رقم الرسالة' },
     {
+      // الأسماء طويلة وقد تكون أكثر من ماكينة للسطر الواحد، فنعرضها ملفوفة مع tooltip
+      field: 'machines_label',
+      headerName: 'ماكينة الحياكة',
+      cellClass: 'ag-cell-wrap',
+      width: 160,
+      minWidth: 140,
+      tooltipValueGetter: (params) => params.value || '',
+      valueFormatter: (params) => params.value || '—'
+    },
+    {
       field: 'is_prepare_dyeing',
       headerName: 'نزل المصبغة',
       width: 85,
@@ -94,11 +104,12 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
     },
     { field: 'quantity', headerName: 'الكمية المشكلة', width: 95, minWidth: 95, maxWidth: 95, valueFormatter: this.numberFormatter.bind(this) },
     { field: 'current_quantity', headerName: 'الكمية التشكيل المتبقية', width: 110, minWidth: 110, maxWidth: 110, valueFormatter: this.numberFormatter.bind(this) },
-    { field: 'price', headerName: 'السعر', width: 85, minWidth: 85, maxWidth: 85, valueFormatter: this.numberFormatter.bind(this) },
-    { field: 'price_dollar', headerName: 'السعر دولار', width: 90, minWidth: 90, maxWidth: 90, valueFormatter: this.numberFormatter.bind(this) },
+    { field: 'price', headerName: 'السعر', hide: true, width: 85, minWidth: 85, maxWidth: 85, valueFormatter: this.numberFormatter.bind(this) },
+    { field: 'price_dollar', headerName: 'السعر دولار', hide: true, width: 90, minWidth: 90, maxWidth: 90, valueFormatter: this.numberFormatter.bind(this) },
     {
       colId: 'amount',
       headerName: 'القيمة',
+      hide: true,
       width: 95,
       minWidth: 95,
       maxWidth: 95,
@@ -108,6 +119,7 @@ export class CurrentStockFormDyeingWdComponent implements OnInit {
     {
       colId: 'amount_dollar',
       headerName: 'القيمة دولار',
+      hide: true,
       width: 105,
       minWidth: 105,
       maxWidth: 105,

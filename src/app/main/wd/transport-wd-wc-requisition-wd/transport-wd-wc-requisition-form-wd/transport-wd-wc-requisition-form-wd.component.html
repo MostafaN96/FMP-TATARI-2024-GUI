@@ -136,10 +136,30 @@
                                             [innerHTML]="_sharedComponentService.invalid_message">
                                             </small>
                                             <small class="text-danger"
-                                                *ngIf="row.get('consigmentDyeingId').hasError('required') && (row.get('consigmentDyeingId').dirty 
+                                                *ngIf="row.get('consigmentDyeingId').hasError('required') && (row.get('consigmentDyeingId').dirty
                                                 || row.get('consigmentDyeingId').touched)"
                                                 [innerHTML]="_sharedComponentService.required_field">
                                             </small>
+
+                                            <!-- اختيار ماكينة الحياكة التي تُخصم منها الكمية -->
+                                            <div *ngIf="machinesOfConsigment[index]?.has_machine" class="mt-1">
+                                                <select class="form-control form-control-sm"
+                                                        formControlName="machineLinkId"
+                                                        (change)="onSelectMachine($event, row, index)"
+                                                        style="font-size:0.72rem;">
+                                                    <option value="">
+                                                        كل الماكينات ({{ machinesOfConsigment[index].current_quantity }})
+                                                    </option>
+                                                    <option *ngFor="let m of machinesOfConsigment[index].machines"
+                                                            [value]="m.machineLinkId">
+                                                        {{ m.machineName }} — {{ m.quantity }}
+                                                    </option>
+                                                </select>
+                                                <small *ngIf="machinesOfConsigment[index].quantity_without_machine > 0"
+                                                       class="text-muted" style="font-size:0.68rem;">
+                                                    بلا ماكينة: {{ machinesOfConsigment[index].quantity_without_machine }}
+                                                </small>
+                                            </div>
                                         </td>
                                         
                                         <!-- Price -->

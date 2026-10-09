@@ -38,6 +38,7 @@ export class TransportWcWdRequisitionDetailsWcComponent implements OnInit {
     'fabric_name', 
     'fabric_code',
     'consigment_manufacturing_number',
+    'machines_label',
     'dyer_name',
     'quantity',
     'price',

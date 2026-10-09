@@ -55,15 +55,48 @@
                             <div class="col">
                                 <div [class]="_sharedComponentService.tableSectionClass">
 
-                                    <div class="mb-4">
+                                    <div class="mb-4 report-toolbar">
                                         <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowClosedBalances"
                                 (change)="onToggleBalanceType($event)">اظهار الارصدة المغلقة</mat-checkbox>
                                         <button mat-raised-button color="warn" (click)="resetFilters()" class="ms-3">
                                             <i class="fas fa-undo me-2"></i>إعادة تعيين الفلاتر
                                         </button>
+
+                                        <div class="date-filter">
+                                            <label>من تاريخ
+                                                <input type="date" class="form-control form-control-sm" [(ngModel)]="fromDate">
+                                            </label>
+                                            <label>إلى تاريخ
+                                                <input type="date" class="form-control form-control-sm" [(ngModel)]="toDate">
+                                            </label>
+                                            <button mat-raised-button color="primary" (click)="applyDateFilter()" [disabled]="isLoading">
+                                                <i class="fas fa-filter me-2"></i>تطبيق
+                                            </button>
+                                            <button mat-stroked-button *ngIf="appliedDateRange || fromDate || toDate" (click)="clearDateFilter()" [disabled]="isLoading">
+                                                مسح التاريخ
+                                            </button>
+                                        </div>
+
+                                        <button mat-raised-button [color]="isMarkingMode ? 'accent' : undefined" (click)="toggleMarkingMode()"
+                                                [title]="isMarkingMode ? 'اضغط لإيقاف التعليم' : 'بعد التفعيل: اضغط على أي سطر لتعليمه'">
+                                            <i class="fas fa-highlighter me-2"></i>{{ isMarkingMode ? 'إيقاف التعليم' : 'تعليم الأسطر' }}
+                                        </button>
+                                        <button mat-raised-button [color]="isShowInputMovements ? 'accent' : undefined" (click)="toggleInputMovements()">
+                                            <i class="fas fa-sign-in-alt me-2"></i>{{ isShowInputMovements ? 'إخفاء حركات الإدخال' : 'إظهار حركات الإدخال' }}
+                                        </button>
+                                        <button mat-stroked-button *ngIf="markedRows.size" (click)="clearMarkedRows()">
+                                            <i class="fas fa-eraser me-2"></i>إلغاء تعليم الأسطر ({{ markedRows.size }})
+                                        </button>
                                     </div>
 
-                                    <div id="table-header-data-report"
+                                    <div class="date-hint" *ngIf="appliedDateRange">
+                                        الإدخال والإخراج لحركات الفترة
+                                        <b>{{ appliedDateRange.fromDate || 'البداية' }}</b> ←
+                                        <b>{{ appliedDateRange.toDate || 'اليوم' }}</b>
+                                        — «الرصيد» هو الرصيد الحالي، وأرصدة الفترة في «رصيد أول المدة» و«رصيد آخر المدة».
+                                    </div>
+
+                                    <div id="table-header-data-report" [class.marking-mode]="isMarkingMode"
                         dir="rtl"
                         class="ag-theme-alpine ag-rtl">
 
@@ -84,6 +117,8 @@
                                 [sideBar]="sideBar"
                                 [localeText]="_sharedComponentService.localeText" 
                                 [pinnedBottomRowData]="pinnedBottomRowData"
+                                [rowClassRules]="rowClassRules"
+                                (rowClicked)="onRowClicked($event)"
                                 (modelUpdated)="onModelUpdated()">
                             </ag-grid-angular>
 

@@ -120,6 +120,8 @@ getData() {
 
   this._weService.selectStoreWe().subscribe((response: any) => {
     this.currentStockReport.dyersAndRequisitionsFabrics = response
+    // مطابقة كود اللون في الطلبية مع المعروض متاحة من إذن البيع
+    this.currentStockReport.isShowColorCodeEdit = true
     this.currentStockReport.listen();
   })
 

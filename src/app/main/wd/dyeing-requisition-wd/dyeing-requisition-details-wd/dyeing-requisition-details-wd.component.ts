@@ -43,6 +43,7 @@ export class DyeingRequisitionDetailsWdComponent implements OnInit {
     'fabric_code',
     'fabric_dyeing_code',
     'consigment_dyeing_number',
+    'machines_label',
     'quantity',
     'dyeing_quantity',
     'fabric_piece',

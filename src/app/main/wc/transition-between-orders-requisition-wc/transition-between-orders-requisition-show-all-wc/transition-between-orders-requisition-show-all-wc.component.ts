@@ -71,17 +71,19 @@ consigmentDetails: any[] = []
     }
     
  getRequisitionDetails(data) {
-  let filter = [{}]
+  // Set بدل indexOf على مصفوفة متنامية: كان البحث تربيعياً على آلاف السطور.
+  // مجموعة واحدة للحقلين كما في الأصل، فالنتيجة مطابقة.
+  const seen = new Set<any>()
     for (let i = 0; i < data.length; i++) {
       const fabric = data[i];
-      for (let j = 0; j < fabric.details.length; j++) {
-        let element = fabric.details[j];          
-        if (filter.indexOf(element['document']) < 0) {
-          filter.push(element['document'])
+      for (let j = 0; j < (fabric.details || []).length; j++) {
+        let element = fabric.details[j];
+        if (!seen.has(element['document'])) {
+          seen.add(element['document'])
           this.documentDetails.push(element)
         }
-        if (filter.indexOf(element['consigment_manufacturing_number']) < 0) {
-          filter.push(element['consigment_manufacturing_number'])
+        if (!seen.has(element['consigment_manufacturing_number'])) {
+          seen.add(element['consigment_manufacturing_number'])
           this.consigmentDetails.push(element)
         }
       }

@@ -39,6 +39,7 @@ export class TransitionBetweenOrdersRequisitionDetailsWcComponent implements OnI
     'fabric_code',
     'from_consigment_manufacturing_number',
     'consigment_manufacturing_number',
+    'machines_label',
     'quantity',
     'price',
     'price_dollar',

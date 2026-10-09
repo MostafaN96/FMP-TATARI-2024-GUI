@@ -260,21 +260,88 @@
                                     <th mat-header-cell mat-sort-header *matHeaderCellDef>
                                         <b>اذون التشكيل</b>
                                     </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        <table class="w-100">
+                                    <td mat-cell *matCellDef="let element" class="list-cell">
+                                        <table class="w-100" *ngIf="element.fabricOrderRequisitions?.length; else noFormDyeing">
                                             <tbody>
-                                                <tr
-                                                    *ngFor="let fabricOrderRequisition of element.fabricOrderRequisitions">
-                                                    <a [routerLink]="[goToRequisitionPage(fabricOrderRequisition?.type_of_requisition, element)]"
-                                                        [queryParams]="{id: fabricOrderRequisition?.requisition_id}">
-                                                        <td>{{fabricOrderRequisition.type_of_requisition}}</td>
-                                                        <td>
-                                                            ({{ fabricOrderRequisition.number}})
-                                                        </td>
-                                                    </a>
+                                                <tr *ngFor="let req of visibleItems(element.fabricOrderRequisitions, element, 'form')">
+                                                    <td class="lm-number">
+                                                        <a [routerLink]="[goToRequisitionPage(req?.type_of_requisition, req)]"
+                                                           [queryParams]="{id: req?.requisition_id}"
+                                                           [title]="_sharedComponentService.formatDate(req.date)">
+                                                            ({{ req.number }})
+                                                        </a>
+                                                    </td>
+                                                    <td class="lm-work-order" [title]="req.work_order_number ? 'أمر التشغيل' : ''">
+                                                        {{ req.work_order_number || '—' }}
+                                                    </td>
+                                                    <td class="lm-qty"
+                                                        [title]="req.is_partial ? 'تقديرية: الدفعة المشكّلة كانت مخلوطة بقماش من مصادر أخرى' : ''">
+                                                        {{ req.is_partial ? '≈ ' : '' }}{{ req.quantity | number }}
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="element.fabricOrderRequisitions.length > collapsedListSize">
+                                                    <td colspan="3">
+                                                        <button type="button" class="list-toggle" (click)="toggleList(element, 'form')">
+                                                            {{ isListExpanded(element, 'form')
+                                                               ? 'إخفاء'
+                                                               : 'عرض الكل (' + element.fabricOrderRequisitions.length + ')' }}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="element.fabricOrderRequisitions.length > 1" class="lm-total">
+                                                    <td colspan="2">إجمالي المشكّل</td>
+                                                    <td class="lm-qty">{{ sumQuantity(element.fabricOrderRequisitions) | number:'1.0-2' }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
+                                        <ng-template #noFormDyeing>
+                                            <span class="text-muted">لا يوجد</span>
+                                        </ng-template>
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
+
+                                <!-- حركة الرسالة: أين ذهبت كمية الدفعة التي أنتجها هذا المخرج -->
+                                <ng-container matColumnDef="lot_movements">
+                                    <th mat-header-cell *matHeaderCellDef>
+                                        <b>حركة الرسالة</b>
+                                    </th>
+                                    <td mat-cell *matCellDef="let element" class="list-cell lot-movements-cell">
+                                        <table class="w-100" *ngIf="element.lot_movements?.length; else noMovements">
+                                            <tbody>
+                                                <tr *ngFor="let m of visibleItems(element.lot_movements, element, 'moves')">
+                                                    <td class="lm-type">{{ m.type_label }}</td>
+                                                    <td class="lm-number">
+                                                        <a *ngIf="lotMovementRoute(m); else plainNumber"
+                                                           [routerLink]="[lotMovementRoute(m)]"
+                                                           [queryParams]="{id: m.requisition_id}"
+                                                           [title]="_sharedComponentService.formatDate(m.date)">
+                                                            ({{ m.number }})
+                                                        </a>
+                                                        <ng-template #plainNumber>({{ m.number }})</ng-template>
+                                                    </td>
+                                                    <td class="lm-qty" [class.lm-in]="m.direction === 'in'">
+                                                        {{ m.direction === 'in' ? '+' : '' }}{{ m.quantity | number }}
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="element.lot_movements.length > collapsedListSize">
+                                                    <td colspan="3">
+                                                        <button type="button" class="list-toggle" (click)="toggleList(element, 'moves')">
+                                                            {{ isListExpanded(element, 'moves')
+                                                               ? 'إخفاء'
+                                                               : 'عرض الكل (' + element.lot_movements.length + ')' }}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="element.lot_movements.length > 1" class="lm-total">
+                                                    <td colspan="2">إجمالي الخارج</td>
+                                                    <td class="lm-qty">{{ element.lot_movements_out_total | number }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <ng-template #noMovements>
+                                            <span class="text-muted">لم تتحرك</span>
+                                        </ng-template>
                                     </td>
                                     <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>

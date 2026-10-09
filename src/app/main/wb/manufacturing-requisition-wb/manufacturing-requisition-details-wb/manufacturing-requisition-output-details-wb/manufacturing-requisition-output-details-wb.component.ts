@@ -56,7 +56,18 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
     'storage_place',
     'statement',
     'fabric_order_requisitions',
+    'lot_movements',
     'update'];
+
+  // صفحة تفاصيل كل نوع إذن يسحب من دفعة wc، تُفتح بـ ?id=<رقم الإذن>
+  private readonly lotMovementRoutes: Record<string, string> = {
+    transport_wc_wd: '/dashboard/show-all-transport-wc-wd-requisition/details',
+    sell: '/dashboard/show-all-sell-requisition-wc/details',
+    transition_orders: '/dashboard/show-all-transition-between-orders-requisition-wc/details',
+    transition_wh: '/dashboard/show-all-transition-between-wh-requisition-wc/details',
+    reconciliation: '/dashboard/show-all-reconciliation-requisition-wc/details',
+    return: '/dashboard/show-all-return-requisition-wc/details',
+  };
   filter = "";
   dataSourceSearchTabel: any;
 
@@ -196,11 +207,44 @@ export class ManufacturingRequisitionOutputDetailsWbComponent implements OnInit 
 
   ///////////////////// ----------- End Search Tabel ----------- /////////////////////
 
-  goToRequisitionPage(typeOfRequisition, element?) {
-    if (typeOfRequisition == 'اذن تشكيل' && element?.is_order != '1') {
+  lotMovementRoute(movement: any): string | null {
+    return this.lotMovementRoutes[movement?.type] || null
+  }
+
+  ///////////////////// قوائم مطوية داخل الخلية /////////////////////
+  // الخلايا التي فيها قوائم طويلة (أذون التشكيل، حركة الرسالة) تُعرض مطويّة
+  // على أول عناصر قليلة حتى لا يتضخّم ارتفاع السطر؛ ويمكن فتحها لكل سطر.
+  readonly collapsedListSize = 3
+  private expandedLists = new Set<string>()
+
+  private listKey(element: any, column: string) {
+    return `${element?.id}:${column}`
+  }
+
+  isListExpanded(element: any, column: string) {
+    return this.expandedLists.has(this.listKey(element, column))
+  }
+
+  toggleList(element: any, column: string) {
+    const key = this.listKey(element, column)
+    this.expandedLists.has(key) ? this.expandedLists.delete(key) : this.expandedLists.add(key)
+  }
+
+  visibleItems(list: any[], element: any, column: string) {
+    const items = list || []
+    return this.isListExpanded(element, column) ? items : items.slice(0, this.collapsedListSize)
+  }
+
+  sumQuantity(list: any[]) {
+    return (list || []).reduce((s, x) => s + (Number(x?.quantity) || 0), 0)
+  }
+
+  // الرابط يتبع نوع إذن التشكيل نفسه (عادي أو بطلبية)، لا صفّ المخرج
+  goToRequisitionPage(typeOfRequisition, requisition?) {
+    if (typeOfRequisition == 'اذن تشكيل' && String(requisition?.is_order) != '1') {
       return `/dashboard/show-all-form-dyeing-requisition-wd/details`
     }
-    else if (typeOfRequisition == 'اذن تشكيل' && element?.is_order == '1') {
+    else if (typeOfRequisition == 'اذن تشكيل' && String(requisition?.is_order) == '1') {
       return `/dashboard/show-all-form-dyeing-order-requisition-wd/order-details`
     }
     return

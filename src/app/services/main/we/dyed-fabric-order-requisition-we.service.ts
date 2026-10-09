@@ -111,6 +111,34 @@ export class DyedFabricOrderRequisitionWeService {
       });
   }
 
+  ///////////////////// ملفات إكسل تفاصيل الطلبية /////////////////////
+
+  uploadOrderFile(requisitionId: string, file: File): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}${requisitionId}/files`;
+    const form = new FormData();
+    form.append('file', file, file.name);
+    // بلا Content-Type: المتصفح يضعه مع حدود multipart
+    return this._http.post(url, form, {
+      headers: new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` })
+    });
+  }
+
+  // التنزيل يحتاج التوكن، فيُجلب كـ Blob بدل رابط مباشر
+  downloadOrderFile(fileId: string): Observable<Blob> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}files/${fileId}/download`;
+    return this._http.get(url, {
+      responseType: 'blob',
+      headers: new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` })
+    });
+  }
+
+  deleteOrderFile(fileId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}files/${fileId}`;
+    return this._http.delete(url, {
+      headers: new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` })
+    });
+  }
+
   closeOrderByRequisition(id: string): Observable<any> {
     let url = `${this._constantsService.BASE_URL}${this.urlService}close-order-by-requisition/${id}`;
 

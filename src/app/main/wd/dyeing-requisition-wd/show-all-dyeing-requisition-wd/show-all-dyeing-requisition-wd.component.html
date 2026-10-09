@@ -15,6 +15,35 @@
                 <div class="col">
                     <div [class]="_sharedComponentService.tableSectionClass">
 
+                        <!-- شريط الفلاتر أعلى الجدول -->
+                        <div dir="rtl" class="row g-2 mb-3 align-items-end">
+                            <div class="col-md-3 col-sm-6" *ngFor="let f of topFilterDefs">
+                                <label class="form-label mb-1" style="font-size:0.82rem; font-weight:600;">{{ f.label }}</label>
+                                <p-multiSelect
+                                    [options]="topFilterOptions[f.colId] || []"
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    [(ngModel)]="topFilterValues[f.colId]"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onChange)="onTopFilterChange(f.colId)"
+                                    [filter]="true"
+                                    filterBy="label"
+                                    [resetFilterOnHide]="true"
+                                    [showToggleAll]="true"
+                                    defaultLabel="الكل"
+                                    selectedItemsLabel="{0} محدد"
+                                    emptyFilterMessage="لا توجد نتائج"
+                                    styleClass="w-100"
+                                    [style]="{'width':'100%'}">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <button type="button" class="btn btn-outline-secondary btn-sm w-100" (click)="clearAg()">
+                                    <i class="fa-solid fa-filter-circle-xmark me-1"></i> إعادة تعيين الفلاتر
+                                </button>
+                            </div>
+                        </div>
+
                         <div id="table-header-data-report"
                         dir="rtl"
                         class="ag-theme-alpine ag-rtl ag-details">

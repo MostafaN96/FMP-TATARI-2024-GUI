@@ -4,6 +4,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent, SideBarDef } from 'ag-grid-community';
 import { CustomLoadingCellRendererComponent } from 'src/app/general-pages/custom-loading-cell-renderer/custom-loading-cell-renderer.component';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { finalize } from 'rxjs/operators';
 
 // Shared Service
 import { SharedComponentService } from "src/app/services/shared-component.service";
@@ -15,6 +16,7 @@ import { InventoryReportService } from 'src/app/services/inventory-report.servic
 // Call Service
 import { ReportWcService } from "src/app/services/main/wc/report-wc.service";
 import { wcInputRequisitionRoute } from '../wc-input-details-dialog/wc-input-details-dialog.component';
+import { WcMovement } from '../wc-movements-dialog/wc-movements-dialog.component';
 
 @Component({
   selector: 'app-item-history-by-fabric',
@@ -379,30 +381,15 @@ export class ItemHistoryByFabricComponent implements OnInit {
       },
     },
 
-      // حركات الإدخال التي حسب منها السطر «إجمالي الإدخال» (حركات الفترة إن طُبّق التاريخ).
-      // مخفي افتراضياً ويُظهَر بزر «إظهار حركات الإدخال»
       {
-        headerName: 'حركات الإدخال',
-        colId: 'input_movements',
-        field: 'input_movements',
-        hide: true,
+        headerName: 'الحركة',
+        colId: 'row_movements',
         filter: false,
         sortable: false,
-        // عرض ثابت لا flex: يضاف لعرض الجدول فيظهر التمرير الأفقي بدل أن يُضغط العمود
-        width: 460,
-        minWidth: 380,
-        flex: 0,
-        wrapText: true,
-        autoHeight: true,
-        // لا details-cell: ارتفاع الخلية محدود وتمرير داخلي (انظر .input-movements-box).
-        // سطر بمئات الحركات كان يصير بآلاف البكسلات فيتعطّل تمرير الجدول
-        cellClass: 'input-movements-cell',
+        minWidth: 90,
+        width: 90,
         excludeFromFooter: true,
-        // نص للتصدير إلى إكسل/PDF، والعرض من cellRenderer
-        valueGetter: (p: any) => this.inputMovements(p.data)
-          .map((d: any) => `${d.type_of_requisition} ${d.number ?? ''} (${this._sharedComponentService.formatDate(d.date)}): ${this.formatNumber(d.quantity)}`)
-          .join(' | '),
-        cellRenderer: (p: any) => this.inputMovementsRenderer(p),
+        cellRenderer: (p: any) => this.movementsButton(p, () => this.openRowMovements(p.data)),
       },
       {
         headerName: 'حركة الصنف',
@@ -752,78 +739,278 @@ export class ItemHistoryByFabricComponent implements OnInit {
       } else {
         this.markedRows.add(event.data);
       }
-      this.gridApi.redrawRows({ rowNodes: [event.node] });
+      // event.api: الجدول الذي ضُغط فيه (الرئيسي أو جدول حركات الإدخال)
+      event.api.redrawRows({ rowNodes: [event.node] });
     }
 
     clearMarkedRows() {
       this.markedRows.clear();
       this.gridApi?.redrawRows();
+      this.lotsGridApi?.redrawRows();
     }
 
-    ///////////////////// عمود حركات الإدخال /////////////////////
-    isShowInputMovements = false
+    ///////////////////// عرض «حركات الإدخال» /////////////////////
+    // الزر يبدّل الجدول إلى عرض آخر: كل حركة إدخال سطر مستقل مع إدخالها وإخراجها ورصيد دفعتها.
+    // البيانات تُجلب عند أول فتح، وتُعاد مع تغيير التاريخ أو «الأرصدة المغلقة» ما دام العرض مفتوحاً.
+    isInputLotsView = false
+    inputLots: any[] = []
+    lotsGridApi?: GridApi
+    lotsColumnApi: any
+    lotsPinnedBottomRowData: any[] = []
+    private lotsLoadedKey: string | null = null
 
-    toggleInputMovements() {
-      this.isShowInputMovements = !this.isShowInputMovements;
-      this.gridColumnApi?.setColumnsVisible(['input_movements'], this.isShowInputMovements);
-      this.gridApi?.resetRowHeights();
+    toggleInputLotsView() {
+      this.isInputLotsView = !this.isInputLotsView;
+      if (this.isInputLotsView) this.loadInputLots();
     }
 
-    private inputMovements(row: any): any[] {
-      return (row?.details || []).filter((d: any) => d?.input_output == 1);
+    // يطابق مفاتيح فلاتر التقرير الحالية، فلا يُعاد الجلب إن لم يتغير شيء
+    private currentFiltersKey() {
+      return JSON.stringify([this.isShowClosedBalances, this.appliedDateRange]);
     }
 
-    // جدول صغير داخل الخلية: النوع | رقم الإذن (رابط) | التاريخ | الكمية
-    private inputMovementsRenderer(p: any): HTMLElement | string {
-      if (!p.data) return '';
-      // سطر الإجمالي: مجموع حركات الإدخال لكل الأسطر الظاهرة (بعد الفلاتر)
-      if (p.node?.rowPinned) {
-        const totals = p.data.__inputMovementsTotals;
-        if (!totals) return '';
-        return `${this.formatNumber(totals.quantity)} (${totals.count} حركة)`;
+    private loadInputLots(force = false) {
+      const key = this.currentFiltersKey();
+      if (!force && this.lotsLoadedKey === key) return;
+      this.isLoading = true;
+      this._reportWcService.selectInventoryInputLots({
+        isShowClosedBalances: this.isShowClosedBalances,
+        ...(this.appliedDateRange || {}),
+      })
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe({
+          next: (rows: any) => {
+            this.inputLots = Array.isArray(rows) ? rows : [];
+            this.lotsLoadedKey = key;
+            this.lotsGridApi?.setRowData(this.inputLots);
+            this.updateLotsFooter();
+          },
+          error: () => this.inputLots = [],
+        });
+    }
+
+    onLotsGridReady(params: GridReadyEvent) {
+      this.lotsGridApi = params.api;
+      this.lotsColumnApi = params.columnApi;
+      if (this.inputLots.length) {
+        params.api.setRowData(this.inputLots);
+        this.updateLotsFooter();
       }
-      const movements = this.inputMovements(p.data);
-      if (!movements.length) return '—';
+    }
 
-      const table = document.createElement('table');
-      table.className = 'input-movements-table';
-      const body = document.createElement('tbody');
-      for (const d of movements) {
-        const tr = document.createElement('tr');
+    // الإجمالي للأسطر الظاهرة بعد الفلاتر
+    private isUpdatingLotsFooter = false
+    onLotsModelUpdated() {
+      if (!this.isUpdatingLotsFooter) this.updateLotsFooter();
+    }
 
-        const type = document.createElement('td');
-        type.textContent = d.type_of_requisition || '';
+    private updateLotsFooter() {
+      if (!this.lotsGridApi) return;
+      this.isUpdatingLotsFooter = true;
+      const total = { input_quantity: 0, output_quantity: 0, current_quantity: 0, count: 0 };
+      this.lotsGridApi.forEachNodeAfterFilterAndSort((node) => {
+        if (!node.data) return;
+        total.input_quantity += Number(node.data.input_quantity) || 0;
+        total.output_quantity += Number(node.data.output_quantity) || 0;
+        total.current_quantity += Number(node.data.current_quantity) || 0;
+        total.count++;
+      });
+      this.lotsPinnedBottomRowData = [{
+        type_of_requisition: `الإجمالي (${total.count} حركة)`,
+        input_quantity: total.input_quantity,
+        output_quantity: total.output_quantity,
+        current_quantity: total.current_quantity,
+      }];
+      this.lotsGridApi.setPinnedBottomRowData(this.lotsPinnedBottomRowData);
+      this.isUpdatingLotsFooter = false;
+    }
 
-        const number = document.createElement('td');
-        const route = wcInputRequisitionRoute(d.type_of_requisition);
-        if (route && d.requisition_id) {
+    resetLotsFilters() {
+      this.lotsGridApi?.setFilterModel(null);
+      this.lotsColumnApi?.applyColumnState({ defaultState: { sort: null } });
+    }
+
+    ///////////////////// نافذة «الحركة» /////////////////////
+    movementsDialog = {
+      visible: false,
+      loading: false,
+      title: '',
+      headerItems: [] as { label: string, value: any }[],
+      movements: [] as WcMovement[],
+      openingBalance: 0,
+      expectedBalance: null as number | null,
+      expectedLabel: '',
+      note: '',
+    };
+
+    private movementsButton(p: any, open: () => void): HTMLElement | string {
+      if (!p.data || p.node?.rowPinned) return '';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'movements-btn';
+      button.title = 'عرض الحركة (إدخال وإخراج)';
+      button.innerHTML = '<i class="fas fa-exchange-alt"></i>';
+      button.addEventListener('click', (event) => { event.stopPropagation(); open(); });
+      return button;
+    }
+
+    // حركات السطر كما حسبها التقرير (حركات الفترة إن طُبّق التاريخ)
+    openRowMovements(row: any) {
+      const movements: WcMovement[] = (row.details || []).map((d: any) => {
+        const qty = Number(d.quantity) || 0;
+        const isIn = d.input_output == 1;
+        return {
+          typeKey: d.type_of_requisition,
+          typeLabel: d.type_of_requisition,
+          number: d.number,
+          requisitionId: d.requisition_id || null,
+          date: d.date,
+          inQty: isIn ? qty : 0,
+          outQty: isIn ? 0 : qty,
+        };
+      });
+      this.movementsDialog = {
+        visible: true,
+        loading: false,
+        title: 'حركة السطر',
+        headerItems: [
+          { label: 'المخزن', value: row.warehouse_name },
+          { label: 'المادة', value: `${row.fabric_code ?? ''} - ${row.fabric_name ?? ''}` },
+          { label: 'الرسالة', value: row.consigment_manufacturing_number },
+          { label: 'الطلبية', value: row.wc_fabric_order_requisition_name },
+        ],
+        movements,
+        openingBalance: this.appliedDateRange ? Number(row.opening_balance) || 0 : 0,
+        expectedBalance: this.appliedDateRange ? Number(row.closing_balance) || 0 : Number(row.current_quantity) || 0,
+        expectedLabel: this.appliedDateRange ? 'رصيد آخر المدة' : 'رصيد السطر الحالي',
+        note: this.appliedDateRange
+          ? `حركات الفترة ${this.appliedDateRange.fromDate || 'البداية'} ← ${this.appliedDateRange.toDate || 'اليوم'}`
+          : '',
+      };
+    }
+
+    // حركة دفعة: إدخالها ثم كل ما سُحب منها (أو أُدخل عليها بتسوية)
+    openLotMovements(lot: any) {
+      const input: WcMovement = {
+        typeKey: lot.type_of_requisition,
+        typeLabel: lot.type_of_requisition,
+        number: lot.number,
+        requisitionId: lot.requisition_id || null,
+        date: lot.date,
+        inQty: Number(lot.input_quantity) || 0,
+        outQty: 0,
+      };
+      this.movementsDialog = {
+        visible: true,
+        loading: true,
+        title: 'حركة الدفعة',
+        headerItems: [
+          { label: 'المخزن', value: lot.warehouse_name },
+          { label: 'المادة', value: `${lot.fabric_code ?? ''} - ${lot.fabric_name ?? ''}` },
+          { label: 'الرسالة', value: lot.consigment_manufacturing_number },
+          { label: 'الطلبية', value: lot.wc_fabric_order_requisition_name },
+        ],
+        movements: [input],
+        openingBalance: 0,
+        expectedBalance: Number(lot.current_quantity) || 0,
+        expectedLabel: 'رصيد الدفعة الحالي',
+        note: 'أول سطر هو الإدخال الذي أنشأ الدفعة، وبعده كل ما سُحب منها حتى اليوم.',
+      };
+      if (!lot.lot_id) { this.movementsDialog = { ...this.movementsDialog, loading: false }; return; }
+      this._reportWcService.selectLotMovements(lot.lot_id)
+        .pipe(finalize(() => this.movementsDialog = { ...this.movementsDialog, loading: false }))
+        .subscribe({
+          next: (rows: any) => {
+            const moves: WcMovement[] = (Array.isArray(rows) ? rows : [])
+              // تسوية الإدخال التي أنشأت الدفعة نفسها = سطر الإدخال، لا حركة إضافية
+              .filter((m: any) => !(m.direction === 'in' && lot.type_of_requisition === 'اذن تسوية'
+                && String(m.requisition_id) === String(lot.requisition_id)))
+              .map((m: any) => ({
+                typeKey: m.type,
+                typeLabel: m.type_label,
+                number: m.number,
+                requisitionId: m.requisition_id || null,
+                date: m.date,
+                inQty: m.direction === 'in' ? Number(m.quantity) || 0 : 0,
+                outQty: m.direction === 'in' ? 0 : Number(m.quantity) || 0,
+              }));
+            this.movementsDialog = { ...this.movementsDialog, movements: [input, ...moves] };
+          },
+          error: () => this._constantsService.errorMessage('تعذّر جلب حركة الدفعة'),
+        });
+    }
+
+    // للتصدير والطباعة: الجدول الظاهر حالياً
+    get activeGridApi(): any { return this.isInputLotsView ? this.lotsGridApi : this.gridApi; }
+    get activeColumnApi(): any { return this.isInputLotsView ? this.lotsColumnApi : this.gridColumnApi; }
+
+    private numberColumn(headerName: string, field: string, extra: ColDef = {}): ColDef {
+      return {
+        headerName, field,
+        type: 'numericColumn',
+        filter: 'agNumberColumnFilter',
+        valueFormatter: (p: any) => this.formatNumber(p.value),
+        ...extra,
+      };
+    }
+
+    private setColumn(headerName: string, field: string, extra: ColDef = {}): ColDef {
+      return { headerName, field, filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' }, ...extra };
+    }
+
+    // بلا autoHeight ولا تفاف: أسطر بارتفاع ثابت، فيبقى الجدول سريعاً مع عشرات آلاف الحركات
+    public lotsColumnDefs: ColDef[] = [
+      { headerName: 'التسلسل', colId: 'index', valueGetter: 'node.rowIndex + 1', width: 80, filter: false, sortable: false },
+      this.setColumn('المخزن', 'warehouse_name', { minWidth: 120 }),
+      this.setColumn('كود المادة', 'fabric_code', { minWidth: 100 }),
+      this.setColumn('اسم المادة', 'fabric_name', { minWidth: 260 }),
+      this.setColumn('رقم الرسالة', 'consigment_manufacturing_number', { minWidth: 110 }),
+      this.setColumn('الطلبية', 'wc_fabric_order_requisition_name', { minWidth: 220 }),
+      this.setColumn('نوع الإذن', 'type_of_requisition', { minWidth: 150 }),
+      {
+        headerName: 'رقم الإذن', field: 'number', minWidth: 100,
+        filter: 'agNumberColumnFilter',
+        cellRenderer: (p: any) => {
+          if (!p.data || p.node?.rowPinned) return '';
+          const route = wcInputRequisitionRoute(p.data.type_of_requisition);
+          if (!route || !p.data.requisition_id) return p.value ?? '';
           const link = document.createElement('a');
-          link.href = `${route}?id=${encodeURIComponent(d.requisition_id)}`;
+          link.href = `${route}?id=${encodeURIComponent(p.data.requisition_id)}`;
           link.target = '_blank';
-          link.textContent = d.number ?? '';
-          number.appendChild(link);
-        } else {
-          number.textContent = d.number ?? '';
-        }
+          link.textContent = p.value ?? '';
+          return link;
+        },
+      },
+      {
+        headerName: 'تاريخ الإدخال', field: 'date', minWidth: 130,
+        filter: 'agDateColumnFilter',
+        filterParams: this._sharedComponentService.dateFilterParams(),
+        valueFormatter: (p: any) => p.node?.rowPinned ? '' : this._sharedComponentService.formatDate(p.value),
+        sort: 'desc',
+      } as ColDef,
+      this.setColumn('الماكينة', 'machine_name', { minWidth: 200 }),
+      this.setColumn('ايصال التصنيع', 'document', { minWidth: 110 }),
+      this.setColumn('رقم الاستاند', 'storage_place', { minWidth: 110 }),
+      this.numberColumn('عدد الأتواب', 'fabric_piece', { minWidth: 100, valueFormatter: (p: any) => p.value ?? '' }),
+      this.numberColumn('الإدخال', 'input_quantity', { minWidth: 120 }),
+      this.numberColumn('الإخراج', 'output_quantity', { minWidth: 120 }),
+      this.numberColumn('الرصيد', 'current_quantity', { minWidth: 120 }),
+      this.numberColumn('السعر', 'price', { minWidth: 100 }),
+      {
+        headerName: 'حركة الدفعة', colId: 'lot_movements', minWidth: 100, width: 100, filter: false, sortable: false,
+        cellRenderer: (p: any) => this.movementsButton(p, () => this.openLotMovements(p.data)),
+      },
+    ].reverse();
 
-        const date = document.createElement('td');
-        date.textContent = this._sharedComponentService.formatDate(d.date);
-
-        const quantity = document.createElement('td');
-        quantity.className = 'num';
-        quantity.textContent = this.formatNumber(d.quantity);
-
-        tr.append(type, number, date, quantity);
-        body.appendChild(tr);
-      }
-      table.appendChild(body);
-
-      const box = document.createElement('div');
-      box.className = 'input-movements-box';
-      box.appendChild(table);
-      return box;
-    }
-
+    public lotsDefaultColDef: ColDef = {
+      flex: 1,
+      minWidth: 100,
+      resizable: true,
+      sortable: true,
+      wrapText: false,
+      autoHeight: false,
+      suppressMenu: false,
+    };
     // سطر لكل ماكينة. الأسطر لا تلتفّ (والنص الكامل في التلميح) حتى تبقى متقابلة بين الأعمدة
     private machineLinesRenderer(value: any, isNumber = false) {
       const host = document.createElement('div');
@@ -858,6 +1045,8 @@ export class ItemHistoryByFabricComponent implements OnInit {
         (response) => {
           this.appliedDateRange = dateRange;
           this.applyGridData(params, response);
+          // عرض حركات الإدخال مفتوح: يتبع نفس الفلاتر
+          if (this.isInputLotsView) this.loadInputLots();
         },
         () => this.isLoading = false,
         { isShowClosedBalances, ...(dateRange || {}) }
@@ -972,16 +1161,6 @@ export class ItemHistoryByFabricComponent implements OnInit {
     
     
     
-          // إجمالي عمود «حركات الإدخال» (الأسطر الظاهرة بعد الفلاتر)
-          const inputTotals = { quantity: 0, count: 0 };
-          this.gridApi.forEachNodeAfterFilterAndSort((node) => {
-            for (const d of this.inputMovements(node.data)) {
-              inputTotals.quantity += Number(d.quantity) || 0;
-              inputTotals.count++;
-            }
-          });
-          summary.__inputMovementsTotals = inputTotals;
-
           this.pinnedBottomRowData = [summary];
           this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData);
           this.isUpdatingFooter = false;

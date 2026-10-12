@@ -1,0 +1,297 @@
+<div class="imp" dir="rtl">
+
+    <!-- ===== الرأس والخطوات ===== -->
+    <header class="imp-header">
+        <div class="imp-title">
+            <span class="imp-title-icon"><i class="fas fa-file-excel"></i></span>
+            <div>
+                <h3>استيراد طلبيات من إكسل</h3>
+                <p>كل ورقة في ملف العميل تصير طلبية — راجع ما اقترحه السيستم ثم احفظ</p>
+            </div>
+        </div>
+
+        <ol class="imp-steps">
+            <li [class.done]="step > 1" [class.current]="step === 1"><span>1</span>رفع الملف</li>
+            <li [class.done]="step > 2" [class.current]="step === 2"><span>2</span>المراجعة</li>
+            <li [class.current]="step === 3"><span>3</span>الحفظ</li>
+        </ol>
+
+        <button type="button" class="imp-btn ghost" (click)="closed.emit()">
+            <i class="fas fa-arrow-right"></i> الإضافة اليدوية
+        </button>
+    </header>
+
+    <!-- ===== نتيجة الحفظ ===== -->
+    <section class="imp-results" *ngIf="created.length || failed.length">
+        <div class="result ok" *ngFor="let c of created">
+            <i class="fas fa-check-circle"></i>
+            <div class="result-text"><b>{{ c.name }}</b><small>من ورقة «{{ c.sheetName }}»</small></div>
+            <button type="button" class="imp-btn small" (click)="openOrder(c.id)">
+                فتح الطلبية <i class="fas fa-external-link-alt"></i>
+            </button>
+        </div>
+        <div class="result fail" *ngFor="let f of failed">
+            <i class="fas fa-exclamation-circle"></i>
+            <div class="result-text"><b>«{{ f.sheetName }}» لم تُحفظ</b><small>{{ f.reason }}</small></div>
+        </div>
+    </section>
+
+    <!-- ===== الخطوة 1: رفع الملف ===== -->
+    <section *ngIf="!token" class="imp-empty">
+        <label class="dropzone" [class.over]="isDragOver" [class.busy]="isBusy"
+            (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+            <input type="file" accept=".xlsx,.xls,.xlsm" (change)="onFileSelected($event)" [disabled]="isBusy" hidden>
+            <ng-container *ngIf="!isBusy; else reading">
+                <span class="dz-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                <b>اسحب ملف إكسل الطلبية إلى هنا</b>
+                <span>أو <u>اختر ملفاً</u> من جهازك — xlsx, xls, xlsm</span>
+            </ng-container>
+            <ng-template #reading>
+                <mat-spinner diameter="40"></mat-spinner>
+                <b>جاري قراءة الملف...</b>
+            </ng-template>
+        </label>
+
+        <ul class="how">
+            <li><i class="fas fa-layer-group"></i><div><b>ورقة = طلبية</b><span>كل ورقة في الملف تُقترح طلبية مستقلة، وتختار أيها تُحفظ.</span></div></li>
+            <li><i class="fas fa-brain"></i><div><b>يتعلّم من طلبياتك</b><span>يعرف الأقمشة والألوان من الطلبيات السابقة لنفس العميل.</span></div></li>
+            <li><i class="fas fa-user-check"></i><div><b>أنت تؤكد</b><span>ما لا يعرفه يظهر بالأحمر، وما يحتاج تأكيداً بالأصفر. تأكيدك يُتعلَّم.</span></div></li>
+        </ul>
+    </section>
+
+    <!-- ===== الخطوة 2: المراجعة ===== -->
+    <ng-container *ngIf="token">
+
+        <!-- الملف + بيانات مشتركة -->
+        <section class="imp-top">
+            <div class="card file-card">
+                <span class="file-icon"><i class="fas fa-file-excel"></i></span>
+                <div class="file-info">
+                    <b [title]="originalName">{{ originalName }}</b>
+                    <small>{{ orders.length }} طلبية مقترحة<ng-container *ngIf="skippedSheets.length"> • {{ skippedSheets.length }} ورقة لم تُقرأ</ng-container></small>
+                </div>
+                <label class="imp-btn ghost small" [class.disabled]="isBusy">
+                    <i class="fas fa-sync-alt"></i> ملف آخر
+                    <input type="file" accept=".xlsx,.xls,.xlsm" (change)="onFileSelected($event)" [disabled]="isBusy" hidden>
+                </label>
+            </div>
+
+            <div class="card common-card">
+                <div class="field">
+                    <label>العميل <i class="fas fa-circle req" *ngIf="!sellerId"></i></label>
+                    <ejs-autocomplete [dataSource]="sellers" [fields]="fieldsSeller" [value]="sellerName(sellerId)"
+                        (filtering)="onFilteringSeller($event)" placeholder="اختر العميل" [autofill]="autofill"
+                        (change)="onSellerChange($event)" class="ejs-autocomplete w-100">
+                    </ejs-autocomplete>
+                    <small class="field-hint">تغيير العميل يعيد الاقتراحات من طلبياته</small>
+                </div>
+                <div class="field date-field">
+                    <label>تاريخ الطلبيات</label>
+                    <input type="date" class="form-control" [(ngModel)]="date">
+                </div>
+                <mat-spinner *ngIf="isBusy" diameter="22" class="busy"></mat-spinner>
+            </div>
+        </section>
+
+        <!-- بطاقات الطلبيات -->
+        <section class="orders-strip">
+            <button type="button" *ngFor="let order of orders; trackBy: trackBySheet" class="order-card"
+                [class.active]="activeOrder?.sheetName === order.sheetName"
+                [ngClass]="'st-' + orderStatus(order)" (click)="selectOrder(order)">
+                <span class="oc-check" (click)="$event.stopPropagation()">
+                    <mat-checkbox [(ngModel)]="order.include" [title]="order.include ? 'ستُحفظ' : 'لن تُحفظ'"></mat-checkbox>
+                </span>
+                <span class="oc-body">
+                    <span class="oc-name">{{ order.sheetName }}
+                        <span class="ai-tag" *ngIf="order.source === 'ollama'" title="قُرئت بالذكاء الاصطناعي المحلي">AI</span>
+                    </span>
+                    <span class="oc-meta">{{ activeLines(order).length }} سطر • {{ totalQuantity(order) | number:'1.0-0' }} كغ</span>
+                    <span class="oc-status">
+                        <ng-container [ngSwitch]="orderStatus(order)">
+                            <span *ngSwitchCase="'ready'"><i class="fas fa-check-circle"></i> جاهزة</span>
+                            <span *ngSwitchCase="'check'"><i class="fas fa-eye"></i> تحتاج نظرة</span>
+                            <span *ngSwitchCase="'missing'"><i class="fas fa-exclamation-circle"></i> {{ problems(order).length }} ناقص</span>
+                            <span *ngSwitchDefault><i class="fas fa-minus-circle"></i> لن تُحفظ</span>
+                        </ng-container>
+                    </span>
+                </span>
+            </button>
+
+            <div class="order-card skipped" *ngFor="let s of skippedSheets">
+                <span class="oc-body">
+                    <span class="oc-name">{{ s.sheetName }}</span>
+                    <span class="oc-meta">{{ s.reason }}</span>
+                    <button type="button" class="imp-btn ai small" *ngIf="s.canUseAi" [disabled]="!!aiReadingSheet"
+                        (click)="readSheetWithAi(s)" title="قراءة بالذكاء الاصطناعي المحلي (Ollama) — قد تأخذ دقيقة">
+                        <mat-spinner *ngIf="aiReadingSheet === s.sheetName" diameter="12"></mat-spinner>
+                        <i *ngIf="aiReadingSheet !== s.sheetName" class="fas fa-magic"></i>
+                        {{ aiReadingSheet === s.sheetName ? 'جاري القراءة...' : 'اقرأ بالذكاء الاصطناعي' }}
+                    </button>
+                </span>
+            </div>
+        </section>
+
+        <!-- تفاصيل الطلبية المختارة -->
+        <section class="order-detail" *ngIf="activeOrder as order" [class.excluded]="!order.include">
+
+            <div class="card">
+                <div class="detail-meta">
+                    <div class="field grow-2">
+                        <label>اسم الطلبية <i class="fas fa-circle req" *ngIf="!order.name?.trim()"></i></label>
+                        <input type="text" class="form-control" maxlength="90" [(ngModel)]="order.name">
+                    </div>
+                    <div class="field grow-3">
+                        <label>ملاحظات</label>
+                        <input type="text" class="form-control" [(ngModel)]="order.note" placeholder="—">
+                    </div>
+                </div>
+                <div class="banner warn" *ngIf="order.include && problems(order).length">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>قبل الحفظ: {{ problems(order).join(' • ') }}</span>
+                </div>
+                <div class="banner muted" *ngIf="!order.include">
+                    <i class="fas fa-info-circle"></i>
+                    <span>هذه الطلبية غير محددة ولن تُحفظ. حدّدها من بطاقتها في الأعلى.</span>
+                </div>
+            </div>
+
+            <!-- الأقمشة -->
+            <div class="card section" *ngIf="columnStats(order) as cs">
+                <div class="section-head">
+                    <h4><i class="fas fa-scroll"></i> الأقمشة</h4>
+                    <span class="section-sub">عمود في ملف العميل ← قماش جاهز في السيستم</span>
+                    <span class="chips">
+                        <span class="chip red" *ngIf="cs.missing">{{ cs.missing }} غير معروف</span>
+                        <span class="chip amber" *ngIf="cs.check">{{ cs.check }} للتأكيد</span>
+                        <span class="chip grey" *ngIf="cs.ignored">{{ cs.ignored }} متجاهَل</span>
+                        <span class="chip green" *ngIf="!cs.missing && !cs.check">كلها معروفة</span>
+                    </span>
+                </div>
+
+                <div class="map-list">
+                    <div class="map-row" *ngFor="let col of order.columns" [class.off]="!col.include"
+                        [ngClass]="col.include ? confidenceClass(col.confidence, !!col.dyedFabricId) : ''">
+                        <mat-checkbox [(ngModel)]="col.include" [title]="col.include ? 'تجاهل هذا العمود' : 'إضافة هذا العمود'"></mat-checkbox>
+                        <div class="map-source" [title]="col.header">
+                            <small>في الملف</small>
+                            <span dir="ltr">{{ col.header }}</span>
+                        </div>
+                        <i class="fas fa-long-arrow-alt-left map-arrow"></i>
+                        <div class="map-target">
+                            <ejs-autocomplete [dataSource]="dyedFabrics" [fields]="fieldsFabric" [value]="fabricLabel(col.dyedFabricId)"
+                                (filtering)="onFilteringFabric($event)" placeholder="اختر القماش الجاهز" [autofill]="autofill"
+                                (change)="selectFabric(col, $event)" class="ejs-autocomplete w-100" [enabled]="col.include">
+                            </ejs-autocomplete>
+                            <div class="target-notes" *ngIf="col.include">
+                                <span class="conf" *ngIf="confidenceLabel(col.confidence) && col.dyedFabricId">{{ confidenceLabel(col.confidence) }}</span>
+                                <ng-container *ngIf="col.alternatives.length">
+                                    <span class="alt-label">بدائل:</span>
+                                    <button type="button" class="alt" *ngFor="let id of col.alternatives" (click)="useFabricAlternative(col, id)">{{ fabricName(id) }}</button>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <div class="map-specs">
+                            <label>العرض<input class="form-control form-control-sm" [(ngModel)]="col.fabricWidth" [disabled]="!col.include"></label>
+                            <label>الوزن<input class="form-control form-control-sm" [(ngModel)]="col.fabricQuantityM2" [disabled]="!col.include"></label>
+                            <label>الهالك<input class="form-control form-control-sm" [(ngModel)]="col.wasteRatio" [disabled]="!col.include"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الألوان -->
+            <div class="card section" *ngIf="colorStats(order) as ks">
+                <div class="section-head">
+                    <h4><i class="fas fa-palette"></i> الألوان</h4>
+                    <span class="section-sub">نص اللون في الملف ← لون في السيستم</span>
+                    <span class="chips">
+                        <span class="chip red" *ngIf="ks.missing">{{ ks.missing }} ناقص</span>
+                        <span class="chip amber" *ngIf="ks.check">{{ ks.check }} للتأكيد</span>
+                        <span class="chip green" *ngIf="!ks.missing && !ks.check">كلها معروفة</span>
+                    </span>
+                </div>
+
+                <div class="color-grid">
+                    <div class="color-row" *ngFor="let color of order.colors"
+                        [ngClass]="confidenceClass(color.confidence, !!color.colorId && !!color.colorCode)">
+                        <div class="map-source" [title]="color.colorText">
+                            <small>في الملف</small>
+                            <span dir="ltr">{{ color.colorText || '—' }}</span>
+                        </div>
+                        <div class="map-target">
+                            <ejs-autocomplete [dataSource]="colors" [fields]="fieldsColor" [value]="colorLabel(color.colorId)"
+                                (filtering)="onFilteringColor($event)" placeholder="اختر اللون" [autofill]="autofill"
+                                (change)="selectColor(color, $event)" class="ejs-autocomplete w-100">
+                            </ejs-autocomplete>
+                            <div class="target-notes">
+                                <span class="conf" *ngIf="confidenceLabel(color.confidence) && color.colorId">{{ confidenceLabel(color.confidence) }}</span>
+                                <ng-container *ngIf="color.alternatives.length">
+                                    <span class="alt-label">بدائل:</span>
+                                    <button type="button" class="alt" *ngFor="let id of color.alternatives" (click)="useColorAlternative(color, id)">{{ colorName(id) }}</button>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <label class="code-field">الكود<input class="form-control form-control-sm" [(ngModel)]="color.colorCode"></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الأسطر -->
+            <div class="card section">
+                <div class="section-head">
+                    <h4><i class="fas fa-list-ul"></i> الأسطر</h4>
+                    <span class="section-sub">{{ activeLines(order).length }} من {{ order.lines.length }} سطر • {{ totalQuantity(order) | number:'1.0-2' }} كغ</span>
+                    <span class="chips">
+                        <button type="button" class="imp-btn ghost small" *ngIf="order.lines.length > 25" (click)="toggleLines(order)">
+                            <i class="fas" [ngClass]="linesVisible(order) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                            {{ linesVisible(order) ? 'طيّ' : 'عرض الأسطر' }}
+                        </button>
+                    </span>
+                </div>
+
+                <div class="lines-wrap" *ngIf="linesVisible(order)">
+                    <table class="lines">
+                        <thead>
+                            <tr>
+                                <th class="c-check"></th>
+                                <th>الموديل</th>
+                                <th>اللون في الملف</th>
+                                <th>القماش</th>
+                                <th>اللون</th>
+                                <th class="c-num">بالملف</th>
+                                <th class="c-qty">الكمية (كغ)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let line of order.lines" [class.off]="!line.include || !columnOf(order, line.source.header).include">
+                                <td class="c-check"><mat-checkbox [(ngModel)]="line.include" [disabled]="!columnOf(order, line.source.header).include"></mat-checkbox></td>
+                                <td class="muted">{{ line.source.model || '—' }}</td>
+                                <td dir="ltr" class="src">{{ line.source.colorText }}</td>
+                                <td [class.missing-cell]="!columnOf(order, line.source.header).dyedFabricId">{{ fabricName(columnOf(order, line.source.header).dyedFabricId) }}</td>
+                                <td [class.missing-cell]="!colorOf(order, line.source.colorText).colorId">{{ colorName(colorOf(order, line.source.colorText).colorId) }}</td>
+                                <td class="c-num muted">{{ line.source.value | number:'1.0-3' }}</td>
+                                <td class="c-qty"><input type="number" class="form-control form-control-sm" [(ngModel)]="line.quantity"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- شريط الحفظ -->
+        <footer class="save-bar" *ngIf="summary as s">
+            <div class="save-summary">
+                <span><b>{{ s.orders }}</b> طلبية</span>
+                <span><b>{{ s.lines }}</b> سطر</span>
+                <span><b>{{ s.quantity | number:'1.0-0' }}</b> كغ</span>
+                <span class="blocked" *ngIf="s.blocked"><i class="fas fa-exclamation-circle"></i> {{ s.blocked }} طلبية ناقصة</span>
+                <span class="blocked" *ngIf="!sellerId"><i class="fas fa-exclamation-circle"></i> اختر العميل</span>
+            </div>
+            <button type="button" class="imp-btn primary" [disabled]="!canSave || isBusy" (click)="save()">
+                <mat-spinner *ngIf="isBusy" diameter="16"></mat-spinner>
+                <i *ngIf="!isBusy" class="fas fa-save"></i>
+                حفظ {{ s.orders === 1 ? 'الطلبية' : 'الطلبيات' }}
+            </button>
+        </footer>
+    </ng-container>
+</div>

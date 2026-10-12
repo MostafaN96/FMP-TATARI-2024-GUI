@@ -1,0 +1,63 @@
+<p-dialog [visible]="visible" (visibleChange)="close($event)" [modal]="true" [closable]="true"
+    [dismissableMask]="true" [style]="{ width: '960px', maxWidth: '96vw' }" [header]="title">
+    <div dir="rtl" class="mv">
+
+        <div class="mv-head" *ngIf="headerItems.length">
+            <span *ngFor="let item of headerItems"><b>{{ item.label }}:</b> {{ item.value }}</span>
+        </div>
+        <div class="mv-note" *ngIf="note">{{ note }}</div>
+
+        <div *ngIf="loading" class="mv-empty"><mat-spinner diameter="32"></mat-spinner></div>
+        <div *ngIf="!loading && !rows.length" class="mv-empty">لا توجد حركات</div>
+
+        <div class="mv-table-wrap" *ngIf="!loading && rows.length">
+            <table class="mv-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>التاريخ</th>
+                        <th>نوع الإذن</th>
+                        <th>رقم الإذن</th>
+                        <th class="num">إدخال</th>
+                        <th class="num">إخراج</th>
+                        <th class="num">الرصيد</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="openingBalance" class="opening">
+                        <td></td>
+                        <td colspan="5">رصيد أول المدة</td>
+                        <td class="num">{{ openingBalance | number:'1.2-2' }}</td>
+                    </tr>
+                    <tr *ngFor="let m of rows; let i = index" [class.in]="m.inQty" [class.out]="m.outQty">
+                        <td class="muted">{{ i + 1 }}</td>
+                        <td>{{ _sharedComponentService.formatDate(m.date) }}</td>
+                        <td>{{ m.typeLabel }}</td>
+                        <td>
+                            <a *ngIf="route(m); else plain" [routerLink]="[route(m)]" [queryParams]="{ id: m.requisitionId }" target="_blank">{{ m.number }}</a>
+                            <ng-template #plain>{{ m.number }}</ng-template>
+                        </td>
+                        <td class="num in-qty">{{ m.inQty ? (m.inQty | number:'1.2-2') : '' }}</td>
+                        <td class="num out-qty">{{ m.outQty ? (m.outQty | number:'1.2-2') : '' }}</td>
+                        <td class="num balance" [class.negative]="m.balance < -0.005">{{ m.balance | number:'1.2-2' }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">الإجمالي ({{ rows.length }} حركة)</td>
+                        <td class="num">{{ totalIn | number:'1.2-2' }}</td>
+                        <td class="num">{{ totalOut | number:'1.2-2' }}</td>
+                        <td class="num">{{ finalBalance | number:'1.2-2' }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="mv-check" *ngIf="!loading && expectedBalance != null" [class.ok]="matchesExpected" [class.bad]="!matchesExpected">
+            <i class="fas" [ngClass]="matchesExpected ? 'fa-check-circle' : 'fa-exclamation-triangle'"></i>
+            {{ expectedLabel }}: <b>{{ expectedBalance | number:'1.2-2' }}</b>
+            <span *ngIf="!matchesExpected">— يختلف عن الرصيد من الحركات بـ {{ (finalBalance - expectedBalance) | number:'1.2-2' }}</span>
+            <span *ngIf="matchesExpected">— مطابق للرصيد من الحركات</span>
+        </div>
+    </div>
+</p-dialog>

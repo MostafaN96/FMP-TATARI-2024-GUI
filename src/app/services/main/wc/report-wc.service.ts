@@ -55,6 +55,28 @@ export class ReportWcService {
       });
   }
 
+  // حركة دفعة واحدة: ما سُحب منها وما أُدخل عليها
+  selectLotMovements(lotId: string): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}lot-movements/${lotId}`;
+    return this._http.get(url,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
+  // حركات الإدخال كأسطر مع إخراجها ورصيد دفعتها
+  selectInventoryInputLots(object: any): Observable<any> {
+    const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-input-lots`;
+    return this._http.post(url, object,
+      {
+        headers: new HttpHeaders({
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        })
+      });
+  }
+
   selectInventoryTotalByFabric(fabricId: string): Observable<any> {
     const url = `${this._constantsService.BASE_URL}${this.urlService}select-inventory-total-by-fabric/${fabricId}`;
     return this._http.get(url,

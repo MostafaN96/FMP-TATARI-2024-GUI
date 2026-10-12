@@ -55,6 +55,8 @@ export class DyedFabricOrderRequisitionAddWeComponent implements OnInit {
   colorCode = ""
   wasteRatio = ""
   isShowAdd = true
+  // شاشة استيراد الطلبيات من إكسل بدل الإضافة اليدوية
+  isImportMode = false
 
   ///////////////////////////////// Auto Complete Data  ////////////////////////////////
   // Auto Complete Data 

@@ -63,51 +63,18 @@
   border-bottom: none;
 }
 
-/* عمود «حركات الإدخال»: ارتفاع محدود (~8 حركات) مع تمرير عمودي داخلي فقط.
-   overflow-x: hidden ضروري: تمرير عمودي وحده يجعل المتصفح يضيف تمريراً أفقياً للخلية،
-   فيلتقط التمرير الأفقي بدل الجدول. والجدول الداخلي يلتف ضمن عرض الخلية. */
-:host ::ng-deep .ag-cell.input-movements-cell {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  line-height: normal;
+/* زر «الحركة» في الجدولين */
+:host ::ng-deep .movements-btn {
+  border: 1px solid #c7d2fe;
+  background: #eef2ff;
+  color: #3f51b5;
+  border-radius: 4px;
+  padding: 1px 12px;
+  line-height: 22px;
+  cursor: pointer;
 }
 
-:host ::ng-deep .input-movements-box {
-  max-height: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-:host ::ng-deep .input-movements-table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-  font-size: 12px;
-  margin: 2px 0;
-}
-
-:host ::ng-deep .input-movements-table td {
-  border-bottom: 1px dashed #e2e2e2;
-  padding: 2px 4px;
-  text-align: right;
-  line-height: 18px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* نوع الإذن يلتف، والرقم والتاريخ والكمية سطر واحد */
-:host ::ng-deep .input-movements-table td:nth-child(1) { width: 40%; white-space: normal; }
-:host ::ng-deep .input-movements-table td:nth-child(2) { width: 16%; }
-:host ::ng-deep .input-movements-table td:nth-child(3) { width: 22%; }
-:host ::ng-deep .input-movements-table td:nth-child(4) { width: 22%; }
-
-:host ::ng-deep .input-movements-table tr:last-child td {
-  border-bottom: none;
-}
-
-:host ::ng-deep .input-movements-table td.num {
-  text-align: left;
-  direction: ltr;
-  font-weight: 600;
+:host ::ng-deep .movements-btn:hover {
+  background: #3f51b5;
+  color: #fff;
 }

@@ -111,6 +111,35 @@ export class DyedFabricOrderRequisitionWeService {
       });
   }
 
+  ///////////////////// استيراد طلبيات من إكسل العميل /////////////////////
+
+  private authHeaders() {
+    return new HttpHeaders({ 'authorization': `Bearer ${localStorage.getItem('token')}` });
+  }
+
+  importExcelParse(file: File): Observable<any> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this._http.post(`${this._constantsService.BASE_URL}${this.urlService}import-excel/parse`, form, { headers: this.authHeaders() });
+  }
+
+  importExcelReparse(token: string, sellerId: string): Observable<any> {
+    return this._http.post(`${this._constantsService.BASE_URL}${this.urlService}import-excel/reparse`, { token, sellerId }, { headers: this.authHeaders() });
+  }
+
+  // ورقة لم يعرف السيستم شكلها: تُقرأ بـ Ollama المحلي (قد تأخذ دقيقة)
+  importExcelReadSheetAi(token: string, sellerId: string | null, sheetName: string): Observable<any> {
+    return this._http.post(`${this._constantsService.BASE_URL}${this.urlService}import-excel/read-sheet-ai`, { token, sellerId, sheetName }, { headers: this.authHeaders() });
+  }
+
+  importExcelCommit(body: any): Observable<any> {
+    return this._http.post(`${this._constantsService.BASE_URL}${this.urlService}import-excel/commit`, body, { headers: this.authHeaders() });
+  }
+
+  importExcelRelearn(): Observable<any> {
+    return this._http.post(`${this._constantsService.BASE_URL}${this.urlService}import-excel/relearn`, {}, { headers: this.authHeaders() });
+  }
+
   ///////////////////// ملفات إكسل تفاصيل الطلبية /////////////////////
 
   uploadOrderFile(requisitionId: string, file: File): Observable<any> {

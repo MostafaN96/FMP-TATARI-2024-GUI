@@ -30,16 +30,16 @@
                     <div class="row row-cols-3">
                         <div class="col">
                             <div class="btn-export-section">
-                                <a (click)="_exportDataService.onExportPDFGridAngular(gridApi, 'تقرير جرد القماش الخام', gridColumnApi, ['details'])">
+                                <a (click)="_exportDataService.onExportPDFGridAngular(activeGridApi, isInputLotsView ? 'حركات إدخال الخام' : 'تقرير جرد القماش الخام', activeColumnApi, ['details'])">
                         <i title="PDF" class="far fa-file-pdf"></i>
                     </a>
 
-                    <a (click)="_exportDataService.onExportExcelGridAngular(gridApi, 'تقرير جرد القماش الخام', ['details'])">
+                    <a (click)="_exportDataService.onExportExcelGridAngular(activeGridApi, isInputLotsView ? 'حركات إدخال الخام' : 'تقرير جرد القماش الخام', ['details'])">
                         <i title="Excel" class="far fa-file-excel px-2"></i>
                     </a>
                     
                     <a
-                    (click)="_exportDataService.printGrid(gridApi, 'تقرير جرد القماش الخام', gridColumnApi, ['details'], ['input_quantity', 'output_quantity', 'current_quantity'])">
+                    (click)="_exportDataService.printGrid(activeGridApi, isInputLotsView ? 'حركات إدخال الخام' : 'تقرير جرد القماش الخام', activeColumnApi, ['details'], ['input_quantity', 'output_quantity', 'current_quantity'])">
                     <i title="Print" class="fas fa-print pe-2"></i>
                 </a>
                             </div>
@@ -58,7 +58,7 @@
                                     <div class="mb-4 report-toolbar">
                                         <mat-checkbox class="example-margin me-3" [(ngModel)]="isShowClosedBalances"
                                 (change)="onToggleBalanceType($event)">اظهار الارصدة المغلقة</mat-checkbox>
-                                        <button mat-raised-button color="warn" (click)="resetFilters()" class="ms-3">
+                                        <button mat-raised-button color="warn" (click)="isInputLotsView ? resetLotsFilters() : resetFilters()" class="ms-3">
                                             <i class="fas fa-undo me-2"></i>إعادة تعيين الفلاتر
                                         </button>
 
@@ -81,22 +81,46 @@
                                                 [title]="isMarkingMode ? 'اضغط لإيقاف التعليم' : 'بعد التفعيل: اضغط على أي سطر لتعليمه'">
                                             <i class="fas fa-highlighter me-2"></i>{{ isMarkingMode ? 'إيقاف التعليم' : 'تعليم الأسطر' }}
                                         </button>
-                                        <button mat-raised-button [color]="isShowInputMovements ? 'accent' : undefined" (click)="toggleInputMovements()">
-                                            <i class="fas fa-sign-in-alt me-2"></i>{{ isShowInputMovements ? 'إخفاء حركات الإدخال' : 'إظهار حركات الإدخال' }}
+                                        <button mat-raised-button [color]="isInputLotsView ? 'accent' : undefined" (click)="toggleInputLotsView()" [disabled]="isLoading">
+                                            <i class="fas fa-sign-in-alt me-2"></i>{{ isInputLotsView ? 'رجوع لتقرير الجرد' : 'إظهار حركات الإدخال' }}
                                         </button>
                                         <button mat-stroked-button *ngIf="markedRows.size" (click)="clearMarkedRows()">
                                             <i class="fas fa-eraser me-2"></i>إلغاء تعليم الأسطر ({{ markedRows.size }})
                                         </button>
                                     </div>
 
-                                    <div class="date-hint" *ngIf="appliedDateRange">
+                                    <div class="date-hint" *ngIf="appliedDateRange && !isInputLotsView">
                                         الإدخال والإخراج لحركات الفترة
                                         <b>{{ appliedDateRange.fromDate || 'البداية' }}</b> ←
                                         <b>{{ appliedDateRange.toDate || 'اليوم' }}</b>
                                         — «الرصيد» هو الرصيد الحالي، وأرصدة الفترة في «رصيد أول المدة» و«رصيد آخر المدة».
                                     </div>
 
-                                    <div id="table-header-data-report" [class.marking-mode]="isMarkingMode"
+                                    <div class="date-hint" *ngIf="isInputLotsView">
+                                        كل حركة إدخال سطر مستقل: «الإخراج» = ما سُحب من دفعتها، و«الرصيد» = الباقي منها اليوم.
+                                        {{ appliedDateRange ? 'حركات الإدخال ضمن الفترة (مفتوحة ومغلقة).' : (isShowClosedBalances ? 'كل الحركات (مع المغلقة).' : 'الحركات التي لدفعتها رصيد.') }}
+                                    </div>
+
+                                    <div *ngIf="isInputLotsView" [class.marking-mode]="isMarkingMode" dir="rtl" class="ag-theme-alpine ag-rtl">
+                                        <ag-grid-angular
+                                            class="ag-theme-alpine ag-rtl ag-compact"
+                                            [ngStyle]="_sharedComponentService.gridStyle"
+                                            [columnDefs]="lotsColumnDefs"
+                                            [defaultColDef]="lotsDefaultColDef"
+                                            [rowData]="inputLots"
+                                            [sideBar]="sideBar"
+                                            [enableRangeSelection]="true"
+                                            [animateRows]="false"
+                                            [localeText]="_sharedComponentService.localeText"
+                                            [pinnedBottomRowData]="lotsPinnedBottomRowData"
+                                            [rowClassRules]="rowClassRules"
+                                            (rowClicked)="onRowClicked($event)"
+                                            (gridReady)="onLotsGridReady($event)"
+                                            (modelUpdated)="onLotsModelUpdated()">
+                                        </ag-grid-angular>
+                                    </div>
+
+                                    <div id="table-header-data-report" [hidden]="isInputLotsView" [class.marking-mode]="isMarkingMode"
                         dir="rtl"
                         class="ag-theme-alpine ag-rtl">
 
@@ -133,4 +157,11 @@
             </ng-template>
         </mat-tab>
     </mat-tab-group>
+
+    <app-wc-movements-dialog [(visible)]="movementsDialog.visible" [loading]="movementsDialog.loading"
+        [title]="movementsDialog.title" [headerItems]="movementsDialog.headerItems"
+        [movements]="movementsDialog.movements" [openingBalance]="movementsDialog.openingBalance"
+        [expectedBalance]="movementsDialog.expectedBalance" [expectedLabel]="movementsDialog.expectedLabel"
+        [note]="movementsDialog.note">
+    </app-wc-movements-dialog>
 </section>

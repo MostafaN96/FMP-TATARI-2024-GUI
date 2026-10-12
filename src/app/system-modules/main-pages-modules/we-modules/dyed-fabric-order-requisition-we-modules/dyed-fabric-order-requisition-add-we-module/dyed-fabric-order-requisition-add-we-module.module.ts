@@ -6,12 +6,15 @@ import { DyedFabricOrderRequisitionAddWeModuleRoutingModule } from './dyed-fabri
 // Component
 import { DyedFabricOrderRequisitionAddWeComponent } from 'src/app/main/we/dyed-fabric-order-requisition-we/dyed-fabric-order-requisition-add-we/dyed-fabric-order-requisition-add-we.component';
 
+import { DyedFabricOrderImportExcelWeComponent } from 'src/app/main/we/dyed-fabric-order-requisition-we/dyed-fabric-order-import-excel-we/dyed-fabric-order-import-excel-we.component';
+
 // Shared Module
 import { SharedModule } from 'src/app/shared-modules/shared.module';
 
 @NgModule({
   declarations: [
-    DyedFabricOrderRequisitionAddWeComponent
+    DyedFabricOrderRequisitionAddWeComponent,
+    DyedFabricOrderImportExcelWeComponent
   ],
   imports: [
     SharedModule,

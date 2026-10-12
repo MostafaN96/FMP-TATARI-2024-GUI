@@ -6,9 +6,22 @@
             <h2 [class]="_sharedComponentService.TitleTextClass" id="main-page-title">إضافة طلبية العميل قماش جاهز</h2>
         </div>
     </div>
+
+    <!-- استيراد طلبية (أو أكثر) من ملف إكسل العميل -->
+    <div class="import-toggle" *ngIf="!isImportMode">
+        <button type="button" mat-raised-button color="primary" (click)="isImportMode = true">
+            <i class="fas fa-file-excel me-2"></i>استيراد من ملف إكسل
+        </button>
+    </div>
+    <div [class]="_sharedComponentService.mainPageFormClass" *ngIf="isImportMode">
+        <app-dyed-fabric-order-import-excel-we [sellers]="dyers" [dyedFabrics]="dyedFabrics"
+            (closed)="isImportMode = false">
+        </app-dyed-fabric-order-import-excel-we>
+    </div>
+
     <!-- Form Section -->
     <!-- Main Page Form -->
-    <div [class]="_sharedComponentService.mainPageFormClass">
+    <div [class]="_sharedComponentService.mainPageFormClass" [hidden]="isImportMode">
         <form [formGroup]="addOrderForm" (ngSubmit)="onAddRequisition()">
             <div [class]="_sharedComponentService.subMainPageForm2Class">
                 <!-- Form Body -->

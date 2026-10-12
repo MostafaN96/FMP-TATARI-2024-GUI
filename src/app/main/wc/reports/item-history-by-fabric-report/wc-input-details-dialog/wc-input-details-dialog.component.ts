@@ -2,15 +2,25 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { SharedComponentService } from 'src/app/services/shared-component.service';
 
-// صفحة تفاصيل كل نوع إذن إدخال في جرد الخام (تُفتح بـ ?id=<معرّف الإذن>)
+// صفحة تفاصيل كل نوع إذن في جرد الخام (تُفتح بـ ?id=<معرّف الإذن>).
+// يقبل نص نوع الإذن كما في التقرير، أو مفتاح نوع حركة الدفعة (sell, transport_wc_wd ...)
 export function wcInputRequisitionRoute(type: string): string {
   switch (type) {
     case 'اذن اضافة': return '/dashboard/show-all-add-requisition-wc/details';
-    case 'اذن تسوية': return '/dashboard/show-all-reconciliation-requisition-wc/details';
+    case 'اذن تسوية':
+    case 'reconciliation': return '/dashboard/show-all-reconciliation-requisition-wc/details';
     case 'اذن تصنيع': return '/dashboard/show-all-manufacturing-requisition-wb/details';
     case 'اذن نقل من (D) الى (C)': return '/dashboard/show-all-transport-wd-wc-requisition/details';
-    case 'اذن نقل بين المخازن': return '/dashboard/show-all-transition-between-wh-requisition-wc/details';
-    case 'اذن نقل بين الطلبيات': return '/dashboard/show-all-transition-between-orders-requisition-wc/details';
+    case 'اذن نقل من (C) الى (D)':
+    case 'transport_wc_wd': return '/dashboard/show-all-transport-wc-wd-requisition/details';
+    case 'اذن بيع':
+    case 'sell': return '/dashboard/show-all-sell-requisition-wc/details';
+    case 'اذن مرتجع':
+    case 'return': return '/dashboard/show-all-return-requisition-wc/details';
+    case 'اذن نقل بين المخازن':
+    case 'transition_wh': return '/dashboard/show-all-transition-between-wh-requisition-wc/details';
+    case 'اذن نقل بين الطلبيات':
+    case 'transition_orders': return '/dashboard/show-all-transition-between-orders-requisition-wc/details';
     default: return '';
   }
 }
